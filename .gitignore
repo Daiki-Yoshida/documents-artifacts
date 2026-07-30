@@ -1,0 +1,26 @@
+# Bundled child projects (each managed by its own git repository)
+/design-principles/
+/documentation-strategy/
+/development-environment-strategy/
+
+# AI tool configurations (personal/local, not for public release)
+.serena/
+.claude/
+.devin/
+.cursor/
+.agents/
+
+# Editor / IDE settings
+.vscode/
+.idea/
+
+# OS artifacts
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Temporary / working files
+tmp/
+*.log
+*.tmp
+*~
