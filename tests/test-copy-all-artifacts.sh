@@ -116,4 +116,19 @@ if bash "$WORKSPACE/copy-all-artifacts.sh" "$DEST_TLINK" >/dev/null 2>&1; then
   fail "managed target that is a symbolic link must be rejected"
 fi
 
+# A managed project path must be a real directory, not a regular file.
+DEST_PROJECT_FILE="$TEST_ROOT/project-file-dest"
+mkdir -p "$DEST_PROJECT_FILE"
+printf 'collision\n' > "$DEST_PROJECT_FILE/design-principles"
+if bash "$WORKSPACE/copy-all-artifacts.sh" "$DEST_PROJECT_FILE" >/dev/null 2>&1; then
+  fail "managed project path that is a regular file must be rejected"
+fi
+
+# A managed artifact path must be a regular file, not a directory.
+DEST_TARGET_DIR="$TEST_ROOT/target-dir-dest"
+mkdir -p "$DEST_TARGET_DIR/design-principles/INDEX.md"
+if bash "$WORKSPACE/copy-all-artifacts.sh" "$DEST_TARGET_DIR" >/dev/null 2>&1; then
+  fail "managed target that is a directory must be rejected"
+fi
+
 echo "PASS: copy-all-artifacts managed sync"
