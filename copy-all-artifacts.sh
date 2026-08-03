@@ -174,7 +174,8 @@ while IFS= read -r entry; do
   fi
 done < "$STALE_MANIFEST"
 
-MANIFEST_STAGE="$DEST_DIR/${MANIFEST_NAME}.tmp.$$"
+MANIFEST_STAGE="$(mktemp "$DEST_DIR/${MANIFEST_NAME}.tmp.XXXXXX")" \
+  || fail "could not create manifest staging file in destination: $DEST_DIR"
 {
   echo "# documents-artifacts manifest v1"
   cat "$CURRENT_MANIFEST"
