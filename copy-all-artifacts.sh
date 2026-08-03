@@ -67,6 +67,7 @@ for project in "${PROJECTS[@]}"; do
 
   project_count=0
   while IFS= read -r source_file; do
+    [ -r "$source_file" ] || fail "$project: artifact is not readable: $source_file"
     filename="$(basename "$source_file")"
     entry="$project/$filename"
     is_valid_manifest_entry "$entry" || fail "$project: unsupported artifact path: $entry"
@@ -89,6 +90,7 @@ MANIFEST_PATH="$DEST_DIR/$MANIFEST_NAME"
 [ ! -L "$MANIFEST_PATH" ] || fail "manifest path must not be a symbolic link: $MANIFEST_PATH"
 if [ -e "$MANIFEST_PATH" ]; then
   [ -f "$MANIFEST_PATH" ] || fail "manifest path is not a regular file: $MANIFEST_PATH"
+  [ -r "$MANIFEST_PATH" ] || fail "manifest is not readable: $MANIFEST_PATH"
 
   while IFS= read -r entry || [ -n "$entry" ]; do
     case "$entry" in
@@ -108,13 +110,22 @@ for project in "${PROJECTS[@]}"; do
   if [ -e "$project_dest" ] && [ ! -d "$project_dest" ]; then
     fail "managed project path exists but is not a directory: $project_dest"
   fi
+  if [ -d "$project_dest" ] && [ ! -w "$project_dest" ]; then
+    fail "managed project directory is not writable: $project_dest"
+  fi
 done
 
 while IFS= read -r entry; do
+  project="${entry%%/*}"
+  filename="${entry#*/}"
+  source_file="$SOURCE_DIR/$project/artifacts/$filename"
   target="$DEST_DIR/$entry"
   [ ! -L "$target" ] || fail "managed target must not be a symbolic link: $target"
   if [ -e "$target" ] && [ ! -f "$target" ]; then
     fail "managed target exists but is not a regular file: $target"
+  fi
+  if [ -f "$target" ] && ! cmp -s -- "$source_file" "$target" && [ ! -w "$target" ]; then
+    fail "managed target requires an update but is not writable: $target"
   fi
 done < "$CURRENT_MANIFEST"
 
