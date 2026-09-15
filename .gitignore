@@ -1,8 +1,3 @@
-# Bundled child projects (each managed by its own git repository)
-/design-principles/
-/documentation-strategy/
-/development-environment-strategy/
-
 # AI tool configurations (personal/local, not for public release)
 .serena/
 .claude/

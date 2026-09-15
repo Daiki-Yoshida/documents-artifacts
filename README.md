@@ -1,97 +1,148 @@
 # documents-artifacts
 
-3つのドキュメント戦略プロジェクトの配布用アーティファクト（`artifacts/`）を一括で同期するための親プロジェクトです。
+Public canonical repository for reusable engineering guidance intended primarily for CLI coding agents.
 
-## 構成
+The repository owns the authoritative artifact modules, their human-facing Japanese documentation, and the small distribution tool used to copy selected modules into development projects.
 
-本リポジトリは、以下の3つの子プロジェクトを同ディレクトリ配下に束ねています。各子プロジェクトはそれぞれ独自のGitリポジトリとして管理されており、親リポジトリ（本リポジトリ）はこれらを `.gitignore` で除外しています。
-
-```yaml
-design-principles:
-  path: "design-principles/"
-  scope: "コード設計・実装品質・AIワークフロー"
-  artifacts: "INDEX.md, DESIGN_PHILOSOPHY.md, CODING_STANDARDS.md, AI_WORKFLOW.md, PROJECT_STRUCTURE.md"
-
-documentation-strategy:
-  path: "documentation-strategy/"
-  scope: "AI向けドキュメントの構造と運用"
-  artifacts: "INDEX.md, DOCUMENTATION_PHILOSOPHY.md, FILE_AND_STRUCTURE.md, DOCUMENT_WORKFLOW.md"
-
-development-environment-strategy:
-  path: "development-environment-strategy/"
-  scope: "開発環境・ツール・実行・リポジトリ運用"
-  artifacts: "INDEX.md, DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md, ENVIRONMENT_STANDARDS.md, WORKSPACE_STRUCTURE.md, ENVIRONMENT_WORKFLOW.md"
-```
-
-## リポジトリ管理の方針
-
-- 親リポジトリ（`documents-artifacts`）は、配布用スクリプト、テスト、本READMEなど、親側のメタファイルだけを管理します。
-- 3つの子ディレクトリは親の `.gitignore` で除外され、それぞれの子Gitリポジトリで独立に管理されます。
-- GitHub上の子リポジトリは従来通りそれぞれ残置します。
-- 配布スクリプトは子リポジトリに対して `git pull`、`git reset` などを実行しません。配布前に必要なrefへ更新してください。
-
-## 使い方
-
-### 3つのアーティファクトを一括同期
-
-```bash
-./copy-all-artifacts.sh path/to/target/documents/artifacts
-```
-
-指定したディレクトリ配下に各プロジェクト名のサブディレクトリを作り、それぞれの `artifacts/*.md` を配置します。同名ファイル（`INDEX.md` など）の衝突を避けるため、配布元ごとにサブディレクトリを分けます。
+## Source-of-truth model
 
 ```text
-<destination>/
-├─ .documents-artifacts-manifest
-├─ design-principles/                  (*.md)
-├─ documentation-strategy/             (*.md)
-└─ development-environment-strategy/   (*.md)
+GitHub: Daiki-Yoshida/documents-artifacts
+        │
+        ├─ artifacts/      authoritative AI-facing guidance
+        ├─ docs-jp/        human-facing Japanese documentation
+        └─ artifacts.sh    explicit install/update/remove tool
+                │
+                ▼
+Target project
+└─ documents/
+   └─ artifacts/
+      └─ <selected modules>/
 ```
 
-引数を省略した場合はカレントディレクトリを同期先とします。
+Rules:
 
-### 更新時の動作
+- This public GitHub repository is the canonical source.
+- `artifacts/` contains the authoritative guidance consumed by coding agents.
+- Artifact modules are independent adoption units. A project may use any subset.
+- Copies placed in target projects are committed to the target project's Git repository.
+- Updates are explicit. A target project does not track `main` automatically.
+- Git owns history, rollback, comparison, and archival. This repository does not implement a parallel version-history or manifest system.
+- Omitted modules are never removed implicitly. Removal is a separate explicit operation.
 
-`copy-all-artifacts.sh` は、同期先の `.documents-artifacts-manifest` に、このスクリプトが配布したファイルだけを記録します。
+## Modules
 
-```yaml
-追加: "配布元に新しく存在するMarkdownを配置する"
-更新: "配布元と同じpathにあるファイルの内容が変わっていれば上書きする"
-維持: "内容が同じ管理対象と、現在の配布対象pathに含まれない同期先独自ファイルは変更しない"
-削除: "前回manifestにあり、現在の配布元からなくなったファイルだけを削除する"
+Current modules:
+
+| Module | Scope |
+| --- | --- |
+| `design-principles` | Code design, implementation quality, contracts, structure, and AI implementation workflow |
+| `documentation-strategy` | Structure, routing, and maintenance of AI-facing project documentation |
+| `development-environment-strategy` | Development workspace, Docker-first execution, repository operations, parallel-agent isolation, and environment lifecycle |
+
+Each module lives under `artifacts/<module>/` and owns its own `INDEX.md` entry point.
+
+Modules share one Git repository so cross-cutting changes can be reviewed together, but they remain independently distributable.
+
+## Language policy
+
+The authoritative AI-facing artifacts are currently written in English. This is a pragmatic convention for consistency with code, technical terminology, and common model training material; it is not a claim that English is universally superior for every model or task.
+
+Human-facing Japanese material lives under `docs-jp/`. When the two differ, the files under `artifacts/` are authoritative.
+
+## Repository layout
+
+```text
+.
+├─ README.md
+├─ artifacts.sh
+├─ artifacts/
+│  ├─ design-principles/
+│  ├─ documentation-strategy/
+│  └─ development-environment-strategy/
+├─ docs-jp/
+│  └─ <module>/
+├─ documents/
+│  └─ project/
+└─ tests/
 ```
 
-初回実行でmanifestが存在しない場合は、既存ファイルを削除しません。現在の配布元ファイルを追加・更新してmanifestを作成し、次回以降の削除範囲を確定します。配布元と同じpathに既存ファイルがある場合、そのファイルは更新対象となり、同期後はmanifestの管理対象になります。
+`documents/project/` documents this repository itself. It is not distributed to target projects.
 
-そのため、旧スクリプトで過去に配布され、すでに配布元から削除されたファイルは、初回のmanaged syncでは自動判定できません。
+## Distribution
 
-スクリプトは書き込み前に、3つすべての子プロジェクトについて `artifacts/` とトップレベルMarkdownの存在を確認します。入力不足、危険なmanifest entry、symlinkによる管理pathの差し替え、通常ファイル以外との衝突がある場合は、同期開始前に失敗します。
+### Interactive use
 
-配布先Gitのcommit、rollback、checkout、resetは行いません。同期結果の確認と復旧は、配布先プロジェクトのGit履歴で行ってください。
-
-### 個別にコピーする場合
-
-各子プロジェクトには従来のコピースクリプトも残っています。必要に応じて個別に実行できます。
+Clone or update this repository, then run:
 
 ```bash
-bash design-principles/copy-design-docs.sh path/to/target
-bash documentation-strategy/copy-design-docs.sh path/to/target
-bash development-environment-strategy/copy-environment-docs.sh path/to/target
+./artifacts.sh
 ```
 
-個別スクリプトは親のmanifest同期対象ではありません。廃止ファイルを含めて3セットを繰り返し更新する場合は、`copy-all-artifacts.sh` を使用してください。
+The script asks for the target project and which modules to install or update. It also offers a separate explicit removal selection.
 
-## 検証
-
-親スクリプトの同期契約は、合成した一時ワークスペースで検証できます。
+### Non-interactive / agent use
 
 ```bash
-bash -n copy-all-artifacts.sh
-bash tests/test-copy-all-artifacts.sh
+./artifacts.sh \
+  --target /path/to/project \
+  --modules design-principles,documentation-strategy \
+  --non-interactive
 ```
 
-テストは、初回導入、上書き、追加、廃止済み管理ファイルの削除、同期先独自ファイルの保護、入力不足時のpreflight失敗、unsafe manifest、symlink、管理pathの型衝突を確認します。
+Install or update every available module:
 
-## 各アーティファクトの読み方
+```bash
+./artifacts.sh \
+  --target /path/to/project \
+  --modules all \
+  --non-interactive
+```
 
-各プロジェクトのアーティファクトは `INDEX.md` を入口として読む設計になっています。詳細は各子プロジェクトのREADMEと `artifacts/INDEX.md` を参照してください。
+List available modules:
+
+```bash
+./artifacts.sh --list
+```
+
+### Explicit removal
+
+Removal is never inferred from an install/update selection.
+
+```bash
+./artifacts.sh \
+  --target /path/to/project \
+  --remove development-environment-strategy \
+  --non-interactive
+```
+
+A project that already contains three modules and later runs `--modules design-principles` keeps the other two unchanged. To stop using one, remove it explicitly.
+
+## Sync contract
+
+For every selected install/update module:
+
+- the corresponding `artifacts/<module>/` directory is copied to `documents/artifacts/<module>/` in the target project;
+- the selected module directory is replaced as a unit, so files removed from the canonical module disappear from that copied module;
+- modules not selected are untouched;
+- symlinked destination module paths are rejected;
+- no Git command is run in the target project.
+
+After synchronization, review the normal Git diff in the target project and commit it there.
+
+There is intentionally no generated manifest, independent artifact version file, rollback database, or archive directory. The target repository's Git history records exactly which artifact snapshot was used at each commit.
+
+## Agent integration
+
+This repository does not impose a universal `AGENTS.md`, `CLAUDE.md`, or equivalent configuration on target projects. Agent entry points vary by tool and workspace.
+
+A target project may reference the installed `documents/artifacts/<module>/INDEX.md` files from its own agent-specific instructions. Keep those project-specific routing instructions small and local to the project.
+
+## Validation
+
+```bash
+bash -n artifacts.sh
+bash tests/test-artifacts.sh
+```
+
+The tests cover selective installation, exact module update, non-removal of omitted modules, explicit removal, invalid selections, conflicting operations, and symlink protection.
