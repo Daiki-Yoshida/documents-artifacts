@@ -4,14 +4,14 @@
 document_type: "workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.3.0"
+strategy_version: "2.4.0"
 ```
 
 ```yaml
 ownership_split:
   this_doc: "FLOW — when to act, what steps to follow, when to confirm"
-  FILE_AND_STRUCTURE.md: "HOW + WHERE — file roles, directory layout, versioning, git conventions"
-  DOCUMENTATION_PHILOSOPHY.md: "WHY — accuracy priority, scope, git as recording"
+  FILE_AND_STRUCTURE.md: "HOW + WHERE — file roles, directory layout, managed guidance, versioning, git conventions"
+  DOCUMENTATION_PHILOSOPHY.md: "WHY — accuracy priority, scope, ownership boundaries, git as recording"
   INDEX.md: "routes to all of the above"
 ```
 
@@ -22,8 +22,9 @@ ownership_split:
 ```yaml
 1_new_project: "Apply the strategy from scratch."
 2_existing_project: "Adopt the strategy in a project that already has documentation."
-3_ongoing_updates: "The project follows the strategy; update documents during development."
-4_staleness_handling: "Detect and fix stale documents whose commit hash is behind HEAD."
+3_ongoing_updates: "The project follows the strategy; update project-owned documents during development."
+4_staleness_handling: "Detect and fix stale project-owned documents whose recorded commit/state is behind relevant code changes."
+5_managed_artifact_handling: "Install/update/remove guidance under documents/artifacts/ through its owning distribution mechanism rather than ordinary project-document editing."
 ```
 
 ---
@@ -46,33 +47,37 @@ content:
     - "constraints: project-specific rules"
     - "emergency_action: what to do if intent is unclear"
   routing:
-    - "primary_ref: documents/INDEX.md"
+    - "project_ref: documents/INDEX.md"
+    - "artifact_refs: optional direct links to installed documents/artifacts/<module>/INDEX.md files"
   efficiency:
     - "focus_files: glob patterns for the agent to prioritize"
     - "current_priority: the current development focus"
-rule: "The entry file routes to documents/INDEX.md. It does not contain project detail."
+rule: "The entry file routes to project context and installed guidance entry points. It does not duplicate their detail."
 ```
 
-### Step 2: Create the documents/ Directory
+### Step 2: Create the Project-Owned documents/ Structure
 
 ```yaml
-action: "Create the directory tree."
+action: "Create the project-owned directory tree."
 structure:
   - "documents/INDEX.md (required — create in Step 3)"
   - "documents/project/ (project-level context)"
   - "documents/reference/ (reference material)"
-rule: "Only create directories you will populate. Do not create empty directories speculatively (YAGNI)."
+managed_guidance: "Do NOT create or populate documents/artifacts/ as project documentation. That subtree appears only when an artifact distribution/sync mechanism installs guidance there."
+rule: "Only create project-owned directories you will populate. Do not create empty directories speculatively (YAGNI)."
 ```
 
 ### Step 3: Create documents/INDEX.md
 
 ```yaml
-action: "Create the routing hub and version registry."
+action: "Create the project-owned routing hub and version registry."
 content:
-  - "Document inventory: list every file under documents/ with its purpose"
-  - "Routing map: which document to read for which task"
-  - "Version registry: each document's version + last-updated git commit hash"
+  - "Document inventory: list every project-owned document under documents/ with its purpose"
+  - "Routing map: which project-owned document to read for which task"
+  - "Version registry: each project-owned document's version + last-updated git commit/state"
   - "Cross-reference map"
+  - "Optional links to installed documents/artifacts/<module>/INDEX.md entry points"
+exclusion: "Do NOT inventory/version-register individual files under documents/artifacts/."
 format: "See FILE_AND_STRUCTURE.md → §4 Document Versioning System"
 index_version: "Start at 1.0.0."
 ```
@@ -87,7 +92,7 @@ content:
   - "Constraints (business rules, compliance, performance)"
   - "Current status and roadmap"
 rule: "One file = one concern. Split when a file covers multiple concerns."
-versioning: "Each file starts at version 1.0.0. Use the two-phase workflow for commit hash (see Version Bumping)."
+versioning: "Each project-owned file starts at version 1.0.0. Use the two-phase workflow for commit hash/state tracking (see Version Bumping)."
 ```
 
 ### Step 5: Create docs-jp/ (If Human-Facing Content Is Needed)
@@ -104,12 +109,13 @@ rule: "Human-facing content does NOT go under documents/. It goes in docs-jp/."
 ### Step 6: Add Reference and Topic-Specific Documents As Needed
 
 ```yaml
-action: "Create documents as the project grows — not all at once."
-trigger: "When a task requires context that does not fit in existing project documents, create a new file."
+action: "Create project-owned documents as the project grows — not all at once."
+trigger: "When a task requires project context that does not fit in existing project documents, create a new file."
 placement: "documents/reference/<topic>.md or documents/<topic>/ (see FILE_AND_STRUCTURE.md → §7 Directory Splitting Guide)"
+reserved_path: "Never place a project-owned document under documents/artifacts/. That path is reserved for distributor-managed guidance."
 glossary: "If repeated, ambiguous, or cross-language domain vocabulary is reducing accuracy, consider documents/reference/glossary.md. Do not create one merely to satisfy a template."
 rule: "Prefer fewer files with clear routing over many files with overlapping content."
-versioning: "Register every new file in documents/INDEX.md with version 1.0.0. Bump index_version (minor)."
+versioning: "Register every new project-owned file in documents/INDEX.md with version 1.0.0. Bump index_version (minor)."
 ```
 
 ---
@@ -121,9 +127,10 @@ versioning: "Register every new file in documents/INDEX.md with version 1.0.0. B
 ### Step 1: Audit Existing Documentation
 
 ```yaml
-action: "Read all existing documentation and classify each file."
+action: "Read existing documentation and classify each relevant path by audience and ownership."
 classification:
-  ai_facing: "content an AI agent needs during development"
+  ai_facing_project_owned: "project context an AI agent needs during development"
+  managed_guidance: "installed reusable guidance under documents/artifacts/ or an equivalent explicitly distributor-managed path"
   human_facing: "content for human developers (setup, tutorials, background)"
   shared: "content both audiences need"
   obsolete: "outdated or redundant content"
@@ -133,9 +140,10 @@ classification:
 
 ```yaml
 mapping:
-  ai_facing: "documents/project/ or documents/reference/ (AI-facing)"
+  ai_facing_project_owned: "documents/project/ or documents/reference/ (AI-facing, project-owned)"
+  managed_guidance: "preserve under its owned managed path; do not migrate into project docs or add project version metadata"
   human_facing: "docs-jp/ (human-facing)"
-  shared: "documents/ (AI-facing by default; extract human summary to docs-jp/ if needed)"
+  shared: "project-owned documents/ by default; extract human summary to docs-jp/ if needed"
   obsolete: "remove or archive — do not migrate"
 ```
 
@@ -146,22 +154,24 @@ action: "Create CLAUDE.md / AGENTS.md / GEMINI.md as needed, and documents/INDEX
 note: "Follow Use Case 1 Steps 1–3 for these."
 ```
 
-### Step 4: Migrate Documents
+### Step 4: Migrate Project-Owned Documents
 
 ```yaml
-action: "Move or rewrite existing documents into the new structure."
+action: "Move or rewrite project-owned documents into the new structure."
 rules:
-  - "AI-facing content goes to documents/ with proper versioning."
+  - "Project-owned AI-facing content goes to documents/ with proper versioning, excluding the reserved documents/artifacts/ subtree."
+  - "Managed artifact guidance stays managed; do not rewrite or add target-project version metadata to it."
   - "Human-facing content goes to docs-jp/."
-  - "Eliminate duplication: if two files covered the same topic, merge into one and link from the other."
+  - "Eliminate duplication: if two project-owned files covered the same topic, merge into one and link from the other."
   - "Preserve information — do not delete content without user confirmation."
-  - "Report what was moved, merged, or flagged as obsolete."
+  - "Report what was moved, merged, preserved as managed guidance, or flagged as obsolete."
 ```
 
 ### Step 5: Update INDEX.md and Cross-References
 
 ```yaml
-action: "Register all migrated documents in documents/INDEX.md with version 1.0.0."
+action: "Register all migrated project-owned documents in documents/INDEX.md with version 1.0.0."
+managed_guidance: "Link to installed module INDEX files when useful, but do not register their internal files."
 check: "All routing paths in agent entry files and INDEX.md point to correct locations."
 ```
 
@@ -172,6 +182,7 @@ guard:
   scope: "Do NOT let a documentation migration expand into a content rewrite."
   rule: "Structural migration and content improvement are separate tasks. Do one, then the other."
   violation_handling: "If you find documentation that violates the strategy, note it in the report. Do NOT silently fix it unless the task explicitly asks."
+  managed_guidance: "Do not silently fork or normalize installed artifact guidance; corrections belong in its canonical source."
   local_convention: "Explicit project conventions OUTRANK this strategy where they conflict. Report the conflict once, then follow the local rule."
 ```
 
@@ -179,74 +190,101 @@ guard:
 
 ## Use Case 3: Ongoing Document Updates
 
-**When:** the project follows this strategy and documents need updating.
+**When:** the project follows this strategy and project-owned documents need updating.
 
 ### When to Update
 
 ```yaml
 update_triggers:
   architecture_change: "Update project architecture docs and INDEX.md version registry."
-  new_feature: "Add reference docs as needed; update INDEX.md routing."
+  new_feature: "Add project reference docs as needed; update INDEX.md routing."
   constraint_change: "Update project constraints document and INDEX.md version registry."
-  tech_stack_change: "Update project docs; review whether existing docs are still accurate."
-  directory_restructure: "Update all routing references in INDEX.md and agent entry files."
+  tech_stack_change: "Update project docs; review whether existing project docs are still accurate."
+  directory_restructure: "Update all affected project routing references in INDEX.md and agent entry files."
 ```
 
 ### What to Update
 
 ```yaml
 decision_tree:
-  question: "Does the change affect what an AI agent needs to know?"
-  yes:
-    action: "Update the relevant document under documents/."
-    check: "Is the information already in an existing file, or does it need a new file?"
-    existing_file: "Update the file and bump its version."
-    new_file: "Create the file, register it in INDEX.md, and add routing."
-  no:
-    action: "Update docs-jp/ if human-facing content is affected."
-    ai_docs: "Leave documents/ unchanged."
+  first_question: "Is the target under documents/artifacts/ and distributor-managed?"
+  yes_managed: "Do NOT edit it through this workflow. Use Managed Artifact Handling below."
+  no_project_owned:
+    question: "Does the change affect what an AI agent needs to know about this project?"
+    yes:
+      action: "Update the relevant project-owned document under documents/."
+      check: "Is the information already in an existing file, or does it need a new file?"
+      existing_file: "Update the file and bump its version."
+      new_file: "Create the file outside documents/artifacts/, register it in INDEX.md, and add routing."
+    no:
+      action: "Update docs-jp/ if human-facing content is affected."
+      ai_docs: "Leave project-owned documents/ unchanged."
 ```
 
 ### Update Discipline
 
 ```yaml
 rules:
-  - "Change-triggered: update documents when the code changes, not on a schedule."
+  - "Change-triggered: update project-owned documents when the code changes, not on a schedule."
   - "Proportional: a one-line code fix does not require a full documentation review."
-  - "Routing-first: if you add a new document, register it in INDEX.md."
-  - "Accuracy-first: if an update makes a document inaccurate, fix the inaccuracy — do not leave stale information."
-  - "SSOT-check: if you add information, verify it does not duplicate an existing document. Link instead of duplicating."
+  - "Routing-first: if you add a new project-owned document, register it in INDEX.md."
+  - "Accuracy-first: if an update makes a project-owned document inaccurate, fix the inaccuracy — do not leave stale information."
+  - "SSOT-check: if you add information, verify it does not duplicate an existing owner. Link instead of duplicating."
+  - "Managed-guidance guard: do not edit documents/artifacts/ merely because the target project needs different local wording; project-specific information belongs in project-owned docs."
 ```
 
 ---
 
 ## Use Case 4: Staleness Handling
 
-**When:** an AI agent detects that a document's `last_updated_commit` is behind
-HEAD and code relevant to the document has changed since then.
+**When:** an AI agent detects that a **project-owned** document's `last_updated_commit`
+is behind HEAD and code relevant to the document has changed since the reflected state.
+
+This workflow does **not** apply to managed files under `documents/artifacts/`; update those
+through their artifact source/distribution mechanism.
 
 ### Detection
 
 ```yaml
 detection: "See FILE_AND_STRUCTURE.md → §4 Staleness Detection in Practice."
-summary: "Compare the document's last_updated_commit with HEAD using git log on relevant code paths."
+summary: "Compare the project-owned document's last_updated_commit with HEAD using git log on relevant code paths."
 ```
 
 ### Staleness Update Flow
 
 ```yaml
 step_1_detect: "Run git log --oneline <last_updated_commit>..HEAD -- <relevant_code_paths>."
-step_2_assess: "Review the listed commits. Determine if the document is still accurate."
+step_2_assess: "Review the listed commits. Determine if the project-owned document is still accurate."
 step_3_classify:
   still_accurate: "Code changes did not affect the documented information."
   needs_update: "Code changes affect the documented information."
   needs_full_rewrite: "Code changes are so significant that the document must be restructured."
 step_4_act:
-  still_accurate: "Update last_updated_commit and last_updated_date in both the document header and INDEX.md entry. Bump document_version (patch — metadata refresh). Bump index_version (patch). Commit: 'chore: <document>のレビュー済みコミットハッシュを更新'. Follow the two-phase workflow (see FILE_AND_STRUCTURE.md → §4)."
+  still_accurate: "Set last_updated_commit to the reviewed code HEAD/state and update last_updated_date in both the document header and INDEX.md entry. Bump document_version (patch — metadata refresh). Bump index_version (patch). Commit: 'chore: <document>のレビュー済みコミットハッシュを更新'. The metadata commit is not recursively recorded as the reflected commit."
   needs_update: "Update the document content. Bump version (minor or patch). Use the two-phase commit workflow."
   needs_full_rewrite: "Treat as a major version bump. Confirm with the user before restructuring (L2/L3 gate)."
 step_5_report: "Report what was detected, what was updated, and the new version."
 ```
+
+---
+
+## Use Case 5: Managed Artifact Handling
+
+**When:** the target project has reusable guidance under `documents/artifacts/<module>/`.
+
+```yaml
+ownership_rule: "Installed artifact guidance is distributor-managed, even when committed in the target project's Git history."
+read: "Read each module through documents/artifacts/<module>/INDEX.md."
+install_or_update: "Use the target project's explicit artifact distribution/sync mechanism. Review and commit the resulting normal Git diff in the target project."
+remove: "Use the distribution mechanism's explicit module-removal operation. Omission from an update selection is not permission to remove a module."
+project_index: "documents/INDEX.md may link to installed module INDEX files, but it does not inventory/version their internal files."
+metadata: "Do not add target-project document_version / last_updated_commit fields to managed artifact files."
+correction: "If installed guidance itself is wrong, correct the canonical artifact source and redistribute it. Do not silently patch only the target copy."
+local_override: "If an explicit project convention overrides generic guidance, record the project-specific rule in project-owned instructions/docs rather than editing the installed artifact."
+```
+
+This strategy does not prescribe a universal distribution command; use the mechanism
+owned by the artifact source or the target project's documented artifact workflow.
 
 ---
 
@@ -256,9 +294,10 @@ step_5_report: "Report what was detected, what was updated, and the new version.
 
 ```yaml
 when_to_bump:
-  major: "Document restructured or rewritten — section reorganization, scope change, or full rewrite"
+  major: "Project-owned document restructured or rewritten — section reorganization, scope change, or full rewrite"
   minor: "Content addition or significant update — new section, new information"
   patch: "Small fix — typo, clarification, minor correction, or metadata refresh"
+managed_guidance: "Target-project version bumps do not apply to documents/artifacts/; preserve versions owned by the artifact itself."
 ```
 
 ### How to Bump
@@ -266,13 +305,13 @@ when_to_bump:
 ```yaml
 procedure: "See FILE_AND_STRUCTURE.md → §4 Commit Hash: Two-Phase Workflow for the full procedure."
 summary:
-  - "Update document content and bump document_version."
-  - "Set last_updated_commit to 'pending'."
+  - "Update project-owned document content and bump document_version."
+  - "Set last_updated_commit to 'pending' when the reflected commit is not yet known."
   - "Update the document's INDEX.md entry (version + date)."
-  - "Bump index_version if a new file was added or routing changed."
+  - "Bump index_version if a new project-owned file was added/removed or routing changed."
   - "Commit with the appropriate message prefix."
-  - "After committing, record the commit hash in the document header and INDEX.md entry."
-  - "Commit the hash update: 'chore: <document>のコミットハッシュを記録'"
+  - "After committing, record the reflected content/code-state hash in the document header and INDEX.md entry."
+  - "Commit the metadata update: 'chore: <document>のコミットハッシュを記録'. Do not recursively change the recorded hash to this metadata commit."
 ```
 
 ---
@@ -280,7 +319,11 @@ summary:
 ## Document Creation Decision Tree
 
 ```yaml
-question_1: "Does an AI agent need this information during development?"
+question_0: "Is documents/artifacts/ being considered as the destination?"
+  yes: "Stop. That path is reserved for distributor-managed artifact guidance; use the artifact installation mechanism instead of creating project docs there."
+  no: "Continue to question 1."
+
+question_1: "Does an AI agent need this project-specific information during development?"
   no: "Place in docs-jp/ (human-facing)."
   yes: "Continue to question 2."
 
@@ -288,12 +331,12 @@ question_2: "Is it project-level context (overview, architecture, constraints, s
   yes: "Place in documents/project/<topic>.md."
   no: "Continue to question 3."
 
-question_3: "Is it reference material (specs, schemas, standards, examples, glossary)?"
+question_3: "Is it project-owned reference material (specs, schemas, standards, examples, glossary)?"
   yes: "Place in documents/reference/<topic>.md."
   no: "Continue to question 4."
 
 question_4: "Would a dedicated topic directory create a clearer routing or ownership boundary?"
-  yes: "Create documents/<topic>/ and place the cohesive concern there (see FILE_AND_STRUCTURE.md → §7)."
+  yes: "Create documents/<topic>/ outside documents/artifacts/ and place the cohesive concern there (see FILE_AND_STRUCTURE.md → §7)."
   no: "Keep the file under documents/project/ or documents/reference/, whichever owns the concern."
 
 heuristic: "Three or more related files are evidence that a topic directory may be useful, not a requirement. One or two files may use a topic directory when the boundary is already clear and useful."
@@ -306,18 +349,19 @@ anti_pattern: "Do not create a new file or directory for every small piece of in
 
 ```yaml
 when_to_delete:
-  - "The document is obsolete — the content it described no longer exists."
-  - "The document was merged into another document and is now redundant."
-  - "The user explicitly asks to remove it."
+  - "A project-owned document is obsolete — the content it described no longer exists."
+  - "A project-owned document was merged into another document and is now redundant."
+  - "The user explicitly asks to remove a project-owned document."
 
 deletion_steps:
-  1: "Search the entire documents/ tree for references to the document."
+  1: "Search project-owned documentation and relevant routing for references to the document."
   2: "Update or remove all referencing links."
   3: "Remove the document's entry from documents/INDEX.md."
-  4: "Bump index_version in INDEX.md (minor — file removed from registry)."
+  4: "Bump index_version in INDEX.md (minor — project-owned file removed from registry)."
   5: "Commit: 'refactor: <document>を削除' with a note explaining why in the body."
 
-rule: "Never delete a document that other documents still reference without fixing those references first."
+rule: "Never delete a project-owned document that other documents still reference without fixing those references first."
+managed_guidance: "Do not delete individual files under documents/artifacts/ through this workflow. Use Managed Artifact Handling and the explicit module-removal/update mechanism."
 confirmation: "L2_structural — proceed only if clearly implied by the task; report explicitly."
 ```
 
@@ -330,32 +374,34 @@ When an AI agent should reload this strategy before acting.
 ```yaml
 must_re_read:
   - "First contact with a project using this strategy (read INDEX.md first)."
-  - "Creating or restructuring the documents/ directory tree."
+  - "Creating or restructuring the project-owned documents/ tree."
   - "Setting up a new project that will use AI agents."
   - "Adopting this strategy in an existing project (brownfield)."
 
 should_re_read:
   - "Adding a new agent entry file."
-  - "Restructuring documents (moving files between directories)."
+  - "Restructuring project-owned documents (moving files between directories)."
   - "Changing the project from single to hierarchical (or vice versa)."
-  - "Uncertainty about where a piece of information belongs."
+  - "Uncertainty about whether a documents/ path is project-owned or distributor-managed."
 
 no_re_read_needed:
-  - "Routine content updates within an existing file."
-  - "Adding a new document in an established directory."
+  - "Routine content updates within an existing project-owned file."
+  - "Adding a new project-owned document in an established directory."
   - "Updating constraints or status in an existing project document."
+  - "Routine artifact sync when the project's documented distribution mechanism is already clear."
 ```
 
 ---
 
 ## Confirmation Gate
 
-Before changing the documentation structure, assess the impact.
+Before changing the **project-owned documentation structure**, assess the impact.
 
 ```yaml
-L0_content: "Updating content within an existing file (no structural change) — proceed."
-L1_additive: "Adding a new file in an existing directory — proceed and report."
-L2_structural: "Moving files, changing routing paths, renaming files, deleting a document — proceed only if clearly implied by the task; report explicitly."
-L3_breaking: "Removing a core document, restructuring the entire documents/ tree, changing project from single to hierarchical — MUST confirm before implementation."
+L0_content: "Updating content within an existing project-owned file (no structural change) — proceed."
+L1_additive: "Adding a new project-owned file in an existing directory — proceed and report."
+L2_structural: "Moving project-owned files, changing routing paths, renaming files, deleting a project-owned document — proceed only if clearly implied by the task; report explicitly."
+L3_breaking: "Removing a core project document, restructuring the entire project-owned documents/ tree, changing project from single to hierarchical — MUST confirm before implementation."
+managed_guidance_rule: "Install/update/remove of documents/artifacts/ follows the artifact distribution mechanism's own explicit semantics; do not disguise those operations as ordinary L0/L1 project-document edits."
 rule: "When in doubt, ask the user. Structural changes affect every future AI agent session."
 ```
