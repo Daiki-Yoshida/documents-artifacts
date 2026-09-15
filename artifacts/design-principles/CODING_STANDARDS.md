@@ -90,7 +90,7 @@ The `interface` keyword only defines the signature. You MUST define the semantic
 ```csharp
 /// <summary>
 /// Persists the job state.
-/// Constraint: Throws DbException if connection fails.
+/// Constraint: Throws JobStoreUnavailable if persistence is unavailable; the infrastructure cause remains internal.
 /// Constraint: Idempotent - repeated calls with same job have no effect.
 /// </summary>
 void Save(Job job);
@@ -99,7 +99,7 @@ void Save(Job job);
 ```typescript
 /**
  * Persists the job state.
- * Constraint: Throws if the connection fails.
+ * Constraint: Throws JobStoreUnavailable if persistence is unavailable; the infrastructure cause remains internal.
  * Constraint: Idempotent — repeated calls with the same job have no effect.
  */
 save(job: Job): void;
