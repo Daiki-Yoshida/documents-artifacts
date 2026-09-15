@@ -41,6 +41,7 @@ governs:
   - "README.md — role as human-facing entry point"
   - "Git commit message conventions for documentation changes"
   - "Document versioning — tracking which commit a document reflects"
+
 does_not_govern:
   - "Source code design, architecture, or patterns"
   - "Git commit timing — when to commit is a code-side concern"
