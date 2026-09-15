@@ -82,7 +82,7 @@ Before drafting contracts, run these checks (criteria are owned elsewhere — li
 2.  **Build the Core Logic**:
     *   Implement the logic *inside* the shell.
     *   Select Internal Paradigm: Functional, Procedural, Data-Oriented.
-    *   **Constraint**: The Core Logic must satisfy the Shell's Contract (Signature + Semantics).
+    *   **Constraint**: The Core Logic must satisfy the Shell's Contract (Signature + Semantics + Constraints).
 
 ---
 
