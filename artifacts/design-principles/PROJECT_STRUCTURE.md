@@ -115,7 +115,7 @@ Choose the topology explicitly.
 ### The seam between runtimes is itself a Bounded Contract
 ```yaml
 seam_is_a_contract: "The HTTP/RPC DTOs between frontend and backend are a published contract (Signature + Semantics + Constraints)."
-governance: "Treat the seam like any public surface — additive evolution + Contract Confirmation Gate (see CODING_STANDARDS.md → Contract Evolution)."
+governance: "Treat the seam like any published contract — evolve it only when existing consumers and providers keep working under prior guarantees, and check the relevant wire/schema compatibility before applying the Contract Confirmation Gate (see CODING_STANDARDS.md → Contract Evolution). Additive shape is not proof of compatibility."
 recursion_note: "This is the recursive boundary principle one scale up — a service/runtime boundary is a Bounded Contract just like a module (see DESIGN_PHILOSOPHY.md → Boundaries Are Recursive)."
 ```
 
@@ -173,7 +173,7 @@ parallel_tree: "Reserve a separate top-level location only for cross-module / cr
 ```yaml
 location: "Place the shared contract-test suite next to the contract owner (domain for domain contracts, application for application ports)."
 shape: "Parameterize the suite by a factory."
-conformance: "Every implementation (in-memory fake, real adapter) provides a factory and runs the SAME suite. This physically encodes 'the contract owns correctness; implementations conform' (CODING_STANDARDS.md → Contract Verification)."
+conformance: "Every implementation (in-memory fake, real adapter) provides a factory and runs the SAME suite. This physically encodes that the contract owns conformance expectations and implementations must satisfy them; requested-outcome verification remains a separate responsibility (CODING_STANDARDS.md → Testing Strategy)."
 ```
 
 ### Test doubles / fakes
