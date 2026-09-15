@@ -38,7 +38,7 @@ The foundational principle of this project is strict decoupling through **Bounde
 ```yaml
 principle: "Bounded Contracts"
 definition: "Modules are black boxes defined SOLELY by their public contract."
-formula: "Contract = Signature (Type) + Semantics (Behavior) + Constraints (Side-effects)"
+formula: "Contract = Signature (Type) + Semantics (Behavior) + Constraints (Side-effects / Failure / Resource / Determinism / Data guarantees)"
 rationale: |
   The contract is the design. Implementation is secondary and replaceable.
   The `interface` keyword is just the syntax; the *Contract* includes the behavior and constraints.
