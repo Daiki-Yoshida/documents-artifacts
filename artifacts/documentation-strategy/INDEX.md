@@ -5,7 +5,7 @@ document_type: "index"
 target_audience: "ai_agents"
 language: "english"
 role: "entry point for the documentation strategy artifact set"
-strategy_version: "2.3.0"
+strategy_version: "2.4.0"
 ```
 
 This is the entry point for the exported strategy. Read it first.
@@ -13,9 +13,9 @@ This is the entry point for the exported strategy. Read it first.
 ## Read Order
 
 ```yaml
-1_philosophy: "DOCUMENTATION_PHILOSOPHY.md"   # WHY:  accuracy priority, scope, git as recording, design-principles relationship
-2_structure:  "FILE_AND_STRUCTURE.md"         # HOW+WHERE: file roles, directory layout, versioning, git conventions, hierarchy, deletion
-3_workflow:   "DOCUMENT_WORKFLOW.md"           # FLOW: setup, update, brownfield, staleness handling, version bumping, deletion
+1_philosophy: "DOCUMENTATION_PHILOSOPHY.md"   # WHY:  accuracy priority, scope, ownership boundaries, git as recording, design-principles relationship
+2_structure:  "FILE_AND_STRUCTURE.md"         # HOW+WHERE: file roles, directory layout, managed guidance, versioning, git conventions, hierarchy, deletion
+3_workflow:   "DOCUMENT_WORKFLOW.md"           # FLOW: setup, update, brownfield, managed-artifact handling, staleness, version bumping, deletion
 ```
 
 On first contact, read 1 → 2 → 3. For a specific task, jump via Quick Task Routing.
@@ -27,9 +27,9 @@ These artifacts assume an **accuracy-first, routing-driven** paradigm for docume
 ```yaml
 core_idea: "Documentation gives AI agents accurate information at the right time. Token efficiency is achieved through file structure and routing, never through information truncation."
 priority: "accuracy > routing > token efficiency"
-scope: "documents/ only — not code design, not git timing, not branching"
-audience: "documents/ is entirely AI-facing; human-facing content goes in docs-jp/"
-recording: "Git is the recording tool — we govern commit message format and version tracking, not commit timing"
+scope: "project-owned documentation, human-facing separation, agent-entry routing, and documentation recording/versioning — not source-code design, git timing, or branching"
+audience: "documents/ is AI-facing; documents/artifacts/ is distributor-managed guidance rather than project-owned documentation; human-facing content goes in docs-jp/"
+recording: "Git is the recording tool — we govern documentation commit format and project-document version tracking, not commit timing"
 ```
 
 ## Ownership Map (Single Source of Truth)
@@ -40,7 +40,7 @@ Each concept lives in exactly ONE document. Link, never duplicate.
 DOCUMENTATION_PHILOSOPHY.md:
   owns:
     - "Information accuracy as top priority (accuracy > token efficiency)"
-    - "Scope boundary: documents/ only, not code"
+    - "Scope boundary: project-owned documentation vs distributor-managed guidance; not code design"
     - "Git as a recording tool (principle, not timing)"
     - "AI-facing by default; human-facing is a separate concern"
     - "Routing over truncation: split files, do not shrink information"
@@ -49,13 +49,14 @@ DOCUMENTATION_PHILOSOPHY.md:
 
 FILE_AND_STRUCTURE.md:
   owns:
-    - "documents/ directory: all AI-facing"
+    - "documents/ directory: AI-facing root with distinct ownership zones"
+    - "documents/artifacts/ managed-guidance subtree: distributor-owned, excluded from project document registry/versioning"
     - "docs-jp/ directory: human-facing (Japanese)"
-    - "INDEX.md role: routing hub + document version registry"
-    - "File roles: agent entry files, INDEX.md, project docs, reference docs"
+    - "INDEX.md role: routing hub + project-document version registry"
+    - "File roles: agent entry files, INDEX.md, project docs, reference docs, managed guidance"
     - "Domain glossary guidance for repeated, ambiguous, or cross-language terms"
     - "Document versioning system: semantic version + git commit hash"
-    - "Two-phase commit hash workflow"
+    - "Two-phase commit hash workflow and non-self-referential hash semantics"
     - "Staleness detection in practice (git log commands)"
     - "INDEX.md version bumping (index_version)"
     - "Git commit message conventions for documentation"
@@ -70,7 +71,8 @@ DOCUMENT_WORKFLOW.md:
   owns:
     - "New project setup: step-by-step"
     - "Brownfield adoption: audit, classify, migrate"
-    - "Ongoing document updates"
+    - "Managed artifact guidance handling: preserve/sync/remove through its owning distribution mechanism, not project-doc editing"
+    - "Ongoing project-document updates"
     - "Staleness handling: detection, classification, update flow"
     - "Version bumping workflow (links to FILE_AND_STRUCTURE.md §4 for the two-phase procedure)"
     - "Document creation decision tree"
@@ -84,7 +86,8 @@ DOCUMENT_WORKFLOW.md:
 ```yaml
 "setting up docs for a new project":       "DOCUMENT_WORKFLOW.md (New Project Setup) + FILE_AND_STRUCTURE.md (File Roles)"
 "adopting strategy in existing project":    "DOCUMENT_WORKFLOW.md (Brownfield Adoption)"
-"updating an existing document":            "DOCUMENT_WORKFLOW.md (Use Case 3: Ongoing Document Updates) + FILE_AND_STRUCTURE.md (§2 File Roles)"
+"working with installed guidance under documents/artifacts/": "FILE_AND_STRUCTURE.md (Managed Artifact Guidance) + DOCUMENT_WORKFLOW.md (Managed Artifact Handling)"
+"updating an existing project document":    "DOCUMENT_WORKFLOW.md (Use Case 3: Ongoing Document Updates) + FILE_AND_STRUCTURE.md (§2 File Roles)"
 "document is stale (behind HEAD)":          "DOCUMENT_WORKFLOW.md (Use Case 4: Staleness Handling) + FILE_AND_STRUCTURE.md (§4 Staleness Detection in Practice)"
 "bumping a document version":               "DOCUMENT_WORKFLOW.md (Version Bumping Workflow) + FILE_AND_STRUCTURE.md (§4 Document Versioning System)"
 "recording commit hash after update":       "FILE_AND_STRUCTURE.md (§4 Commit Hash: Two-Phase Workflow) — DOCUMENT_WORKFLOW.md links here"
