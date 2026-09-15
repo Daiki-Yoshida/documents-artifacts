@@ -4,15 +4,15 @@
 document_type: "file_and_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.3.0"
-scope: "file roles, directory layout, versioning, git conventions, hierarchy"
+strategy_version: "2.4.0"
+scope: "file roles, directory layout, managed-guidance ownership, versioning, git conventions, hierarchy"
 ```
 
 ```yaml
 ownership_split:
-  this_doc: "HOW + WHERE — file roles, directory layout, versioning, git conventions, hierarchy"
-  DOCUMENTATION_PHILOSOPHY.md: "WHY — accuracy priority, scope, git as recording"
-  DOCUMENT_WORKFLOW.md: "FLOW — setup, update, version bumping, brownfield"
+  this_doc: "HOW + WHERE — file roles, directory layout, managed guidance, versioning, git conventions, hierarchy"
+  DOCUMENTATION_PHILOSOPHY.md: "WHY — accuracy priority, scope, ownership boundaries, git as recording"
+  DOCUMENT_WORKFLOW.md: "FLOW — setup, update, managed-artifact handling, version bumping, brownfield"
   INDEX.md: "routes to all of the above"
 ```
 
@@ -22,9 +22,8 @@ ownership_split:
 
 ```yaml
 project_root:
-  documents: "AI-facing documentation (all content under here is for AI agents)"
+  documents: "AI-facing root: project-owned documentation plus optional distributor-managed guidance under documents/artifacts/"
   docs-jp: "Human-facing documentation (Japanese, for project owners and developers)"
-  artifacts: "Exported strategy files (this set) — copied into target projects"
   CLAUDE_md: "Claude Code entry point (project root)"
   AGENTS_md: "Devin / Codex entry point (project root)"
   GEMINI_md: "Gemini entry point (project root, if used)"
@@ -34,15 +33,36 @@ project_root:
 ### documents/ — AI-Facing
 
 ```yaml
-rule: "Everything under documents/ is written for AI agents to read."
+rule: "Everything under documents/ is written for AI agents to read, but ownership differs by subtree."
 language: "English by default. Japanese is allowed when the AI agent needs Japanese context (e.g., Japanese API specs, Japanese domain terms)."
 structure:
-  - "documents/INDEX.md — routing hub + version registry (required)"
+  - "documents/INDEX.md — project-owned routing hub + version registry (required)"
   - "documents/project/ — project-level context (overview, architecture, constraints)"
-  - "documents/reference/ — reference materials (specs, standards, examples)"
-  - "documents/<topic>/ — topic-specific directories (see §7 Directory Splitting Guide)"
-principle: "Split by concern, not by audience. There is no audience split inside documents/ — it is all AI-facing."
+  - "documents/reference/ — project-owned reference materials (specs, standards, examples)"
+  - "documents/<topic>/ — project-owned topic-specific directories (see §7 Directory Splitting Guide)"
+  - "documents/artifacts/<module>/ — optional distributor-managed guidance; each module owns its own INDEX.md"
+principle: "Split by concern, not by audience. There is no audience split inside documents/ — it is all AI-facing — but project-owned documents and managed artifact guidance have different maintenance rules."
 ```
+
+### Ownership Zones Inside `documents/`
+
+```yaml
+project_owned:
+  examples: ["documents/INDEX.md", "documents/project/", "documents/reference/", "documents/<topic>/"]
+  owner: "target project"
+  governed_by: "this strategy's routing, versioning, staleness, and deletion rules"
+
+managed_guidance:
+  path: "documents/artifacts/<module>/"
+  owner: "artifact canonical source + target project's distribution/sync mechanism"
+  governed_by: "the installed artifact module for its content; the distribution mechanism for install/update/remove"
+  project_registry: "excluded from documents/INDEX.md document inventory/version registry"
+  direct_edit: "do not add target-project document metadata or directly rewrite installed guidance as ordinary project documentation"
+```
+
+Managed artifact files may be committed as a snapshot in the target project's Git history.
+That records what was installed; it does not transfer content ownership to the target project's
+documentation workflow.
 
 ### docs-jp/ — Human-Facing
 
@@ -64,15 +84,17 @@ content_examples:
 ### documents/INDEX.md (Required)
 
 ```yaml
-purpose: "Routing hub + document version registry"
+purpose: "Routing hub + version registry for project-owned documents"
 placement: "documents/INDEX.md"
 required: true
 content:
-  - "Document inventory: every file under documents/ with its purpose"
-  - "Routing map: which document to read for which task"
-  - "Version registry: each document's version + last-updated git commit hash"
-  - "Cross-reference map: which documents link to which"
-versioning: "INDEX.md has its own version (index_version). Bump it when the inventory or routing changes. See §4."
+  - "Document inventory: every project-owned document under documents/ with its purpose"
+  - "Routing map: which project-owned document to read for which task"
+  - "Version registry: each project-owned document's version + last-updated git commit/state"
+  - "Cross-reference map: which project-owned documents link to which"
+  - "Optional entry-point links to installed documents/artifacts/<module>/INDEX.md files when the project uses those modules"
+exclusion: "Do NOT enumerate or version-register the files inside documents/artifacts/. Each managed artifact module owns its internal routing and metadata."
+versioning: "INDEX.md has its own version (index_version). Bump it when the project-owned inventory or routing changes. See §4."
 ```
 
 See §4 "Document Versioning System" for the version registry format.
@@ -89,16 +111,32 @@ content:
     - "execution rules (e.g., commit after changes, no sudo)"
     - "emergency_action: what to do if intent is unclear"
   routing:
-    - "primary_ref: documents/INDEX.md"
+    - "project_ref: documents/INDEX.md"
+    - "artifact_refs: optional direct links to documents/artifacts/<module>/INDEX.md for installed guidance sets"
   efficiency:
     - "focus_files: glob patterns the agent should prioritize"
     - "current_priority: the current development focus"
 design_rule: |
   The entry file holds conventions + routing.
   Conventions (language, execution rules, constraints) live in the entry file itself — they are agent-specific and project-specific.
-  Project detail (architecture, specs, constraints documentation) lives under documents/.
+  Project detail (architecture, specs, constraints documentation) lives under project-owned documents/ paths.
+  Installed artifact guidance stays under documents/artifacts/ and is referenced by module INDEX, not copied into the entry file.
   The entry file is a template created by the AI agent during setup; the user customizes it thereafter (adding rules like 'no sudo', 'commit after every change', etc.).
 when_to_create: "One file per AI tool the project actually uses. Do not create files for unused tools (YAGNI)."
+```
+
+### Managed Artifact Guidance (documents/artifacts/)
+
+```yaml
+purpose: "Reusable AI-facing guidance installed from a canonical artifact source."
+placement: "documents/artifacts/<module>/"
+ownership: "Distributor-managed; not ordinary project-owned documentation."
+routing: "Each module's INDEX.md is the entry point and owns routing inside that module."
+project_index: "documents/INDEX.md may link to a module INDEX as a routing destination but MUST NOT inventory/version every managed artifact file."
+versioning: "Do NOT add target-project document_version / last_updated_commit metadata to installed artifact files. Preserve metadata owned by the artifact itself."
+updates: "Update by the target project's explicit artifact sync/distribution mechanism so the selected module is replaced from its canonical source."
+removal: "Remove through the explicit artifact removal mechanism; do not use the ordinary project-document deletion workflow."
+direct_edit: "If the guidance itself is wrong, change its canonical source and redistribute it; do not fork the installed copy silently."
 ```
 
 ### Project Documents (documents/project/)
@@ -117,7 +155,7 @@ routing_rule: "INDEX.md routes to these files. Each file covers one concern."
 ### Reference Documents (documents/reference/)
 
 ```yaml
-purpose: "Reference material the agent reads on demand"
+purpose: "Project-owned reference material the agent reads on demand"
 placement: "documents/reference/"
 content_examples:
   - "API specifications, data models, schemas"
@@ -179,9 +217,11 @@ rule: "AI agents should NOT rely on README.md for project context. It is human-f
 ## 3. Cross-Reference and Routing Strategy
 
 ```yaml
-routing_chain: "agent.md → documents/INDEX.md → project/ or reference/ → detail files"
+project_routing_chain: "agent.md → documents/INDEX.md → project/ or reference/ → detail files"
+artifact_routing_chain: "agent.md or documents/INDEX.md → documents/artifacts/<module>/INDEX.md → managed module detail files"
 principles:
-  - "INDEX.md is the single routing hub. Every document is listed there."
+  - "documents/INDEX.md is the routing hub for project-owned documentation. Every project-owned document is listed there."
+  - "Managed artifact modules route internally through their own INDEX.md; do not flatten them into the project registry."
   - "Each document links to related documents instead of duplicating content."
   - "One file = one concern. A task that touches one concern should require reading one file."
   - "The agent follows the routing chain only as far as needed."
@@ -193,6 +233,7 @@ principles:
 ```yaml
 format: "markdown links with brief context"
 example_from_index: "See [project/architecture.md](project/architecture.md) for the architecture overview."
+example_artifact_from_index: "See [artifacts/design-principles/INDEX.md](artifacts/design-principles/INDEX.md) for installed design guidance."
 example_from_project_doc: "See [../reference/api-specs.md](../reference/api-specs.md) for API specifications."
 rule: "Never duplicate content that exists elsewhere. Link to it with a one-sentence description."
 path_note: "Paths are relative to the file containing the link. From documents/INDEX.md, a link to documents/project/overview.md is written as project/overview.md."
@@ -202,8 +243,10 @@ path_note: "Paths are relative to the file containing the link. From documents/I
 
 ## 4. Document Versioning System
 
-Every document under `documents/` has a version and tracks the git commit at
-which it was last updated. This includes INDEX.md itself.
+Every **project-owned** document governed by this strategy has a version and tracks
+the git commit/state it was last updated or reviewed against. This includes
+`documents/INDEX.md` itself. Files under `documents/artifacts/` are explicitly excluded:
+they retain metadata and versions owned by their canonical artifact source.
 
 ### Version Format
 
@@ -217,7 +260,7 @@ initial_version: "1.0.0"
 
 ### Per-Document Version Header
 
-Each document includes a version block in its top YAML front matter:
+Each project-owned document includes a version block in its top YAML front matter:
 
 ```yaml
 # At the top of each document, inside the existing YAML block:
@@ -228,12 +271,14 @@ last_updated_date: "2025-07-09"
 
 ```yaml
 format_rule: "Use the same YAML code block (```yaml) that already holds document_type, target_audience, etc. Do NOT use a separate front-matter block (---)."
+managed_guidance_exception: "Do not add or rewrite these target-project fields inside documents/artifacts/."
 ```
 
 ### Version Registry in INDEX.md
 
-INDEX.md maintains a registry of all documents. INDEX.md itself has an
-`index_version` field that tracks the registry's version.
+INDEX.md maintains a registry of all **project-owned** documents. INDEX.md itself has an
+`index_version` field that tracks the registry's version. Managed artifact files are not
+registry entries; at most, link to a module's INDEX.md as an external routing destination.
 
 ```yaml
 # Example entries in documents/INDEX.md
@@ -262,8 +307,9 @@ note: "Registry 'path' fields are repo-root-relative identifiers (e.g., 'documen
 ```yaml
 index_version_bump:
   major: "Registry restructured — bulk reorganization, many files added/removed"
-  minor: "File registered or removed, or a file's routing entry changed"
+  minor: "Project-owned file registered or removed, or project routing changed"
   patch: "Typo fix in an entry, metadata correction"
+artifact_sync_note: "A managed artifact module's internal file changes do not require project registry entries or per-file version bumps. Bump project INDEX only if its routing link to that module changes."
 ```
 
 ### INDEX.md Self-Versioning
@@ -276,39 +322,47 @@ commit_tracking: "INDEX.md carries its own last_updated_commit and last_updated_
 
 ### Commit Hash: Two-Phase Workflow
 
-The commit hash cannot be known before the commit is made. Use this workflow:
+A commit cannot contain its own final hash as tracked content: changing the file
+changes the commit. `last_updated_commit` therefore identifies the **content/code
+state that the document was updated or reviewed against**, not the later metadata
+recording commit that writes that hash into the file.
+
+Use this workflow:
 
 ```yaml
 phase_1_commit:
-  action: "Update the document content and bump the version number."
-  commit_hash_field: "Leave last_updated_commit blank or set to 'pending'."
+  action: "Update the project-owned document content and bump the version number."
+  commit_hash_field: "Leave last_updated_commit blank or set to 'pending' when the reflected commit is not yet known."
   commit: "Commit with the appropriate message prefix."
+  reflected_commit: "For a content update, this phase-1 commit is normally the commit the document now reflects. For a staleness review with no content change, the reflected commit may instead be the reviewed code HEAD."
 phase_2_record:
-  action: "After committing, get the hash with: git rev-parse --short HEAD"
-  update: "Fill in last_updated_commit in the document header AND in INDEX.md."
-  commit: "Commit the hash update as a follow-up: 'chore: <document>のコミットハッシュを記録'"
-alternative: "Use git commit --amend to fill in the hash before finalizing, if the commit has not been pushed yet."
+  action: "Resolve the reflected commit hash (for example: git rev-parse --short <reflected-commit>)."
+  update: "Fill in last_updated_commit in the document header AND its INDEX.md entry."
+  commit: "Commit the metadata update as a follow-up: 'chore: <document>のコミットハッシュを記録'."
+  recursion_rule: "Do NOT update last_updated_commit again merely because this metadata-recording commit exists. The field intentionally points to the reflected content/code state."
+amend_rule: "Do NOT use git commit --amend to try to embed a commit's own hash into that same commit. Amending tracked content creates a new hash and cannot solve the self-reference."
 ```
 
 ### Why Track Commit Hash
 
 ```yaml
 rationale: |
-  When an AI agent reads a document, it can check the commit hash to verify
-  whether the document reflects the current state of the code. If the document's
-  last_updated_commit is behind HEAD, the agent knows the document may be stale
-  and should be verified against the code before relying on it.
+  When an AI agent reads a project-owned document, it can use last_updated_commit
+  as the code/content state the document was reviewed against. If relevant code has
+  changed after that state, the document may be stale and should be verified before
+  relying on it. The metadata-recording commit itself is not recursively tracked.
 ```
 
 ### Staleness Detection in Practice
 
 ```yaml
 how_to_detect_staleness:
-  step_1: "Read the document's last_updated_commit from its header."
+  step_1: "Read the project-owned document's last_updated_commit from its header."
   step_2: "Run: git log --oneline <last_updated_commit>..HEAD -- <relevant_code_paths>"
-  step_3: "If the output is non-empty, code has changed since the document was last updated."
+  step_3: "If the output is non-empty, code has changed since the document was last reviewed."
   step_4: "Review the listed commits to determine if the document is still accurate."
   step_5: "If inaccurate, update the document (see DOCUMENT_WORKFLOW.md → Staleness Update Flow)."
+exclusion: "Do not apply this target-project staleness algorithm to managed files under documents/artifacts/. Update those through their artifact source/distribution mechanism."
 example: |
   # Document header says: last_updated_commit: "abc1234"
   # Check if src/ changed since then:
@@ -412,15 +466,18 @@ avoid:
 ## 8. Hierarchical Projects
 
 For multi-service or multi-package projects, each child has an independent
-`documents/` tree. The parent does not enter children's trees.
+project-owned `documents/` tree and registry. Managed artifact guidance may also
+be installed in a child's `documents/artifacts/`; it remains outside that child's
+project-document registry.
 
 ### Principles
 
 ```yaml
-child_independence: "Each child has its own documents/INDEX.md and version registry."
-parent_containment: "Parent's documents/ describes children at a high level but does not duplicate child details."
-information_flow: "Parent → child (unidirectional). Child does not reference parent's internal documents."
+child_independence: "Each child has its own documents/INDEX.md and project-document version registry."
+parent_containment: "Parent's project-owned documents describe children at a high level but do not duplicate child details."
+information_flow: "Parent → child (unidirectional). Child does not reference parent's internal project documents."
 external_reference: "If a child needs parent context, it treats the parent as an external project."
+managed_guidance: "Parent and child may independently install artifact modules; those managed files are not inherited through the project-document registry."
 ```
 
 ### Structure
@@ -428,16 +485,17 @@ external_reference: "If a child needs parent context, it treats the parent as an
 ```yaml
 parent_project:
   documents:
-    index: "documents/INDEX.md (parent's routing + version registry)"
+    index: "documents/INDEX.md (parent's project routing + version registry)"
     project: "documents/project/ (parent project context)"
     reference: "documents/reference/ (shared reference, child-overview)"
+    artifacts: "documents/artifacts/ (optional managed guidance; excluded from registry)"
     children_overview: "documents/project/children.md (high-level child descriptions, parent-only)"
 
 child_projects:
   each_child:
-    documents: "Independent documents/ tree with its own INDEX.md"
+    documents: "Independent project-owned documents/ tree with its own INDEX.md; may also contain its own managed documents/artifacts/"
     parent_awareness: false
-    rule: "Child's INDEX.md does not list parent documents. Child is self-contained."
+    rule: "Child's INDEX.md does not list parent project documents. Child is self-contained."
 ```
 
 ### Parent's children.md
@@ -453,33 +511,34 @@ rule: "Children do not reference this file. Children are unaware of each other u
 
 ## 9. Document Deletion Rules
 
-When a document under `documents/` is removed:
+When a **project-owned** document is removed:
 
 ```yaml
 deletion_steps:
   1: "Confirm the document is truly obsolete — check all cross-references first."
-  2: "Remove or update all links pointing to the deleted document (search the entire documents/ tree)."
+  2: "Remove or update all project-owned links pointing to the deleted document."
   3: "Remove the document's entry from documents/INDEX.md version registry."
-  4: "Bump index_version in INDEX.md (minor — a file was removed from the registry)."
+  4: "Bump index_version in INDEX.md (minor — a project-owned file was removed from the registry)."
   5: "Commit with: 'refactor: <document>を削除' and note why in the body."
-rule: "Never delete a document that other documents still reference without fixing those references first."
+rule: "Never delete a project-owned document that other documents still reference without fixing those references first."
+managed_guidance_exception: "Do not delete individual files under documents/artifacts/ through this workflow. Remove or update the owning module through the artifact distribution mechanism."
 ```
 
 ---
 
 ## 10. Multi-Developer INDEX.md Conflict Mitigation
 
-The version registry in INDEX.md is a single file that all documentation
+The version registry in INDEX.md is a single file that all project-documentation
 changes touch, which can cause merge conflicts when multiple developers update
 documents in parallel.
 
 ```yaml
 mitigation:
   - "Keep INDEX.md entries sorted by path to reduce conflict surface."
-  - "Each developer updates only their own document's entry."
+  - "Each developer updates only their own project-owned document's entry."
   - "If conflicts occur, they are typically in the version registry block — resolve by keeping both entries and sorting."
   - "For large teams, consider updating INDEX.md in a separate commit from the document change, to isolate conflicts."
-note: "This is a known trade-off of centralizing the version registry. The benefit (single routing hub) outweighs the conflict cost for most projects."
+note: "Managed artifact files do not create per-file project-registry conflicts because they are excluded from the registry."
 ```
 
 ---
@@ -487,11 +546,11 @@ note: "This is a known trade-off of centralizing the version registry. The benef
 ## How These Interlock
 
 ```yaml
-entry_file_routes: "agent.md routes to documents/INDEX.md"
-index_routes: "INDEX.md routes to project/ or reference/ based on the task"
-version_registry: "INDEX.md tracks every document's version + commit hash for staleness detection"
-cross_references: "Documents link to each other using relative paths from the referencing file"
-hierarchy: "Parent and child each have independent documents/ trees; coordination via parent's children.md"
-deletion: "Removing a document requires fixing references + updating INDEX.md"
-one_idea: "INDEX.md is the map, documents are the destinations, version headers are the timestamps. The agent reads the map, picks a destination, and follows links only as far as needed."
+entry_file_routes: "agent.md routes to documents/INDEX.md and, when useful, directly to installed documents/artifacts/<module>/INDEX.md files"
+index_routes: "documents/INDEX.md routes project-owned docs; managed module INDEX files route their own artifact content"
+version_registry: "documents/INDEX.md tracks project-owned documents only; managed artifact metadata stays artifact-owned"
+cross_references: "Documents link using relative paths from the referencing file"
+hierarchy: "Parent and child each have independent project-owned document trees; coordination via parent's children.md"
+deletion: "Removing a project-owned document requires fixing references + updating INDEX.md; managed artifact removal uses its distributor"
+one_idea: "Keep routing and ownership aligned: project INDEX owns project docs, artifact INDEX owns managed guidance, and Git records both snapshots without conflating their maintenance rules."
 ```
