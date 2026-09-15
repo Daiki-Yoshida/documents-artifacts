@@ -4,7 +4,7 @@
 document_type: "file_and_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.2.0"
+strategy_version: "2.3.0"
 scope: "file roles, directory layout, versioning, git conventions, hierarchy"
 ```
 
@@ -126,6 +126,43 @@ content_examples:
   - "Glossary, domain terms"
 routing_rule: "Project documents and INDEX.md link to these when needed. The agent does not read them unless a task requires it."
 ```
+
+### Domain Glossary (When Useful)
+
+A glossary is an optional reference document, not a mandatory project ceremony.
+Create one when shared vocabulary is important enough that inconsistent wording
+would reduce accuracy.
+
+```yaml
+placement: "documents/reference/glossary.md"
+create_when:
+  - "The same domain terms appear across multiple documents or modules."
+  - "A term is ambiguous, overloaded, or easy for an agent to misinterpret."
+  - "The authoritative domain vocabulary is not English and translation could alter meaning."
+  - "Aliases or historical names must be mapped to one canonical term."
+do_not_create_when:
+  - "The project has only ordinary technical vocabulary with no meaningful ambiguity."
+  - "A term is used once and its meaning is already clear in the owning document."
+  - "The only reason is to satisfy a template."
+```
+
+When a glossary is useful, prefer a compact structured form such as:
+
+```yaml
+terms:
+  - term: "canonical domain term"
+    english_equivalent: "optional English equivalent"
+    definition: "meaning in this project"
+    context: "where or when the term is used"
+    aliases: ["optional alias"]
+```
+
+Rules:
+
+- Preserve the canonical term used by the domain. Do not translate away meaning merely to keep a document English-only.
+- `english_equivalent` is optional and exists to aid routing or explanation, not to replace the canonical term.
+- Define terms that improve shared understanding; do not require every ordinary technical word to be registered first.
+- If one glossary becomes difficult to navigate, it may be split by domain or concern. File count alone does not require a split.
 
 ### README.md
 
@@ -340,25 +377,34 @@ naming: "lowercase, hyphen-separated for files; directories are lowercase"
 
 ## 7. Directory Splitting Guide
 
-When to create a new `documents/<topic>/` directory vs. placing a file in
-`documents/project/` or `documents/reference/`.
+Creating a `documents/<topic>/` directory is a structural option, not a file-count
+mandate. Use a topic directory when it creates a clearer routing or ownership
+boundary than placing the files directly under `documents/project/` or
+`documents/reference/`.
 
 ```yaml
 default_placement:
   project_level: "documents/project/ — context the agent needs for every task"
   reference_level: "documents/reference/ — material the agent reads on demand"
 
-when_to_create_topic_directory:
-  criteria:
-    - "The topic has 3 or more files that form a cohesive unit."
-    - "The topic is self-contained — an agent can read only that directory for the topic."
-    - "Placing the files in project/ or reference/ would make those directories cluttered."
-  rule: "Do NOT create a topic directory for 1–2 files. Place them in project/ or reference/ until a third file appears (Rule of Three)."
+signals_that_support_a_topic_directory:
+  - "The files form a cohesive concern that should be routed together."
+  - "The topic is sufficiently self-contained that an agent can load that directory for the concern."
+  - "The files have a distinct lifecycle or ownership boundary from surrounding project/reference documents."
+  - "Keeping them directly under project/ or reference/ would reduce discoverability or create clutter."
+  - "Three or more related files exist — useful evidence of a stable grouping, but not a threshold."
 
-when_not_to_create:
-  - "The topic overlaps with project/ or reference/ content."
-  - "The files would need to cross-reference each other heavily (keep them together in one directory)."
-  - "The topic is a single file — use project/ or reference/ instead."
+permission_rule: |
+  File count is a heuristic, not a gate. One or two files MAY live in a topic
+  directory when the routing boundary is already clear and useful. Conversely,
+  three files do not REQUIRE a new directory if keeping them together in
+  project/ or reference/ remains clearer.
+
+avoid:
+  - "Speculative empty or nearly-empty directories created for hypothetical future growth."
+  - "Splitting solely to satisfy a numeric rule."
+  - "Moving stable documents without a concrete routing, ownership, or navigation benefit."
+  - "Creating a topic directory that duplicates an existing project/ or reference/ concern."
 ```
 
 ---
