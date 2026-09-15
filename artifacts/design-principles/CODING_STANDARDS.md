@@ -45,11 +45,25 @@ Interfaces are the backbone of our architecture — **at boundaries**. Apply the
 **Bad reasons** (avoid): "every class needs one" by habit; `IUserService` exists only because `UserService` exists; no semantic documentation; name differs from the implementation only by an `I` prefix; no boundary or substitution value.
 
 ### Concept Generality (consumer-neutral modeling)
-When the concept a component implements is more general than the feature that first needs it — test: its one-sentence responsibility needs no feature name (principle/why: `DESIGN_PHILOSOPHY.md` → "Concept Altitude") — model it consumer-neutral:
-*   **Naming**: name the concept by what it IS (`Stairs`, `ItemGenerator`), NOT by its first consumer (`DungeonStairs`, `DungeonItemGenerator`) — unless the behavior is genuinely feature-specific.
-*   **Types**: the concept's contract and types MUST NOT import or reference the consuming feature's types.
+
+The one-sentence responsibility test from `DESIGN_PHILOSOPHY.md` → "Concept Altitude" is a **signal for neutrality**, not proof that several contexts share one semantic concept.
+
+```yaml
+neutrality_rule: "If the responsibility does not require the first consumer's feature name, keep naming and types consumer-neutral from day one."
+semantic_identity_check:
+  - "Invariants: must the same conditions always hold?"
+  - "Pre/postconditions: does success establish the same state/guarantees?"
+  - "Failure semantics: do the same kinds of failure mean the same thing?"
+  - "Lifecycle/state transitions: does the concept move through equivalent states for equivalent reasons?"
+  - "Reason to change: would the candidate concepts evolve for the same business reason?"
+identity_rule: "Treat multiple consumers as one general contract only when their shared meaning survives the semantic-identity check. Similar names or a generalized sentence are insufficient."
+unknown_rule: "If semantic identity is not yet evidenced, keep a consumer-neutral LOCAL model. Do not declare a broad shared abstraction merely to anticipate reuse."
+```
+
+*   **Naming**: name the local concept by what it IS (`Stairs`, `ItemGenerator`), NOT by its first consumer (`DungeonStairs`, `DungeonItemGenerator`) — unless the behavior is genuinely feature-specific.
+*   **Types**: the concept's contract and types MUST NOT import or reference the consuming feature's types unless that feature-specific meaning is part of the concept itself.
 *   **Feature policy**: feature-specific variation enters through the concept's contract (an implementation, composition, or parameters) and is OWNED by the feature.
-*   **Placement (YAGNI intact)**: the neutral concept MAY live inside the first consumer's module until promotion is earned (Rule of Two/Three — `PROJECT_STRUCTURE.md` → Shared Kernel). Do NOT pre-build a shared module for it; DO keep its meaning clean from day one.
+*   **Placement (YAGNI intact)**: neutral meaning does **not** imply shared placement. Keep the concept local until another consumer genuinely needs the same semantics and promotion is earned (`PROJECT_STRUCTURE.md` → Shared Kernel).
 
 ### Naming & Granularity
 *   **Prefix**: **MUST** follow the specific language's standard idiom.
@@ -100,10 +114,20 @@ Clients should not be forced to depend on methods they do not use. Split a fat i
 
 Priority #2 (External Interface Stability) requires disciplined evolution.
 
+**Additive describes change shape; compatibility describes impact. They are not the same thing.** Adding a required member to an interface may leave callers unchanged while breaking every existing implementation or fake.
+
 ```yaml
+compatibility_definition: "An evolution is backward-compatible only when existing contract participants can continue without mandatory changes and previously valid interactions retain their guarantees."
+participants:
+  consumer_side: "Existing callers/clients can keep using the contract without mandatory changes and with prior guarantees preserved."
+  provider_side: "Existing implementations/adapters/fakes can keep satisfying the contract without mandatory changes."
+dimensions: "Check only dimensions relevant to the contract medium — e.g. source/binary compatibility, wire/schema compatibility, or persisted-data compatibility."
+
 evolution_policy:
-  default: "Additive only. Add new members; do not change or remove published ones."
-  breaking_change: "Requires the Contract Confirmation Gate (see AI_WORKFLOW.md)."
+  default: "Prefer additive evolution because it is often easier to keep compatible, but NEVER infer compatibility from additivity alone."
+  compatible_public_change: "May use the L2 compatible-public-evolution path in AI_WORKFLOW.md when consumers, providers, and prior guarantees are preserved."
+  published_breaking_change: "If an existing published participant must change or a previous guarantee becomes invalid, treat the evolution as breaking even when syntax is additive; use the L3 Contract Confirmation Gate."
+  local_breaking_change: "A contained module-local contract may evolve with its owned participants inside the requested scope; classify by actual blast radius rather than mechanically escalating every local break to L3."
   deprecation:
     step_1: "Mark the old contract deprecated; keep it working."
     step_2: "Provide a replacement plus a migration note in the Semantics."
@@ -175,6 +199,29 @@ Place contracts at the boundary that owns the reason for their existence.
 *   **Boundary Rule**: MUST define its own Request/Response DTOs. NEVER expose Domain Entities directly to external boundaries (API/CLI).
 *   **Placement Rule**: True business rules → Domain. Orchestration, boundary coordination, DTO mapping, transaction flow, and port calls → Application. UseCases MAY hold application-specific policy but MUST NOT replace Domain modeling.
 *   **Ownership Rule (coordinate ≠ own)**: A UseCase MAY *coordinate* Functional & Technical responsibilities — call `Order.confirm()`, call a `PaymentPort`, run a transaction, map DTOs — but MUST NOT *own* their internals: no payment-provider HTTP details, no domain invariants that belong in Domain, no large email-formatting logic, no infrastructure exception types.
+
+### State Ownership & Cross-Boundary Consistency
+
+Boundary separation must not orphan ownership of mutable state or the responsibility for a multi-step business outcome.
+
+```yaml
+state_ownership:
+  rule: "Each mutable business state has one clear owning boundary."
+  mutation: "Other boundaries request changes through the owner's contract; they MUST NOT directly mutate another owner's internal state."
+
+cross_state_outcome:
+  rule: "When one business outcome spans multiple state owners, assign one orchestration boundary to own the coordination and failure policy."
+  limitation: "The orchestrator owns the outcome/flow, NOT the participants' internal invariants or storage details."
+
+consistency_model:
+  question: "What must be true when one step succeeds and another fails?"
+  atomic: "Use one transaction when the required consistency and topology genuinely support it."
+  non_atomic: "When atomicity is unavailable or undesirable, make retry, idempotency, compensation, or an explicit intermediate/failure state part of the coordination design."
+
+boundary_rule: "A cross-boundary invariant does NOT automatically require merging boundaries. It DOES require an explicit consistency model and failure owner. Reconsider the split when coordination becomes chatty, mutable state is shared, or both sides repeatedly change together."
+```
+
+Example: a purchase may coordinate `Wallet.debit()` and `Inventory.grant()` while Wallet still owns balance invariants and Inventory still owns item-ownership invariants. The Purchase use case owns what to do if one succeeds and the other fails; it does not reach into either module's state directly.
 
 ### 4. UI Boundary (`<module>/ui`)
 *   **Contains**: UI components/pages, view models, presentation logic, input formatting.
@@ -459,11 +506,13 @@ Test the **most stable meaningful boundary**; do not test private details unless
 *   **UI**: test pragmatically; invest only when behavior is complex/critical.
 *   **Internal private helpers**: test through the public/module contract unless the logic is complex & pure enough to justify direct tests.
 
-### Contract Verification (The Primary Validation)
-**Rule**: The Contract Test IS the definition of correctness.
+### Contract Verification (Primary Validation of Contract Conformance)
+
+**Rule**: The Contract Test defines **contract conformance** — whether an implementation satisfies the contract's Signature + Semantics + Constraints. It is not, by itself, proof that the user's end requirement is satisfied.
 
 1.  **Define Contract Suite**: A test suite that runs against the mental model of the `Interface`.
 2.  **Verify Implementations**: All concrete implementations (Mocks, Fakes, Real) MUST pass this suite.
+3.  **Verify Requested Outcome Separately**: When the task's required outcome crosses composition, UI, runtime, or integration boundaries, verify that outcome through the narrowest meaningful path (`AI_WORKFLOW.md` → Step 3: Verification).
 
 ```pseudocode
 // Conceptual Contract Test

@@ -75,7 +75,7 @@ The unit of design is the **module** (a feature / functional area), not the tech
 The module is the **default** hardening boundary, **not a fixed floor**: the actual line where you commit to a hard contract is chosen by responsibility and may sit below or above the module (see *Encapsulation Horizon*). Read "primary" as "the usual default", not "the only scale".
 
 ```yaml
-choose_module_boundary_by: ["feature / functional area", "reason to change", "domain concept", "dependency direction"]
+choose_module_boundary_by: ["feature / functional area", "reason to change", "domain concept", "dependency direction", "state ownership / consistency responsibility"]
 tech_type_split: "Controller / Service / Repository / DTO / Mapper live INSIDE a module, not as the top-level structure."
 rule: "Module boundary first; layers (domain/application/infrastructure/ui) live inside the module."
 ```
@@ -116,7 +116,8 @@ re_draw_reactively: "When the responsibility fractures — an 'AND' appears in i
 preserve_outer_surface: "An internal maturation-split keeps the published OUTER contract fixed and adds INNER horizons. If the split forces an outer break, the original responsibility was mis-drawn."
 graduation_cost: "Interior freedom is cheap UNTIL a sub-responsibility graduates into a hardened unit — then its surface (semantics / resource / failure) must be built retroactively over an interior that grew wild. Containment DEFERS this debt, it does not erase it; weigh interior laxity against the future graduation cost."
 decision_cues: "SPLIT: peer-level AND / different change-rates / independently testable / outer surface stays intact. KEEP: subordinate steps under one meaning / change together / chatty seam / duplicate test setup. CHEAP seam: low cross-call freq, stable shape, clear ownership. EXPENSIVE seam: high back-and-forth, shared mutable state, both sides edited together."
-rule: "SRP says WHERE a boundary can go; maturity + seam cost say WHETHER / WHEN to harden it; the 'AND' test says when to re-draw."
+consistency_guard: "Before splitting, keep each mutable state under one clear owner and assign an owner for any cross-boundary business outcome, consistency requirement, and failure policy. A cross-boundary invariant is a coordination problem first, not automatic evidence that the boundaries must merge."
+rule: "SRP says WHERE a boundary can go; maturity + seam cost + consistency responsibility say WHETHER / WHEN to harden it; the 'AND' test says when to re-draw."
 ```
 
 ---
@@ -138,6 +139,9 @@ misreadings:
   - "internal flexibility != careless internal chaos (only true when the surface closes every leakage channel)"
   - "public contract != method signature only (semantics + constraints + side effects + failure + resource + determinism + data)"
   - "YAGNI / 'flexible below the module' != model a general concept as feature-specific (YAGNI bounds mechanism & placement, NOT the concept's meaning — see Concept Altitude)"
+  - "a feature-free responsibility sentence != proof that multiple consumers share one semantic concept (semantic identity must be earned)"
+  - "consumer-neutral modeling != a shared abstraction (neutrality may be early; sharing waits for semantic evidence and reuse)"
+  - "a cross-boundary invariant != merge the boundaries (keep state ownership clear and assign explicit consistency / failure coordination)"
 ```
 
 ---
@@ -155,10 +159,11 @@ single_responsibility:
     - "Can I describe the class's responsibility in one simple sentence?"
     - "Does 'AND' appear? It is a WARNING, not an auto-split: KEEP subordinate steps under one higher meaning (evaluate AND cost AND reconstruct → 'find a path'); SPLIT peer-level meanings with different actors/policies/lifecycles (find-path AND charge AND notify)."
     - "Do these methods change together for the same business reason?"
+    - "If this responsibility is split, do state ownership and cross-boundary consistency / failure responsibilities remain explicit?"
 
 ```
 
-**Judge SRP by *reason to change* and *caller-visible capability* — NOT by class size or method count.** A component may run several internal steps and still have one responsibility if the caller sees a single coherent capability (e.g., internally read a clock, format, and return → responsibility: *"tell the caller the current time"*). Criteria order: (1) reason to change, (2) caller-visible meaning, (3) needs "and"?, (4) size / method count, (5) test perspective.
+**Judge SRP by *reason to change* and *caller-visible capability* — NOT by class size or method count.** A component may run several internal steps and still have one responsibility if the caller sees a single coherent capability (e.g., internally read a clock, format, and return → responsibility: *"tell the caller the current time"*). Criteria order: (1) reason to change, (2) caller-visible meaning, (3) needs "and"?, (4) consistency/ownership impact of a split, (5) size / method count, (6) test perspective.
 
 ### Responsibility Anti-Patterns (actively avoid)
 *   **God / "everything" service** — one Service that knows too much and becomes the hidden center of the system. *(Most dangerous.)*
@@ -178,6 +183,19 @@ single_responsibility:
 | **Orchestration** | Coordinating flow, wiring | `OrderProcessingUseCase` |
 
 **Rule**: Do not mix these responsibilities in a single class. *Coordinating ≠ owning*: an Orchestrator (UseCase) MAY coordinate Functional & Technical work but MUST NOT own their internal decisions (see `CODING_STANDARDS.md` → Application Boundary).
+
+### State Ownership & Consistency Responsibility
+
+A boundary split is valid only when it leaves ownership and failure responsibility understandable.
+
+```yaml
+state_owner: "Each mutable business state has one clear owning boundary. Other boundaries interact with that state through the owner's contract."
+cross_state_outcome: "When one business outcome spans multiple state owners, one orchestration boundary owns the coordination and failure policy without taking ownership of the participants' internal state."
+consistency_model: "Choose the required consistency model explicitly — atomic transaction when available, or retry/idempotency/compensation/explicit intermediate state when the topology cannot be atomic."
+merge_rule: "A cross-boundary invariant does NOT automatically require merging modules. Reconsider the split when the resulting seam becomes chatty, shares mutable state, or repeatedly forces both sides to change together."
+```
+
+> **Single source of truth**: the normative ownership and coordination rules live in `CODING_STANDARDS.md` → "State Ownership & Cross-Boundary Consistency". This section states the design principle (the *why*).
 
 ---
 
@@ -260,13 +278,15 @@ YAGNI restricts **mechanism** — speculative interfaces, unused seams, prematur
 
 ```yaml
 principle: "Place a concept at the altitude of its MEANING, not of its first consumer. The first caller is a consumer, NOT the owner."
-test: "State the unit's responsibility in one sentence. If the sentence needs no feature name, the concept is more general than the feature (stairs = 'move an actor between connected locations' — not 'dungeon stairs')."
-independent_axes: "Concept altitude (which layer a MEANING belongs to) is independent of hardening depth (where contracts are enforced — see Encapsulation Horizon). Modeling a concept neutrally does NOT lower the horizon and adds no machinery."
+altitude_signal: "State the unit's responsibility in one sentence. If that sentence needs no feature/consumer name, treat this as a SIGNAL to keep the concept consumer-neutral — not as proof of broader semantic identity."
+semantic_identity: "Before treating concepts from different consumers as one general concept, compare their invariants, pre/postconditions, failure semantics, lifecycle/state transitions, and reasons to change. The shared meaning must survive those comparisons."
+uncertain_case: "When semantic identity is not yet evidenced, keep the model consumer-neutral but local. Do not declare a broad shared contract merely because the names can be generalized."
+independent_axes: "Concept altitude (where a MEANING naturally belongs) is independent of hardening depth (where contracts are enforced — see Encapsulation Horizon) and physical sharing (where code is extracted). Neutral modeling does NOT require a shared module."
 asymmetry: "Keeping a concept consumer-neutral at creation is nearly free (naming + not importing feature types). De-contaminating it later is expensive (references and semantics have spread). The same correction-cost asymmetry that justifies default-hardening."
-anti_pattern: "'YAGNI' invoked to justify DungeonStairs / DungeonItemGenerator — feature-locked types and absent contracts for concepts that plainly exist outside the feature."
+anti_pattern: "Either feature-locking a plainly neutral concept (`DungeonStairs`) OR inventing a broad shared abstraction from naming similarity alone. Neutrality may be early; generality and sharing must be earned."
 ```
 
-> **Single source of truth**: the normative rules (consumer-neutral naming & types, feature-policy placement, when physical extraction may wait) live in `CODING_STANDARDS.md` → "Concept Generality". This section states only the principle (the *why*).
+> **Single source of truth**: the normative semantic-identity, consumer-neutral naming/types, feature-policy placement, and physical-promotion rules live in `CODING_STANDARDS.md` → "Concept Generality". This section states only the principle (the *why*).
 
 ## External Dependency Containment
 
