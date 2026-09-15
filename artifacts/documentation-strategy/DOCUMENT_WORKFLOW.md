@@ -4,7 +4,7 @@
 document_type: "workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.2.0"
+strategy_version: "2.3.0"
 ```
 
 ```yaml
@@ -107,6 +107,7 @@ rule: "Human-facing content does NOT go under documents/. It goes in docs-jp/."
 action: "Create documents as the project grows — not all at once."
 trigger: "When a task requires context that does not fit in existing project documents, create a new file."
 placement: "documents/reference/<topic>.md or documents/<topic>/ (see FILE_AND_STRUCTURE.md → §7 Directory Splitting Guide)"
+glossary: "If repeated, ambiguous, or cross-language domain vocabulary is reducing accuracy, consider documents/reference/glossary.md. Do not create one merely to satisfy a template."
 rule: "Prefer fewer files with clear routing over many files with overlapping content."
 versioning: "Register every new file in documents/INDEX.md with version 1.0.0. Bump index_version (minor)."
 ```
@@ -287,15 +288,16 @@ question_2: "Is it project-level context (overview, architecture, constraints, s
   yes: "Place in documents/project/<topic>.md."
   no: "Continue to question 3."
 
-question_3: "Is it reference material (specs, schemas, standards, examples)?"
+question_3: "Is it reference material (specs, schemas, standards, examples, glossary)?"
   yes: "Place in documents/reference/<topic>.md."
   no: "Continue to question 4."
 
-question_4: "Is it a topic with 3+ files that form a cohesive, self-contained unit?"
-  yes: "Create documents/<topic>/ and place files there (see FILE_AND_STRUCTURE.md → §7)."
-  no: "Place in documents/reference/<topic>.md. Revisit when a third related file appears (Rule of Three)."
+question_4: "Would a dedicated topic directory create a clearer routing or ownership boundary?"
+  yes: "Create documents/<topic>/ and place the cohesive concern there (see FILE_AND_STRUCTURE.md → §7)."
+  no: "Keep the file under documents/project/ or documents/reference/, whichever owns the concern."
 
-anti_pattern: "Do not create a new file for every small piece of information. Prefer extending an existing file with a new section + INDEX.md routing update."
+heuristic: "Three or more related files are evidence that a topic directory may be useful, not a requirement. One or two files may use a topic directory when the boundary is already clear and useful."
+anti_pattern: "Do not create a new file or directory for every small piece of information. Prefer the simplest structure that keeps ownership and routing clear."
 ```
 
 ---

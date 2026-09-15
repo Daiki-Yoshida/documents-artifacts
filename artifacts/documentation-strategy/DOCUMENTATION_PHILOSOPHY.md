@@ -4,7 +4,7 @@
 document_type: "documentation_philosophy"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.2.0"
+strategy_version: "2.3.0"
 ```
 
 ## Core Principle: Information Accuracy First
