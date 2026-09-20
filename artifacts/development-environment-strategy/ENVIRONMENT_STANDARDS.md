@@ -4,7 +4,7 @@
 document_type: "environment_standards"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.3.0"
+strategy_version: "1.4.0"
 scope: "host boundary, Docker, command interface, Git safety, validation, and CI parity"
 ```
 
@@ -164,6 +164,71 @@ prohibited_pattern: "an ambiguous short name whose target or destructive effect 
 - A canonical final-validation operation must exist.
 - Partial validation commands are diagnostic or implementation-time tools; they do not replace the final gate.
 - Failed commands must return a non-zero exit status and preserve actionable output.
+
+### Worktree Public Command Contract
+
+Projects that expose Work Root Git worktrees must provide stable semantic operations equivalent to:
+
+```yaml
+worktree_create: "create or reuse one repository checkout for a confirmed Work Identity"
+worktree_status: "inspect the resolved repository/branch/path/materialization without mutation"
+worktree_remove: "remove only the selected Git worktree after safety checks"
+```
+
+When Make is the public router and no stronger project convention exists, prefer `worktree-create`, `worktree-status`, and `worktree-remove`.
+
+Routine identity input is uniform across single- and multi-repository projects:
+
+```yaml
+required:
+  WORK: "<work-type>/<work-name>"
+  REPO: "<stable project repository selector>"
+conditional:
+  BASE: "required for new branch creation unless the project has a documented default base"
+```
+
+- Require `REPO` even for a single-repository project so the public contract does not change when project topology changes.
+- Derive the Work Root path, repository root, and repository-specific branch from project-owned deterministic policy.
+- Do not require routine callers to provide an arbitrary filesystem path, sparse-checkout decision, or branch name.
+- Never use the currently checked-out HEAD as an accidental base for a missing Work branch; use explicit `BASE` or a documented project default.
+- Keep Git/filesystem/runtime systems as their own state sources of truth. Do not create a duplicate registry of current worktrees or runtime state merely to support the command.
+- Keep complex resolution, validation, and Git orchestration behind a project-owned script/wrapper rather than inline Make shell.
+
+#### Create semantics
+
+`worktree-create` (or equivalent) must be fail-closed and idempotent:
+
+```yaml
+exact_existing_valid_worktree: "no-op success; report the resolved existing state"
+conflicting_worktree_or_branch: "fail; do not steal or rewrite another writable checkout"
+unrelated_target_path_content: "fail; do not delete or overwrite it"
+partial_creation_failure: "roll back only state created by this invocation when normal non-force cleanup is safe; otherwise report residual state"
+```
+
+Branch deletion is not part of normal create rollback.
+
+#### Status semantics
+
+`worktree-status` is non-mutating and should expose at least:
+
+- Work Identity and repository selector;
+- resolved repository root, Work branch, and worktree path;
+- registered/not-registered state;
+- current branch/HEAD and clean/dirty state when present;
+- whether the Worktree Materialization Contract applies;
+- sparse/materialization state when applicable;
+- whether nested Project-level `.worktrees/` is absent/present;
+- Work Documents visibility/tracking when relevant.
+
+#### Remove semantics
+
+`worktree-remove` removes only the selected repository worktree.
+
+- Refuse dirty worktrees in the normal path.
+- Verify commit preservation according to project policy.
+- Use normal non-force worktree removal.
+- Do not delete the Work branch, Work Documents, Work Root, or sibling repository worktrees.
+- Work completion and Work Root removal remain higher-level lifecycle operations.
 
 ## 4. Git Operation Safety
 

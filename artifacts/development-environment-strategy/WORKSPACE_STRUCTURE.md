@@ -4,7 +4,7 @@
 document_type: "workspace_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.3.0"
+strategy_version: "1.4.0"
 scope: "repository topology, Work Roots, checkouts, Work Documents placement, and top-level environment layout"
 ```
 
@@ -180,6 +180,43 @@ feat/hogehoge/back
 ```
 
 The exact branch syntax is project-owned. The invariant is deterministic traceability back to the same base Work Identity.
+
+### Repository Selector and Deterministic Resolution
+
+Every participating repository has a stable project-owned `REPO` selector. Use the same command shape in single- and multi-repository projects.
+
+Examples:
+
+```text
+single repository:
+  REPO=main
+  -> .worktrees/feat/pathfinding/main/
+
+multiple repositories:
+  REPO=front
+  -> .worktrees/feat/user-auth/front/
+
+  REPO=back
+  -> .worktrees/feat/user-auth/back/
+```
+
+The selector must resolve deterministically to:
+
+```yaml
+repo_selector:
+  repository_root: "the Git repository that owns the checkout"
+  worktree_directory: "the child directory under the Work Root"
+  work_branch: "the repository-specific branch derived from the base Work Identity"
+  repository_role: "whether the repository carries Project-level tracked .worktrees/** coordination state"
+```
+
+Do not use a custom registry as the source of truth for current Git worktree state. Repository mapping/configuration may describe stable project topology, but live branch/worktree state comes from Git.
+
+Routine callers should not provide the final worktree path directly. Derive it as:
+
+```text
+<project-root>/.worktrees/<work-type>/<work-name>/<REPO>/
+```
 
 ### Checkout Selection
 
