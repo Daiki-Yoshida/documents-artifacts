@@ -240,7 +240,7 @@ rules:
 
 ## Use Case 4: Staleness Handling
 
-**When:** an AI agent detects that a **project-owned** document's `last_updated_commit`
+**When:** an AI agent detects that a **canonical project-owned** document's `last_updated_commit`
 is behind HEAD and code relevant to the document has changed since the reflected state.
 
 This workflow does **not** apply to managed files under `documents/artifacts/`; update those
@@ -342,10 +342,11 @@ A single repository branch merge does not automatically mean Work Document recon
 
 ```yaml
 when_to_bump:
-  major: "Project-owned document restructured or rewritten — section reorganization, scope change, or full rewrite"
+  major: "Canonical Project Document restructured or rewritten — section reorganization, scope change, or full rewrite"
   minor: "Content addition or significant update — new section, new information"
   patch: "Small fix — typo, clarification, minor correction, or metadata refresh"
 managed_guidance: "Target-project version bumps do not apply to documents/artifacts/; preserve versions owned by the artifact itself."
+work_documents: "Work Documents do not use this semantic-version/last_updated_commit workflow; Git history records them until reconciliation into canonical Project Documents."
 ```
 
 ### How to Bump
@@ -399,6 +400,8 @@ anti_pattern: "Do not create a new file or directory for every small piece of in
 
 ## Document Deletion Workflow
 
+This workflow governs canonical Project Documents. Work Documents are removed through **Use Case 6: Work Documents** after reconciliation.
+
 ```yaml
 when_to_delete:
   - "A project-owned document is obsolete — the content it described no longer exists."
@@ -448,7 +451,7 @@ no_re_read_needed:
 
 ## Confirmation Gate
 
-Before changing the **project-owned documentation structure**, assess the impact.
+Before changing the **canonical project-owned documentation structure**, assess the impact. Routine Work Document creation/update/removal follows the active Work lifecycle instead of this structural gate.
 
 ```yaml
 L0_content: "Updating content within an existing project-owned file (no structural change) — proceed."
