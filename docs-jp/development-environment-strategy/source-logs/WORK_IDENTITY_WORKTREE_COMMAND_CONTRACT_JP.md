@@ -5,7 +5,7 @@ document_type: "source_rationale_log"
 target_audience: "human_readers"
 language: "japanese"
 authority: "non_canonical_source_log"
-status: "artifactization_source"
+status: "artifactized_reference"
 related_design: "WORK_IDENTITY_DESIGN_JP.md"
 related_experiment: "WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md"
 ```
