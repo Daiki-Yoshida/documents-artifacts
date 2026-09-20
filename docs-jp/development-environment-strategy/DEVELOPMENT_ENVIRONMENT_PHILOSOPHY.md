@@ -4,7 +4,7 @@
 document_type: "development_environment_philosophy_translation"
 target_audience: "human_readers"
 language: "japanese"
-source: "../artifacts/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md"
+source: "../../artifacts/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md"
 strategy_version: "1.1.1"
 authority: "英語版 artifacts/ が正本。内容に差がある場合は英語版を優先する"
 ```

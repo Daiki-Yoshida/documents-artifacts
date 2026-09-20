@@ -350,12 +350,18 @@ The *Design Priority Order* above ranks design **choices**. This ranks **mistake
 
 ## Performance vs. Abstraction Policy
 
-Performance optimization must not degrade interface abstraction.
+Performance optimization must not leak implementation mechanics through a boundary. However, a **load-bearing performance requirement is itself part of the contract** when callers depend on latency, throughput, memory, bounded work, backpressure, or similar resource guarantees.
 
 ```yaml
 performance_policy:
-  interface_layer: "Strictly Abstract. Do NOT warp signatures for performance."
-  implementation_layer: "Optimize Freely. Use internal buffering, caching, or unmanaged code if needed."
-  cost_acceptance: "The overhead of the interface boundary (boxing, virtual calls) is an accepted cost."
-  rule: "Optimize BEHIND the interface. Never expose optimization complexity (like manual buffer management) in the domain API."
+  default: "Preserve the semantic capability and optimize behind the existing contract first."
+  load_bearing_requirement: "Treat performance as contract input only when the user/product/system states a real budget/SLO or evidence shows a resource bound materially affects correctness or usability."
+  evidence: "Use representative measurement when practical. A defensible structural bound (for example unavoidable N network round trips or unbounded materialization) is also evidence; speculative 'this may be slow' is not."
+  interaction_shape: "If the existing interaction shape itself prevents the required bound, batch / streaming / pagination / async / cancellation / backpressure MAY become part of the contract."
+  semantic_guard: "Change interaction shape without casually changing the capability's meaning, ownership boundary, or business invariants."
+  implementation_layer: "Caching, buffering strategy, vectorization, pooling, unmanaged code, and similar mechanisms remain internal unless interoperability genuinely requires a caller-visible guarantee."
+  compatibility: "An existing published contract still follows normal compatibility/deprecation rules; performance does not grant a bypass."
+  rule: "Optimize BEHIND the contract by default. Redesign the contract only when a load-bearing requirement plus evidence shows the current interaction shape is the limiting constraint."
 ```
+
+A batch or stream is therefore not automatically an abstraction leak. It is justified when **how work is requested or delivered** is itself necessary to satisfy a caller-visible bound. Conversely, exposing buffer ownership, chunk sizes, cache layout, or other implementation tactics merely because they are faster is still a leak.

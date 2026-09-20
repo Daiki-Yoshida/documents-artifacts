@@ -1,13 +1,16 @@
 # ドキュメント哲学
 
+> **情報源ログ / 旧訳**: この文書は documentation-strategy 2.1.0 前後の日本語資料を履歴として保存したものです。現在の規範ではありません。現行の唯一の正本は `../../artifacts/documentation-strategy/` です。内容が異なる場合は必ず英語正本を優先してください。
+
 ```yaml
 document_type: "documentation_philosophy"
-target_audience: "ai_agents"
-language: "english"
-strategy_version: "2.1.0"
+target_audience: "human_readers"
+language: "japanese"
+source_snapshot_strategy_version: "2.1.0"
+authority: "non_canonical_source_log"
+status: "historical_translation"
 ```
 
-> **注**: このファイルは `artifacts/DOCUMENTATION_PHILOSOPHY.md` の日本語訳です。AIエージェントが読むべき正式版は `artifacts/DOCUMENTATION_PHILOSOPHY.md`（英語）です。この翻訳は人間による内容確認用です。
 
 ## 核心原則: 情報正確性優先
 
