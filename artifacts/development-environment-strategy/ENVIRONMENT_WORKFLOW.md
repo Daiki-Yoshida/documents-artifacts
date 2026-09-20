@@ -291,7 +291,7 @@ L1_local_additive:
 
 L2_structural:
   examples: ["new Workspace/Component split", "moving repository roots", "changing worktree paths", "changing canonical command names", "changing CI workspace ref policy"]
-  action: "proceed only when clearly implied by the task; report explicitly"
+  action: "proceed only when clearly implied by the requested work; report explicitly"
 
 L3_destructive_or_host_mutating:
   examples: ["discarding dirty worktree", "deleting branches or persistent volumes", "database destruction", "global host cleanup", "installing/removing host runtimes", "history rewriting"]
@@ -318,7 +318,7 @@ should_re_read:
 
 no_re_read_needed:
   - "routine use of established commands"
-  - "choosing the current checkout for an ordinary single-writer task"
+  - "choosing the current checkout for an ordinary single-writer Work"
   - "ordinary Git worktree creation after an actual isolation trigger is established"
   - "small internal script fix behind an unchanged command contract"
 ```
