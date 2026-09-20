@@ -4,7 +4,7 @@
 document_type: "environment_workflow_translation"
 target_audience: "human_readers"
 language: "japanese"
-source: "../artifacts/ENVIRONMENT_WORKFLOW.md"
+source: "../../artifacts/development-environment-strategy/ENVIRONMENT_WORKFLOW.md"
 strategy_version: "1.1.1"
 authority: "英語版 artifacts/ が正本。内容に差がある場合は英語版を優先する"
 ```
