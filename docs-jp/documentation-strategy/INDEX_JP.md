@@ -1,102 +1,42 @@
-# ドキュメント戦略 - 索引
+# ドキュメント戦略 - 日本語案内
 
 ```yaml
-document_type: "index"
-target_audience: "ai_agents"
-language: "english"
-role: "エクスポートされたドキュメント戦略アーティファクトセットの入口"
-strategy_version: "2.1.0"
+document_type: "human_companion_index"
+target_audience: "human_readers"
+language: "japanese"
+source: "../../artifacts/documentation-strategy/INDEX.md"
+canonical_strategy_version: "2.4.0"
+authority: "non_canonical"
 ```
 
-> **注**: このファイルは `artifacts/INDEX.md` の日本語訳です。AIエージェントが読むべき正式版は `artifacts/INDEX.md`（英語）です。この翻訳は人間による内容確認用です。
+このディレクトリは、人が `documentation-strategy` の背景や過去の日本語訳を確認するための補助領域です。
 
-本ファイルはエクスポートされた戦略の入口です。最初に読んでください。
+**現在有効な規範の唯一の正本は `../../artifacts/documentation-strategy/` です。**
+この日本語領域に差分・古い表現・古いバージョンがある場合は、必ず英語正本を優先してください。
 
-## 読む順序
+## 現在の要点
 
-```yaml
-1_philosophy: "DOCUMENTATION_PHILOSOPHY.md"   # WHY:  正確性優先、スコープ、記録としてのgit、design-principlesとの関係
-2_structure:  "FILE_AND_STRUCTURE.md"         # HOW+WHERE: ファイル役割、ディレクトリ配置、バージョニング、git規約、階層、削除
-3_workflow:   "DOCUMENT_WORKFLOW.md"           # FLOW: セットアップ、更新、ブラウンフィールド、陳腐化対応、バージョンbump、削除
-```
+現行の documentation-strategy 2.4.0 は、次の方針を取ります。
 
-初回接触時は 1 → 2 → 3 の順に読む。特定のタスクの場合は、クイックタスクルーティングから該当箇所へジャンプする。
+- 優先順位は **accuracy > routing > token efficiency**。
+- `documents/` はAI向けのルートですが、`documents/artifacts/` は project-owned documentation ではなく **distributor-managed guidance** です。
+- `documents/artifacts/` の内容は、対象プロジェクト側の通常ドキュメントとして編集・version registry管理せず、所有する配布機構で同期・削除します。
+- glossary は必須ではなく、曖昧さ・反復・言語差など、正確性に寄与するときだけ導入します。
+- ディレクトリ分割は固定の「三の法則」ではありません。ファイル数は兆候の一つにすぎず、責務・権限境界・独立して読む必要性を基準に判断します。
+- project-owned document の履歴・対応状態は Git と文書version/hash規約で記録します。artifact配布物のversioningはその仕組みに混ぜません。
 
-## 基礎レンズ
+詳細・正確なルール・Ownership Map・Quick Task Routing は、正本の
+`../../artifacts/documentation-strategy/INDEX.md`
+から参照してください。
 
-これらのアーティファクトは **正確性第一・ルーティング駆動** のドキュメントパラダイムを前提としている。
+## このディレクトリ内の旧詳細文書
 
-```yaml
-core_idea: "ドキュメントはAIエージェントに正確な情報を適切なタイミングで提供する。トークン効率はファイル構造とルーティングによって達成され、情報の切り詰めによることはない。"
-priority: "正確性 > ルーティング > トークン効率"
-scope: "documents/ のみ — コード設計ではなく、gitのタイミングではなく、ブランチングではない"
-audience: "documents/ は完全にAI向け。人間向けコンテンツは docs-jp/ に置く"
-recording: "Gitは記録ツールである — コミットメッセージの形式とバージョン追跡を管理し、コミットのタイミングは管理しない"
-```
+以下の詳細な日本語文書は、documentation-strategy 2.1.0 時点を中心とした**情報源ログ / 旧訳**として保持しています。
 
-## Ownership Map（唯一の情報源）
+- `DOCUMENTATION_PHILOSOPHY_JP.md`
+- `FILE_AND_STRUCTURE_JP.md`
+- `DOCUMENT_WORKFLOW_JP.md`
 
-各概念は正確に1つのドキュメントに存在する。複製せずリンクすること。
+これらは現在の規範ではありません。特に旧版の directory splitting、scope、versioning、`documents/artifacts/` の扱いを、現行正本へ逆輸入しないでください。
 
-```yaml
-DOCUMENTATION_PHILOSOPHY.md:
-  owns:
-    - "情報の正確性を最優先（正確性 > トークン効率）"
-    - "スコープ境界: documents/ のみ、コードではない"
-    - "記録ツールとしてのGit（原則、タイミングではない）"
-    - "デフォルトでAI向け。人間向けは別の関心事"
-    - "切り詰めよりルーティング: ファイルを分割し、情報を縮小しない"
-    - "design-principlesとの関係（ドメイン境界、使用パターン、同時読みガイダンス）"
-    - "よくある誤読"
-
-FILE_AND_STRUCTURE.md:
-  owns:
-    - "documents/ ディレクトリ: 全てAI向け"
-    - "docs-jp/ ディレクトリ: 人間向け（日本語）"
-    - "INDEX.md の役割: ルーティングハブ + ドキュメントバージョンレジストリ"
-    - "ファイル役割: エージェントエントリファイル、INDEX.md、プロジェクトドキュメント、参照ドキュメント"
-    - "ドキュメントバージョニングシステム: セマンティックバージョン + gitコミットハッシュ"
-    - "二段階コミットハッシュワークフロー"
-    - "陳腐化検出の実践（git log コマンド）"
-    - "INDEX.md のバージョンbump（index_version）"
-    - "ドキュメント用のgitコミットメッセージ規約"
-    - "相互参照・ルーティング戦略（相対パス）"
-    - "ディレクトリ分割ガイド（三の法則）"
-    - "階層プロジェクト（親子ドキュメント）"
-    - "ドキュメント削除ルール"
-    - "複数開発者によるINDEX.md競合の緩和"
-    - "ファイルフォーマット標準"
-
-DOCUMENT_WORKFLOW.md:
-  owns:
-    - "新規プロジェクトセットアップ: ステップバイステップ"
-    - "ブラウンフィールド導入: 監査、分類、移行"
-    - "継続的ドキュメント更新"
-    - "陳腐化対応: 検出、分類、更新フロー"
-    - "バージョンbumpワークフロー（二段階コミット）"
-    - "ドキュメント作成デシジョンツリー"
-    - "ドキュメント削除ワークフロー"
-    - "再読み込みトリガー"
-    - "確認ゲート（L0–L3）"
-```
-
-## クイックタスクルーティング
-
-```yaml
-"新規プロジェクトのドキュメントをセットアップ":           "DOCUMENT_WORKFLOW.md（新規プロジェクトセットアップ）+ FILE_AND_STRUCTURE.md（ファイル役割）"
-"既存プロジェクトに本戦略を導入":                         "DOCUMENT_WORKFLOW.md（ブラウンフィールド導入）"
-"既存ドキュメントを更新":                                 "DOCUMENT_WORKFLOW.md（継続的更新）+ FILE_AND_STRUCTURE.md（適切なファイルを見つける）"
-"ドキュメントが陳腐化している（HEADより遅れている）":     "DOCUMENT_WORKFLOW.md（陳腐化対応）+ FILE_AND_STRUCTURE.md（陳腐化検出）"
-"ドキュメントのバージョンをbumpする":                     "DOCUMENT_WORKFLOW.md（バージョンbump）+ FILE_AND_STRUCTURE.md（バージョニングシステム）"
-"更新後にコミットハッシュを記録する":                     "DOCUMENT_WORKFLOW.md（二段階コミット）+ FILE_AND_STRUCTURE.md（コミットハッシュワークフロー）"
-"ドキュメントのgitコミットメッセージを書く":              "FILE_AND_STRUCTURE.md（gitコミット規約）"
-"この情報はどのファイルに置くべきか":                     "FILE_AND_STRUCTURE.md（ファイル役割定義）"
-"新規ディレクトリを作成すべきか":                         "FILE_AND_STRUCTURE.md（ディレクトリ分割ガイド）"
-"マルチサービスプロジェクトの構造化方法":                 "FILE_AND_STRUCTURE.md（階層プロジェクト）"
-"documents/INDEX.md のセットアップ":                     "FILE_AND_STRUCTURE.md（INDEX.mdの役割）+ DOCUMENT_WORKFLOW.md（新規プロジェクトセットアップ）"
-"ドキュメントを削除する":                                 "DOCUMENT_WORKFLOW.md（ドキュメント削除）+ FILE_AND_STRUCTURE.md（ドキュメント削除ルール）"
-"ドキュメントを二つに分割する":                           "FILE_AND_STRUCTURE.md（ディレクトリ分割ガイド）+ DOCUMENT_WORKFLOW.md（バージョンbump）"
-"いつ本戦略を再読み込みすべきか":                         "DOCUMENT_WORKFLOW.md（再読み込みトリガー）"
-"本戦略は何を管理対象とするか":                           "DOCUMENTATION_PHILOSOPHY.md（スコープ境界）"
-"design-principlesとの関係":                              "DOCUMENTATION_PHILOSOPHY.md（design-principlesとの関係）"
-```
+日本語側を逐次完全同期するのではなく、現行規範は英語正本へ一本化し、日本語の旧詳細資料は設計判断の背景を確認するために保存する方針です。
