@@ -4,7 +4,7 @@
 document_type: "environment_workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.2.0"
+strategy_version: "1.3.0"
 scope: "setup, Work Identity lifecycle, checkout selection, validation, integration, cleanup, and recovery"
 ```
 
@@ -154,13 +154,44 @@ For each participating repository:
 - synchronize refs according to project policy;
 - ensure only one writing agent owns each writable checkout.
 
-When a Git worktree is required, create it at:
+When a Git worktree is required, its path is:
 
 ```text
 .worktrees/<work-type>/<work-name>/<repository>/
 ```
 
-and report the repository, branch, path, and any Work-scoped runtime identity.
+Create it through one project-owned **Work Identity Git worktree creation operation**. That operation must preserve the Worktree Materialization Contract from `WORKSPACE_STRUCTURE.md`.
+
+The normative low-level sequence is:
+
+```bash
+git worktree add --no-checkout <worktree-path> <work-branch>
+
+git -C <worktree-path> \
+  sparse-checkout set --no-cone '/*' '!/.worktrees/'
+
+git -C <worktree-path> \
+  reset --hard HEAD
+```
+
+Do not make humans or agents manually reproduce these steps during routine work. Encode them in a project-owned wrapper/script or equivalent stable command.
+
+Do not use raw `git worktree add` as the normal Work Root creation path when tracked Project-level `.worktrees/` content exists; it can recursively materialize that tree before exclusion is applied.
+
+After creation, verify:
+
+```yaml
+primary_checkout:
+  - "Work Documents remain materialized and tracked by the Project Repository"
+  - "the sibling repository worktree path is ignored as ordinary Project Repository content"
+nested_worktree:
+  - "the intended Work branch is selected"
+  - "ordinary repository content is materialized"
+  - "Project-level .worktrees/ is absent from the filesystem"
+  - "worktree-local sparse configuration is active"
+```
+
+Report the repository, branch, path, and any Work-scoped runtime identity.
 
 ### Implement and Validate
 
@@ -238,6 +269,8 @@ For each Git worktree being removed:
 6. remove the Git worktree without force;
 7. prune stale metadata only when appropriate;
 8. keep branch deletion as a separate decision.
+
+Worktree-local sparse configuration is removed with the linked worktree's Git administrative state. If the worktree is later recreated, run the full Work Identity Git worktree creation operation again; do not assume prior sparse configuration survives.
 
 ### Work Root Completion
 
