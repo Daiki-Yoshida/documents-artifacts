@@ -5,13 +5,12 @@ document_type: "source_rationale_log"
 target_audience: "human_readers"
 language: "japanese"
 authority: "non_canonical_source_log"
-status: "design_approved_pending_artifactization"
+status: "artifactized_reference"
 future_owner: "artifacts/development-environment-strategy/"
 ```
 
-> この文書は、Work Identity という新しい開発環境概念を artifact 化する前の設計原本です。
-> 現在有効な規範を直接変更するものではありません。
-> 情報・背景・判断理由を圧縮せず保存し、後続工程で AI 向け artifact へ再構成するために使用します。
+> この文書は、Work Identity を artifact 化する際の設計原本として作成された source/rationale log です。
+> 現在の規範は `artifacts/` 側であり、この文書は背景・判断理由・圧縮前の文脈を保持する参照資料です。
 
 ---
 
