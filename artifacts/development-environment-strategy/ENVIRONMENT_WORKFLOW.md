@@ -4,7 +4,7 @@
 document_type: "environment_workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.3.0"
+strategy_version: "1.4.0"
 scope: "setup, Work Identity lifecycle, checkout selection, validation, integration, cleanup, and recovery"
 ```
 
@@ -146,13 +146,21 @@ The existence of `.worktrees/`, helper commands, or the Work Identity itself is 
 
 ### Prepare the Selected Repository
 
-For each participating repository:
+For each participating repository, routine callers provide the confirmed `WORK` and stable `REPO` selector. The project-owned command resolves repository root, Work branch, Work Root child path, and materialization mode.
 
-- verify it belongs to the intended project;
-- verify its repository-specific identity maps to the confirmed base Work Identity;
-- verify the selected checkout/branch;
-- synchronize refs according to project policy;
-- ensure only one writing agent owns each writable checkout.
+Before mutation:
+
+1. verify the Project Root and `REPO` mapping;
+2. validate the Work Identity syntax;
+3. resolve the repository-specific Work branch deterministically;
+4. if the branch does not exist, resolve its base from explicit `BASE` or a documented project default — never accidental current HEAD;
+5. verify the target path is absent or already the exact registered worktree being requested;
+6. refuse unrelated filesystem content at the target path;
+7. verify the branch is not assigned to another incompatible writable worktree;
+8. verify the Project Repository ignore boundary for the sibling worktree path when applicable;
+9. verify supported Git/materialization capability when the Worktree Materialization Contract applies.
+
+If the exact requested worktree already exists and satisfies the contract, return success without recreating it.
 
 When a Git worktree is required, its path is:
 
@@ -194,6 +202,38 @@ nested_worktree:
 ```
 
 Report the repository, branch, path, and any Work-scoped runtime identity.
+
+### Create Failure and Rollback
+
+Treat worktree creation as one semantic operation even when several Git commands are required.
+
+If a failure occurs after this invocation created a new linked worktree but before postconditions pass:
+
+- roll back only the worktree state created by this invocation;
+- use normal non-force removal only when the created worktree is safe to remove;
+- do not delete a pre-existing worktree;
+- do not delete the Work branch as an implicit rollback step;
+- if safe rollback cannot complete, stop and report the exact residual path/Git administrative state.
+
+Never convert routine create into a destructive repair operation.
+
+### Creation Postconditions
+
+Before reporting create success, verify:
+
+```yaml
+common:
+  - "registered worktree path equals the resolved path"
+  - "selected branch equals the resolved Work branch"
+  - "one writable checkout ownership invariant holds"
+project_checkout:
+  - "Work Documents remain materialized/tracked"
+  - "the sibling worktree path is not ordinary untracked Project Repository content"
+materialization_contract_case:
+  - "ordinary repository content is materialized"
+  - "nested Project-level .worktrees/ is absent"
+  - "worktree-local sparse configuration is active"
+```
 
 ### Implement and Validate
 
@@ -261,16 +301,21 @@ Project-scoped shared resources are not cleanup targets merely because a Work us
 
 ### Git Worktree Removal
 
-For each Git worktree being removed:
+Routine removal is addressed by Work Identity and repository selector, not an arbitrary path.
 
-1. resolve it from the Work Identity and repository deterministically;
-2. verify it belongs to the intended repository;
-3. refuse uncommitted changes;
-4. warn/refuse when commits are not preserved according to project policy;
-5. stop/remove Work-scoped runtime resources owned by that repository surface;
-6. remove the Git worktree without force;
-7. prune stale metadata only when appropriate;
-8. keep branch deletion as a separate decision.
+For each selected Git worktree:
+
+1. resolve `WORK + REPO` to the expected repository, branch, and path;
+2. verify that path is a registered worktree of the expected repository;
+3. verify identity/branch ownership;
+4. refuse uncommitted changes;
+5. warn/refuse when commits are not preserved according to project policy;
+6. stop/remove Work-scoped runtime resources owned by that repository surface when the public operation owns them;
+7. remove the Git worktree without force;
+8. prune stale metadata only when appropriate;
+9. keep branch deletion as a separate decision.
+
+Routine worktree removal does not remove Work Documents, the Work Root, or sibling repository worktrees. Those belong to the higher-level Work completion lifecycle.
 
 Worktree-local sparse configuration is removed with the linked worktree's Git administrative state. If the worktree is later recreated, run the full Work Identity Git worktree creation operation again; do not assume prior sparse configuration survives.
 
