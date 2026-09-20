@@ -139,6 +139,43 @@ rule: "A changed Semantics is a breaking change even if the Signature is identic
 
 ---
 
+## Performance-Shaped Contracts
+
+Performance requirements belong in a contract only when they are **load-bearing and caller-visible**. Do not redesign an API from intuition alone.
+
+```yaml
+performance_contract_policy:
+  requirement_gate:
+    stated_requirement: "A user/product/system latency, throughput, memory, work, or backpressure budget is a legitimate contract requirement."
+    evidence_to_redesign: "Before changing an existing interaction shape, show that the current shape is the limiting constraint using representative measurement when practical or a defensible structural lower bound."
+    insufficient: "Speculation, micro-optimization preference, or 'batching is usually faster' is not enough."
+  sequence:
+    1: "State the required bound and representative workload/conditions."
+    2: "Try implementation-only optimization while preserving the current contract."
+    3: "If the interaction shape itself prevents the bound, redesign only that shape."
+    4: "Re-check semantic capability, ownership, failure semantics, and compatibility."
+    5: "Verify the resulting contract against the required bound."
+  allowed_contract_shapes:
+    - "batch operations when per-item boundary crossings dominate the required bound"
+    - "streaming when full materialization violates latency/memory bounds or incremental consumption is required"
+    - "pagination when result cardinality must be bounded across a remote/public boundary"
+    - "async/cancellation/backpressure when waiting, cancellation, or producer/consumer rate is caller-visible"
+  abstraction_guard: "Expose the interaction semantics needed by callers, not implementation tactics such as cache layout, pool internals, arbitrary buffer ownership, or vendor-specific optimization details."
+```
+
+### Contract medium and blast radius
+
+* **Module-local/internal port**: if all participants are owned by the requested task, a shape change may be an L1 contained evolution. Keep the outer published module contract stable when possible.
+* **Published in-process/library API**: apply `Contract Evolution & Versioning`. A compatible added batch/stream capability can be L2; changing/removing the existing required interaction is L3 unless the migration is explicitly agreed.
+* **Cross-runtime / wire protocol**: treat pagination tokens, stream framing, request batching, ordering, retry/idempotency, and backpressure behavior as wire semantics. Check rollout/schema compatibility and mixed-version operation where relevant.
+* **Persistent-data-facing contract**: if the performance redesign changes stored representation or migration requirements, classify the data change separately through the normal persistence compatibility gate.
+
+### Verification
+
+If performance drove the contract shape, verification MUST include the stated bound under a representative workload or an equivalent deterministic bound check. A faster microbenchmark that does not model the required workload is not sufficient evidence.
+
+---
+
 ## Architectural Boundaries (Layering)
 
 **The primary boundary is the feature/module; layers live inside each module.** (Principle/why: `DESIGN_PHILOSOPHY.md` → "Module — The Primary Boundary".) Organize by feature first, then by layer:
