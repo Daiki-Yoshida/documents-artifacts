@@ -4,7 +4,7 @@
 document_type: "documentation_philosophy"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.4.0"
+strategy_version: "2.5.0"
 ```
 
 ## Core Principle: Information Accuracy First
@@ -34,7 +34,8 @@ right_approach: "Split the document by concern so the agent loads only the relev
 
 ```yaml
 governs:
-  - "Project-owned documentation under documents/ — content, structure, routing, and maintenance"
+  - "Project-owned canonical documentation under documents/ — content, structure, routing, and maintenance"
+  - "Work Documents under .worktrees/<work-type>/<work-name>/documents/ when the project uses Work Identity"
   - "documents/INDEX.md — routing hub and version registry for project-owned documents"
   - "documents/artifacts/ ownership boundary — installed guidance is distributor-managed, not project-owned documentation"
   - "docs-jp/ directory — human-facing documentation placement and separation"
@@ -47,7 +48,7 @@ does_not_govern:
   - "Source code design, architecture, or patterns"
   - "The contents or internal version metadata of installed artifact modules under documents/artifacts/"
   - "Git commit timing — when to commit is a code-side concern"
-  - "Git branching strategy — that is a development workflow concern"
+  - "Work Identity, Git branching/worktree topology, and .worktrees/ placement — those are development-environment concerns"
   - "Code review process — that is a development process concern"
 ```
 
@@ -80,14 +81,41 @@ snapshot; the canonical artifact source still owns the guidance content.
 
 ---
 
+## Work Documents: Active-Work Knowledge
+
+When a project uses the Work Identity model from `development-environment-strategy`, it may keep Git-managed **Work Documents** at:
+
+```text
+.worktrees/<work-type>/<work-name>/documents/
+```
+
+Work Documents are project-owned AI-facing documentation, but they are not canonical Project Documents.
+
+```yaml
+project_documents:
+  location: "documents/"
+  meaning: "canonical knowledge describing the project's accepted/current state"
+work_documents:
+  location: ".worktrees/<work-type>/<work-name>/documents/"
+  meaning: "knowledge owned by one active Work Identity: design, investigation, decisions, verification, migration context"
+  authority: "authoritative for the active Work's intent/context, not for the already-accepted project state"
+  lifecycle: "reconcile into canonical Project Documents when the Work completes, then remove the Work Documents that no longer need to remain active"
+```
+
+Do not treat Work Documents as disposable scratch merely because they are temporary in lifecycle. They are tracked so humans and agents can understand active work from the Project Repository's baseline.
+
+Do not blindly promote every Work Document. On completion, preserve only durable project knowledge in canonical Project Documents; transient hypotheses, rejected approaches, raw logs, and one-off outputs may be discarded. Git history records the former Work Documents, so a parallel archive is unnecessary.
+
+Placement, Work Identity naming, Git ownership, and Work Root lifecycle belong to `development-environment-strategy`. This strategy owns the **documentation semantics and reconciliation behavior**.
+
+---
+
 ## AI-Facing by Default
 
 ```yaml
-principle: "Everything under documents/ is written for AI agents."
+principle: "Canonical documents/ and Work Documents are AI-facing; human-facing prose belongs in docs-jp/."
 rationale: |
-  Users instruct AI agents with "@documents/ — understand this and develop."
-  If documents/ contained human-facing prose, the agent would waste tokens
-  parsing non-actionable content. Therefore documents/ is entirely AI-facing.
+  Canonical Project Documents under documents/ and active Work Documents exist to provide actionable development context to AI agents. Human-facing tutorials/background remain separate so agents can route directly to implementation-relevant knowledge.
 
 ownership_note: |
   AI-facing does not imply project-owned. documents/artifacts/ is also AI-facing,
@@ -108,7 +136,8 @@ human_facing:
 ```yaml
 principle: "Split files by concern; route the agent to the right file. Do not compress information."
 mechanisms:
-  project_index: "documents/INDEX.md lists and routes project-owned documents."
+  project_index: "documents/INDEX.md lists and routes canonical project-owned documents."
+  work_documents: "The Work Root scopes active Work Documents; split them by concern as needed, but do not register them in the canonical project INDEX."
   managed_guidance: "Each installed documents/artifacts/<module>/INDEX.md routes within that managed artifact module; the project INDEX may link to the module entry point but does not inventory every managed file."
   cross_references: "Each document links to related documents instead of duplicating content."
   concern_separation: "One file = one concern. A change to one concern should require reading one file."
@@ -218,6 +247,10 @@ guidance:
 ---
 
 ## Common Misreadings
+
+- Work Documents are **not** canonical Project Documents; they describe an active Work and must be reconciled at completion.
+- Work Documents are **not** unmanaged scratch; they are project-owned, AI-facing, and Git-recorded while active.
+- Work Documents do **not** require a second archive after completion; durable knowledge is promoted and Git retains history.
 
 ```yaml
 misreadings:

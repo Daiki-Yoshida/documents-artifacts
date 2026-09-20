@@ -18,9 +18,9 @@ authority: "英語版 artifacts/ が正本。内容に差がある場合は英�
 現在、将来の `development-environment-strategy` へ統合する新概念として **Work Identity** を設計しています。
 
 - [Work Identity 設計原本](source-logs/WORK_IDENTITY_DESIGN_JP.md)
-  - status: `design_approved_pending_artifactization`
+  - status: `artifactized_reference`
   - authority: non-canonical source/rationale log
-  - 用途: 情報・背景・判断理由を保持し、後続工程で既存artifactのOwnershipへ再構成するための設計原本
+  - 用途: artifact化後も、背景・判断理由・圧縮前の文脈を確認するためのsource/rationale log
 
 このsource logは現行artifactを上書きしません。現在有効な規範は引き続き `../../artifacts/development-environment-strategy/` です。
 

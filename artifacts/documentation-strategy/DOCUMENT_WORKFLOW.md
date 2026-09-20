@@ -4,7 +4,7 @@
 document_type: "workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.4.0"
+strategy_version: "2.5.0"
 ```
 
 ```yaml
@@ -25,6 +25,7 @@ ownership_split:
 3_ongoing_updates: "The project follows the strategy; update project-owned documents during development."
 4_staleness_handling: "Detect and fix stale project-owned documents whose recorded commit/state is behind relevant code changes."
 5_managed_artifact_handling: "Install/update/remove guidance under documents/artifacts/ through its owning distribution mechanism rather than ordinary project-document editing."
+6_work_documents: "Create, maintain, and reconcile active Work Documents when the project uses Work Identity."
 ```
 
 ---
@@ -112,7 +113,7 @@ rule: "Human-facing content does NOT go under documents/. It goes in docs-jp/."
 action: "Create project-owned documents as the project grows — not all at once."
 trigger: "When a task requires project context that does not fit in existing project documents, create a new file."
 placement: "documents/reference/<topic>.md or documents/<topic>/ (see FILE_AND_STRUCTURE.md → §7 Directory Splitting Guide)"
-reserved_path: "Never place a project-owned document under documents/artifacts/. That path is reserved for distributor-managed guidance."
+reserved_path: "Never place a canonical project-owned document under documents/artifacts/. Work Documents, when Work Identity is used, belong under the Work Root rather than canonical documents/."
 glossary: "If repeated, ambiguous, or cross-language domain vocabulary is reducing accuracy, consider documents/reference/glossary.md. Do not create one merely to satisfy a template."
 rule: "Prefer fewer files with clear routing over many files with overlapping content."
 versioning: "Register every new project-owned file in documents/INDEX.md with version 1.0.0. Bump index_version (minor)."
@@ -207,18 +208,20 @@ update_triggers:
 
 ```yaml
 decision_tree:
-  first_question: "Is the target under documents/artifacts/ and distributor-managed?"
-  yes_managed: "Do NOT edit it through this workflow. Use Managed Artifact Handling below."
-  no_project_owned:
-    question: "Does the change affect what an AI agent needs to know about this project?"
-    yes:
-      action: "Update the relevant project-owned document under documents/."
-      check: "Is the information already in an existing file, or does it need a new file?"
-      existing_file: "Update the file and bump its version."
-      new_file: "Create the file outside documents/artifacts/, register it in INDEX.md, and add routing."
-    no:
-      action: "Update docs-jp/ if human-facing content is affected."
-      ai_docs: "Leave project-owned documents/ unchanged."
+  first_question: "Is the target an active Work Document under .worktrees/<work-type>/<work-name>/documents/?"
+  yes_work_document: "Use the Work Documents lifecycle below; do not register/version it as a canonical Project Document."
+  no:
+    second_question: "Is the target under documents/artifacts/ and distributor-managed?"
+    yes_managed: "Do NOT edit it through this workflow. Use Managed Artifact Handling below."
+    no_project_owned:
+      question: "Does the change affect canonical project knowledge an AI agent needs after the active Work ends?"
+      yes:
+        action: "Update the relevant canonical project-owned document under documents/."
+        check: "Is the information already in an existing file, or does it need a new file?"
+        existing_file: "Update the file and bump its version."
+        new_file: "Create the file outside documents/artifacts/, register it in INDEX.md, and add routing."
+      no:
+        action: "Keep active-work-only knowledge in Work Documents, or update docs-jp/ when the content is human-facing."
 ```
 
 ### Update Discipline
@@ -237,7 +240,7 @@ rules:
 
 ## Use Case 4: Staleness Handling
 
-**When:** an AI agent detects that a **project-owned** document's `last_updated_commit`
+**When:** an AI agent detects that a **canonical project-owned** document's `last_updated_commit`
 is behind HEAD and code relevant to the document has changed since the reflected state.
 
 This workflow does **not** apply to managed files under `documents/artifacts/`; update those
@@ -288,16 +291,62 @@ owned by the artifact source or the target project's documented artifact workflo
 
 ---
 
+## Use Case 6: Work Documents
+
+**When:** the project uses the Work Identity model and one concrete development goal has moved from design/discussion into implementation.
+
+### Create / Establish
+
+```yaml
+precondition: "The Work Identity has been explicitly confirmed according to development-environment-strategy."
+location: ".worktrees/<work-type>/<work-name>/documents/"
+owner: "active Work Identity; Git-tracked by the Project Repository"
+create_when: "The Work needs durable design, investigation, decision, verification, migration, or coordination context."
+do_not_create_when: "No durable active-work context exists; an empty template directory is not required."
+```
+
+Do not turn every command result into a document. Prefer curated context that prevents information loss or repeated reasoning.
+
+### Maintain During Work
+
+Update Work Documents when active-work knowledge materially changes:
+
+- design decisions change;
+- an investigation resolves uncertainty that affects implementation;
+- cross-repository coordination changes;
+- verification evidence changes the completion judgment;
+- a rejected alternative must be remembered to avoid repeating the same analysis.
+
+Work Documents do not use the canonical Project Document version registry. Git records their evolution.
+
+### Reconcile at Work Completion
+
+Before the Work Identity is completed:
+
+1. Read the active Work Documents.
+2. Identify knowledge that remains true/useful after the Work is integrated.
+3. Merge that durable knowledge into the appropriate canonical Project Documents under `documents/`.
+4. Apply normal canonical routing/versioning to those destination documents.
+5. Discard active-work-only material such as superseded hypotheses, raw logs, rejected alternatives that no longer aid the project, and one-off execution output.
+6. Remove Work Documents that no longer represent active Work.
+
+Do **not** archive the Work Documents into a second history tree solely for preservation. Git history already records them.
+
+A single repository branch merge does not automatically mean Work Document reconciliation is complete; completion is governed by the Work Identity lifecycle in `development-environment-strategy`.
+
+---
+
 ## Version Bumping Workflow
 
 ### When to Bump
 
 ```yaml
 when_to_bump:
-  major: "Project-owned document restructured or rewritten — section reorganization, scope change, or full rewrite"
+  major: "Canonical Project Document restructured or rewritten — section reorganization, scope change, or full rewrite"
   minor: "Content addition or significant update — new section, new information"
   patch: "Small fix — typo, clarification, minor correction, or metadata refresh"
 managed_guidance: "Target-project version bumps do not apply to documents/artifacts/; preserve versions owned by the artifact itself."
+work_documents: "Work Documents do not use this semantic-version/last_updated_commit workflow; Git history records them until reconciliation into canonical Project Documents."
 ```
 
 ### How to Bump
@@ -319,7 +368,11 @@ summary:
 ## Document Creation Decision Tree
 
 ```yaml
-question_0: "Is documents/artifacts/ being considered as the destination?"
+question_0: "Is this knowledge scoped only to an active Work Identity?"
+  yes: "Place it in the active Work Documents when durable active-work context is needed; do not register it as canonical project documentation."
+  no: "Continue to question 0b."
+
+question_0b: "Is documents/artifacts/ being considered as the destination?"
   yes: "Stop. That path is reserved for distributor-managed artifact guidance; use the artifact installation mechanism instead of creating project docs there."
   no: "Continue to question 1."
 
@@ -346,6 +399,8 @@ anti_pattern: "Do not create a new file or directory for every small piece of in
 ---
 
 ## Document Deletion Workflow
+
+This workflow governs canonical Project Documents. Work Documents are removed through **Use Case 6: Work Documents** after reconciliation.
 
 ```yaml
 when_to_delete:
@@ -389,13 +444,14 @@ no_re_read_needed:
   - "Adding a new project-owned document in an established directory."
   - "Updating constraints or status in an existing project document."
   - "Routine artifact sync when the project's documented distribution mechanism is already clear."
+  - "Routine edits within already-established Work Documents when the Work Identity and routing are clear."
 ```
 
 ---
 
 ## Confirmation Gate
 
-Before changing the **project-owned documentation structure**, assess the impact.
+Before changing the **canonical project-owned documentation structure**, assess the impact. Routine Work Document creation/update/removal follows the active Work lifecycle instead of this structural gate.
 
 ```yaml
 L0_content: "Updating content within an existing project-owned file (no structural change) — proceed."

@@ -4,8 +4,8 @@
 document_type: "workspace_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.1.1"
-scope: "repository topology, checkouts, optional task worktrees, and top-level environment layout"
+strategy_version: "1.2.0"
+scope: "repository topology, Work Roots, checkouts, Work Documents placement, and top-level environment layout"
 ```
 
 ## 1. Repository Topology
@@ -48,180 +48,238 @@ A separate Workspace Repository is optional.
 
 Use one repository when environment tooling and product code share one lifecycle and parallel coordination does not justify a second history. Apply the same host, command, branch, and optional worktree rules at the single repository root.
 
-## 2. Primary Checkout
+## 2. Project Root and Primary Checkouts
 
-Each Component Repository has one Primary Checkout within the workspace.
+The **Project Root** is the top-level path whose owning Project Repository controls project coordination and contains `.worktrees/`.
+
+A separate Workspace Repository is optional. In a single-repository project, the same repository may simultaneously be the Project Repository and the product repository.
+
+Each participating repository may also have a stable Primary Checkout.
 
 ```yaml
-purpose:
-  - "ordinary single-agent work on a task branch when project policy permits"
-  - "fetch and synchronization"
-  - "optional worktree creation"
-  - "integration and final inspection"
-  - "stable component path for interactive tools when required"
-default_branch_rule: "keep the default branch stable; switch to a task branch before implementation"
+project_root:
+  owns:
+    - ".worktrees/ Work Identity workspace"
+    - "Work Documents through the Project Repository"
+    - "project-level coordination"
+primary_checkout:
+  purpose:
+    - "ordinary single-writer work when no separate checkout is needed"
+    - "fetch and synchronization"
+    - "Git worktree creation"
+    - "integration and final inspection"
 ```
 
-A Primary Checkout does not have to remain permanently on the default branch. It may be the active feature checkout when only one writing task is running and no stable secondary checkout is needed.
+When Git is available, implementation should normally occur on a branch representing the confirmed Work Identity rather than directly on the protected/default branch.
 
-Keep it free from unrelated local edits. Its stable path remains part of the workspace contract.
+## 3. Work Root
 
-## 3. Checkout Selection
+Each active Work Identity has one filesystem root:
 
-Select the simplest checkout mode that satisfies the task.
+```text
+.worktrees/<work-type>/<work-name>/
+```
+
+Example:
+
+```text
+.worktrees/feat/pathfinding/
+```
+
+The Work Root groups the filesystem-facing state of one development goal.
+
+```yaml
+work_root:
+  identity: "<work-type>/<work-name>"
+  contains:
+    - "documents/ — Work Documents tracked by the Project Repository"
+    - "<repository>/ — zero or more participating Git worktrees"
+  lifecycle: "created for active Work; removed after completion/abandonment reconciliation"
+```
+
+Do not introduce a separate `.work/<identity>/` hierarchy for the same purpose.
+
+## 4. Uniform Single- and Multi-Repository Shape
+
+Use the same Work Root shape regardless of repository count.
+
+### Single repository
+
+```text
+.worktrees/
+└─ feat/
+   └─ pathfinding/
+      ├─ documents/
+      └─ main/
+```
+
+`main/` is the participating repository's Git worktree.
+
+### Multiple repositories
+
+```text
+.worktrees/
+└─ feat/
+   └─ hogehoge/
+      ├─ documents/
+      ├─ front/
+      └─ back/
+```
+
+`front/` and `back/` are Git worktrees of their respective repositories.
+
+This uniform shape is intentional: project topology may evolve, and agents should not need separate single-repository and multi-repository management flows.
+
+## 5. Work Documents Placement and Ownership
+
+```text
+.worktrees/<work-type>/<work-name>/documents/
+```
+
+contains **Work Documents**: Git-managed documentation for the active Work Identity.
+
+Ownership rules:
+
+- The Project Repository at the Project Root owns and tracks Work Documents.
+- Work Documents are intended to be visible from the Project Repository's main/default coordination state so that active Work can be discovered from that baseline.
+- Work Documents are not the same as canonical Project Documents under `documents/`; their content semantics and reconciliation rules are owned by `documentation-strategy`.
+- Sibling repository directories under the Work Root are Git worktrees and MUST NOT be tracked as ordinary files by the Project Repository.
+- Do not create a dedicated Git repository only for Work Documents.
+
+The Project Repository's ignore/materialization rules must express this ownership boundary rather than ignoring the entire `.worktrees/` tree.
+
+## 6. Repository Worktrees and Identity
+
+A Git worktree, when required, lives at:
+
+```text
+.worktrees/<work-type>/<work-name>/<repository>/
+```
+
+A Work Identity is normally expressed semantically as:
+
+```text
+<work-type>/<work-name>
+```
+
+For multiple participating repositories, derive repository-specific identities deterministically from the base Work Identity.
+
+Examples:
+
+```text
+base:  feat/hogehoge
+front: feat-hogehoge-front
+back:  feat-hogehoge-back
+```
+
+or, when the project prefers hierarchical branch names:
+
+```text
+feat/hogehoge/front
+feat/hogehoge/back
+```
+
+The exact branch syntax is project-owned. The invariant is deterministic traceability back to the same base Work Identity.
+
+### Checkout Selection
+
+Use the simplest safe checkout arrangement.
 
 ```yaml
 use_current_or_primary_checkout_when:
-  - "one writing task is active for the Component Repository"
-  - "the checkout can safely use the task branch"
+  - "one writing Work is active for the repository"
+  - "the checkout can safely use the Work branch"
   - "no other branch must remain available at a stable path"
   - "separate mutable runtime state is unnecessary"
-create_task_worktree_when:
-  - "multiple writing tasks or agents must run concurrently on the same Component Repository"
+create_git_worktree_when:
+  - "multiple writing Works or agents need concurrent writable checkouts"
   - "another branch must remain checked out at a stable path"
-  - "the user or project workflow explicitly requires a worktree"
+  - "the user/project explicitly requires a worktree"
   - "an independently disposable checkout and runtime state are needed"
-prohibited_reason:
-  - "the .worktrees/ directory exists"
-  - "worktree commands are available"
-  - "the task has an identifier"
+insufficient_reason:
+  - ".worktrees/ exists"
+  - "worktree helper commands exist"
+  - "a Work Identity exists"
 ```
-
-Creating a Task Worktree is an isolation decision, not a routine ceremony. A task branch alone is sufficient when there is only one active writer and no additional isolation requirement.
-
-## 4. Task Worktrees
-
-When selected by the Checkout Selection rule, Task Worktrees live under the Workspace Repository's `.worktrees/` directory.
-
-```yaml
-canonical_shape: ".worktrees/<component>/<task-identity>/"
-ownership: "one task, one branch, one writing agent"
-lifecycle: "temporary; create for isolated work, remove after integration or abandonment"
-git_tracking: "ignored by the Workspace Repository"
-```
-
-A flat `.worktrees/<component>-<task>/` layout is acceptable for a workspace with exactly one component, but the nested form is preferred when multiple components exist or are expected.
-
-The `.worktrees/` directory may remain empty. Its presence does not require agents to create a worktree.
-
-### Worktree Identity
-
-A Task Worktree name should identify:
-
-- the Component Repository;
-- the task or tracked work item when one exists;
-- optionally a concise branch slug when it adds useful meaning.
-
-Use a stable task identifier in workflows that already have one. Avoid identity based only on random values.
-
-Names must be filesystem-safe and collision-resistant. Branch-to-path normalization must detect collisions rather than silently reusing a directory.
 
 ### Worktree Invariants
 
-- The worktree branch belongs to the Component Repository, not the Workspace Repository.
 - A branch must not be assigned to two writable worktrees.
-- The selected worktree path must propagate to build, test, format, logs, and generated-output operations.
-- Parallel worktrees must receive distinct mutable runtime state.
-- Removing a worktree must not delete the branch automatically unless the command explicitly owns that separate action.
+- One writable checkout is owned by one writing agent at a time.
+- The selected repository/worktree path must propagate to build, test, format, logs, and generated-output operations.
+- Parallel Works must receive distinct mutable state where sharing would alter results.
+- Removing a worktree must not implicitly delete its branch.
 
-## 5. Recommended Top-Level Layout
+## 7. Recommended Top-Level Layout
 
 ```text
-<workspace>/
+<project-root>/
 ├─ Makefile
 ├─ <public-wrapper>
 ├─ compose.yml
 ├─ docker/
 ├─ scripts/
-├─ documents/
-├─ <component-a>/
-├─ <component-b>/
-└─ .worktrees/              # optional task checkouts; may be empty
-   ├─ <component-a>/
-   │  └─ <task-identity>/
-   └─ <component-b>/
-      └─ <task-identity>/
+├─ documents/                         # canonical Project Documents
+├─ <primary-repository-checkouts>/    # project-specific
+└─ .worktrees/
+   └─ <work-type>/
+      └─ <work-name>/
+         ├─ documents/                # Work Documents; Project Repository tracked
+         ├─ <repository-a>/           # optional Git worktree
+         └─ <repository-b>/           # optional Git worktree
 ```
 
-The exact filenames are ecosystem-specific. The responsibilities are normative.
+The exact filenames are ecosystem-specific. The ownership and lifecycle boundaries are normative.
 
-```yaml
-Makefile: "discoverable public operation names and delegation"
-public_wrapper: "optional common CLI entry and target selection"
-compose: "container topology and runtime definitions"
-docker: "Dockerfiles and container-specific support"
-scripts: "owned implementation of environment operations"
-documents: "AI-facing project documentation; governed by documentation-strategy"
-component_paths: "Primary Checkouts of independent Component Repositories"
-worktrees: "optional temporary Task Worktrees"
-```
+## 8. Git Tracking and Materialization Boundaries
 
-Do not use this structure to prescribe application-internal modules. Source-code module placement belongs to `design-principles`.
+### Project Repository
 
-## 6. Git Tracking Boundaries
+The Project Repository:
 
-### Workspace Repository
+- tracks Work Documents under `.worktrees/<type>/<name>/documents/`;
+- does not track nested participating repository worktrees as ordinary files;
+- keeps environment-local secrets, caches, and generated build output out of Git;
+- uses Git history as the historical record for completed/deleted Work Documents rather than inventing a parallel archive.
 
-The Workspace Repository should ignore:
+### Participating Repository
 
-- embedded Component Repository checkouts that have independent Git histories;
-- `.worktrees/` when worktree support is present;
-- environment-local secrets;
-- generated build/export output;
-- runtime caches;
-- editor and OS noise unless intentionally shared.
+Each repository owns its own source, tests, history, caches, build outputs, and tool-specific ignores.
 
-Ignoring an embedded repository is not sufficient documentation by itself. Agent entry files or project documents must state that the path is an independent repository.
+### Recursive materialization invariant
 
-### Component Repository
+When the Project Repository itself also participates as a Git worktree under a Work Root, that nested worktree MUST NOT recursively materialize the Project-level `.worktrees/` tree inside itself.
 
-Each Component Repository owns its own ignore rules for product caches, build outputs, generated files, and tool-specific state.
+The mechanism is implementation-specific (for example, worktree-specific sparse checkout or an equivalent checkout exclusion), and must be verified before relying on it. Preserve this invariant rather than changing the Work Root model to avoid the problem.
 
-The Workspace Repository must not become the accidental owner of files generated inside a Component Repository.
+## 9. Multi-Repository Coordination and Resource Identity
 
-## 7. Multi-Component Workspace
-
-A Workspace Repository may coordinate multiple Component Repositories.
+A single Work Identity may coordinate several repositories.
 
 ```yaml
 requirements:
-  - "each component has a stable Primary Checkout path"
-  - "commands identify the selected component when the operation is not workspace-wide"
-  - "worktrees are namespaced by component when they are used"
-  - "resource names include the component when collision is possible"
-  - "cross-component validation is a separate explicit operation"
+  - "one base Work Identity describes the shared development goal"
+  - "repository-specific identities map deterministically to that base"
+  - "commands identify the selected repository when the operation is not project-wide"
+  - "cross-repository validation is an explicit operation"
+  - "one repository merge does not by itself imply that the whole Work is complete"
 ```
 
-Do not create a Workspace Repository solely to place unrelated repositories in one folder. The workspace must own real shared tooling, coordination, or environment behavior.
-
-## 8. Resource Identity Propagation
-
-Use one logical task identity across isolated environment surfaces when a Task Worktree or separate task runtime is used.
+For isolated runtime surfaces, propagate the same semantic Work Identity:
 
 ```yaml
-propagate_to_when_isolated:
-  - "branch or task metadata"
+propagate_to_when_work_scoped:
+  - "branch metadata"
   - "worktree path"
-  - "Compose project/container namespace"
-  - "mutable volumes and host ports"
+  - "Compose/container namespace"
+  - "mutable volumes / databases / host ports"
   - "logs"
-  - "temporary and generated output paths"
+  - "generated work outputs"
 ```
 
-The exact formatted string may differ by subsystem, but the mapping must be deterministic and diagnosable.
+Formatting may vary by subsystem, but the mapping must remain deterministic and diagnosable.
 
-Resource names should distinguish:
-
-```yaml
-workspace: "which development workspace owns the resource"
-component: "which Component Repository it belongs to"
-task: "which isolated task or worktree owns mutable state"
-role: "what the resource does"
-```
-
-Do not manufacture task-specific namespaces when a single shared checkout and runtime are intentionally being used.
-
-## 9. Workspace-to-Component Tool Dependency
+## 10. Workspace-to-Component Tool Dependency
 
 A Component Repository may rely on tools stored in a separate Workspace Repository.
 
@@ -240,15 +298,15 @@ rule: "CI and release validation must not accidentally consume an unspecified wo
 
 Record the selected mode in project documentation or CI configuration. Local convenience may use the current workspace checkout, while formal validation may require a fixed ref.
 
-## 10. Cross-Artifact Boundaries
+## 11. Cross-Artifact Boundaries
 
 ```yaml
 development_environment_strategy:
-  owns: "repository/checkout/worktree placement and environment-facing top-level directories"
+  owns: "Work Identity, Work Root, repository/checkout/worktree placement, and environment-facing lifecycle boundaries"
 design_principles:
   owns: "application modules, public code surfaces, dependency direction, and test architecture"
 documentation_strategy:
-  owns: "documents/ internal layout, routing, and maintenance"
+  owns: "Project Document and Work Document content semantics, routing, maintenance, and reconciliation"
 ```
 
 When a folder has mixed significance, apply each strategy only to the concern it owns.
