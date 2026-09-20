@@ -17,7 +17,7 @@
 ```text
 docs-jp/
 ├─ design-principles/
-├─ documentation-strategy/
+├─ documentation-strategy/          # INDEX_JP.md is current routing; detailed 2.1-era files are source logs
 └─ development-environment-strategy/
 ```
 
