@@ -136,7 +136,8 @@ human_facing:
 ```yaml
 principle: "Split files by concern; route the agent to the right file. Do not compress information."
 mechanisms:
-  project_index: "documents/INDEX.md lists and routes project-owned documents."
+  project_index: "documents/INDEX.md lists and routes canonical project-owned documents."
+  work_documents: "The Work Root scopes active Work Documents; split them by concern as needed, but do not register them in the canonical project INDEX."
   managed_guidance: "Each installed documents/artifacts/<module>/INDEX.md routes within that managed artifact module; the project INDEX may link to the module entry point but does not inventory every managed file."
   cross_references: "Each document links to related documents instead of duplicating content."
   concern_separation: "One file = one concern. A change to one concern should require reading one file."
