@@ -269,9 +269,9 @@ This controls **tracking ownership only**. It does not stop Git from checking ou
 
 ### Worktree Materialization Contract
 
-A repository worktree created under a Work Root MUST NOT materialize the Project-level `.worktrees/` tree inside itself.
+When a participating repository's branch tree contains the Project-level tracked `.worktrees/**` coordination state — notably when the Project Repository itself participates as a linked worktree — that worktree MUST NOT materialize the Project-level `.worktrees/` tree inside itself.
 
-For Work Root worktrees, the standard materialization semantics are:
+For such worktrees, the standard materialization semantics are:
 
 ```text
 ordinary tracked repository content
@@ -290,9 +290,11 @@ Use worktree-local non-cone sparse checkout with:
 
 Non-cone exclusion is intentional: it means "materialize everything except Project-level `.worktrees/`" and does not require maintaining an allow-list of future top-level repository directories.
 
+If an independent Component Repository does not track the Project-level `.worktrees/**` state, this sparse exclusion is not required solely by this contract. Do not hide an unrelated tracked `.worktrees/` path in another repository by assumption.
+
 ### Creation and recreation invariant
 
-Create a Work Root repository worktree without first materializing the full tracked tree:
+For a repository whose branch contains the Project-level tracked `.worktrees/**` state, create the Work Root worktree without first materializing the full tracked tree:
 
 ```bash
 git worktree add --no-checkout <worktree-path> <work-branch>
@@ -306,7 +308,9 @@ git -C <worktree-path> \
 
 The worktree-local sparse state is owned by the linked worktree's Git administrative directory and is removed with that worktree. Therefore every recreation MUST repeat the sparse configuration before materialization.
 
-Do not use plain `git worktree add` as the standard Work Root creation path when the branch contains tracked Project-level `.worktrees/` content; it transiently materializes the forbidden recursive tree before sparse exclusion can be applied.
+Do not use plain `git worktree add` for a Work Root worktree when the selected branch contains tracked Project-level `.worktrees/` content; it transiently materializes the forbidden recursive tree before sparse exclusion can be applied.
+
+The project-owned creation helper should determine whether this materialization contract applies so routine callers do not need to reason about the low-level Git distinction.
 
 A project using this contract MUST support a Git version where worktree-local sparse checkout is verified to behave correctly. The generic strategy does not mandate one universal Git version; project bootstrap/doctor logic should verify compatibility for supported versions.
 
