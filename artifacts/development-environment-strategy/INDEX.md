@@ -6,7 +6,7 @@ target_audience: "ai_agents"
 optimization: "token_efficiency"
 language: "english"
 role: "entry point for the exported development-environment guidance"
-strategy_version: "1.2.0"
+strategy_version: "1.3.0"
 ```
 
 Read this file first. Load only the documents required by the current request.
@@ -74,6 +74,7 @@ ENVIRONMENT_STANDARDS.md:
     - "UID/GID, caches, ports, secrets, generated files"
     - "Makefile, public command interface, and scripts responsibility"
     - "Git operation safety"
+    - "Work Root worktree materialization compatibility and helper requirements"
     - "Destructive-operation rules"
     - "Local/CI parity, diagnostics, canonical validation"
 
@@ -84,7 +85,7 @@ WORKSPACE_STRUCTURE.md:
     - "Uniform single-/multi-repository shape"
     - "Work Documents placement and Git ownership boundary"
     - "Repository-specific Work Identity derivation"
-    - "Git worktree placement and recursive-materialization invariant"
+    - "Git worktree placement and Worktree Materialization Contract"
     - "Multi-repository coordination and identity propagation"
 
 ENVIRONMENT_WORKFLOW.md:
@@ -92,7 +93,7 @@ ENVIRONMENT_WORKFLOW.md:
     - "New-project and brownfield adoption"
     - "Work Identity establishment and explicit confirmation"
     - "Work Root / Work Documents creation"
-    - "Checkout and optional Git worktree lifecycle"
+    - "Checkout and optional Git worktree lifecycle, including atomic Work Root creation/recreation"
     - "Implementation-time/final validation"
     - "Multi-repository integration semantics"
     - "Work Documents reconciliation and Work completion"
@@ -111,7 +112,8 @@ ENVIRONMENT_WORKFLOW.md:
 "naming containers, networks, or volumes":       "ENVIRONMENT_STANDARDS.md (Resource Identity / Resource Scope)"
 "designing Make targets or scripts":             "ENVIRONMENT_STANDARDS.md (Command Interface)"
 "deciding whether to create a worktree":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Checkout Selection Rule) + ENVIRONMENT_WORKFLOW.md"
-"adding or changing Git worktree support":       "WORKSPACE_STRUCTURE.md (Repository Worktrees and Identity) + ENVIRONMENT_WORKFLOW.md"
+"adding or changing Git worktree support":       "WORKSPACE_STRUCTURE.md (Repository Worktrees and Identity + Git Tracking and Materialization Boundaries) + ENVIRONMENT_WORKFLOW.md"
+"creating a Work Root Git worktree":             "ENVIRONMENT_WORKFLOW.md (Prepare the Selected Repository) + WORKSPACE_STRUCTURE.md (Worktree Materialization Contract)"
 "organizing parent and child repositories":      "WORKSPACE_STRUCTURE.md (Repository Topology)"
 "supporting several component repositories":     "WORKSPACE_STRUCTURE.md (Multi-Repository Coordination and Resource Identity)"
 "running several AI agents in parallel":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Parallel-Agent Isolation) + WORKSPACE_STRUCTURE.md"
