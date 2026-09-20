@@ -160,9 +160,9 @@ When a Git worktree is required, its path is:
 .worktrees/<work-type>/<work-name>/<repository>/
 ```
 
-Create it through one project-owned **Work Identity Git worktree creation operation**. That operation must preserve the Worktree Materialization Contract from `WORKSPACE_STRUCTURE.md`.
+Create it through one project-owned **Work Identity Git worktree creation operation**. That operation owns the low-level choice needed to preserve the Worktree Materialization Contract from `WORKSPACE_STRUCTURE.md`.
 
-The normative low-level sequence is:
+When the selected repository branch contains tracked Project-level `.worktrees/**` coordination state, the normative low-level sequence is:
 
 ```bash
 git worktree add --no-checkout <worktree-path> <work-branch>
@@ -176,7 +176,9 @@ git -C <worktree-path> \
 
 Do not make humans or agents manually reproduce these steps during routine work. Encode them in a project-owned wrapper/script or equivalent stable command.
 
-Do not use raw `git worktree add` as the normal Work Root creation path when tracked Project-level `.worktrees/` content exists; it can recursively materialize that tree before exclusion is applied.
+When the selected repository does not track Project-level `.worktrees/**`, the helper need not apply sparse exclusion solely for this contract. Do not accidentally hide an unrelated tracked `.worktrees/` path in an independent repository.
+
+Do not use raw `git worktree add` when tracked Project-level `.worktrees/` content exists; it can recursively materialize that tree before exclusion is applied.
 
 After creation, verify:
 
