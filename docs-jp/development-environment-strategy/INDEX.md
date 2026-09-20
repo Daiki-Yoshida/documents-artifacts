@@ -22,9 +22,9 @@ Work Identity関連の背景・判断理由・実験証拠は、正本artifact�
   - authority: non-canonical source/rationale log
   - 用途: Work Identityの背景・判断理由・圧縮前の文脈を確認する
 - [Work Identity Git Materialization 実験記録](source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md)
-  - status: `artifactization_source`
+  - status: `artifactized_reference`
   - authority: non-canonical experiment record
-  - 用途: Work DocumentsをtrackしながらWork Root配下へGit worktreeを配置する際の実機検証、失敗経路、採用手順、互換性条件を確認する
+  - 用途: artifact化済みのWorktree Materialization Contractについて、実機検証、失敗経路、採用根拠、互換性条件を確認する
 
 これらのsource logは現行artifactを上書きしません。現在有効な規範は `../../artifacts/development-environment-strategy/` です。
 
