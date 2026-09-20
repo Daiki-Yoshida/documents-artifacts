@@ -15,14 +15,18 @@ authority: "英語版 artifacts/ が正本。内容に差がある場合は英�
 
 ## 設計原本 / source log
 
-現在、将来の `development-environment-strategy` へ統合する新概念として **Work Identity** を設計しています。
+Work Identity関連の背景・判断理由・実験証拠は、正本artifactとは分離してsource/rationale logに保持します。
 
 - [Work Identity 設計原本](source-logs/WORK_IDENTITY_DESIGN_JP.md)
   - status: `artifactized_reference`
   - authority: non-canonical source/rationale log
-  - 用途: artifact化後も、背景・判断理由・圧縮前の文脈を確認するためのsource/rationale log
+  - 用途: Work Identityの背景・判断理由・圧縮前の文脈を確認する
+- [Work Identity Git Materialization 実験記録](source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md)
+  - status: `artifactization_source`
+  - authority: non-canonical experiment record
+  - 用途: Work DocumentsをtrackしながらWork Root配下へGit worktreeを配置する際の実機検証、失敗経路、採用手順、互換性条件を確認する
 
-このsource logは現行artifactを上書きしません。現在有効な規範は引き続き `../../artifacts/development-environment-strategy/` です。
+これらのsource logは現行artifactを上書きしません。現在有効な規範は `../../artifacts/development-environment-strategy/` です。
 
 ## 読む順番
 
