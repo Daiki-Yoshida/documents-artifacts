@@ -4,8 +4,8 @@
 document_type: "environment_workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.1.1"
-scope: "setup, checkout selection, optional task worktrees, validation, integration, cleanup, and recovery"
+strategy_version: "1.2.0"
+scope: "setup, Work Identity lifecycle, checkout selection, validation, integration, cleanup, and recovery"
 ```
 
 ## 1. New Project Setup
@@ -36,25 +36,26 @@ Choose the second form only when separate histories, stable component roots, sha
 - Define help, status/diagnosis, partial validation, canonical final validation, and scoped cleanup operations.
 - Separate normal and destructive operations.
 
-### Step 4: Define Resource Identity
+### Step 4: Define Work Identity and Resource Identity
 
-Define deterministic names for:
+Define how the project names and confirms Work Identities before implementation.
 
-- workspace/project;
-- component;
-- resource role;
-- task/worktree only when separate task isolation is used.
+- Semantic form should normally follow `<work-type>/<work-name>`.
+- The user explicitly confirms the Work Identity once the development goal is concrete enough to implement.
+- If Git is available, define how work branches map deterministically to the Work Identity.
+- Define project-, Work-, and run-scoped resource naming.
+- Do not create isolated resources merely because a Work Identity exists.
 
-Ensure parallel tasks receive isolated mutable resources and non-conflicting host ports.
+### Step 5: Define Work Root and Repository Paths
 
-### Step 5: Define Repository and Optional Worktree Paths
-
-- Establish each Component Repository's Primary Checkout.
-- Ignore independent Component Repository paths from the Workspace Repository.
-- Define and ignore `.worktrees/` only when worktree support is part of the workspace.
-- Select a worktree naming rule for the cases that require one.
-- Ensure commands can target either the current checkout or an explicitly selected worktree without editing command internals.
-- Do not create a Task Worktree during setup merely to prove that worktree support exists.
+- Establish the Project Root and owning Project Repository.
+- Reserve `.worktrees/<work-type>/<work-name>/` as the Work Root shape.
+- Reserve `<Work Root>/documents/` for Project-Repository-tracked Work Documents.
+- Place participating Git worktrees at `<Work Root>/<repository>/` only when a separate checkout is actually required.
+- Use the same Work Root shape for single- and multi-repository projects.
+- Ensure the Project Repository tracks Work Documents without tracking sibling repository worktrees.
+- If the Project Repository itself participates through a nested worktree, verify that Project-level `.worktrees/` is not recursively materialized inside it.
+- Ensure commands can target the current/Primary Checkout or an explicit repository worktree without editing command internals.
 
 ### Step 6: Verify Bootstrap
 
@@ -89,10 +90,11 @@ destructive_paths: "cleanup, reset, force removal, and data deletion"
 
 1. Establish a stable public command interface over current behavior.
 2. Move project-specific execution into controlled containers.
-3. Normalize resource identity and ownership.
-4. Add diagnosis and canonical validation.
-5. Add or normalize worktree support only when parallel development or explicit isolation requires it.
-6. Align CI with project-owned commands.
+3. Introduce Work Identity and normalize resource ownership around it.
+4. Establish the uniform Work Root and Work Documents ownership boundary.
+5. Add diagnosis and canonical validation.
+6. Add/normalize Git worktree support only when parallel development or explicit isolation requires it.
+7. Align CI with project-owned commands.
 
 Preserve working behavior while changing one environment boundary at a time.
 
@@ -100,74 +102,76 @@ Preserve working behavior while changing one environment boundary at a time.
 
 - Explicit project conventions outrank this generic strategy when they conflict; report the conflict.
 - Do not silently move repositories or delete environment state.
-- Do not introduce separate Workspace and Component repositories unless the task explicitly requires the structural change.
-- Do not introduce Task Worktrees when the current checkout already satisfies a single writing task.
+- Do not introduce separate Workspace and Component repositories unless the requested project change actually requires that topology.
+- Do not introduce Git worktrees when the current checkout already satisfies a single active Work.
 - Existing violations outside the requested scope are reported, not opportunistically rewritten.
 
-## 3. Checkout Selection and Optional Task Worktree Lifecycle
+## 3. Work Identity Lifecycle
+
+### Establish the Work
+
+Before implementation begins:
+
+1. Confirm that the user's development goal is concrete enough to implement.
+2. Propose a meaningful Work Identity when one is not already specified.
+3. Obtain explicit user confirmation of that Work Identity.
+4. Establish the Work Root at `.worktrees/<work-type>/<work-name>/`.
+5. Create/update Work Documents under `<Work Root>/documents/` when the Work needs durable active-work context.
+6. When Git is available, create or select branch identities that map deterministically to the Work Identity.
+
+Do not manufacture a Work Identity for every investigation command, test run, or conversational iteration.
 
 ### Select the Checkout Mode
 
-Before editing, choose the least complex safe mode.
+Choose the least complex safe mode per participating repository.
 
 ```yaml
 current_or_primary_checkout:
   use_when:
-    - "only one writing task is active for the Component Repository"
-    - "the checkout can safely use the task branch"
+    - "one writing Work is active for the repository"
+    - "the checkout can safely use the Work branch"
     - "no stable secondary branch checkout is required"
     - "separate mutable runtime state is unnecessary"
-  action: "use the assigned checkout; do not create a worktree"
-task_worktree:
+  action: "use the assigned checkout; do not create a Git worktree"
+git_worktree:
   use_when:
-    - "multiple writing tasks or agents must run concurrently"
+    - "multiple writing Works or agents need concurrent writable checkouts"
     - "another branch must remain checked out at a stable path"
-    - "the user or project workflow explicitly requests a worktree"
-    - "the task needs an independently disposable checkout and runtime state"
-  action: "create and explicitly select a Task Worktree"
+    - "the user/project explicitly requests a worktree"
+    - "the Work needs an independently disposable checkout and runtime state"
+  action: "create the repository worktree under the Work Root"
 ```
 
-The existence of `.worktrees/`, worktree helper commands, or a TASK_ID is not sufficient reason to create a worktree.
+The existence of `.worktrees/`, helper commands, or the Work Identity itself is not sufficient reason to create a Git worktree.
 
-### Prepare the Selected Checkout
+### Prepare the Selected Repository
 
-For either mode:
+For each participating repository:
 
-- identify the Component Repository;
-- identify the task and task branch;
-- verify the selected checkout belongs to the intended repository;
+- verify it belongs to the intended project;
+- verify its repository-specific identity maps to the confirmed base Work Identity;
+- verify the selected checkout/branch;
 - synchronize refs according to project policy;
-- ensure only one writing agent owns that writable checkout.
+- ensure only one writing agent owns each writable checkout.
 
-When using the Primary Checkout, switch to or create the task branch according to project policy. Do not implement directly on the protected/default branch.
+When a Git worktree is required, create it at:
 
-### Create a Task Worktree When Required
-
-Before creation:
-
-- verify the isolation trigger is actually present;
-- verify the Primary Checkout is the intended repository;
-- verify branch/path identity does not collide.
-
-Creation must produce a Task Worktree under the declared `.worktrees/` namespace and report its branch, absolute or workspace-relative path, and runtime identity.
-
-```yaml
-worktree_assignment:
-  worktree: "one writing agent"
-  branch: "the branch checked out by that worktree"
-  mutable_runtime: "isolated by task identity"
-  command_target: "explicitly selected for every operation"
+```text
+.worktrees/<work-type>/<work-name>/<repository>/
 ```
+
+and report the repository, branch, path, and any Work-scoped runtime identity.
 
 ### Implement and Validate
 
 During implementation:
 
-1. Run the narrowest relevant validation first.
-2. Use project-owned commands, not ad hoc host tool invocations.
-3. Diagnose failures through the selected checkout's logs and status.
-4. Avoid touching another writable checkout.
-5. Run the canonical final validation on the final HEAD before completion is reported.
+1. Keep Work Documents current when design/verification knowledge materially changes.
+2. Run the narrowest relevant validation first.
+3. Use project-owned commands, not ad hoc host tool invocations.
+4. Diagnose failures through the selected Work Identity, repository checkout, logs, and runtime state.
+5. Avoid mutating another Work's writable checkout or mutable state.
+6. Run the canonical final validation on the final implementation state before reporting completion.
 
 ### Preserve
 
@@ -175,8 +179,9 @@ Before integration, checkout switching, or worktree removal:
 
 - review the working tree;
 - preserve intended changes in commits according to project policy;
-- identify untracked generated files;
-- verify remote or other preservation requirements when applicable.
+- identify untracked/generated files;
+- verify remote or other preservation requirements when applicable;
+- ensure material decisions needed after completion have been captured in Work Documents or canonical Project Documents.
 
 ## 4. Integration
 
@@ -190,50 +195,64 @@ Integration policy is project-specific, but the environment flow must preserve r
 
 This strategy does not decide pull-request approval or release policy.
 
-## 5. Cleanup
+## 5. Work Completion and Cleanup
 
-Creating task-scoped resources creates an obligation to reconcile them when the task ends.
+A repository branch merge is a **component completion signal**, not necessarily completion of the whole Work.
+
+For multi-repository Work, the base Work Identity remains active while any participating repository, required validation, or Work Document reconciliation remains incomplete.
+
+### Reconcile Work Documents
+
+Before declaring the Work complete:
+
+1. Review `<Work Root>/documents/`.
+2. Promote durable project knowledge into canonical Project Documents under `documents/`.
+3. Do not blindly copy transient notes, rejected hypotheses, raw logs, or one-off benchmark output.
+4. Apply canonical Project Document versioning/routing rules to promoted knowledge.
+5. Remove Work Documents that no longer need to remain active after reconciliation.
+
+Git history is the historical record; do not create a parallel archive merely to preserve deleted Work Documents.
+
+### Reconcile Work-Scoped Resources
+
+Creating Work-scoped resources creates an obligation to reconcile them when the Work ends.
 
 ```yaml
 completion_state:
-  removed: "the resource is no longer needed and was removed through normal, scoped cleanup"
-  intentionally_retained: "the resource is still needed for a concrete follow-up; report the resource and reason"
-rule: "Unowned or unexplained residual resources are not an acceptable completion state."
+  removed: "resource is no longer needed and was removed through normal scoped cleanup"
+  intentionally_retained: "resource remains for a concrete follow-up and its owner/reason is reported"
+rule: "unowned or unexplained residual Work-scoped resources are not an acceptable completion state"
 ```
 
-Shared resources and persistent data are not task-cleanup targets merely because a task used them. Destructive cleanup remains governed by the purge rules below.
+Project-scoped shared resources are not cleanup targets merely because a Work used them. Run-scoped state should disappear with its execution unless retained for diagnosis.
 
-### No Worktree Was Created
+### Git Worktree Removal
 
-When the task used the current or Primary Checkout:
+For each Git worktree being removed:
 
-- do not run worktree cleanup;
-- preserve the task branch according to project policy;
-- reconcile every task-scoped runtime resource that was actually created;
-- remove resources that are no longer needed, or report intentionally retained resources and why they remain;
-- return the checkout to the expected branch only when the project workflow requires it.
-
-### Normal Worktree Removal
-
-When a Task Worktree was created, normal removal must:
-
-1. resolve the selected worktree deterministically;
-2. verify it belongs to the intended Component Repository;
+1. resolve it from the Work Identity and repository deterministically;
+2. verify it belongs to the intended repository;
 3. refuse uncommitted changes;
-4. warn or refuse when commits are not preserved according to project policy;
-5. stop and remove task-scoped runtime resources;
+4. warn/refuse when commits are not preserved according to project policy;
+5. stop/remove Work-scoped runtime resources owned by that repository surface;
 6. remove the Git worktree without force;
 7. prune stale metadata only when appropriate;
-8. report what remains, including the branch;
-9. report any intentionally retained task-scoped resources and why they remain.
+8. keep branch deletion as a separate decision.
+
+### Work Root Completion
+
+After all participating repository work, validation, Work Document reconciliation, and Work-scoped cleanup are complete:
+
+- remove the now-empty Work Root;
+- keep canonical promoted knowledge in `documents/`;
+- rely on Git history for the former Work Documents;
+- report any intentionally retained external Work-scoped resources.
 
 ### Destructive Purge
 
-A purge may discard work or persistent state. It must be a separate explicit operation and must report its scope before or immediately after execution according to the project's confirmation policy.
+A purge may discard work or persistent state. It must be a separate explicit operation with a narrow declared scope.
 
 Never combine branch deletion, worktree force removal, database deletion, and shared-cache deletion into one vague cleanup operation.
-
-Cleanup is complete only when every task-scoped resource is removed or intentionally retained with a stated reason. Unexpected residual resources must be reported rather than ignored.
 
 ## 6. Diagnosis and Recovery
 
@@ -251,7 +270,7 @@ When an environment operation fails, inspect in this order:
 
 Recovery rules:
 
-- Prefer scoped recreation of task resources over global host cleanup.
+- Prefer scoped recreation of Work resources over global host cleanup.
 - Preserve source changes before rebuilding or deleting state.
 - Do not use force removal until the ordinary failure is understood.
 - Do not run global Docker prune or broad filesystem deletion as an initial diagnostic step.
@@ -267,7 +286,7 @@ L0_observational:
   action: "proceed"
 
 L1_local_additive:
-  examples: ["new non-destructive target", "new diagnostic script", "task-scoped container config"]
+  examples: ["new non-destructive target", "new diagnostic script", "Work-scoped container config"]
   action: "proceed and report"
 
 L2_structural:
@@ -300,6 +319,6 @@ should_re_read:
 no_re_read_needed:
   - "routine use of established commands"
   - "choosing the current checkout for an ordinary single-writer task"
-  - "ordinary Task Worktree creation after an actual isolation trigger is established"
+  - "ordinary Git worktree creation after an actual isolation trigger is established"
   - "small internal script fix behind an unchanged command contract"
 ```
