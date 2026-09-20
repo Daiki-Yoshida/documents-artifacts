@@ -5,7 +5,7 @@ document_type: "source_rationale_log"
 target_audience: "human_readers"
 language: "japanese"
 authority: "non_canonical_experiment_record"
-status: "artifactization_source"
+status: "artifactized_reference"
 related_design: "WORK_IDENTITY_DESIGN_JP.md"
 test_repository: "Daiki-Yoshida/test-git-track"
 tested_environment:
