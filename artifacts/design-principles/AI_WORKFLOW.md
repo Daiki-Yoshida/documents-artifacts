@@ -48,6 +48,7 @@ Before drafting contracts, run these checks (criteria are owned elsewhere — li
 5.  **Dependency Spread**: Introduce/spread an external dependency? Local, or will many modules depend on it? Does it touch Domain/Core language? Wrap with port/adapter/anti-corruption? Acceptable because it stays in UI/Infrastructure? (See `CODING_STANDARDS.md` → External Dependency Boundary Policy.)
 6.  **Mapping**: Is a conversion crossing a boundary? Which boundary owns it? Is Domain being made aware of an outer DTO/ViewModel/DB model? Inline or extract? (See `CODING_STANDARDS.md` → Mapping & Conversion Policy.)
 7.  **Accuracy vs Speed**: Module shell / foundation → prioritize correctness. Private/internal behind a stable shell → prioritize simplicity & speed. (See `DESIGN_PHILOSOPHY.md` → Module Shell vs Internal Implementation.)
+8.  **Load-Bearing Performance**: Is there an explicit latency/throughput/memory/work/backpressure requirement? If an existing contract is involved, is there measurement or a defensible structural bound showing the interaction shape itself is the limiter after implementation-only optimization is considered? Do not redesign from speculation. (See `DESIGN_PHILOSOPHY.md` → Performance vs. Abstraction Policy; rules: `CODING_STANDARDS.md` → Performance-Shaped Contracts.)
 
 > Weigh findings by **Mistake Prevention Priority** (`DESIGN_PHILOSOPHY.md`): responsibility mixing, contract breakage, and dependency spread outrank over-engineering.
 
@@ -98,6 +99,9 @@ Before drafting contracts, run these checks (criteria are owned elsewhere — li
 3.  **Boundary / Paradigm Check**:
     *   Did I accidentally expose an internal detail (e.g., returning a mutable internal list)?
     *   Did I maintain the boundary stability, ownership, and consistency responsibilities?
+4.  **Performance Requirement Check (when applicable)**:
+    *   If a load-bearing performance requirement shaped the contract, does representative measurement or an equivalent deterministic bound check show that the required budget is met?
+    *   Did I expose only necessary interaction semantics rather than internal optimization mechanics?
 
 ---
 
