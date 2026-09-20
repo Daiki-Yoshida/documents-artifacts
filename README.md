@@ -2,7 +2,7 @@
 
 Public canonical repository for reusable engineering guidance intended primarily for CLI coding agents.
 
-The repository owns the authoritative artifact modules, their human-facing Japanese documentation, and the small distribution tool used to copy selected modules into development projects.
+The repository owns the authoritative artifact modules, non-canonical human-facing Japanese companion/source-log material, and the small distribution tool used to copy selected modules into development projects.
 
 ## Source-of-truth model
 
@@ -10,7 +10,7 @@ The repository owns the authoritative artifact modules, their human-facing Japan
 GitHub: Daiki-Yoshida/documents-artifacts
         │
         ├─ artifacts/      authoritative AI-facing guidance
-        ├─ docs-jp/        human-facing Japanese documentation
+        ├─ docs-jp/        non-canonical Japanese companion / source logs
         └─ artifacts.sh    explicit install/update/remove tool
                 │
                 ▼
@@ -48,7 +48,7 @@ Modules share one Git repository so cross-cutting changes can be reviewed togeth
 
 The authoritative AI-facing artifacts are currently written in English. This is a pragmatic convention for consistency with code, technical terminology, and common model training material; it is not a claim that English is universally superior for every model or task.
 
-Human-facing Japanese material lives under `docs-jp/`. When the two differ, the files under `artifacts/` are authoritative.
+Human-facing Japanese material lives under `docs-jp/`. It may include current companion explanations as well as historical source/rationale logs. It is never authoritative: when any Japanese material differs from `artifacts/`, the files under `artifacts/` win.
 
 ## Repository layout
 
