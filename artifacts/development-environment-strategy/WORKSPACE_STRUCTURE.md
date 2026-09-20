@@ -4,7 +4,7 @@
 document_type: "workspace_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.2.0"
+strategy_version: "1.3.0"
 scope: "repository topology, Work Roots, checkouts, Work Documents placement, and top-level environment layout"
 ```
 
@@ -208,6 +208,7 @@ insufficient_reason:
 - One writable checkout is owned by one writing agent at a time.
 - The selected repository/worktree path must propagate to build, test, format, logs, and generated-output operations.
 - Parallel Works must receive distinct mutable state where sharing would alter results.
+- A Work Root repository worktree must satisfy the Worktree Materialization Contract in §8.
 - Removing a worktree must not implicitly delete its branch.
 
 ## 7. Recommended Top-Level Layout
@@ -246,11 +247,72 @@ The Project Repository:
 
 Each repository owns its own source, tests, history, caches, build outputs, and tool-specific ignores.
 
-### Recursive materialization invariant
+### Tracking ownership and materialization are separate
 
-When the Project Repository itself also participates as a Git worktree under a Work Root, that nested worktree MUST NOT recursively materialize the Project-level `.worktrees/` tree inside itself.
+The Project Repository may track:
 
-The mechanism is implementation-specific (for example, worktree-specific sparse checkout or an equivalent checkout exclusion), and must be verified before relying on it. Preserve this invariant rather than changing the Work Root model to avoid the problem.
+```text
+.worktrees/<work-type>/<work-name>/documents/**
+```
+
+while sibling repository worktree directories remain ignored as ordinary Project Repository files.
+
+A compatible ignore boundary is:
+
+```gitignore
+.worktrees/*/*/*
+!.worktrees/*/*/documents/
+!.worktrees/*/*/documents/**
+```
+
+This controls **tracking ownership only**. It does not stop Git from checking out tracked Work Documents inside another worktree.
+
+### Worktree Materialization Contract
+
+When a participating repository's branch tree contains the Project-level tracked `.worktrees/**` coordination state — notably when the Project Repository itself participates as a linked worktree — that worktree MUST NOT materialize the Project-level `.worktrees/` tree inside itself.
+
+For such worktrees, the standard materialization semantics are:
+
+```text
+ordinary tracked repository content
+    → materialize
+
+Project-level .worktrees/
+    → keep tracked in Git history/index as applicable, but exclude from this worktree filesystem
+```
+
+Use worktree-local non-cone sparse checkout with:
+
+```text
+/*
+!/.worktrees/
+```
+
+Non-cone exclusion is intentional: it means "materialize everything except Project-level `.worktrees/`" and does not require maintaining an allow-list of future top-level repository directories.
+
+If an independent Component Repository does not track the Project-level `.worktrees/**` state, this sparse exclusion is not required solely by this contract. Do not hide an unrelated tracked `.worktrees/` path in another repository by assumption.
+
+### Creation and recreation invariant
+
+For a repository whose branch contains the Project-level tracked `.worktrees/**` state, create the Work Root worktree without first materializing the full tracked tree:
+
+```bash
+git worktree add --no-checkout <worktree-path> <work-branch>
+
+git -C <worktree-path> \
+  sparse-checkout set --no-cone '/*' '!/.worktrees/'
+
+git -C <worktree-path> \
+  reset --hard HEAD
+```
+
+The worktree-local sparse state is owned by the linked worktree's Git administrative directory and is removed with that worktree. Therefore every recreation MUST repeat the sparse configuration before materialization.
+
+Do not use plain `git worktree add` for a Work Root worktree when the selected branch contains tracked Project-level `.worktrees/` content; it transiently materializes the forbidden recursive tree before sparse exclusion can be applied.
+
+The project-owned creation helper should determine whether this materialization contract applies so routine callers do not need to reason about the low-level Git distinction.
+
+A project using this contract MUST support a Git version where worktree-local sparse checkout is verified to behave correctly. The generic strategy does not mandate one universal Git version; project bootstrap/doctor logic should verify compatibility for supported versions.
 
 ## 9. Multi-Repository Coordination and Resource Identity
 

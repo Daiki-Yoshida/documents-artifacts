@@ -4,7 +4,7 @@
 document_type: "environment_standards"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.2.0"
+strategy_version: "1.3.0"
 scope: "host boundary, Docker, command interface, Git safety, validation, and CI parity"
 ```
 
@@ -105,7 +105,7 @@ ownership_rule: "Run-scoped state remains subordinate to its Work Identity; exec
 - Share immutable or safely reusable dependency caches when this improves speed without cross-Work corruption.
 - Isolate mutable state that can alter test or runtime results when multiple checkouts run concurrently.
 - Name volumes so ownership and deletion scope are clear.
-- Removing a worktree must not silently remove shared caches used by other tasks.
+- Removing a worktree must not silently remove shared caches used by other Works.
 
 ### Ports and Networks
 
@@ -183,6 +183,19 @@ prohibited_pattern: "an ambiguous short name whose target or destructive effect 
 - Pruning stale Git metadata must not be treated as permission to delete live directories.
 - Push, force-push, branch deletion, and history rewriting remain explicit operations.
 
+### Work Root Worktree Materialization Support
+
+Projects that create repository worktrees under Work Roots must:
+
+- encode Work Root worktree creation in a project-owned helper/command rather than requiring operators to remember low-level Git setup;
+- detect/know whether the selected repository branch contains tracked Project-level `.worktrees/**` coordination state;
+- when it does, support and verify a Git version whose linked worktrees can use worktree-local sparse checkout without changing Primary Checkout materialization;
+- for that case, create with `--no-checkout`, apply the Project-level `.worktrees/` exclusion, then materialize the branch;
+- reapply that materialization setup whenever such a linked worktree is recreated;
+- expose diagnosis sufficient to verify the selected branch, worktree Git dir/common dir, sparse configuration, and absence of nested Project-level `.worktrees/`.
+
+Do not apply Project-level `.worktrees/` sparse exclusion to an independent repository merely because its worktree happens to live under the Work Root. A plain `git worktree add` is specifically insufficient when the selected repository branch itself tracks the Project-level Work Documents/coordination tree.
+
 ## 5. Destructive Operations
 
 ```yaml
@@ -214,7 +227,7 @@ validation: "run the canonical completion gate"
 ```
 
 - Diagnostics must not print secrets.
-- Diagnostic output should identify the selected checkout and, when applicable, the worktree and container namespace.
+- Diagnostic output should identify the selected checkout and, when applicable, the worktree and container namespace. For Work Root worktrees, it should also make sparse/materialization state inspectable.
 - Validation should start with the narrowest useful checks during implementation and finish with the canonical gate before completion is reported.
 - Do not claim completion when the canonical gate fails or was not runnable; report the limitation and evidence.
 
