@@ -187,13 +187,14 @@ prohibited_pattern: "an ambiguous short name whose target or destructive effect 
 
 Projects that create repository worktrees under Work Roots must:
 
-- support and verify a Git version whose linked worktrees can use worktree-local sparse checkout without changing Primary Checkout materialization;
-- encode Work Root worktree creation in a project-owned helper/command rather than requiring operators to remember the low-level multi-step sequence;
-- create the linked worktree with `--no-checkout`, apply the Project-level `.worktrees/` exclusion, then materialize the branch;
-- reapply that materialization setup whenever the linked worktree is recreated;
+- encode Work Root worktree creation in a project-owned helper/command rather than requiring operators to remember low-level Git setup;
+- detect/know whether the selected repository branch contains tracked Project-level `.worktrees/**` coordination state;
+- when it does, support and verify a Git version whose linked worktrees can use worktree-local sparse checkout without changing Primary Checkout materialization;
+- for that case, create with `--no-checkout`, apply the Project-level `.worktrees/` exclusion, then materialize the branch;
+- reapply that materialization setup whenever such a linked worktree is recreated;
 - expose diagnosis sufficient to verify the selected branch, worktree Git dir/common dir, sparse configuration, and absence of nested Project-level `.worktrees/`.
 
-A plain `git worktree add` is not equivalent to the Work Root creation contract when the repository tracks Project-level Work Documents.
+Do not apply Project-level `.worktrees/` sparse exclusion to an independent repository merely because its worktree happens to live under the Work Root. A plain `git worktree add` is specifically insufficient when the selected repository branch itself tracks the Project-level Work Documents/coordination tree.
 
 ## 5. Destructive Operations
 
