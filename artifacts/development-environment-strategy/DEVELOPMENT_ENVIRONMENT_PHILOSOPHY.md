@@ -4,7 +4,7 @@
 document_type: "development_environment_philosophy"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.1.1"
+strategy_version: "1.2.0"
 ```
 
 ## Development Environment Contract
@@ -17,7 +17,7 @@ contract:
   toolchain: "which tools belong on the host and which belong in the project execution environment"
   command_interface: "the stable operations available to humans, AI agents, and CI"
   state_lifecycle: "how environment state is created, inspected, reused, cleaned, and recovered"
-  isolation: "how projects, tasks, branches, and parallel agents avoid interfering with each other"
+  isolation: "how projects, Work Identities, branches, and parallel agents avoid interfering with each other"
   safety: "which operations are non-destructive, destructive, or require confirmation"
 ```
 
@@ -54,62 +54,103 @@ The host is not the project runtime by default. It controls the runtime.
 
 This separation reduces host mutation, version conflicts, accidental privilege expansion, and differences between developers or AI agents.
 
+## Work Identity
+
+A **Work Identity** is the semantic identity of one concrete development goal once that goal is specific enough to implement.
+
+```yaml
+work_identity:
+  meaning: "what development outcome this work exists to achieve"
+  owns:
+    - "work-scoped ownership"
+    - "resource identity"
+    - "lifecycle"
+establishment:
+  timing: "after the goal is concrete and before implementation begins"
+  confirmation: "the user explicitly confirms the Work Identity; an agent may propose the name"
+```
+
+Do not create a Work Identity for every discussion, command, test run, or exploratory thought. Establish it when work crosses from design/discussion into implementation.
+
+A Work Identity is intentionally above its tool representations:
+
+```text
+Goal
+  ↓
+Work Identity
+  ├─ Git branch / optional worktree
+  ├─ mutable runtime and test state
+  ├─ logs and generated work outputs
+  └─ Work Documents
+```
+
+Git is strongly preferred for normal software development, but it does not define the Work Identity. When Git is available, a work branch should deterministically represent the Work Identity according to project naming conventions. A Git-less environment may still use the same Work Identity and lifecycle model.
+
+Typical semantic form:
+
+```text
+<work-type>/<work-name>
+```
+
+Examples include `feat/pathfinding`, `fix/login-timeout`, and `refactor/payment-boundary`. The exact branch syntax remains project-owned.
+
 ## Workspace Topology Concepts
 
 ```yaml
 workspace_repository:
-  meaning: "the repository that owns development tooling, workspace coordination, environment documents, and optional worktree management"
+  meaning: "the repository that owns development tooling, workspace coordination, environment documents, and multi-component coordination when such a separate repository is useful"
 component_repository:
   meaning: "an independent repository that owns product code and its product history"
+project_repository:
+  meaning: "the top-level repository whose project root owns .worktrees/ and the Work Documents stored there; it may also be the only product repository"
 primary_checkout:
-  meaning: "the stable default checkout of a component repository; it may be used for one active writing task when project policy permits"
-task_worktree:
-  meaning: "an additional temporary checkout created only when parallel writing or explicit isolation is needed"
+  meaning: "the stable default checkout of a repository; it may host one active Work when project policy permits"
+work_root:
+  meaning: ".worktrees/<work-type>/<work-name>/; the filesystem workspace owned by one Work Identity"
+git_worktree:
+  meaning: "an optional repository checkout under a Work Root, used when a separate writable checkout is justified"
 ```
 
-A Workspace Repository and Component Repository may have completely separate Git histories. This is a workspace relationship, not necessarily a Git submodule relationship.
-
-A single-repository project may use the same principles without creating a separate Workspace Repository. Do not add repository layers without a real coordination or isolation need.
+A Workspace Repository and Component Repository may have separate Git histories. A single-repository project uses the same Work Root shape without inventing a different workflow.
 
 ## Checkout Selection Rule
 
-Worktree support is a capability, not a mandatory step for every task.
+A Work Identity does **not** imply that a Git worktree must exist.
 
 ```yaml
 default:
-  checkout: "use the currently assigned checkout on an appropriate task branch"
-  condition: "one writing task is active and no separate checkout or runtime isolation is needed"
-create_task_worktree_when:
-  - "two or more writing tasks or agents must operate on the same Component Repository concurrently"
+  checkout: "use the currently assigned or Primary Checkout on the Work's branch when Git is available"
+  condition: "one active writing Work exists for that repository and no separate checkout or mutable-runtime isolation is needed"
+create_git_worktree_when:
+  - "multiple writing Works or agents must operate on the same repository concurrently"
   - "another branch must remain checked out at a stable path"
   - "the user or project workflow explicitly requests a worktree"
-  - "the task needs an independently disposable checkout and mutable runtime state"
-do_not_create_task_worktree_when:
-  - "only one writing task is active"
-  - "the current checkout can safely switch to or already uses the task branch"
+  - "the Work needs an independently disposable checkout and mutable runtime state"
+do_not_create_git_worktree_when:
+  - "only one writing Work is active"
+  - "the current checkout can safely use the Work's branch"
   - "the only reason is that .worktrees/ exists or worktree commands are available"
 ```
 
-Agents must choose the least complex checkout mode that satisfies safety and isolation requirements. Creating unnecessary worktrees adds state, cleanup cost, and opportunities for selecting the wrong checkout.
+Choose the least complex checkout mode that satisfies safety and isolation. Work Identity is the ownership boundary; a Git worktree is only one possible execution surface.
 
 ## Parallel-Agent Isolation
 
-When parallel writing or explicit task isolation is active, separate branches alone are insufficient.
+When parallel writing or explicit Work isolation is active, a branch alone may be insufficient.
 
 ```yaml
-isolate_per_parallel_task:
-  - "branch"
-  - "working directory"
+isolate_per_parallel_work_when_needed:
+  - "writable checkout"
   - "container namespace"
   - "network and host-port allocation"
-  - "mutable volumes when state must not be shared"
+  - "mutable volumes or databases"
   - "logs and generated outputs"
 rule: "one writable checkout is owned by one writing agent at a time"
 ```
 
 Shared read-only caches may be reused when safe. Mutable project state must not be shared merely for convenience.
 
-When a Task Worktree is used, task, branch, worktree, container namespace, and logs should be traceable through a common stable identity.
+When separate surfaces are created, branch, worktree, runtime resources, logs, outputs, and Work Documents must remain deterministically traceable to the same Work Identity.
 
 ## Explicit Operations
 
@@ -150,7 +191,7 @@ examples_of_policy:
   - "destructive commands are explicit and narrowly scoped"
   - "diagnostic commands are easy to discover"
   - "the final validation path is canonical and documented"
-  - "cleanup affects only resources owned by the selected project or task"
+  - "cleanup affects only resources owned by the selected project or Work Identity"
 ```
 
 Do not solve safety by forcing repeated manual steps that agents will bypass. Encode safety into the command interface and resource identity.
@@ -169,25 +210,27 @@ governs:
 does_not_govern:
   - "application code architecture"
   - "domain module boundaries"
-  - "documents/ routing and versioning"
+  - "project-document content and routing semantics; those belong to documentation-strategy"
   - "issue triage and pull-request approval policy"
   - "release governance and team permissions"
 ```
 
-Code quality inside scripts is evaluated by `design-principles`. Placement and invocation of those scripts are evaluated by this strategy. Documentation under `documents/` is evaluated by `documentation-strategy`.
+Code quality inside scripts is evaluated by `design-principles`. Placement and invocation of those scripts are evaluated by this strategy. Documentation content is evaluated by `documentation-strategy`; this strategy owns the Work Identity, Work Root placement, and environment lifecycle around Work Documents.
 
 ## Common Misreadings
 
 ```yaml
 misreadings:
-  - "Docker-first != every operation must run in Docker; host control-plane operations may stay on the host"
-  - "minimal host != a universal fixed allowlist; classify tools by responsibility"
-  - "worktree support != create a worktree for every task; use it only for parallelism or explicit isolation"
-  - "one writable checkout per agent != every agent needs a separate checkout when only one writing task exists"
-  - "Workspace Repository != Git parent repository or mandatory submodule"
-  - "Primary Checkout != default branch only; it may host ordinary single-agent task-branch work when project policy permits"
+  - "Work Identity != conversation index, command run, or arbitrary tool identifier; it represents a concrete development goal"
+  - "Work Identity != Git branch; Git branches normally represent Work Identities when Git is available"
+  - "Work Identity != create every resource again; isolate only mutable state that actually requires separation"
+  - "worktree support != create a Git worktree for every Work; use it only for parallelism or explicit isolation"
+  - ".worktrees/ != only a Git worktree bucket; it is the Project Repository's Work Identity workspace"
+  - "one writable checkout per agent != every agent always needs a separate checkout"
+  - "Workspace Repository != mandatory extra repository or Git submodule"
+  - "Primary Checkout != default branch only; it may host ordinary single-writer Work when policy permits"
   - "resource isolation != duplicate every cache; immutable or safely shareable caches may be shared"
-  - "explicit names != mechanically prefix every command; add scope when meaning or side effects would otherwise be unclear"
+  - "Docker-first != every operation must run in Docker; host control-plane operations may stay on the host"
   - "reproducibility != never update; updates must be intentional and reviewable"
   - "safety != slow workflow; safe paths should be the shortest paths"
 ```
