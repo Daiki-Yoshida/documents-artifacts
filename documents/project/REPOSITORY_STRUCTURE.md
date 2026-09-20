@@ -11,8 +11,9 @@ artifacts:
 
 docs_jp:
   path: "docs-jp/<module>/"
-  authority: "human-facing companion"
+  authority: "non-canonical human-facing companion and source/rationale logs"
   audience: "Japanese-speaking maintainers and users"
+  precedence: "artifacts/ always wins on conflict"
   distribution: "not copied by artifacts.sh"
 
 repository_docs:
@@ -23,6 +24,8 @@ repository_docs:
 ```
 
 ## Module boundary
+
+`artifacts/` is the only normative guidance scope. `docs-jp/` may explain current guidance or preserve historical reasoning, but it never overrides `artifacts/`.
 
 A module is an independently adoptable guidance set. Modules share this Git repository so cross-module consistency changes can be reviewed atomically, but target projects choose modules independently.
 
