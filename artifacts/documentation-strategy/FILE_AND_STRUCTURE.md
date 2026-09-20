@@ -4,8 +4,8 @@
 document_type: "file_and_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "2.4.0"
-scope: "file roles, directory layout, managed-guidance ownership, versioning, git conventions, hierarchy"
+strategy_version: "2.5.0"
+scope: "file roles, canonical and Work Document layout, managed-guidance ownership, versioning, git conventions, hierarchy"
 ```
 
 ```yaml
@@ -22,7 +22,8 @@ ownership_split:
 
 ```yaml
 project_root:
-  documents: "AI-facing root: project-owned documentation plus optional distributor-managed guidance under documents/artifacts/"
+  documents: "AI-facing canonical Project Documents plus optional distributor-managed guidance under documents/artifacts/"
+  work_documents: ".worktrees/<work-type>/<work-name>/documents/ — AI-facing documentation for one active Work Identity, when Work Identity is used"
   docs-jp: "Human-facing documentation (Japanese, for project owners and developers)"
   CLAUDE_md: "Claude Code entry point (project root)"
   AGENTS_md: "Devin / Codex entry point (project root)"
@@ -64,6 +65,26 @@ Managed artifact files may be committed as a snapshot in the target project's Gi
 That records what was installed; it does not transfer content ownership to the target project's
 documentation workflow.
 
+### Work Documents — Active Work Scope
+
+When the project uses Work Identity, the documentation area for one active Work is:
+
+```text
+.worktrees/<work-type>/<work-name>/documents/
+```
+
+```yaml
+owner: "target project; Git-tracked by the Project Repository that owns the Project Root"
+purpose: "design, investigation, decisions, verification, migration context, and other durable context needed while that Work is active"
+canonicality: "not canonical Project state; authoritative only for the active Work's context"
+project_index: "do not register Work Documents in documents/INDEX.md"
+versioning: "do not require project-document semantic version / last_updated_commit metadata; Git history records the active-work document evolution"
+completion: "reconcile durable knowledge into canonical documents/, then remove Work Documents that no longer need to remain active"
+placement_owner: "development-environment-strategy owns the .worktrees/ topology and Git/worktree boundary"
+```
+
+Do not create fixed filenames merely to satisfy a template. Split Work Documents by concern when that improves routing, and keep enough context to prevent design/verification meaning from degrading.
+
 ### docs-jp/ — Human-Facing
 
 ```yaml
@@ -84,16 +105,16 @@ content_examples:
 ### documents/INDEX.md (Required)
 
 ```yaml
-purpose: "Routing hub + version registry for project-owned documents"
+purpose: "Routing hub + version registry for canonical project-owned documents under documents/"
 placement: "documents/INDEX.md"
 required: true
 content:
-  - "Document inventory: every project-owned document under documents/ with its purpose"
+  - "Document inventory: every canonical project-owned document under documents/ with its purpose"
   - "Routing map: which project-owned document to read for which task"
   - "Version registry: each project-owned document's version + last-updated git commit/state"
   - "Cross-reference map: which project-owned documents link to which"
   - "Optional entry-point links to installed documents/artifacts/<module>/INDEX.md files when the project uses those modules"
-exclusion: "Do NOT enumerate or version-register the files inside documents/artifacts/. Each managed artifact module owns its internal routing and metadata."
+exclusion: "Do NOT enumerate/version-register files inside documents/artifacts/ or active Work Documents under .worktrees/**/documents/. Managed artifacts route internally; Work Documents route by Work Identity."
 versioning: "INDEX.md has its own version (index_version). Bump it when the project-owned inventory or routing changes. See §4."
 ```
 
@@ -124,6 +145,25 @@ design_rule: |
   The entry file is a template created by the AI agent during setup; the user customizes it thereafter (adding rules like 'no sudo', 'commit after every change', etc.).
 when_to_create: "One file per AI tool the project actually uses. Do not create files for unused tools (YAGNI)."
 ```
+
+### Work Documents (.worktrees/<work-type>/<work-name>/documents/)
+
+```yaml
+purpose: "AI-facing, Work Identity-scoped documentation for active development"
+placement: ".worktrees/<work-type>/<work-name>/documents/"
+owner: "target project / active Work Identity"
+content_examples:
+  - "design being implemented"
+  - "investigation findings needed by the active Work"
+  - "decisions and rejected alternatives when needed to prevent re-analysis"
+  - "verification plan/results that remain relevant to completion"
+  - "migration or cross-repository coordination context"
+routing: "the Work Root itself identifies the active Work; documents/INDEX.md does not inventory these files"
+git: "tracked by the Project Repository main/default coordination state"
+lifecycle: "active Work -> reconciliation -> durable knowledge promoted to canonical Project Documents -> Work Documents removed when no longer active"
+```
+
+Work Documents are not raw output dumps. Large generated logs/results should remain in appropriate Work-scoped runtime/output locations unless a curated document is needed for reasoning or verification.
 
 ### Managed Artifact Guidance (documents/artifacts/)
 
@@ -243,10 +283,14 @@ path_note: "Paths are relative to the file containing the link. From documents/I
 
 ## 4. Document Versioning System
 
-Every **project-owned** document governed by this strategy has a version and tracks
-the git commit/state it was last updated or reviewed against. This includes
-`documents/INDEX.md` itself. Files under `documents/artifacts/` are explicitly excluded:
-they retain metadata and versions owned by their canonical artifact source.
+The semantic version + reflected Git state system applies to **canonical project-owned documents under `documents/`**.
+
+It does not apply to:
+
+- distributor-managed guidance under `documents/artifacts/`;
+- active Work Documents under `.worktrees/<work-type>/<work-name>/documents/`.
+
+Work Documents are intentionally shorter-lived and already scoped by Work Identity; Git history records their evolution. When knowledge is promoted into canonical Project Documents, the destination document follows the normal canonical versioning workflow.
 
 ### Version Format
 
@@ -438,7 +482,7 @@ boundary than placing the files directly under `documents/project/` or
 
 ```yaml
 default_placement:
-  project_level: "documents/project/ — context the agent needs for every task"
+  project_level: "documents/project/ — canonical project-level context the agent needs during development"
   reference_level: "documents/reference/ — material the agent reads on demand"
 
 signals_that_support_a_topic_directory:
@@ -545,12 +589,12 @@ note: "Managed artifact files do not create per-file project-registry conflicts 
 
 ## How These Interlock
 
-```yaml
-entry_file_routes: "agent.md routes to documents/INDEX.md and, when useful, directly to installed documents/artifacts/<module>/INDEX.md files"
-index_routes: "documents/INDEX.md routes project-owned docs; managed module INDEX files route their own artifact content"
-version_registry: "documents/INDEX.md tracks project-owned documents only; managed artifact metadata stays artifact-owned"
-cross_references: "Documents link using relative paths from the referencing file"
-hierarchy: "Parent and child each have independent project-owned document trees; coordination via parent's children.md"
-deletion: "Removing a project-owned document requires fixing references + updating INDEX.md; managed artifact removal uses its distributor"
-one_idea: "Keep routing and ownership aligned: project INDEX owns project docs, artifact INDEX owns managed guidance, and Git records both snapshots without conflating their maintenance rules."
+```text
+Work Identity active
+    ↓
+.worktrees/<identity>/documents/      # active Work knowledge; Git-tracked, no canonical doc-version registry
+    ↓ reconcile at completion
+documents/...                         # canonical project knowledge; normal routing/versioning applies
 ```
+
+Managed artifact guidance remains a separate ownership zone under `documents/artifacts/`.
