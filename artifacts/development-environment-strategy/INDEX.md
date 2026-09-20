@@ -9,18 +9,18 @@ role: "entry point for the exported development-environment guidance"
 strategy_version: "1.2.0"
 ```
 
-Read this file first. Load only the documents required by the current task.
+Read this file first. Load only the documents required by the current request.
 
 ## Read Order
 
 ```yaml
-1_philosophy: "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md" # WHY: safety, reproducibility, isolation, checkout selection
-2_standards:  "ENVIRONMENT_STANDARDS.md"             # HOW: host, Docker, commands, Git safety, CI parity
-3_structure:  "WORKSPACE_STRUCTURE.md"               # WHERE: repositories, checkouts, optional worktrees, layout
-4_workflow:   "ENVIRONMENT_WORKFLOW.md"               # FLOW: setup, checkout choice, validation, cleanup, recovery
+1_philosophy: "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md" # WHY: environment contract, Work Identity, safety, isolation
+2_standards:  "ENVIRONMENT_STANDARDS.md"             # HOW: host, Docker, resource scope, commands, Git safety, CI
+3_structure:  "WORKSPACE_STRUCTURE.md"               # WHERE: Project Root, Work Root, repositories, Work Documents, worktrees
+4_workflow:   "ENVIRONMENT_WORKFLOW.md"               # FLOW: establish Work, implement, validate, reconcile, clean, recover
 ```
 
-On first contact, read 1 -> 2 -> 3 -> 4. For a focused task, use Quick Task Routing.
+On first contact, read 1 -> 2 -> 3 -> 4. For a focused request, use Quick Routing.
 
 ## Foundational Lens
 
@@ -50,7 +50,9 @@ never_sufficient_alone:
   - "a Work Identity exists"
 ```
 
-`.wo## Ownership Map
+`.worktrees/` is the Project Repository's Work Identity workspace, not merely a bucket of Git worktrees.
+
+## Ownership Map
 
 Each concept has one authoritative document. Link instead of duplicating.
 
@@ -68,7 +70,8 @@ ENVIRONMENT_STANDARDS.md:
   owns:
     - "Host dependency policy"
     - "Project / Work / Run resource scope"
-    - "Work-scoped Docker/runtime identity, reuse, UID/GID, caches, ports, secrets"
+    - "Work-scoped Docker/runtime identity and resource reuse"
+    - "UID/GID, caches, ports, secrets, generated files"
     - "Makefile, public command interface, and scripts responsibility"
     - "Git operation safety"
     - "Destructive-operation rules"
@@ -76,7 +79,7 @@ ENVIRONMENT_STANDARDS.md:
 
 WORKSPACE_STRUCTURE.md:
   owns:
-    - "Project Root, Project/Workspace/Component Repository placement"
+    - "Project Root and Project/Workspace/Component Repository placement"
     - "Work Root: .worktrees/<type>/<name>/"
     - "Uniform single-/multi-repository shape"
     - "Work Documents placement and Git ownership boundary"
@@ -99,10 +102,10 @@ ENVIRONMENT_WORKFLOW.md:
 ## Quick Routing
 
 ```yaml
-"understanding Work Identity":                  "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Work Identity)"
-"starting implementation work":                 "ENVIRONMENT_WORKFLOW.md (Work Identity Lifecycle)"
-"naming or locating a Work Root":               "WORKSPACE_STRUCTURE.md (Work Root)"
-"working with Work Documents":                  "WORKSPACE_STRUCTURE.md (Work Documents Placement and Ownership) + ENVIRONMENT_WORKFLOW.md (Work Completion and Cleanup)"
+"understanding Work Identity":                   "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Work Identity)"
+"starting implementation work":                  "ENVIRONMENT_WORKFLOW.md (Work Identity Lifecycle)"
+"naming or locating a Work Root":                "WORKSPACE_STRUCTURE.md (Work Root)"
+"working with Work Documents":                   "WORKSPACE_STRUCTURE.md (Work Documents Placement and Ownership) + ENVIRONMENT_WORKFLOW.md (Work Completion and Cleanup)"
 "choosing host-installed tools":                 "ENVIRONMENT_STANDARDS.md (Host Dependency Boundary)"
 "adding Docker or Compose":                      "ENVIRONMENT_STANDARDS.md (Docker Standards)"
 "naming containers, networks, or volumes":       "ENVIRONMENT_STANDARDS.md (Resource Identity / Resource Scope)"
@@ -125,9 +128,9 @@ ENVIRONMENT_WORKFLOW.md:
 design_principles:
   owns: "code architecture, module contracts, implementation, and testing strategy"
 documentation_strategy:
-  owns: "documents/ structure, routing, versioning, and maintenance"
+  owns: "canonical Project Document and active Work Document content semantics, routing, versioning, and reconciliation"
 development_environment_strategy:
-  owns: "workspace topology, development tools, execution paths, optional Git worktrees, and environment lifecycle"
+  owns: "Work Identity, Work Root/worktree topology, development tools, resource lifecycle, and execution paths"
 ```
 
-For mixed tasks, apply each artifact set to its own domain. Do not use development-environment rules to redesign application modules, and do not use code-layout rules to decide repository/worktree topology.
+For mixed requests, apply each artifact set only to the domain it owns. In particular, Work Document **placement and lifecycle boundary** come from this strategy; Work Document **content/reconciliation semantics** come from documentation-strategy.
