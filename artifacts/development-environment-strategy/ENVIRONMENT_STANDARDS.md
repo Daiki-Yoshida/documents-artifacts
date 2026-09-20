@@ -4,7 +4,7 @@
 document_type: "environment_standards"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.1.1"
+strategy_version: "1.2.0"
 scope: "host boundary, Docker, command interface, Git safety, validation, and CI parity"
 ```
 
@@ -50,12 +50,12 @@ Rules:
 
 ### Resource Identity
 
-Every resource must be attributable to a project and, when relevant, a task or worktree.
+Every resource must be attributable to a project and, when its lifecycle is narrower, to a Work Identity.
 
 ```yaml
 identity_components:
   required: ["workspace or project slug", "resource role"]
-  conditional: ["environment", "component", "task/worktree identity"]
+  conditional: ["environment", "component/repository", "work identity"]
 properties:
   - "deterministic"
   - "human-readable"
@@ -63,17 +63,33 @@ properties:
   - "usable for scoped cleanup and diagnosis"
 ```
 
-- Avoid generic names that reveal only a role, such as an unscoped `web`, `api`, or `database`.
-- Avoid random names when a stable project/task identity is available.
-- Use a task-specific Compose project name only when parallel or explicitly isolated checkouts may run simultaneously.
-- Apply the same identity to containers, networks, mutable volumes, logs, and temporary output locations where practical.
+- Prefer meaningful Work Identity over random or execution-count identifiers.
+- A subsystem may normalize the formatted string for Docker, filesystem, database, or provider constraints, but the mapping back to the Work Identity must be deterministic.
+- Apply the Work Identity to containers, networks, mutable volumes, test state, logs, and generated work outputs when those resources are actually Work-scoped.
+
+### Resource Scope
+
+Classify state by lifecycle before deciding whether to duplicate it.
+
+```yaml
+project_scoped:
+  meaning: "safe to share across Works and longer-lived than one Work"
+  examples: ["shared images", "immutable dependency caches", "SDK/tool caches", "safely reusable read-only state"]
+work_scoped:
+  meaning: "owned by one Work Identity"
+  examples: ["work branch", "optional worktree", "isolated mutable runtime", "test database/state", "logs", "Work Documents", "generated work outputs"]
+run_scoped:
+  meaning: "owned by one execution inside a Work"
+  examples: ["one test process", "temporary file", "single command output"]
+ownership_rule: "Run-scoped state remains subordinate to its Work Identity; execution count does not create a new Work."
+```
 
 ### Resource Creation and Reuse
 
-- A task, branch, or worktree identity does not by itself require a separate image, container, network, or volume.
-- Reuse project- or component-scoped images and safe caches when their build inputs are equivalent.
+- A Work Identity, branch, or worktree does not by itself require a separate image, container, network, volume, database, or cache.
+- Reuse project- or component-scoped images and safe caches when their inputs and mutation behavior make sharing correct.
 - Create separate runtime resources only when concurrent execution, mutable-state isolation, differing configuration, or explicit project policy makes sharing unsafe or incorrect.
-- Do not rebuild or retag an image only because the selected checkout, branch, task, or worktree changed; rebuild when image build inputs or the required toolchain changed.
+- Do not rebuild or retag an image merely because the selected Work, branch, checkout, or worktree changed; rebuild when image inputs or required toolchains changed.
 - Allocate only the narrowest separate resource set required by the actual isolation need.
 
 ### Files, Ownership, and Mounts
@@ -86,17 +102,17 @@ properties:
 
 ### Caches and Volumes
 
-- Share immutable or safely reusable dependency caches when this improves speed without cross-task corruption.
+- Share immutable or safely reusable dependency caches when this improves speed without cross-Work corruption.
 - Isolate mutable state that can alter test or runtime results when multiple checkouts run concurrently.
 - Name volumes so ownership and deletion scope are clear.
-- Removing a task worktree must not silently remove shared caches used by other tasks.
+- Removing a worktree must not silently remove shared caches used by other tasks.
 
 ### Ports and Networks
 
 - Parallel checkouts must not claim the same fixed host ports without an allocation rule.
 - Prefer internal container networking when host exposure is unnecessary.
-- When host ports are required, derive or configure them explicitly per isolated task.
-- A cleanup command must affect only the selected project's or task's network resources.
+- When host ports are required, derive or configure them explicitly per isolated Work.
+- A cleanup command must affect only the selected project's or Work's network resources.
 
 ### Secrets
 
@@ -151,13 +167,15 @@ prohibited_pattern: "an ambiguous short name whose target or destructive effect 
 
 ## 4. Git Operation Safety
 
-- Keep the default branch stable. Ordinary feature implementation should occur on a task branch.
-- A task branch does not require a Task Worktree. Use the currently assigned checkout when only one writing task is active and no separate isolation is needed.
-- Create a Task Worktree only for concurrent writing, an explicitly requested stable secondary checkout, or another documented isolation need.
-- Do not create a worktree merely because `.worktrees/` exists or worktree commands are available.
+- Establish and explicitly confirm the Work Identity before implementation begins.
+- When Git is available, ordinary implementation should use a branch that deterministically represents the Work Identity according to project naming conventions.
+- Keep the default branch stable for implementation code; Work Documents are the deliberate exception described by the Work Root model.
+- A Work branch does not require a Git worktree. Use the current or Primary Checkout when one writing Work is active and no separate isolation is needed.
+- Create a Git worktree only for concurrent writing, a required stable secondary checkout, an independently disposable runtime, or another documented isolation need.
+- Do not create a worktree merely because `.worktrees/` exists or helper commands are available.
 - One writable checkout maps to one writing agent at a time.
-- Verify the selected repository and checkout before mutation; verify the worktree as well when one is used.
-- Do not operate on repositories outside the declared workspace scope.
+- Verify the selected repository, Work Identity, branch, and checkout before mutation; verify the worktree path as well when one is used.
+- Do not operate on repositories outside the declared project/workspace scope.
 - Normal worktree removal must refuse dirty worktrees.
 - Check for unpushed or otherwise unpreserved commits before removal when the workflow can determine this reliably.
 - Force removal belongs to an explicitly destructive command; never hide `--force` behind the normal remove operation.
@@ -181,7 +199,7 @@ destructive:
 ```
 
 - Do not place broad host commands such as global Docker pruning in the ordinary project lifecycle.
-- A project cleanup command must select resources by deterministic project/task identity.
+- A project cleanup command must select resources by deterministic project/Work Identity.
 - Database reset, volume removal, worktree force removal, and remote deployment destruction must not share a vague `clean` target.
 
 ## 6. Diagnostics and Validation
@@ -191,12 +209,12 @@ A project environment should expose operations equivalent to:
 ```yaml
 discovery: "list available operations and required parameters"
 diagnosis: "report tool versions, selected repository/checkout, containers, ports, mounts, and common configuration failures"
-status: "show current project/task resources without mutation"
+status: "show current project/Work resources without mutation"
 validation: "run the canonical completion gate"
 ```
 
 - Diagnostics must not print secrets.
-- Diagnostic output should identify the selected checkout and, when applicable, the task worktree and container namespace.
+- Diagnostic output should identify the selected checkout and, when applicable, the worktree and container namespace.
 - Validation should start with the narrowest useful checks during implementation and finish with the canonical gate before completion is reported.
 - Do not claim completion when the canonical gate fails or was not runnable; report the limitation and evidence.
 
