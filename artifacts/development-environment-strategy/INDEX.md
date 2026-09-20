@@ -6,7 +6,7 @@ target_audience: "ai_agents"
 optimization: "token_efficiency"
 language: "english"
 role: "entry point for the exported development-environment guidance"
-strategy_version: "1.1.1"
+strategy_version: "1.2.0"
 ```
 
 Read this file first. Load only the documents required by the current task.
@@ -25,100 +25,98 @@ On first contact, read 1 -> 2 -> 3 -> 4. For a focused task, use Quick Task Rout
 ## Foundational Lens
 
 ```yaml
-core_idea: "A development environment is a contract: topology, toolchain, command interface, state lifecycle, isolation, and safety."
+core_idea: "A development environment is a contract whose active development unit is a Work Identity: one concrete goal, one ownership/lifecycle boundary."
 priority: "host/data safety > reproducibility > isolation > parallel operability > explicit operations > diagnosability > local/CI parity > efficiency"
 primary_pattern: "host as control plane; containers as project execution plane"
-checkout_default: "use the currently assigned checkout for one writing task; create a Task Worktree only for parallelism or explicit isolation"
-scope: "development workspace, repository topology, execution tooling, and environment lifecycle"
+work_identity: "confirm <work-type>/<work-name> after the goal is concrete and before implementation"
+git_relation: "Git is preferred; branches/worktrees represent a Work Identity but do not define it"
+work_root: ".worktrees/<work-type>/<work-name>/"
+scope: "development workspace, repository topology, Work Identity, execution tooling, and environment lifecycle"
 ```
 
-## Absolute Worktree Selection Rule
+## Worktree Selection Rule
 
 ```yaml
-rule: "Worktree support is optional capability, not a mandatory per-task step."
-default: "one writing task -> current or Primary Checkout on a task branch"
+rule: "A Work Identity does not require a Git worktree."
+default: "one writing Work -> current or Primary Checkout on the Work branch when Git is available"
 worktree_triggers:
-  - "concurrent writing tasks or agents on the same Component Repository"
+  - "concurrent writable Works/agents on the same repository"
   - "another branch must remain checked out at a stable path"
-  - "explicit user or project requirement"
-  - "independently disposable checkout and mutable runtime state are required"
+  - "explicit user/project requirement"
+  - "independently disposable checkout and mutable runtime are required"
 never_sufficient_alone:
   - ".worktrees/ exists"
   - "worktree helper commands exist"
-  - "the task has a TASK_ID"
+  - "a Work Identity exists"
 ```
 
-This rule overrides wording that could otherwise be read as requiring a Task Worktree for ordinary single-agent work.
-
-## Ownership Map
+`.wo## Ownership Map
 
 Each concept has one authoritative document. Link instead of duplicating.
 
 ```yaml
 DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md:
   owns:
-    - "Development Environment Contract"
-    - "Priority order"
-    - "Host control plane and container execution plane"
-    - "Checkout selection rationale"
-    - "Workspace Repository, Component Repository, Primary Checkout, and Task Worktree concepts"
+    - "Development Environment Contract and priority order"
+    - "Host control plane / container execution plane"
+    - "Work Identity WHY, definition, confirmation timing, and Git relationship"
+    - "Checkout/worktree selection rationale"
     - "Parallel-agent isolation rationale"
     - "Scope boundary and common misreadings"
 
 ENVIRONMENT_STANDARDS.md:
   owns:
     - "Host dependency policy"
-    - "Docker resource naming and isolation"
-    - "UID/GID, caches, ports, secrets, and generated files"
+    - "Project / Work / Run resource scope"
+    - "Work-scoped Docker/runtime identity, reuse, UID/GID, caches, ports, secrets"
     - "Makefile, public command interface, and scripts responsibility"
-    - "Command naming and destructive-operation rules"
     - "Git operation safety"
-    - "Local and CI execution parity"
-    - "Diagnostics and canonical validation requirements"
+    - "Destructive-operation rules"
+    - "Local/CI parity, diagnostics, canonical validation"
 
 WORKSPACE_STRUCTURE.md:
   owns:
-    - "Workspace Repository and Component Repository placement"
-    - "Primary Checkout and optional Task Worktree placement"
-    - "Checkout selection conditions"
-    - ".worktrees/ structure and naming"
-    - "Top-level development-environment directories"
-    - "Git tracking and ignore boundaries"
-    - "Multi-component workspaces"
-    - "Workspace-to-component tool-version dependency"
-    - "Identity propagation across isolated Git, Docker, logs, and outputs"
+    - "Project Root, Project/Workspace/Component Repository placement"
+    - "Work Root: .worktrees/<type>/<name>/"
+    - "Uniform single-/multi-repository shape"
+    - "Work Documents placement and Git ownership boundary"
+    - "Repository-specific Work Identity derivation"
+    - "Git worktree placement and recursive-materialization invariant"
+    - "Multi-repository coordination and identity propagation"
 
 ENVIRONMENT_WORKFLOW.md:
   owns:
-    - "New-project setup"
-    - "Brownfield adoption"
-    - "Checkout mode selection"
-    - "Optional Task Worktree creation and assignment"
-    - "Implementation-time and final validation flow"
-    - "Integration and conditional cleanup flow"
-    - "Diagnosis and recovery"
-    - "Environment Confirmation Gate"
-    - "Re-read triggers"
+    - "New-project and brownfield adoption"
+    - "Work Identity establishment and explicit confirmation"
+    - "Work Root / Work Documents creation"
+    - "Checkout and optional Git worktree lifecycle"
+    - "Implementation-time/final validation"
+    - "Multi-repository integration semantics"
+    - "Work Documents reconciliation and Work completion"
+    - "Scoped cleanup, diagnosis, recovery, and confirmation gate"
 ```
 
-## Quick Task Routing
+## Quick Routing
 
 ```yaml
+"understanding Work Identity":                  "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Work Identity)"
+"starting implementation work":                 "ENVIRONMENT_WORKFLOW.md (Work Identity Lifecycle)"
+"naming or locating a Work Root":               "WORKSPACE_STRUCTURE.md (Work Root)"
+"working with Work Documents":                  "WORKSPACE_STRUCTURE.md (Work Documents Placement and Ownership) + ENVIRONMENT_WORKFLOW.md (Work Completion and Cleanup)"
 "choosing host-installed tools":                 "ENVIRONMENT_STANDARDS.md (Host Dependency Boundary)"
 "adding Docker or Compose":                      "ENVIRONMENT_STANDARDS.md (Docker Standards)"
-"naming containers, networks, or volumes":       "ENVIRONMENT_STANDARDS.md (Resource Identity)"
+"naming containers, networks, or volumes":       "ENVIRONMENT_STANDARDS.md (Resource Identity / Resource Scope)"
 "designing Make targets or scripts":             "ENVIRONMENT_STANDARDS.md (Command Interface)"
 "deciding whether to create a worktree":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Checkout Selection Rule) + ENVIRONMENT_WORKFLOW.md"
-"adding or changing Git worktree support":       "WORKSPACE_STRUCTURE.md (Task Worktrees) + ENVIRONMENT_WORKFLOW.md"
+"adding or changing Git worktree support":       "WORKSPACE_STRUCTURE.md (Repository Worktrees and Identity) + ENVIRONMENT_WORKFLOW.md"
 "organizing parent and child repositories":      "WORKSPACE_STRUCTURE.md (Repository Topology)"
-"supporting several component repositories":     "WORKSPACE_STRUCTURE.md (Multi-Component Workspace)"
-"running several AI agents in parallel":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Parallel Isolation) + WORKSPACE_STRUCTURE.md"
-"making local and CI behavior match":            "ENVIRONMENT_STANDARDS.md (Local/CI Parity)"
-"adding a destructive cleanup command":          "ENVIRONMENT_STANDARDS.md (Destructive Operations) + ENVIRONMENT_WORKFLOW.md (Confirmation Gate)"
+"supporting several component repositories":     "WORKSPACE_STRUCTURE.md (Multi-Repository Coordination and Resource Identity)"
+"running several AI agents in parallel":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Parallel-Agent Isolation) + WORKSPACE_STRUCTURE.md"
+"making local and CI behavior match":            "ENVIRONMENT_STANDARDS.md (Local and CI Parity)"
+"adding a destructive cleanup command":          "ENVIRONMENT_STANDARDS.md (Destructive Operations) + ENVIRONMENT_WORKFLOW.md"
 "setting up a new project":                      "ENVIRONMENT_WORKFLOW.md (New Project Setup)"
 "adopting this in an existing project":          "ENVIRONMENT_WORKFLOW.md (Brownfield Adoption)"
 "diagnosing a broken environment":               "ENVIRONMENT_WORKFLOW.md (Diagnosis and Recovery)"
-"deciding whether a change needs confirmation":  "ENVIRONMENT_WORKFLOW.md (Environment Confirmation Gate)"
 ```
 
 ## Relationship to Sibling Artifact Sets
