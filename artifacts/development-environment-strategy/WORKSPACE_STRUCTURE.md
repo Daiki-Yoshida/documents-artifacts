@@ -279,7 +279,7 @@ propagate_to_when_work_scoped:
 
 Formatting may vary by subsystem, but the mapping must remain deterministic and diagnosable.
 
-## 9. Workspace-to-Component Tool Dependency
+## 10. Workspace-to-Component Tool Dependency
 
 A Component Repository may rely on tools stored in a separate Workspace Repository.
 
@@ -298,7 +298,7 @@ rule: "CI and release validation must not accidentally consume an unspecified wo
 
 Record the selected mode in project documentation or CI configuration. Local convenience may use the current workspace checkout, while formal validation may require a fixed ref.
 
-## 10. Cross-Artifact Boundaries
+## 11. Cross-Artifact Boundaries
 
 ```yaml
 development_environment_strategy:
