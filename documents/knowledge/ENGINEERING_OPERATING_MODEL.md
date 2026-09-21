@@ -206,7 +206,42 @@ Target projects should own:
 
 Reusable knowledge owns the general model and invariants.
 
-## 13. Reporting Discipline
+## 13. Agent Operational Defaults
+
+For AI coding-agent work, the legacy reusable guidance defines these defaults unless more specific user/project rules override them:
+
+```yaml
+reporting:
+  final_report: "use the user's language"
+  content: "state what changed, why, and any impact on a public contract"
+
+testing:
+  when: "run relevant tests after implementation and before declaring completion"
+  gate: "contract evidence and requested-outcome evidence must support the completion claim"
+  scope: "start with the narrowest meaningful validation and widen as the boundary requires"
+
+version_control:
+  commit: "do not commit or push unless the user asks"
+  branch: "if committing while on the default branch, create/use an appropriate non-default branch first"
+  confirmation: "after changes and the final report, ask whether to commit when commit intent has not already been provided"
+
+clarification:
+  rule: "if user intent or a load-bearing contract is genuinely unclear, resolve the ambiguity before implementing the uncertain effect"
+```
+
+Specific agent platforms or projects may override these operational defaults.
+
+### Approach questions
+
+When a user asks how to approach a design problem rather than asking directly for implementation:
+
+1. explain materially different approaches;
+2. compare relevant trade-offs such as complexity, performance, maintainability, compatibility, and risk;
+3. recommend an approach based on the applicable engineering principles.
+
+Do not jump straight to code when the user's actual need is decision support.
+
+## 14. Reporting Discipline
 
 When work changes a meaningful contract or structure, report:
 
@@ -218,7 +253,7 @@ When work changes a meaningful contract or structure, report:
 
 Do not bury important behavioral changes inside implementation detail.
 
-## 14. Common Misreadings
+## 15. Common Misreadings
 
 - "one semantic owner" does not mean a term may appear only once; it means only one location defines its meaning.
 - "accuracy first" does not mean load everything; it means route without deleting necessary information.
