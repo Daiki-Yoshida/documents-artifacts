@@ -325,21 +325,26 @@ artifacts/
 
 This separation allows future canonical rewrites without erasing the reasoning/history that produced them.
 
-# 5. Knowledge Intentionally Reframed
+# 5. Centralization Without Semantic Relaxation
 
-Some legacy rules remain semantically valid but are intentionally less rigid in canonical form.
+The canonical rewrite may centralize duplicated rules, but it must not silently weaken them.
 
-| Legacy form | Canonical interpretation |
+Examples:
+
+| Legacy distribution | Canonical handling |
 |---|---|
-| exact documentation commit description language | project-owned convention; semantic categories retained |
-| mandatory per-document version metadata as universal template | provenance/versioning is a project policy/tool; semantics preserved without forcing one registry everywhere |
-| module-local confirmation gates | one cross-cutting confirmation model with domain specializations |
-| repeated brownfield policies | one shared brownfield rule plus domain specialization |
-| repeated SSOT rules | one semantic-owner principle plus domain-specific ownership |
-| repeated validation rules | one shared evidence model plus code/execution specializations |
-| Work Documents split between environment and documentation modules | one complete Work Lifecycle owner; Project Knowledge owns only accepted-project-document structure after reconciliation |
+| confirmation gates repeated per domain | one cross-cutting confirmation model plus domain specializations; severity/effect semantics preserved |
+| brownfield policies repeated per domain | one shared brownfield rule plus code/document/environment specializations |
+| SSOT language repeated in design/documentation | one semantic-owner principle plus domain-specific ownership |
+| validation rules repeated across design/environment | one shared evidence model plus code/execution specializations |
+| Work Documents split between environment and documentation modules | one complete Work Lifecycle owner; Project Knowledge owns accepted Project Document structure after reconciliation |
+| Project Document semantic version/hash registry | preserved as required for canonical project-owned documents |
+| documentation commit convention | preserved: English Conventional Commit prefix + Japanese description |
+| Work Identity confirmation | preserved: explicit user confirmation before implementation |
 
-These are consolidations, not deletions.
+The migration intentionally changes **where a rule lives**, not what the rule requires.
+
+The only removed premises are explicitly classified as `legacy_packaging_only` or `derived_only`: legacy module selection, legacy WHY/HOW/WHERE/FLOW partitioning, and publication/read-order mechanics.
 
 # 6. Coverage Checklist
 
