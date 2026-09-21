@@ -1,76 +1,84 @@
 # documents-artifacts
 
-Canonical repository for reusable engineering knowledge and the AI-facing guidance derived from it.
+再利用可能なengineering knowledgeと、そこから生成・編集されるAI向けartifactを管理するrepository。
 
-The repository separates **semantic knowledge ownership** from **artifact publication/distribution** so the artifact layout can be redesigned without changing engineering meaning.
+このrepositoryでは、**情報の完全性を守る第1情報源**と、**AI利用効率を優先する第2情報源**を分離する。
 
-## Source-of-truth model
-
-```text
-GitHub: Daiki-Yoshida/documents-artifacts
-        │
-        ├─ documents/
-        │  ├─ knowledge/    canonical reusable engineering knowledge
-        │  └─ project/      documentation about this repository itself
-        │
-        ├─ artifacts/       derived AI-facing projection (legacy projection during migration)
-        ├─ docs-jp/         non-canonical human/rationale/experiment material
-        └─ artifacts.sh     current legacy projection sync tool
-                │
-                ▼
-Target project
-└─ documents/
-   └─ artifacts/            installed derived snapshot
-```
-
-### Authority
+## 情報源モデル
 
 ```text
+第0情報源
+Chat / Issue / 調査 / 実験 / ユーザー・AIからの提言
+        │
+        │ 原文を情報劣化なく記録
+        ▼
 documents/knowledge/
-    ↓ defines reusable semantic meaning
-
+第1情報源・正本
+        │
+        │ 用途に応じて解釈・圧縮・再構成
+        ▼
 artifacts/
-    ↓ projects that meaning for AI consumption
-
-target-project installed artifacts
-    ↓ reproducible snapshot + local routing
+第2情報源・AI向け派生情報
+        │
+        ▼
+target projects
 ```
 
-Rules:
+ファイル化された情報について疑義・矛盾・意味差がある場合、常に `documents/knowledge/` を最優先で確認する。
 
-- `documents/knowledge/` is the canonical source for reusable engineering knowledge.
-- `artifacts/` is derived. Its files, grouping, read order, profiles, or packaging may change without changing canonical meaning.
-- If a future artifact requires a new reusable rule, update the canonical knowledge owner first.
-- Target-project rules are more specific than reusable guidance.
-- `docs-jp/` may preserve rationale, experiments, Japanese explanations, and migration evidence. It does not override canonical knowledge.
-- Git owns history, rollback, comparison, and archival. Do not build a parallel history database.
+knowledgeに含まれる個々の提言・仮説がすべて採用済みという意味ではない。提言、反論、評価、却下、採用、訂正を含む記録全体が正確に保存されていることを信頼する。
 
-## Canonical Knowledge
-
-Start at:
+詳細な根拠は:
 
 ```text
 documents/knowledge/INDEX.md
 ```
 
-Current semantic owners:
+## Repository Layout
 
-| Document | Scope |
-|---|---|
-| `ENGINEERING_OPERATING_MODEL.md` | Cross-cutting authority, safety, confirmation, brownfield, validation, semantic ownership, progressive disclosure |
-| `WORK_LIFECYCLE.md` | Work Identity, Work Root, Work Documents, repositories/branches/worktrees/resources, reconciliation and completion |
-| `CODE_DESIGN.md` | Bounded Contracts, code/module boundaries, architecture, state/dependencies/errors/async, evolution, testing and change process |
-| `DEVELOPMENT_EXECUTION.md` | Host/container boundary, Docker, public commands, runtime resources, secrets, diagnostics, reproducibility and CI |
-| `PROJECT_KNOWLEDGE.md` | Project Documents, routing, agent entry files, provenance/staleness, hierarchy and document maintenance |
-| `TRACEABILITY.md` | Migration map from the legacy artifact files to canonical owners |
+```text
+.
+├─ README.md
+├─ artifacts.sh
+├─ artifacts/                 # 第2情報源。現在はlegacy projection
+├─ docs-jp/                   # legacyの人間向け説明・source log。順次knowledgeへ原文移行対象
+├─ documents/
+│  ├─ INDEX.md
+│  ├─ knowledge/              # 第1情報源。日本語。原文・評価関係を完全保存
+│  └─ project/                # このrepository自体の運用・移行documentation
+└─ tests/
+```
 
-The canonical layer is organized by semantic concept/lifecycle rather than the legacy `design-principles / documentation-strategy / development-environment-strategy` packaging or WHY/HOW/WHERE/FLOW facets.
+## documents/knowledge/
 
-## Current Artifact Migration State
+`documents/knowledge/` は情報における正本であり、第1情報源。
 
-The existing `artifacts/` tree remains intact while the publication layer is redesigned.
+原則:
 
-Legacy directories currently present:
+- 日本語で人間が監査可能にする。
+- 第0情報源から取り込む本文を要約しない。
+- 抜粋・言い換え・都合のよい削除を行わない。
+- 過去の提言や却下案も、評価・時系列とともに保存する。
+- 後続判断で過去recordを書き換えず、新しいrecordを追加する。
+- 第2情報源に疑義があればknowledgeへ戻る。
+
+## artifacts/
+
+`artifacts/` はAI向けの第2情報源。
+
+ここでは第1情報源に基づき、次を優先してよい:
+
+- 現在有効な結論の抽出
+- context圧縮
+- 重複除去
+- AI向け再構成
+- progressive disclosure
+- token消費効率
+- 必要に応じた翻訳
+
+artifactはknowledgeを上書きしない。
+
+現在の:
 
 ```text
 artifacts/
@@ -79,63 +87,51 @@ artifacts/
 └─ development-environment-strategy/
 ```
 
-These directories are **not the new canonical knowledge boundary**.
+および `artifacts.sh --modules` はlegacy互換状態。選択module単位を将来の知識境界とは扱わない。
 
-The previous premise that these directories are independently selectable knowledge modules has been retired for the redesign. The current files remain temporarily because they are deployed in existing projects and provide the baseline from which the new projection will be designed.
+新artifact構造が決まるまで既存projectionを壊さない。
 
-Do not delete or restructure the legacy artifact projection until the new publication/distribution design is explicitly completed.
+## 更新フロー
 
-## Traceability
-
-`documents/knowledge/TRACEABILITY.md` maps all 14 legacy artifact Markdown files and their major concerns to the new semantic owners.
-
-This provides a migration invariant:
+repo更新時は:
 
 ```text
-artifact structure may change
-≠
-engineering knowledge may silently disappear
+第0情報源
+  ↓
+documents/knowledge/
+  ↓
+artifacts/
+  ↓
+target projects
 ```
 
-Detailed historical design/experiment evidence remains in Git and `docs-jp/**/source-logs/`.
-
-## Language Policy
-
-Canonical reusable knowledge is currently written in English for technical consistency and AI use.
-
-Human-facing Japanese material may live under `docs-jp/`.
-
-This is a routing convention, not a claim that one language is inherently better. Preserve the language required for accurate domain meaning.
-
-## Repository Layout
+詳細:
 
 ```text
-.
-├─ README.md
-├─ artifacts.sh
-├─ artifacts/                 # current derived/legacy AI projection
-├─ docs-jp/                   # human/rationale/experiment material
-├─ documents/
-│  ├─ INDEX.md
-│  ├─ knowledge/              # canonical reusable knowledge
-│  └─ project/                # this repository's local documentation
-└─ tests/
+documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
 ```
 
-## Legacy Distribution During Migration
+新しいreusable knowledgeをartifactだけへ直接追加しない。
 
-`artifacts.sh` still implements the existing selective-module sync contract.
+artifactの誤りを見つけた場合はまずknowledgeを確認する。knowledgeに訂正が必要なら、その訂正根拠となる第0情報源を新しいrecordとして保存してから派生物を更新する。
 
-That behavior is maintained temporarily for compatibility with projects that already consume the legacy projection. It is **not** the intended knowledge architecture going forward.
+## 移行状態
 
-Until the publication redesign is complete:
+現行artifactからの意味保存監査で作成した再構成候補は:
 
-- existing projects may continue syncing the legacy projection;
-- do not interpret `--modules` choices as canonical knowledge boundaries;
-- do not add new semantic rules only inside legacy artifacts;
-- canonical changes begin under `documents/knowledge/`, then are reflected into whatever artifact projection is currently supported.
+```text
+documents/project/migration/semantic-preservation-candidate/
+```
 
-Current commands remain available for the legacy projection:
+へ退避済み。
+
+これらは監査成果物であり、第1情報源ではない。
+
+今後は、既存の `docs-jp/**/source-logs/`、現行artifactを生んだ議論・Issue・実験結果などを、利用可能な原文単位で `documents/knowledge/` へ移行する。
+
+## Legacy Distribution
+
+現在の `artifacts.sh` は既存project互換のため残している。
 
 ```bash
 ./artifacts.sh
@@ -143,25 +139,13 @@ Current commands remain available for the legacy projection:
 ./artifacts.sh --target /path/to/project --modules all --non-interactive
 ```
 
-The future distribution interface will be redesigned separately.
-
-## Agent Integration
-
-This repository does not impose one universal `AGENTS.md`, `CLAUDE.md`, or equivalent file on target projects.
-
-Target-project entry files should remain small and route to:
-
-1. project-specific canonical knowledge;
-2. the relevant installed reusable guidance projection;
-3. additional detail only when needed.
+このinterface自体も将来のartifact再設計時に見直す。
 
 ## Validation
 
-Legacy distribution validation remains:
+legacy distribution validation:
 
 ```bash
 bash -n artifacts.sh
 bash tests/test-artifacts.sh
 ```
-
-Future canonical/artifact projection validation will be added as the publication redesign is implemented.
