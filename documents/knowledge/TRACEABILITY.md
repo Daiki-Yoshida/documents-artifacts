@@ -206,3 +206,182 @@ PROJECT_KNOWLEDGE.md:
 | Quick task routing | future derived artifact/publication routing | derived_only |
 | "read all three on first contact" | none | legacy_packaging_only |
 | documentation-strategy as selectable adoption module | none | legacy_packaging_only |
+
+
+# 3. Legacy development-environment-strategy
+
+## `development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+| Legacy concern | Canonical owner | Status |
+|---|---|---|
+| Development environment contract / priority order | `DEVELOPMENT_EXECUTION.md` §§1–2 | preserved |
+| Host control plane / container execution plane | `DEVELOPMENT_EXECUTION.md` §3 | preserved |
+| Work Identity definition / establishment / Git relation | `WORK_LIFECYCLE.md` §§1–2 | centralized |
+| Workspace topology concepts | `WORK_LIFECYCLE.md` §§3–4 | centralized |
+| Checkout selection rule | `WORK_LIFECYCLE.md` §6 | centralized |
+| Parallel-agent isolation / one writable owner | `WORK_LIFECYCLE.md` §10 | centralized |
+| Explicit operation semantics | `DEVELOPMENT_EXECUTION.md` §9 and `ENGINEERING_OPERATING_MODEL.md` §§4–7 | centralized |
+| Reproducibility | `DEVELOPMENT_EXECUTION.md` §15 | preserved |
+| Safety without friction | `ENGINEERING_OPERATING_MODEL.md` §5 | centralized |
+| Environment scope boundary | represented by canonical owner boundaries | centralized |
+| Common misreadings | relevant canonical owner sections | preserved |
+
+## `development-environment-strategy/ENVIRONMENT_STANDARDS.md`
+
+| Legacy concern | Canonical owner | Status |
+|---|---|---|
+| Host dependency boundary | `DEVELOPMENT_EXECUTION.md` §3 | preserved |
+| Docker-first execution | `DEVELOPMENT_EXECUTION.md` §4 | preserved |
+| Resource identity | `DEVELOPMENT_EXECUTION.md` §5 | preserved |
+| Project/Work/Run resource scope | `WORK_LIFECYCLE.md` §9 | centralized |
+| Resource creation/reuse | `WORK_LIFECYCLE.md` §10 + runtime specialization in `DEVELOPMENT_EXECUTION.md` §6 | centralized |
+| Files/ownership/mounts | `DEVELOPMENT_EXECUTION.md` §7 | preserved |
+| Caches/volumes/ports/networks | `DEVELOPMENT_EXECUTION.md` §7 | preserved |
+| Secrets | `DEVELOPMENT_EXECUTION.md` §8 | preserved |
+| Public command interface / Makefile / scripts / naming | `DEVELOPMENT_EXECUTION.md` §9 | preserved |
+| Worktree public command contract | `WORK_LIFECYCLE.md` §11 | centralized |
+| Git operation safety | `DEVELOPMENT_EXECUTION.md` §10 + Work-specific rules in `WORK_LIFECYCLE.md` | centralized |
+| Worktree materialization support | `WORK_LIFECYCLE.md` §13 | centralized |
+| Destructive operations | `ENGINEERING_OPERATING_MODEL.md` §§5,7 + execution specialization in `DEVELOPMENT_EXECUTION.md` §11 | centralized |
+| Diagnostics/final validation | `DEVELOPMENT_EXECUTION.md` §§12–13 + shared validation model in `ENGINEERING_OPERATING_MODEL.md` §9 | centralized |
+| Local/CI parity | `DEVELOPMENT_EXECUTION.md` §14 | preserved |
+
+## `development-environment-strategy/WORKSPACE_STRUCTURE.md`
+
+| Legacy concern | Canonical owner | Status |
+|---|---|---|
+| Workspace/Project/Component repository concepts | `WORK_LIFECYCLE.md` §4 | centralized |
+| Project Root / Primary Checkout | `WORK_LIFECYCLE.md` §§3–4 | centralized |
+| Work Root | `WORK_LIFECYCLE.md` §3 | centralized |
+| Uniform single-/multi-repository shape | `WORK_LIFECYCLE.md` §3 | preserved |
+| Work Documents placement / Git ownership | `WORK_LIFECYCLE.md` §7 | centralized |
+| Repository selector / deterministic branch mapping | `WORK_LIFECYCLE.md` §5 | centralized |
+| Checkout selection / worktree invariants | `WORK_LIFECYCLE.md` §§6,10–11 | centralized |
+| Recommended top-level Work layout | `WORK_LIFECYCLE.md` §3 | preserved semantically |
+| Git tracking vs materialization boundary | `WORK_LIFECYCLE.md` §§7,13 | centralized |
+| Worktree Materialization Contract / recreation | `WORK_LIFECYCLE.md` §13 | centralized |
+| Multi-repository coordination / resource identity | `WORK_LIFECYCLE.md` §§4–5,9–10,14 | centralized |
+| Workspace-to-component tool dependency | `DEVELOPMENT_EXECUTION.md` §§5,15 and project-specific mappings | preserved at general level |
+| Cross-artifact boundary explanation | none | legacy_packaging_only |
+
+## `development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
+
+| Legacy concern | Canonical owner | Status |
+|---|---|---|
+| New project setup / bootstrap | `DEVELOPMENT_EXECUTION.md` §16 + Work setup in `WORK_LIFECYCLE.md` §14 | centralized |
+| Brownfield environment adoption | `DEVELOPMENT_EXECUTION.md` §17 + shared brownfield rule in `ENGINEERING_OPERATING_MODEL.md` §8 | centralized |
+| Establish Work Identity | `WORK_LIFECYCLE.md` §§1,14 | centralized |
+| Checkout selection / repository preparation | `WORK_LIFECYCLE.md` §§5–6,11–13 | centralized |
+| Worktree preflight / materialization / rollback / postconditions | `WORK_LIFECYCLE.md` §§11–13 | centralized |
+| Implementation and validation | Work lifecycle in `WORK_LIFECYCLE.md` §14; validation principle in `ENGINEERING_OPERATING_MODEL.md` §9 | centralized |
+| Preserve before integration | `WORK_LIFECYCLE.md` §14 | preserved |
+| Multi-repository integration | `WORK_LIFECYCLE.md` §14 | centralized |
+| Work completion / Work Document reconciliation | `WORK_LIFECYCLE.md` §§8,14–15 | centralized |
+| Work-scoped resource reconciliation | `WORK_LIFECYCLE.md` §§9–10,15 | centralized |
+| Worktree removal / Work Root completion | `WORK_LIFECYCLE.md` §§11,14–15 | centralized |
+| Destructive purge | `WORK_LIFECYCLE.md` §16 + shared safety model | centralized |
+| Diagnosis/recovery | `DEVELOPMENT_EXECUTION.md` §18 | preserved |
+| Environment confirmation gate | `ENGINEERING_OPERATING_MODEL.md` §7 + `DEVELOPMENT_EXECUTION.md` §19 | centralized |
+| Re-read triggers | future derived routing; canonical owners identify relevant concepts | derived_only |
+
+## `development-environment-strategy/INDEX.md`
+
+| Legacy concern | Canonical owner | Status |
+|---|---|---|
+| Environment foundational lens | `DEVELOPMENT_EXECUTION.md` §§1–4 and `WORK_LIFECYCLE.md` §§1–3 | centralized |
+| Worktree selection summary | `WORK_LIFECYCLE.md` §6 | centralized |
+| Legacy WHY/HOW/WHERE/FLOW read order | none | legacy_packaging_only |
+| Legacy ownership map | concept ownership in `documents/knowledge/INDEX.md` | centralized |
+| Quick task routing | future derived artifact/publication routing | derived_only |
+| Relationship to sibling artifact sets | none | legacy_packaging_only |
+| "read all four on first contact" | none | legacy_packaging_only |
+| development-environment-strategy as selectable adoption module | none | legacy_packaging_only |
+
+# 4. Source Logs, Experiments, and Implementation Evidence
+
+The detailed Japanese source/rationale and experiment logs under `docs-jp/` are **not collapsed into canonical rules**.
+
+They retain evidence such as:
+
+- why Work Identity was introduced;
+- alternative designs considered;
+- Git materialization experiments;
+- exact tested environments and commit evidence;
+- reference helper implementation validation;
+- failure observations and later fixes.
+
+Canonical knowledge incorporates the accepted semantic result. Historical evidence remains evidence.
+
+```text
+docs-jp/.../source-logs/
+  → rationale / experiment / proof
+
+documents/knowledge/
+  → accepted reusable semantic knowledge
+
+artifacts/
+  → derived AI delivery projection
+```
+
+This separation allows future canonical rewrites without erasing the reasoning/history that produced them.
+
+# 5. Knowledge Intentionally Reframed
+
+Some legacy rules remain semantically valid but are intentionally less rigid in canonical form.
+
+| Legacy form | Canonical interpretation |
+|---|---|
+| exact documentation commit description language | project-owned convention; semantic categories retained |
+| mandatory per-document version metadata as universal template | provenance/versioning is a project policy/tool; semantics preserved without forcing one registry everywhere |
+| module-local confirmation gates | one cross-cutting confirmation model with domain specializations |
+| repeated brownfield policies | one shared brownfield rule plus domain specialization |
+| repeated SSOT rules | one semantic-owner principle plus domain-specific ownership |
+| repeated validation rules | one shared evidence model plus code/execution specializations |
+| Work Documents split between environment and documentation modules | one complete Work Lifecycle owner; Project Knowledge owns only accepted-project-document structure after reconciliation |
+
+These are consolidations, not deletions.
+
+# 6. Coverage Checklist
+
+Legacy artifact files accounted for:
+
+```yaml
+design_principles:
+  - "DESIGN_PHILOSOPHY.md"
+  - "CODING_STANDARDS.md"
+  - "PROJECT_STRUCTURE.md"
+  - "AI_WORKFLOW.md"
+  - "INDEX.md"
+
+documentation_strategy:
+  - "DOCUMENTATION_PHILOSOPHY.md"
+  - "FILE_AND_STRUCTURE.md"
+  - "DOCUMENT_WORKFLOW.md"
+  - "INDEX.md"
+
+development_environment_strategy:
+  - "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md"
+  - "ENVIRONMENT_STANDARDS.md"
+  - "WORKSPACE_STRUCTURE.md"
+  - "ENVIRONMENT_WORKFLOW.md"
+  - "INDEX.md"
+```
+
+Total legacy artifact files mapped: **14 / 14**.
+
+# 7. Next Migration Boundary
+
+This traceability establishes the semantic source layer only.
+
+It does **not** decide the future artifact publication shape.
+
+The next phase may redesign `artifacts/` around:
+
+- a very small always-on core;
+- concept-oriented references;
+- task/playbook-oriented projections;
+- generated or manually curated AI profiles;
+- a single non-selectable delivery set;
+- another progressive-disclosure structure.
+
+Whatever publication model is selected, it should be evaluated against the canonical knowledge here rather than against the legacy module/file layout.
