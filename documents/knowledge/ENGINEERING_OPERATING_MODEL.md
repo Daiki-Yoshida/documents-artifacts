@@ -212,6 +212,7 @@ For AI coding-agent work, the legacy reusable guidance defines these defaults un
 
 ```yaml
 reporting:
+  thinking_and_interim: "English"
   final_report: "use the user's language"
   content: "state what changed, why, and any impact on a public contract"
 
@@ -226,7 +227,7 @@ version_control:
   confirmation: "after changes and the final report, ask whether to commit when commit intent has not already been provided"
 
 clarification:
-  rule: "if user intent or a load-bearing contract is genuinely unclear, resolve the ambiguity before implementing the uncertain effect"
+  rule: "if intent or the contract is unclear, stop and ask before implementing the uncertain effect"
 ```
 
 Specific agent platforms or projects may override these operational defaults.
