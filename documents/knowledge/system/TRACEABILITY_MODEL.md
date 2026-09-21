@@ -60,3 +60,8 @@ artifactsはsubjectsだけでなく、必要に応じてrecordsも参照でき�
 ただし通常は整理済みsubjectsを第1入力とし、不明点や細部の検証時にrecordsへ戻る。
 
 artifactから得た要約をsource recordの代わりに使用しない。
+
+## 根拠records
+
+- `../records/2026-09-21-knowledge-record-accuracy/`
+- `../records/2026-09-21-records-subjects-model/`
