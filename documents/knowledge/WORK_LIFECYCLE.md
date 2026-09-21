@@ -120,18 +120,28 @@ project_repository:
 
 workspace_repository:
   meaning: "optional repository owning workspace tooling and coordination when separate from product repositories"
+  normally_owns: ["Docker/Compose definitions", "Makefile/public command wrappers", "environment scripts", "AI-agent environment context", "optional worktree lifecycle tooling", "multi-component coordination"]
+  does_not_own_by_default: ["component product history", "component source code"]
 
 component_repository:
   meaning: "independent repository owning a product/component history"
+  normally_owns: ["product source", "product tests", "component CI/release files", "component Git history"]
 
 primary_checkout:
   meaning: "stable default checkout of a repository; it may host one ordinary Work when isolation is unnecessary"
+  purposes: ["ordinary single-writer Work", "fetch/synchronization", "Git worktree creation", "integration/final inspection"]
 
 participating_repository:
   meaning: "a repository contributing to one Work Identity"
 ```
 
-A project may have only one repository. Do not create repository types that the project does not need.
+Workspace and Component repositories may be separate Git repositories with separate histories. Do not call that relationship a Git submodule unless it actually is one.
+
+A project may have only one repository. A separate Workspace Repository is optional; use one repository when environment tooling and product code share one lifecycle and separate history/coordination is not justified.
+
+When Git is available, implementation normally occurs on a branch representing the confirmed Work Identity rather than directly on a protected/default branch.
+
+Do not create repository types that the project does not need.
 
 ## 5. Repository Selector and Branch Mapping
 
@@ -266,7 +276,9 @@ A compatible Project Repository ignore boundary is:
 !.worktrees/*/*/documents/**
 ```
 
-This ignore boundary controls **tracking ownership**. It does not prevent Git from materializing already-tracked Project-level Work Documents in another linked worktree; that is a separate materialization concern handled by the Worktree Materialization Contract.
+This ignore boundary controls **tracking ownership**. The Project Repository must not ignore the entire `.worktrees/` tree, because Work Documents inside it are intentionally tracked while sibling repository worktrees are not.
+
+It does not prevent Git from materializing already-tracked Project-level Work Documents in another linked worktree; that is a separate materialization concern handled by the Worktree Materialization Contract.
 
 This allows active Work Documents to remain visible from the Project Repository baseline while repository worktrees remain independent.
 
