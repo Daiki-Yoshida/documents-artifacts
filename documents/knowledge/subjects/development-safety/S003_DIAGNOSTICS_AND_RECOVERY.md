@@ -14,7 +14,7 @@ project環境は、次に相当する操作を提供します。
 ```
 
 - 診断でsecretを表示しない。
-- 選択checkoutを表示し、Task Worktree利用時だけworktreeとcontainer namespaceも表示する。
+- 選択repository / checkoutを表示し、Work用のrepository-specific worktreeや分離runtimeを利用する場合は、Work Identity・worktree・runtime namespaceも表示する。
 - 実装中は狭い検証から始め、完了前に最終gateを実行する。
 - 最終gateが失敗・未実行なら完了と報告しない。
 
