@@ -84,3 +84,9 @@ artifacts等の第2情報源
 ```
 
 情報の追加・訂正は上流から行う。
+
+## 根拠records
+
+- `../records/2026-09-21-knowledge-source-model/`
+- `../records/2026-09-21-knowledge-record-accuracy/`
+- `../records/2026-09-21-records-subjects-model/`
