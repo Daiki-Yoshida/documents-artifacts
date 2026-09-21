@@ -1,105 +1,139 @@
 # Repository Structure
 
-This repository separates reusable semantic knowledge, AI publication artifacts, human/rationale material, and repository-local documentation.
+このrepositoryは、第1情報源・repository-local運用文書・第2情報源・legacy source logを分離する。
 
 ```yaml
-canonical_knowledge:
+first_source:
   path: "documents/knowledge/"
-  authority: "canonical reusable engineering meaning"
-  audience: ["AI agents", "human maintainers"]
-  distribution: "not copied directly as a target-project artifact by the current legacy sync tool"
-
-artifact_projection:
-  path: "artifacts/"
-  authority: "derived from canonical knowledge"
-  audience: "AI coding agents"
-  distribution: "currently copied into target projects by artifacts.sh"
-  migration_state: "legacy projection retained while publication/distribution is redesigned"
-
-docs_jp:
-  path: "docs-jp/"
-  authority: "non-canonical human-facing companion, rationale, experiments, and source logs"
-  audience: "Japanese-speaking maintainers and users"
-  precedence: "canonical knowledge wins on semantic conflict"
-  distribution: "not copied by artifacts.sh"
+  role: "情報の正本"
+  language: "Japanese"
+  property: "原文・評価・時系列を情報劣化なく保存"
+  precedence: "file化された情報の中で最優先"
 
 repository_docs:
   path: "documents/project/"
-  authority: "repository-local"
-  audience: "maintainers of documents-artifacts"
-  distribution: "never copied to target projects"
+  role: "このrepository自体の運用・移行documentation"
+  authority: "knowledgeから派生"
+  precedence: "knowledgeと衝突した場合はrepository_docsを修正"
+
+artifact_projection:
+  path: "artifacts/"
+  role: "AI向け第2情報源"
+  optimization: ["context compression", "AI readability", "token efficiency", "progressive disclosure"]
+  authority: "derived from documents/knowledge/"
+  migration_state: "legacy projection retained until redesign"
+
+legacy_docs_jp:
+  path: "docs-jp/"
+  role: "従来の人間向け説明・設計経緯・実験/source log"
+  migration_state: "原文単位でdocuments/knowledge/へ順次移行対象"
 ```
 
-## Canonical Knowledge Boundary
-
-`documents/knowledge/` is the semantic source of truth.
-
-Knowledge is organized by concept/lifecycle:
+## Information Flow
 
 ```text
-ENGINEERING_OPERATING_MODEL.md
-WORK_LIFECYCLE.md
-CODE_DESIGN.md
-DEVELOPMENT_EXECUTION.md
-PROJECT_KNOWLEDGE.md
+第0情報源
+Chat / Issue / 調査 / 実験 / 提言
+        ↓
+documents/knowledge/
+第1情報源
+        ↓
+artifacts/
+第2情報源
+        ↓
+target project
 ```
 
-`TRACEABILITY.md` records how the previous artifact files map into those owners.
+通常の情報更新方向は上から下。
 
-The old `design-principles / documentation-strategy / development-environment-strategy` module boundary is no longer a canonical knowledge boundary.
+第2情報源から意味を逆輸入してknowledgeを書き換えない。
 
-Likewise, WHY/HOW/WHERE/FLOW is no longer the primary file-partitioning rule.
+artifact側で問題を見つけた場合はknowledgeへ戻り、必要なら第0情報源となる訂正・判断を新しいrecordとして追加する。
 
-## Artifact Boundary
+## documents/knowledge/
 
-`artifacts/` is a publication surface optimized for AI consumption.
+現在の基本形:
 
-A future artifact projection may:
+```text
+documents/knowledge/
+├─ INDEX.md
+└─ records/
+   └─ K-YYYY-MM-DD-NNN.md
+```
 
-- combine canonical concepts;
-- split them into smaller task-specific references;
-- add small routing/index files;
-- publish playbooks or profiles;
-- change read order;
-- change filesystem layout;
-- change distribution packaging.
+`records/` はsource eventの完全記録。
 
-It must preserve the canonical semantics or explicitly originate a canonical knowledge change first.
+source event例:
 
-## Current Migration Boundary
+- Chatの1メッセージ
+- Issue本文
+- Issue comment
+- 調査報告原文
+- 実験結果原文
+- AI提言原文
+- 採用・却下・訂正のユーザーメッセージ
 
-The current `artifacts/` directories and `artifacts.sh --modules` behavior remain temporarily for compatibility.
+INDEXは本文を要約せず、記録ID、source、時系列、明示された関係をroutingする。
 
-They do not define future artifact architecture.
+## documents/project/
 
-Do not:
+このrepositoryの運用方法やmigration成果物を置く。
 
-- delete the current projection before replacement design is complete;
-- add new reusable semantic rules only to legacy artifact files;
-- infer that selectable legacy modules remain a product requirement.
+現在:
 
-## Distribution Boundary
+```text
+documents/project/
+├─ REPOSITORY_STRUCTURE.md
+├─ KNOWLEDGE_UPDATE_WORKFLOW.md
+└─ migration/
+   └─ semantic-preservation-candidate/
+```
 
-The current legacy distribution tool owns paths under:
+`semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた再構成候補。意味欠落監査には使えるが、第1情報源ではない。
+
+## artifacts/
+
+AI向けのmaterialized/derived view。
+
+将来のartifact構造はlegacy module境界に拘束されない。
+
+将来的に可能:
+
+- small always-on core
+- concept/task-specific references
+- playbook
+- agent/profile別projection
+- single delivery set
+- generated projection
+
+どの形でもknowledgeへのtraceabilityを失ってはならない。
+
+## Current Legacy Distribution
+
+現在の `artifacts.sh` は:
 
 ```text
 <target>/documents/artifacts/
 ```
 
-Its selective-module behavior is compatibility behavior during migration.
+へlegacy moduleをinstall/update/removeする。
 
-The future publication/distribution contract will be redesigned separately from the semantic knowledge source.
+このbehaviorは既存consumer互換のため一時維持しているだけで、将来のknowledge architectureを定義しない。
 
-The distribution layer does not own Git history, commits, branches, tags, rollback, or archival. Those remain responsibilities of the target project's Git repository.
+## Agent Entry
 
-## Agent Entry Points
+このrepositoryはtarget projectへ一律の `AGENTS.md` / `CLAUDE.md` を強制しない。
 
-This repository does not distribute one universal agent configuration file.
-
-Consumers should keep their project-specific `AGENTS.md`, `CLAUDE.md`, or equivalent small and route to project knowledge plus the relevant derived reusable guidance.
-
-Canonical reusable knowledge itself is entered through:
+このrepository自身を扱うagentは、まず:
 
 ```text
 documents/knowledge/INDEX.md
 ```
+
+を確認し、repository操作は:
+
+```text
+documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
+```
+
+に従う。
