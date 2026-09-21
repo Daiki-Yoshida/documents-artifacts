@@ -25,3 +25,7 @@ Git所有境界、複数component、外部workspace tool dependencyを扱う。
 ### S003_HISTORY.md
 
 旧artifact間の責務境界など、現在のsubject構造以前の歴史的情報を保持する。
+
+## 再編元
+
+旧 `development-environment` のうち、project全体の静的repository/filesystem構造を所有していた情報をこのsubjectへ移管した。
