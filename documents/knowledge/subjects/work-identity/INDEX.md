@@ -71,6 +71,6 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 - file責務による再配置
 - legacy section番号の除去
 - subject-native title / intro / source参照の追加
-- 旧authority / artifact migration文脈の `HISTORY.md` への分離
+- 旧authority / artifact migration文脈の `S008_HISTORY.md` への分離
 
 今後さらに文体や重複を整理する場合も、recordsへのtraceabilityを維持し、条件・例外・反論・検証結果を失わないこと。
