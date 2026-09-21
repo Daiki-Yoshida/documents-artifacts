@@ -104,3 +104,8 @@ subject本文の別コピーになるような過剰な要約は避ける。
 DRYより意味の完全性を優先する。
 
 ただし同じ規範・定義を複数箇所で独立して更新する状態は避け、主責務を明確にする。
+
+## 根拠records
+
+- `../records/2026-09-21-records-subjects-model/`
+- `../records/2026-09-21-knowledge-structure-implementation/`
