@@ -367,18 +367,57 @@ For missing branch creation, an explicit or documented base may be required.
 
 ### Create
 
-Create must:
+Before mutation, the project-owned worktree operation must:
 
-- validate Work and repository resolution;
-- resolve branch/path deterministically;
-- reuse the exact valid existing worktree idempotently;
-- refuse unrelated target-path content;
-- refuse incompatible branch ownership;
-- choose the correct materialization mode;
-- verify postconditions;
-- roll back only state created by the failed invocation when safe.
+1. resolve the Project Root from a stable project-owned anchor; never infer a linked worktree itself as a new Project Root;
+2. verify the `REPO` mapping and Work Identity syntax;
+3. resolve the repository-specific Work branch deterministically;
+4. if the branch does not exist, resolve its start/base from explicit `BASE` or a documented project default — never accidental current HEAD;
+5. resolve upstream policy separately from branch start/base;
+6. verify the target path is absent or already the exact registered worktree being requested;
+7. refuse unrelated filesystem content at the target path;
+8. verify the branch is not assigned to another incompatible writable worktree;
+9. verify the Project Repository ignore boundary for the sibling worktree path when applicable;
+10. verify supported Git/materialization capability when the Worktree Materialization Contract applies.
 
-Create is not a force-repair operation.
+If the exact requested worktree already exists and satisfies the contract, return success without recreating it.
+
+The create operation then:
+
+- chooses the correct materialization mode;
+- verifies postconditions;
+- reports repository, branch, path, and relevant Work-scoped runtime identity.
+
+If creation fails after this invocation created a linked worktree but before postconditions pass:
+
+- roll back only worktree state created by this invocation;
+- use normal non-force removal only when safe;
+- do not delete a pre-existing worktree;
+- do not delete the Work branch as part of rollback;
+- if safe rollback cannot complete, stop and report the exact residual filesystem/Git administrative state.
+
+Create is not a force-repair operation and must not silently escalate into destructive repair.
+
+### Create postconditions
+
+Before reporting success, verify:
+
+```yaml
+common:
+  - "registered worktree path equals the resolved path"
+  - "selected branch equals the resolved Work branch"
+  - "branch start/base and upstream tracking semantics match project policy"
+  - "one writable checkout ownership invariant holds"
+
+project_checkout:
+  - "Work Documents remain materialized and tracked by the Project Repository"
+  - "the sibling repository worktree path is not ordinary untracked Project Repository content"
+
+materialization_contract_case:
+  - "ordinary repository content is materialized"
+  - "nested Project-level .worktrees/ is absent"
+  - "worktree-local sparse configuration is active"
+```
 
 ### Status
 
@@ -448,6 +487,8 @@ The non-cone pattern means "materialize everything except root `.worktrees/`", i
 
 This low-level sequence should be encapsulated by project-owned tooling, not manually reproduced by routine callers.
 
+Do not use plain `git worktree add` for this case: when tracked Project-level `.worktrees/**` content exists, it can transiently materialize the forbidden recursive tree before sparse exclusion is applied.
+
 Do not apply this exclusion blindly to an independent Component Repository that does not carry Project-level `.worktrees/**` state.
 
 ### Recreation
@@ -494,7 +535,9 @@ Before integration, checkout switching, or worktree removal:
 
 Integration belongs to each participating repository's Git history.
 
-One repository merge is only a component completion signal. A multi-repository Work remains active while any participating repository, validation, documentation reconciliation, or Work-scoped resource remains incomplete.
+Cross-repository validation must be an explicit operation when several repositories jointly satisfy one Work outcome.
+
+One repository merge is only a component completion signal. A multi-repository Work remains active while any participating repository, cross-repository validation, documentation reconciliation, or Work-scoped resource remains incomplete.
 
 ### Complete
 
