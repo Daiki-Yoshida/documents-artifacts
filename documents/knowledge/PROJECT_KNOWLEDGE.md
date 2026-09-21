@@ -190,6 +190,8 @@ A task should not require reading every project document merely to discover one 
 
 Split and route by semantic concern and lifecycle, not arbitrary file-size thresholds.
 
+Default discipline: **one file = one concern**. A task that touches one concern should normally require reading one owning file rather than several overlapping copies.
+
 Use stable relative links within the repository.
 
 Markdown cross-references are relative to the referencing file. Registry `path` values, by contrast, are repository-root-relative identifiers used for unique document identification.
@@ -234,6 +236,10 @@ Avoid speculative empty or nearly-empty structure created only for hypothetical 
 Create a domain glossary when repeated, ambiguous, or cross-language vocabulary materially affects accuracy.
 
 A glossary owns term meaning. Other documents use the vocabulary instead of redefining it.
+
+When aliases or historical names exist, map them to one canonical term. Preserve the canonical domain term even when it is not English; an English equivalent may aid routing/explanation but must not replace the domain's meaning.
+
+Define only terms that materially improve shared understanding; ordinary technical vocabulary does not need registration. If one glossary becomes hard to navigate, split it by domain/concern rather than by arbitrary file count.
 
 Do not create a glossary merely to satisfy a template.
 
