@@ -1,46 +1,38 @@
 # Documents Index
 
-```yaml
-document_type: "index"
-target_audience: ["ai_agents", "human_maintainers"]
-role: "routing hub for repository-local and canonical reusable knowledge"
-```
-
-This repository separates reusable engineering meaning from the AI-facing artifact projection derived from it.
+このrepository内のfile化された情報では、`knowledge/` を常に最優先の情報源とする。
 
 ## Routing
 
 ```yaml
-"reusable engineering knowledge / artifact semantic source":
+第1情報源:
   target: "knowledge/INDEX.md"
 
-"how this repository is structured":
+repository更新フロー:
+  target: "project/KNOWLEDGE_UPDATE_WORKFLOW.md"
+
+repository構造:
   target: "project/REPOSITORY_STRUCTURE.md"
 
-"current artifact projection":
+第2情報源:
   target: "../artifacts/"
-  note: "derived legacy projection during migration; not the canonical semantic owner"
+  note: "AI向け派生情報。疑義があればknowledgeへ戻る"
 
-"Japanese rationale / experiments / source logs":
+legacy_source_logs:
   target: "../docs-jp/"
-  note: "non-canonical evidence and human-facing material"
+  note: "旧来の人間向け説明・実験/source log。第1情報源への原文移行対象"
 ```
 
-## Canonical Reusable Knowledge
-
-Start at:
+## 優先順位
 
 ```text
-knowledge/INDEX.md
+documents/knowledge/
+  ↓
+repository-local derived documents
+  ↓
+artifacts/
+  ↓
+target-project copies
 ```
 
-Load only the relevant semantic owner for the task.
-
-## Migration Rule
-
-During the artifact redesign:
-
-1. preserve/update meaning in `documents/knowledge/`;
-2. use `knowledge/TRACEABILITY.md` to check legacy coverage;
-3. redesign `artifacts/` only as a derived AI publication layer;
-4. do not treat the old selectable-module layout as the future knowledge architecture.
+`documents/project/` はこのrepositoryの運用説明であり、knowledgeと意味が衝突した場合はknowledgeを優先してproject文書側を修正する。
