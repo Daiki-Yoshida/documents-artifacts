@@ -189,3 +189,141 @@ For environment tooling:
 - do not commit Component Repository content into a Workspace/Project Repository accidentally.
 
 Git history rewriting and force operations belong to explicit high-risk paths.
+
+
+## 11. Destructive Operations
+
+Destructive commands must:
+
+- have an explicit name;
+- have a narrow target;
+- state irreversible/persistent effects;
+- require confirmation or explicit user request at the appropriate risk level;
+- avoid hidden global scope.
+
+Do not use global Docker prune, broad filesystem deletion, database destruction, or host-runtime removal as a normal first diagnostic action.
+
+## 12. Diagnostics
+
+Provide easy read-only diagnostics for routine failures.
+
+Useful diagnostics include:
+
+- selected project/Work/repository/checkout;
+- supported tool versions;
+- runtime/container/network/volume state;
+- ports and mounts;
+- file ownership;
+- public command parameters;
+- Git branch/worktree state;
+- CI/provider configuration differences.
+
+When the Worktree Materialization Contract applies, diagnostics should expose enough state to verify it without hard-coding Git's internal administrative-directory naming.
+
+## 13. Canonical Validation
+
+Every project should provide a canonical final-validation operation or documented equivalent.
+
+Partial checks are useful during implementation but do not replace the final gate.
+
+Local validation and CI should invoke the same public operation or underlying script where practical.
+
+Validation depth follows `ENGINEERING_OPERATING_MODEL.md`.
+
+## 14. Local / CI Parity
+
+Aim for shared project-owned execution paths.
+
+Differences that remain should be explicit:
+
+- provider authentication;
+- environment/service availability;
+- secret injection;
+- workspace/ref selection;
+- platform-specific interactive tooling.
+
+Do not maintain completely separate local and CI logic when one repository-owned path can serve both.
+
+## 15. Reproducibility
+
+Repository state should control enough of the environment to recreate its behavior.
+
+- pin or constrain meaningful tool versions;
+- honor dependency locks;
+- declare external tooling version selection;
+- eliminate undocumented host dependencies;
+- make environment-definition changes intentional and reviewable.
+
+Reproducibility does not mean "never update". It means environment changes are attributable.
+
+## 16. New Project Bootstrap
+
+When setting up an environment:
+
+1. choose only the repository topology the project needs;
+2. define the host vs project execution boundary;
+3. expose public commands before many ad-hoc scripts accumulate;
+4. define deterministic resource naming;
+5. define Work Root/repository mappings through the Work model when Work management is used;
+6. verify build/test/diagnostics from a clean bootstrap.
+
+## 17. Brownfield Adoption
+
+For an existing project:
+
+1. audit host dependencies, Docker definitions, scripts, commands, resources, Git practices, and CI;
+2. identify safety/reproducibility problems;
+3. add stable public operations around existing behavior before large rewrites;
+4. migrate high-risk host/project-runtime leakage first;
+5. preserve project-specific constraints;
+6. avoid an all-at-once environment rewrite unless the requested outcome requires it.
+
+General brownfield scope rules live in `ENGINEERING_OPERATING_MODEL.md`.
+
+## 18. Diagnosis and Recovery Order
+
+When execution fails, inspect:
+
+```yaml
+1_selection: "project, Work, repository, checkout/worktree"
+2_host_boundary: "required control-plane tools and permissions"
+3_versions: "runtime/tool versions and lock files"
+4_runtime: "containers, ports, mounts, volumes, ownership"
+5_commands: "public parameters and exit status"
+6_git: "dirty state, branch/worktree metadata, remote refs"
+7_ci_difference: "provider/setup/workspace-ref differences"
+```
+
+Prefer scoped recreation over global cleanup.
+
+Preserve source changes before rebuilding/deleting state.
+
+Do not claim repair until the failing operation is rerun successfully.
+
+## 19. Environment Change Risk
+
+Use the shared confirmation model in `ENGINEERING_OPERATING_MODEL.md`.
+
+Typical specialization:
+
+```yaml
+L0:
+  examples: ["help", "status", "read-only diagnostics"]
+L1:
+  examples: ["new non-destructive target", "new diagnostic script", "contained Work-scoped runtime configuration"]
+L2:
+  examples: ["new repository topology", "moving roots", "changing canonical public command names", "changing CI workspace/ref policy"]
+L3:
+  examples: ["discarding dirty work", "deleting persistent volumes/databases", "global cleanup", "installing/removing host runtimes", "history rewriting"]
+```
+
+A command implementation must not downgrade the effective risk by hiding a destructive effect behind a harmless name.
+
+## 20. Common Misreadings
+
+- Docker-first does not ban host control-plane tools.
+- reproducibility does not require immutable toolchains forever.
+- safe caches do not need per-Work duplication.
+- one Work does not imply one unique Docker image.
+- a public command interface does not mean every shell operation becomes a Make target.
+- safety does not justify hiding destructive effects behind generic names.
