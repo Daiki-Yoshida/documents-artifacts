@@ -59,6 +59,16 @@ INDEXは内容を要約しない。source pathとblob同一性だけを記録す
 
 これらの内部にある旧authority/status表現も歴史的記録の一部なので改変しない。現在の情報源優先順位は、後続のユーザー決定recordを含む全記録の時系列・評価関係から判断する。
 
+## docs-jp snapshot
+
+旧 `docs-jp/` のsnapshot移行状況は次を参照する。
+
+- [docs-jp snapshot manifest — 2026-09-21](manifests/docs-jp-snapshot-2026-09-21.md)
+
+snapshot commit `d68ec413b4bb3dafe90e1aaed3c8de9487b1453c` に存在した16ファイルは、すべてknowledge側に本文無加工で確保済み。
+
+manifestは内容の要約ではなく、copy元・copy先・分類・blob SHAのprovenanceだけを管理する。
+
 ## 記録原則
 
 - 原文本文を要約しない。
