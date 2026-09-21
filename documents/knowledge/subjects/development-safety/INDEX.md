@@ -35,3 +35,7 @@ repository境界を守った統合と、統合後の再検証を扱う。
 ### S005_CONFIRMATION_AND_REREAD.md
 
 変更riskに応じた確認境界と、環境・構造文書の再読条件を扱う。
+
+## 再編元
+
+旧 `development-environment` のうち、安全性・破壊操作・診断・復旧・確認境界をこのsubjectへ移管した。
