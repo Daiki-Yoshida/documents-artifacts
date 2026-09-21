@@ -89,9 +89,29 @@ Judge responsibility primarily by:
 4. state ownership and consistency consequences;
 5. size or method count only as weaker evidence.
 
-Avoid god/everything services, unrelated functional/technical/UI responsibilities in one unit, helper/utility/manager dumping grounds, and infrastructure details leaking into higher-level policy.
+Avoid:
+
+- god/everything services;
+- business rules in Controller/Page/UI;
+- UI display concerns in Domain/Core;
+- infrastructure exceptions leaking into Application/Domain;
+- DTOs used as Domain models;
+- Utility/Helper dumping grounds;
+- Config/Logger/HttpClient appearing everywhere;
+- `any` / `object` / `dynamic` used to escape needed modeling;
+- bloated Managers that accumulate unrelated responsibilities.
 
 A large component is not automatically wrong. It is wrong when unrelated responsibilities or ownership become entangled.
+
+### Responsibility types
+
+| Type | Meaning | Example |
+|---|---|---|
+| Functional | business logic/calculation | `TaxCalculator` |
+| Technical | I/O, networking, serialization/formatting | `JsonSerializer` |
+| Orchestration | coordinating flow/wiring | `OrderProcessingUseCase` |
+
+Do not mix ownership of these peer-level responsibilities in one component. An orchestrator may coordinate Functional and Technical work without owning their internal decisions.
 
 ## 6. State Ownership and Cross-Boundary Consistency
 
@@ -164,7 +184,9 @@ Domain Entities and Value Objects generally do **not** require an interface mere
 
 Design capabilities, not implementation-shaped method bags.
 
-Names should express what the caller can rely on. Document load-bearing semantics where applicable: side effects, failures, ordering, cancellation, concurrency, resource/performance bounds, determinism, ownership, and lifetime.
+Interfaces/ports help with dependency inversion and testability: high-level policy depends on owned abstractions, and tests can substitute mocks/fakes/stubs without coupling to a concrete mechanism.
+
+Names should express what the caller can rely on. Document only load-bearing contract semantics, not verbose comments everywhere: side effects, failures, ordering, cancellation, concurrency, resource/performance bounds, determinism, ownership, lifetime, and relevant pre/postconditions.
 
 Follow Interface Segregation: callers should depend only on the capabilities they actually need.
 
@@ -322,17 +344,37 @@ Use distinct types/state representations when making illegal states unrepresenta
 
 ## 17. Internal Flexibility
 
-Below a hardened boundary, implementation may be pragmatic:
+Design the public/module shell precisely while allowing pragmatic implementation below the Encapsulation Horizon.
+
+Strict shell concerns include:
+
+- public/module contracts;
+- request/response DTOs;
+- caller-visible behavior and side effects;
+- dependency direction;
+- failure semantics;
+- boundary translation.
+
+Flexible interior concerns include:
 
 - private helpers;
-- inline mapping;
-- procedural or functional algorithms;
+- inline one-off mapping;
+- procedural/functional/data-oriented algorithms;
 - small concrete classes;
 - temporary internal structures.
 
-Internal flexibility does not permit caller-visible leakage or unowned chaos.
+Internal flexibility is safe only when the surface closes the observable leakage channels:
 
-The more freedom exists inside, the more completely the outer contract must close observable leakage channels.
+- signature/shape;
+- semantics;
+- resource bounds such as CPU, memory, pools, latency/time;
+- failure behavior such as timeouts, retry storms, shared-state corruption;
+- determinism;
+- persisted/data invariants.
+
+Interior freedom is bought by surface completeness. A loose contract around a complex interior leaks complexity outward; a complete contract lets the interior remain replaceable and fast to change.
+
+Be precise where change impact escapes the module. Move quickly where the effect is truly contained.
 
 ## 18. Mapping and Conversion
 
