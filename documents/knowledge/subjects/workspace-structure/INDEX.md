@@ -1,6 +1,6 @@
 # Workspace Structure
 
-このsubjectは、**project全体のrepository/filesystem構造とGit所有境界**を扱う。
+このsubjectは、**project全体の静的なrepository/filesystem構造、Project Repository / Project Root、Git所有境界、stable repository identity**を扱う。
 
 Work Root、Work Documents、repository-specific worktreeなど1つのWorkに属する動的構造は `../work-identity/` が主所有する。
 
@@ -16,15 +16,27 @@ workspace-structure/
 
 ### S001_PROJECT_AND_REPOSITORY_MODEL.md
 
-Workspace Repository / Component Repository、単一repository、top-level filesystem構造を扱う。
+Project Repository / Project Root、Workspace Repository / Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。
 
 ### S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
 
-Git所有境界、複数component、外部workspace tool dependencyを扱う。
+Git所有境界、Work Documentsとrepository worktreeのownership境界、複数repository、stable repository identityとWork Identityの `REPO` selector接続を扱う。
 
 ### S003_HISTORY.md
 
 旧artifact間の責務境界など、現在のsubject構造以前の歴史的情報を保持する。
+
+## Work Identityとの接続
+
+```text
+workspace-structure
+  Project / repositoryの静的構造
+        ↓
+work-identity
+  Work単位の動的構造
+```
+
+`.worktrees/` の内部path、Work Root、Work Documents、repository-specific worktree、Work単位のbranch/resource lifecycleは `../work-identity/` が主所有する。
 
 ## 再編元
 
