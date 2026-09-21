@@ -1,48 +1,139 @@
 # Repository Structure
 
-This repository has three distinct document scopes.
+このrepositoryは、第1情報源・repository-local運用文書・第2情報源・legacy source logを分離する。
 
 ```yaml
-artifacts:
-  path: "artifacts/<module>/"
-  authority: "canonical"
-  audience: "CLI coding agents"
-  distribution: "copied selectively into target projects"
-
-docs_jp:
-  path: "docs-jp/<module>/"
-  authority: "non-canonical human-facing companion and source/rationale logs"
-  audience: "Japanese-speaking maintainers and users"
-  precedence: "artifacts/ always wins on conflict"
-  distribution: "not copied by artifacts.sh"
+first_source:
+  path: "documents/knowledge/"
+  role: "情報の正本"
+  language: "Japanese"
+  property: "原文・評価・時系列を情報劣化なく保存"
+  precedence: "file化された情報の中で最優先"
 
 repository_docs:
   path: "documents/project/"
-  authority: "repository-local"
-  audience: "maintainers of documents-artifacts"
-  distribution: "never copied to target projects"
+  role: "このrepository自体の運用・移行documentation"
+  authority: "knowledgeから派生"
+  precedence: "knowledgeと衝突した場合はrepository_docsを修正"
+
+artifact_projection:
+  path: "artifacts/"
+  role: "AI向け第2情報源"
+  optimization: ["context compression", "AI readability", "token efficiency", "progressive disclosure"]
+  authority: "derived from documents/knowledge/"
+  migration_state: "legacy projection retained until redesign"
+
+legacy_docs_jp:
+  path: "docs-jp/"
+  role: "従来の人間向け説明・設計経緯・実験/source log"
+  migration_state: "原文単位でdocuments/knowledge/へ順次移行対象"
 ```
 
-## Module boundary
-
-`artifacts/` is the only normative guidance scope. `docs-jp/` may explain current guidance or preserve historical reasoning, but it never overrides `artifacts/`.
-
-A module is an independently adoptable guidance set. Modules share this Git repository so cross-module consistency changes can be reviewed atomically, but target projects choose modules independently.
-
-Current module names are directory names under `artifacts/`. `artifacts.sh` discovers these directories rather than maintaining a separate module registry.
-
-## Distribution boundary
-
-The distribution tool owns only a selected target directory:
+## Information Flow
 
 ```text
-<target>/documents/artifacts/<module>/
+第0情報源
+Chat / Issue / 調査 / 実験 / 提言
+        ↓
+documents/knowledge/
+第1情報源
+        ↓
+artifacts/
+第2情報源
+        ↓
+target project
 ```
 
-Installing or updating a module replaces that module directory as a unit. It must not remove or modify unselected module directories. Removing a module requires a separate explicit removal request.
+通常の情報更新方向は上から下。
 
-The distribution tool does not own Git history, commits, branches, tags, rollback, or archival. Those remain responsibilities of the target project's Git repository.
+第2情報源から意味を逆輸入してknowledgeを書き換えない。
 
-## Agent entry points
+artifact側で問題を見つけた場合はknowledgeへ戻り、必要なら第0情報源となる訂正・判断を新しいrecordとして追加する。
 
-This repository does not distribute a universal agent configuration file. Consumers may reference installed module `INDEX.md` files from `AGENTS.md`, `CLAUDE.md`, or another tool-specific entry point appropriate to the target project.
+## documents/knowledge/
+
+現在の基本形:
+
+```text
+documents/knowledge/
+├─ INDEX.md
+└─ records/
+   └─ K-YYYY-MM-DD-NNN.md
+```
+
+`records/` はsource eventの完全記録。
+
+source event例:
+
+- Chatの1メッセージ
+- Issue本文
+- Issue comment
+- 調査報告原文
+- 実験結果原文
+- AI提言原文
+- 採用・却下・訂正のユーザーメッセージ
+
+INDEXは本文を要約せず、記録ID、source、時系列、明示された関係をroutingする。
+
+## documents/project/
+
+このrepositoryの運用方法やmigration成果物を置く。
+
+現在:
+
+```text
+documents/project/
+├─ REPOSITORY_STRUCTURE.md
+├─ KNOWLEDGE_UPDATE_WORKFLOW.md
+└─ migration/
+   └─ semantic-preservation-candidate/
+```
+
+`semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた再構成候補。意味欠落監査には使えるが、第1情報源ではない。
+
+## artifacts/
+
+AI向けのmaterialized/derived view。
+
+将来のartifact構造はlegacy module境界に拘束されない。
+
+将来的に可能:
+
+- small always-on core
+- concept/task-specific references
+- playbook
+- agent/profile別projection
+- single delivery set
+- generated projection
+
+どの形でもknowledgeへのtraceabilityを失ってはならない。
+
+## Current Legacy Distribution
+
+現在の `artifacts.sh` は:
+
+```text
+<target>/documents/artifacts/
+```
+
+へlegacy moduleをinstall/update/removeする。
+
+このbehaviorは既存consumer互換のため一時維持しているだけで、将来のknowledge architectureを定義しない。
+
+## Agent Entry
+
+このrepositoryはtarget projectへ一律の `AGENTS.md` / `CLAUDE.md` を強制しない。
+
+このrepository自身を扱うagentは、まず:
+
+```text
+documents/knowledge/INDEX.md
+```
+
+を確認し、repository操作は:
+
+```text
+documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
+```
+
+に従う。

@@ -1,148 +1,151 @@
 # documents-artifacts
 
-Public canonical repository for reusable engineering guidance intended primarily for CLI coding agents.
+再利用可能なengineering knowledgeと、そこから生成・編集されるAI向けartifactを管理するrepository。
 
-The repository owns the authoritative artifact modules, non-canonical human-facing Japanese companion/source-log material, and the small distribution tool used to copy selected modules into development projects.
+このrepositoryでは、**情報の完全性を守る第1情報源**と、**AI利用効率を優先する第2情報源**を分離する。
 
-## Source-of-truth model
+## 情報源モデル
 
 ```text
-GitHub: Daiki-Yoshida/documents-artifacts
+第0情報源
+Chat / Issue / 調査 / 実験 / ユーザー・AIからの提言
         │
-        ├─ artifacts/      authoritative AI-facing guidance
-        ├─ docs-jp/        non-canonical Japanese companion / source logs
-        └─ artifacts.sh    explicit install/update/remove tool
-                │
-                ▼
-Target project
-└─ documents/
-   └─ artifacts/
-      └─ <selected modules>/
+        │ 原文を情報劣化なく記録
+        ▼
+documents/knowledge/
+第1情報源・正本
+        │
+        │ 用途に応じて解釈・圧縮・再構成
+        ▼
+artifacts/
+第2情報源・AI向け派生情報
+        │
+        ▼
+target projects
 ```
 
-Rules:
+ファイル化された情報について疑義・矛盾・意味差がある場合、常に `documents/knowledge/` を最優先で確認する。
 
-- This public GitHub repository is the canonical source.
-- `artifacts/` contains the authoritative guidance consumed by coding agents.
-- Artifact modules are independent adoption units. A project may use any subset.
-- Copies placed in target projects are committed to the target project's Git repository.
-- Updates are explicit. A target project does not track `main` automatically.
-- Git owns history, rollback, comparison, and archival. This repository does not implement a parallel version-history or manifest system.
-- Omitted modules are never removed implicitly. Removal is a separate explicit operation.
+knowledgeに含まれる個々の提言・仮説がすべて採用済みという意味ではない。提言、反論、評価、却下、採用、訂正を含む記録全体が正確に保存されていることを信頼する。
 
-## Modules
+詳細な根拠は:
 
-Current modules:
+```text
+documents/knowledge/INDEX.md
+```
 
-| Module | Scope |
-| --- | --- |
-| `design-principles` | Code design, implementation quality, contracts, structure, and AI implementation workflow |
-| `documentation-strategy` | Structure, routing, and maintenance of AI-facing project documentation |
-| `development-environment-strategy` | Development workspace, Docker-first execution, repository operations, parallel-agent isolation, and environment lifecycle |
-
-Each module lives under `artifacts/<module>/` and owns its own `INDEX.md` entry point.
-
-Modules share one Git repository so cross-cutting changes can be reviewed together, but they remain independently distributable.
-
-## Language policy
-
-The authoritative AI-facing artifacts are currently written in English. This is a pragmatic convention for consistency with code, technical terminology, and common model training material; it is not a claim that English is universally superior for every model or task.
-
-Human-facing Japanese material lives under `docs-jp/`. It may include current companion explanations as well as historical source/rationale logs. It is never authoritative: when any Japanese material differs from `artifacts/`, the files under `artifacts/` win.
-
-## Repository layout
+## Repository Layout
 
 ```text
 .
 ├─ README.md
 ├─ artifacts.sh
-├─ artifacts/
-│  ├─ design-principles/
-│  ├─ documentation-strategy/
-│  └─ development-environment-strategy/
-├─ docs-jp/
-│  └─ <module>/
+├─ artifacts/                 # 第2情報源。現在はlegacy projection
+├─ docs-jp/                   # legacyの人間向け説明・source log。順次knowledgeへ原文移行対象
 ├─ documents/
-│  └─ project/
+│  ├─ INDEX.md
+│  ├─ knowledge/              # 第1情報源。日本語。原文・評価関係を完全保存
+│  └─ project/                # このrepository自体の運用・移行documentation
 └─ tests/
 ```
 
-`documents/project/` documents this repository itself. It is not distributed to target projects.
+## documents/knowledge/
 
-## Distribution
+`documents/knowledge/` は情報における正本であり、第1情報源。
 
-### Interactive use
+原則:
 
-Clone or update this repository, then run:
+- 日本語で人間が監査可能にする。
+- 第0情報源から取り込む本文を要約しない。
+- 抜粋・言い換え・都合のよい削除を行わない。
+- 過去の提言や却下案も、評価・時系列とともに保存する。
+- 後続判断で過去recordを書き換えず、新しいrecordを追加する。
+- 第2情報源に疑義があればknowledgeへ戻る。
+
+## artifacts/
+
+`artifacts/` はAI向けの第2情報源。
+
+ここでは第1情報源に基づき、次を優先してよい:
+
+- 現在有効な結論の抽出
+- context圧縮
+- 重複除去
+- AI向け再構成
+- progressive disclosure
+- token消費効率
+- 必要に応じた翻訳
+
+artifactはknowledgeを上書きしない。
+
+現在の:
+
+```text
+artifacts/
+├─ design-principles/
+├─ documentation-strategy/
+└─ development-environment-strategy/
+```
+
+および `artifacts.sh --modules` はlegacy互換状態。選択module単位を将来の知識境界とは扱わない。
+
+新artifact構造が決まるまで既存projectionを壊さない。
+
+## 更新フロー
+
+repo更新時は:
+
+```text
+第0情報源
+  ↓
+documents/knowledge/
+  ↓
+artifacts/
+  ↓
+target projects
+```
+
+詳細:
+
+```text
+documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
+```
+
+新しいreusable knowledgeをartifactだけへ直接追加しない。
+
+artifactの誤りを見つけた場合はまずknowledgeを確認する。knowledgeに訂正が必要なら、その訂正根拠となる第0情報源を新しいrecordとして保存してから派生物を更新する。
+
+## 移行状態
+
+現行artifactからの意味保存監査で作成した再構成候補は:
+
+```text
+documents/project/migration/semantic-preservation-candidate/
+```
+
+へ退避済み。
+
+これらは監査成果物であり、第1情報源ではない。
+
+今後は、既存の `docs-jp/**/source-logs/`、現行artifactを生んだ議論・Issue・実験結果などを、利用可能な原文単位で `documents/knowledge/` へ移行する。
+
+## Legacy Distribution
+
+現在の `artifacts.sh` は既存project互換のため残している。
 
 ```bash
 ./artifacts.sh
-```
-
-The script asks for the target project and which modules to install or update. It also offers a separate explicit removal selection.
-
-### Non-interactive / agent use
-
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --modules design-principles,documentation-strategy \
-  --non-interactive
-```
-
-Install or update every available module:
-
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --modules all \
-  --non-interactive
-```
-
-List available modules:
-
-```bash
 ./artifacts.sh --list
+./artifacts.sh --target /path/to/project --modules all --non-interactive
 ```
 
-### Explicit removal
-
-Removal is never inferred from an install/update selection.
-
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --remove development-environment-strategy \
-  --non-interactive
-```
-
-A project that already contains three modules and later runs `--modules design-principles` keeps the other two unchanged. To stop using one, remove it explicitly.
-
-## Sync contract
-
-For every selected install/update module:
-
-- the corresponding `artifacts/<module>/` directory is copied to `documents/artifacts/<module>/` in the target project;
-- the selected module directory is replaced as a unit, so files removed from the canonical module disappear from that copied module;
-- modules not selected are untouched;
-- symlinked destination module paths are rejected;
-- no Git command is run in the target project.
-
-After synchronization, review the normal Git diff in the target project and commit it there.
-
-There is intentionally no generated manifest, independent artifact version file, rollback database, or archive directory. The target repository's Git history records exactly which artifact snapshot was used at each commit.
-
-## Agent integration
-
-This repository does not impose a universal `AGENTS.md`, `CLAUDE.md`, or equivalent configuration on target projects. Agent entry points vary by tool and workspace.
-
-A target project may reference the installed `documents/artifacts/<module>/INDEX.md` files from its own agent-specific instructions. Keep those project-specific routing instructions small and local to the project.
+このinterface自体も将来のartifact再設計時に見直す。
 
 ## Validation
+
+legacy distribution validation:
 
 ```bash
 bash -n artifacts.sh
 bash tests/test-artifacts.sh
 ```
-
-The tests cover selective installation, exact module update, non-removal of omitted modules, explicit removal, invalid selections, conflicting operations, and symlink protection.
