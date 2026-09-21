@@ -6,7 +6,7 @@ target_audience: "ai_agents"
 optimization: "token_efficiency"
 language: "english"
 role: "entry point for the exported development-environment guidance"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 ```
 
 Read this file first. Load only the documents required by the current request.
@@ -73,7 +73,7 @@ ENVIRONMENT_STANDARDS.md:
     - "Work-scoped Docker/runtime identity and resource reuse"
     - "UID/GID, caches, ports, secrets, generated files"
     - "Makefile, public command interface, and scripts responsibility"
-    - "Worktree public command contract: WORK + REPO, create/status/remove semantics, idempotency"
+    - "Worktree public command contract: WORK + REPO, create/status/remove semantics, idempotency, base/upstream separation, Project Root resolution"
     - "Git operation safety"
     - "Work Root worktree materialization compatibility and helper requirements"
     - "Destructive-operation rules"
@@ -115,6 +115,7 @@ ENVIRONMENT_WORKFLOW.md:
 "deciding whether to create a worktree":         "DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md (Checkout Selection Rule) + ENVIRONMENT_WORKFLOW.md"
 "adding or changing Git worktree support":       "WORKSPACE_STRUCTURE.md (Repository Worktrees and Identity + Git Tracking and Materialization Boundaries) + ENVIRONMENT_WORKFLOW.md"
 "creating a Work Root Git worktree":             "ENVIRONMENT_STANDARDS.md (Worktree Public Command Contract) + ENVIRONMENT_WORKFLOW.md (Prepare the Selected Repository) + WORKSPACE_STRUCTURE.md (Worktree Materialization Contract)"
+"creating a missing Work branch":                "ENVIRONMENT_STANDARDS.md (Worktree Public Command Contract) + ENVIRONMENT_WORKFLOW.md (Prepare the Selected Repository)"
 "checking/removing a Work Root Git worktree":    "ENVIRONMENT_STANDARDS.md (Worktree Public Command Contract) + ENVIRONMENT_WORKFLOW.md (Git Worktree Removal)"
 "organizing parent and child repositories":      "WORKSPACE_STRUCTURE.md (Repository Topology)"
 "supporting several component repositories":     "WORKSPACE_STRUCTURE.md (Multi-Repository Coordination and Resource Identity)"
