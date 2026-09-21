@@ -37,6 +37,28 @@ INDEXは原文内容を要約しない。記録ID・情報源・時系列・明�
 | [K-2026-09-21-001](records/K-2026-09-21-001.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | K-2026-09-21-000 の方針を具体化 |
 | [K-2026-09-21-002](records/K-2026-09-21-002.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | K-2026-09-21-001 の「正確」の意味を補足 |
 
+## Legacy source log 原文コピー
+
+以下は既存 `docs-jp/**/source-logs/` から本文を変更せずにコピーした記録である。
+
+コピー元snapshot:
+
+```text
+d68ec413b4bb3dafe90e1aaed3c8de9487b1453c
+```
+
+INDEXは内容を要約しない。source pathとblob同一性だけを記録する。
+
+| knowledge record | 元path | blob SHA |
+|---|---|---|
+| [ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md](records/legacy-source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md) | `docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md` | `ecad4ecf22fe510b7f71ef0e7c9be684298d73c9` |
+| [WORK_IDENTITY_DESIGN_JP.md](records/legacy-source-logs/WORK_IDENTITY_DESIGN_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md` | `914c937eb0ae9813b4c736d74723212126bda04e` |
+| [WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md](records/legacy-source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md` | `eb7a9d28d05297128845056b9c019796ad31efad` |
+| [WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md](records/legacy-source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md` | `9fd3fbdc6dc9dfda105bfb4ef956b77fec7557a2` |
+| [WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md](records/legacy-source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md` | `dc5ef3b599a35d6f908f10c536ead3886cfb539c` |
+
+これらの内部にある旧authority/status表現も歴史的記録の一部なので改変しない。現在の情報源優先順位は、後続のユーザー決定recordを含む全記録の時系列・評価関係から判断する。
+
 ## 記録原則
 
 - 原文本文を要約しない。
