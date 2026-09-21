@@ -117,6 +117,13 @@ Before sharing/extracting a concept, compare invariants, pre/postconditions, fai
 
 If semantic identity is not yet established, keep the model consumer-neutral when truthful, keep it local, and delay shared-module extraction.
 
+Rules:
+
+- name the concept by what it is rather than by its first consumer when the meaning is genuinely consumer-neutral;
+- a consumer-neutral contract/type must not import or reference the first consumer's feature types unless that feature-specific meaning is part of the concept;
+- feature-specific variation enters through implementation, composition, or parameters and remains owned by that feature;
+- neutral meaning does not imply shared physical placement; promotion is earned only when another consumer genuinely needs the same semantics.
+
 YAGNI constrains speculative mechanisms and placement. It does not justify giving a general concept a feature-specific meaning. Concept altitude, physical code sharing, and hardening depth are separate decisions.
 
 ## 8. Module Organization
@@ -246,19 +253,47 @@ Concrete composition/wiring belongs at a composition root or equivalent applicat
 
 ## 14. Dependency Injection
 
-Use constructor injection or the ecosystem-equivalent when a real boundary dependency exists.
+Use constructor injection or the ecosystem-equivalent for boundary dependencies.
 
-Inject capabilities/connectors, not every trivial helper.
+Rules:
 
-Domain entities should not become service locators or containers for infrastructure dependencies.
+- dependencies are explicit constructor parameters/properties;
+- do not resolve dependencies through a Service Locator from inside business classes;
+- do not instantiate volatile dependencies such as I/O, configuration, randomness, or current time directly inside business/application logic;
+- stable Values, Entities, and pure utility objects may be constructed normally when they are not replaceable boundary dependencies;
+- inject capabilities/connectors, not every trivial helper.
+
+Domain Entities and Value Objects do **not** receive service dependencies through constructor injection. Keep them pure. If an entity operation temporarily needs a domain/application capability, pass that capability explicitly as a method argument rather than storing an injected service.
 
 Do not introduce DI ceremony where a concrete local object/value is sufficient.
 
 ## 15. External Dependency Containment
 
-Third-party SDK/API/framework types should not cross stable owned boundaries unless the external type is intentionally part of the contract.
+External dependencies are allowed, but their influence must be contained. Domain/core code depends on project-owned language and contracts, not vendor SDK types, framework models, DB schemas, HTTP clients, UI-framework types, or external API DTOs.
 
-Where change impact matters, wrap external capabilities behind owned ports/adapters.
+Wrap/adapt an external dependency when any of these holds:
+
+- it would appear in Domain/core;
+- its types would spread across modules;
+- replacing it would force unrelated changes;
+- vendor terminology would redefine domain vocabulary;
+- it pushes technical errors/lifecycle/async/side effects into business logic;
+- several modules would otherwise depend on the same vendor API directly;
+- a widely depended-on module uses it;
+- it touches a core domain concept.
+
+Direct dependency is acceptable when it remains UI-specific, Infrastructure-specific, local to a small internal implementation without public leakage, or the module intentionally is a thin integration layer.
+
+Prohibited:
+
+- expose external SDK types from Domain contracts;
+- use DB/API DTOs as Domain Entities;
+- let one external model become the implicit shared model of the system;
+- make most modules depend directly on one vendor API when a project-owned abstraction would localize the change.
+
+UI may depend on UI frameworks and Infrastructure may depend on SDKs/clients because those mechanisms belong there. Do not push those types inward into Application or Domain.
+
+When Domain/Application needs an external capability, define a project-owned port at the owning boundary and implement it in Infrastructure.
 
 Translate at the boundary:
 
