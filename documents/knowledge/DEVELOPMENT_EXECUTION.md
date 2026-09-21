@@ -217,22 +217,36 @@ Destructive commands must:
 
 Do not use global Docker prune, broad filesystem deletion, database destruction, or host-runtime removal as a normal first diagnostic action.
 
-## 12. Diagnostics
+## 12. Diagnostics and Validation
 
-Provide easy read-only diagnostics for routine failures.
+A project environment should expose operations equivalent to:
 
-Useful diagnostics include:
+```yaml
+discovery: "list available operations and required parameters"
+diagnosis: "report tool versions, selected repository/checkout, containers, ports, mounts, and common configuration failures"
+status: "show current project/Work resources without mutation"
+validation: "run the canonical completion gate"
+```
 
-- selected project/Work/repository/checkout;
-- supported tool versions;
-- runtime/container/network/volume state;
+Diagnostics must not print secrets.
+
+Diagnostic/status output should identify the selected checkout and, when applicable:
+
+- Work Identity and repository;
+- worktree path/branch;
+- container namespace;
+- runtime/network/volume state;
 - ports and mounts;
 - file ownership;
 - public command parameters;
-- Git branch/worktree state;
-- CI/provider configuration differences.
+- sparse/materialization state when the Worktree Materialization Contract applies;
+- common configuration failures.
 
-When the Worktree Materialization Contract applies, diagnostics should expose enough state to verify it without hard-coding Git's internal administrative-directory naming.
+Validation starts with the narrowest useful checks during implementation and finishes with the canonical final gate before completion is reported.
+
+Do not claim completion when the canonical gate fails or cannot run; report the limitation and evidence instead.
+
+Diagnostics should expose enough state to verify worktree materialization without hard-coding Git's internal administrative-directory naming.
 
 ## 13. Canonical Validation
 
@@ -246,7 +260,11 @@ Validation depth follows `ENGINEERING_OPERATING_MODEL.md`.
 
 ## 14. Local / CI Parity
 
-Aim for shared project-owned execution paths.
+CI should invoke project-owned commands rather than reimplementing build/test logic in workflow YAML.
+
+Local and CI provisioning may differ, but they should converge on the same repository-owned validation scripts/operations.
+
+Provider-specific setup stays at the CI edge; project behavior stays in repository-owned commands.
 
 Differences that remain should be explicit:
 
@@ -255,6 +273,8 @@ Differences that remain should be explicit:
 - secret injection;
 - workspace/ref selection;
 - platform-specific interactive tooling.
+
+If a Component Repository consumes a separate Workspace Repository in CI, the selected workspace version/ref must be explicit. CI must not accidentally depend on an unversioned external workspace.
 
 Do not maintain completely separate local and CI logic when one repository-owned path can serve both.
 
@@ -299,14 +319,38 @@ When setting up an environment:
 
 ## 17. Brownfield Adoption
 
-For an existing project:
+Do not turn environment adoption into an unrelated repository or code rewrite.
 
-1. audit host dependencies, Docker definitions, scripts, commands, resources, Git practices, and CI;
-2. identify safety/reproducibility problems;
-3. add stable public operations around existing behavior before large rewrites;
-4. migrate high-risk host/project-runtime leakage first;
-5. preserve project-specific constraints;
-6. avoid an all-at-once environment rewrite unless the requested outcome requires it.
+Audit:
+
+```yaml
+host_dependencies: "installed runtimes, package managers, SDKs, and CLIs"
+entry_commands: "documented and undocumented build/test/deploy commands"
+container_state: "images, Compose files, names, ports, volumes, permissions"
+git_topology: "repository roots, embedded repositories, branches, optional worktrees"
+ci_behavior: "logic duplicated or diverging from local scripts"
+destructive_paths: "cleanup, reset, force removal, and data deletion"
+```
+
+Migration order:
+
+1. establish a stable public command interface over current behavior;
+2. move project-specific execution into controlled containers;
+3. introduce Work Identity and normalize resource ownership;
+4. establish uniform Work Root and Work Documents ownership;
+5. add diagnosis and canonical validation;
+6. add/normalize Git worktree support only when parallel development or explicit isolation requires it;
+7. align CI with project-owned commands.
+
+Preserve working behavior while changing one environment boundary at a time.
+
+Guards:
+
+- explicit project conventions outrank generic reusable guidance when they conflict; report the conflict;
+- do not silently move repositories or delete environment state;
+- do not introduce separate Workspace/Component repositories unless the requested change requires that topology;
+- do not introduce Git worktrees when the current checkout already satisfies one active Work;
+- report out-of-scope violations instead of opportunistically rewriting them.
 
 General brownfield scope rules live in `ENGINEERING_OPERATING_MODEL.md`.
 
@@ -349,7 +393,30 @@ L3:
 
 A command implementation must not downgrade the effective risk by hiding a destructive effect behind a harmless name.
 
-## 20. Common Misreadings
+## 20. Re-read Triggers
+
+```yaml
+must_re_read:
+  - "first contact with a project using this execution model"
+  - "creating or changing Workspace/Component repository topology"
+  - "adding or redesigning worktree support"
+  - "changing the host/container boundary"
+  - "adding destructive environment operations"
+
+should_re_read:
+  - "changing Docker resource naming or isolation"
+  - "changing Makefile/public command structure"
+  - "aligning local and CI execution"
+  - "changing Workspace-tool version selection"
+
+no_re_read_needed:
+  - "routine use of established commands"
+  - "choosing the current checkout for an ordinary single-writer Work"
+  - "ordinary Git worktree creation after a real isolation trigger is established"
+  - "small internal script fix behind an unchanged public command contract"
+```
+
+## 21. Common Misreadings
 
 - Docker-first does not ban host control-plane tools.
 - reproducibility does not require immutable toolchains forever.
