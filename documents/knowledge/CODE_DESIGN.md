@@ -339,6 +339,8 @@ Use a rich model when the domain contains meaningful invariants, behavior, and s
 
 Use a lightweight/anemic representation when the domain is genuinely simple.
 
+"Lightweight" means the domain genuinely has little behavior; it does **not** mean scattering business rules into UI, Infrastructure, or unrelated services.
+
 Do not manufacture domain complexity merely to appear "DDD".
 
 Entities may be mutable when mutation is controlled by invariants and clear ownership.
@@ -626,6 +628,12 @@ Testing serves two distinct goals:
 
 1. **contract conformance**;
 2. **requested-outcome verification**.
+
+Core test rules:
+
+- tests must not modify uncontrolled global state or persist data outside their owned transaction/sandbox;
+- test stable public/module behavior as a black box; do not couple tests to private methods/internal state unless complex pure logic materially justifies direct testing;
+- prioritize the most stable meaningful boundary.
 
 Prioritize tests at stable boundaries.
 
