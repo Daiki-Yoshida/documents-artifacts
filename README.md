@@ -1,148 +1,167 @@
 # documents-artifacts
 
-Public canonical repository for reusable engineering guidance intended primarily for CLI coding agents.
+Canonical repository for reusable engineering knowledge and the AI-facing guidance derived from it.
 
-The repository owns the authoritative artifact modules, non-canonical human-facing Japanese companion/source-log material, and the small distribution tool used to copy selected modules into development projects.
+The repository separates **semantic knowledge ownership** from **artifact publication/distribution** so the artifact layout can be redesigned without changing engineering meaning.
 
 ## Source-of-truth model
 
 ```text
 GitHub: Daiki-Yoshida/documents-artifacts
         │
-        ├─ artifacts/      authoritative AI-facing guidance
-        ├─ docs-jp/        non-canonical Japanese companion / source logs
-        └─ artifacts.sh    explicit install/update/remove tool
+        ├─ documents/
+        │  ├─ knowledge/    canonical reusable engineering knowledge
+        │  └─ project/      documentation about this repository itself
+        │
+        ├─ artifacts/       derived AI-facing projection (legacy projection during migration)
+        ├─ docs-jp/         non-canonical human/rationale/experiment material
+        └─ artifacts.sh     current legacy projection sync tool
                 │
                 ▼
 Target project
 └─ documents/
-   └─ artifacts/
-      └─ <selected modules>/
+   └─ artifacts/            installed derived snapshot
+```
+
+### Authority
+
+```text
+documents/knowledge/
+    ↓ defines reusable semantic meaning
+
+artifacts/
+    ↓ projects that meaning for AI consumption
+
+target-project installed artifacts
+    ↓ reproducible snapshot + local routing
 ```
 
 Rules:
 
-- This public GitHub repository is the canonical source.
-- `artifacts/` contains the authoritative guidance consumed by coding agents.
-- Artifact modules are independent adoption units. A project may use any subset.
-- Copies placed in target projects are committed to the target project's Git repository.
-- Updates are explicit. A target project does not track `main` automatically.
-- Git owns history, rollback, comparison, and archival. This repository does not implement a parallel version-history or manifest system.
-- Omitted modules are never removed implicitly. Removal is a separate explicit operation.
+- `documents/knowledge/` is the canonical source for reusable engineering knowledge.
+- `artifacts/` is derived. Its files, grouping, read order, profiles, or packaging may change without changing canonical meaning.
+- If a future artifact requires a new reusable rule, update the canonical knowledge owner first.
+- Target-project rules are more specific than reusable guidance.
+- `docs-jp/` may preserve rationale, experiments, Japanese explanations, and migration evidence. It does not override canonical knowledge.
+- Git owns history, rollback, comparison, and archival. Do not build a parallel history database.
 
-## Modules
+## Canonical Knowledge
 
-Current modules:
+Start at:
 
-| Module | Scope |
-| --- | --- |
-| `design-principles` | Code design, implementation quality, contracts, structure, and AI implementation workflow |
-| `documentation-strategy` | Structure, routing, and maintenance of AI-facing project documentation |
-| `development-environment-strategy` | Development workspace, Docker-first execution, repository operations, parallel-agent isolation, and environment lifecycle |
+```text
+documents/knowledge/INDEX.md
+```
 
-Each module lives under `artifacts/<module>/` and owns its own `INDEX.md` entry point.
+Current semantic owners:
 
-Modules share one Git repository so cross-cutting changes can be reviewed together, but they remain independently distributable.
+| Document | Scope |
+|---|---|
+| `ENGINEERING_OPERATING_MODEL.md` | Cross-cutting authority, safety, confirmation, brownfield, validation, semantic ownership, progressive disclosure |
+| `WORK_LIFECYCLE.md` | Work Identity, Work Root, Work Documents, repositories/branches/worktrees/resources, reconciliation and completion |
+| `CODE_DESIGN.md` | Bounded Contracts, code/module boundaries, architecture, state/dependencies/errors/async, evolution, testing and change process |
+| `DEVELOPMENT_EXECUTION.md` | Host/container boundary, Docker, public commands, runtime resources, secrets, diagnostics, reproducibility and CI |
+| `PROJECT_KNOWLEDGE.md` | Project Documents, routing, agent entry files, provenance/staleness, hierarchy and document maintenance |
+| `TRACEABILITY.md` | Migration map from the legacy artifact files to canonical owners |
 
-## Language policy
+The canonical layer is organized by semantic concept/lifecycle rather than the legacy `design-principles / documentation-strategy / development-environment-strategy` packaging or WHY/HOW/WHERE/FLOW facets.
 
-The authoritative AI-facing artifacts are currently written in English. This is a pragmatic convention for consistency with code, technical terminology, and common model training material; it is not a claim that English is universally superior for every model or task.
+## Current Artifact Migration State
 
-Human-facing Japanese material lives under `docs-jp/`. It may include current companion explanations as well as historical source/rationale logs. It is never authoritative: when any Japanese material differs from `artifacts/`, the files under `artifacts/` win.
+The existing `artifacts/` tree remains intact while the publication layer is redesigned.
 
-## Repository layout
+Legacy directories currently present:
+
+```text
+artifacts/
+├─ design-principles/
+├─ documentation-strategy/
+└─ development-environment-strategy/
+```
+
+These directories are **not the new canonical knowledge boundary**.
+
+The previous premise that these directories are independently selectable knowledge modules has been retired for the redesign. The current files remain temporarily because they are deployed in existing projects and provide the baseline from which the new projection will be designed.
+
+Do not delete or restructure the legacy artifact projection until the new publication/distribution design is explicitly completed.
+
+## Traceability
+
+`documents/knowledge/TRACEABILITY.md` maps all 14 legacy artifact Markdown files and their major concerns to the new semantic owners.
+
+This provides a migration invariant:
+
+```text
+artifact structure may change
+≠
+engineering knowledge may silently disappear
+```
+
+Detailed historical design/experiment evidence remains in Git and `docs-jp/**/source-logs/`.
+
+## Language Policy
+
+Canonical reusable knowledge is currently written in English for technical consistency and AI use.
+
+Human-facing Japanese material may live under `docs-jp/`.
+
+This is a routing convention, not a claim that one language is inherently better. Preserve the language required for accurate domain meaning.
+
+## Repository Layout
 
 ```text
 .
 ├─ README.md
 ├─ artifacts.sh
-├─ artifacts/
-│  ├─ design-principles/
-│  ├─ documentation-strategy/
-│  └─ development-environment-strategy/
-├─ docs-jp/
-│  └─ <module>/
+├─ artifacts/                 # current derived/legacy AI projection
+├─ docs-jp/                   # human/rationale/experiment material
 ├─ documents/
-│  └─ project/
+│  ├─ INDEX.md
+│  ├─ knowledge/              # canonical reusable knowledge
+│  └─ project/                # this repository's local documentation
 └─ tests/
 ```
 
-`documents/project/` documents this repository itself. It is not distributed to target projects.
+## Legacy Distribution During Migration
 
-## Distribution
+`artifacts.sh` still implements the existing selective-module sync contract.
 
-### Interactive use
+That behavior is maintained temporarily for compatibility with projects that already consume the legacy projection. It is **not** the intended knowledge architecture going forward.
 
-Clone or update this repository, then run:
+Until the publication redesign is complete:
+
+- existing projects may continue syncing the legacy projection;
+- do not interpret `--modules` choices as canonical knowledge boundaries;
+- do not add new semantic rules only inside legacy artifacts;
+- canonical changes begin under `documents/knowledge/`, then are reflected into whatever artifact projection is currently supported.
+
+Current commands remain available for the legacy projection:
 
 ```bash
 ./artifacts.sh
-```
-
-The script asks for the target project and which modules to install or update. It also offers a separate explicit removal selection.
-
-### Non-interactive / agent use
-
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --modules design-principles,documentation-strategy \
-  --non-interactive
-```
-
-Install or update every available module:
-
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --modules all \
-  --non-interactive
-```
-
-List available modules:
-
-```bash
 ./artifacts.sh --list
+./artifacts.sh --target /path/to/project --modules all --non-interactive
 ```
 
-### Explicit removal
+The future distribution interface will be redesigned separately.
 
-Removal is never inferred from an install/update selection.
+## Agent Integration
 
-```bash
-./artifacts.sh \
-  --target /path/to/project \
-  --remove development-environment-strategy \
-  --non-interactive
-```
+This repository does not impose one universal `AGENTS.md`, `CLAUDE.md`, or equivalent file on target projects.
 
-A project that already contains three modules and later runs `--modules design-principles` keeps the other two unchanged. To stop using one, remove it explicitly.
+Target-project entry files should remain small and route to:
 
-## Sync contract
-
-For every selected install/update module:
-
-- the corresponding `artifacts/<module>/` directory is copied to `documents/artifacts/<module>/` in the target project;
-- the selected module directory is replaced as a unit, so files removed from the canonical module disappear from that copied module;
-- modules not selected are untouched;
-- symlinked destination module paths are rejected;
-- no Git command is run in the target project.
-
-After synchronization, review the normal Git diff in the target project and commit it there.
-
-There is intentionally no generated manifest, independent artifact version file, rollback database, or archive directory. The target repository's Git history records exactly which artifact snapshot was used at each commit.
-
-## Agent integration
-
-This repository does not impose a universal `AGENTS.md`, `CLAUDE.md`, or equivalent configuration on target projects. Agent entry points vary by tool and workspace.
-
-A target project may reference the installed `documents/artifacts/<module>/INDEX.md` files from its own agent-specific instructions. Keep those project-specific routing instructions small and local to the project.
+1. project-specific canonical knowledge;
+2. the relevant installed reusable guidance projection;
+3. additional detail only when needed.
 
 ## Validation
+
+Legacy distribution validation remains:
 
 ```bash
 bash -n artifacts.sh
 bash tests/test-artifacts.sh
 ```
 
-The tests cover selective installation, exact module update, non-removal of omitted modules, explicit removal, invalid selections, conflicting operations, and symlink protection.
+Future canonical/artifact projection validation will be added as the publication redesign is implemented.
