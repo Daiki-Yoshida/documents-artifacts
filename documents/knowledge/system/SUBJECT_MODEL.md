@@ -35,6 +35,36 @@ subjects/encapsulation-horizon/
 
 subject directoryはtopic tagではなく、独立して理解・保守する価値のある知識対象を表す。
 
+## File naming
+
+subject内の整理済み本文fileには、公式な構造順・推奨読書順を表す `SNNN_` prefixを付ける。
+
+```text
+subjects/<subject>/
+├─ INDEX.md
+├─ S001_<NAME>.md
+├─ S002_<NAME>.md
+└─ ...
+```
+
+規則:
+
+- `INDEX.md` はsubject本文のsectionではなく入口なので番号を付けない。
+- `S001`, `S002`, ... はsubject内の公式な構造・推奨読書順を表す。
+- 3桁zero paddingを使用する。
+- 番号は恒久IDではない。subject構造を大きく再編した場合は、Git historyを利用して必要に応じてrenameしてよい。
+- 将来挿入用の空き番号を確保する目的で10刻みにはしない。
+- file名の意味部分は責務を表す大文字snake caseを基本とする。
+
+例:
+
+```text
+INDEX.md
+S001_CORE_PRINCIPLE.md
+S002_RESPONSIBILITY_AND_HORIZON.md
+S003_HARDENING_POLICY.md
+```
+
 ## 分割基準
 
 subject内部はWHY/HOW/WHERE/FLOWのような一律のfacetでは分けない。
