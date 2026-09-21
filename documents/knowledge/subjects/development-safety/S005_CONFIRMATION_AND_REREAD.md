@@ -40,7 +40,7 @@ L3_破壊的またはhost変更:
 読み直し不要:
   - "確立済みcommandの日常利用"
   - "単独書き込みtaskで現在checkoutを選ぶ"
-  - "実際の隔離条件がある場合の通常Task Worktree作成"
+  - "確立済みWork Identity contractに従う通常のrepository-specific worktree作成"
   - "command契約を変えない小さな内部script修正"
 ```
 
