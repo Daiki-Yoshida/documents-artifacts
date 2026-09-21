@@ -103,26 +103,48 @@ Artifact layout, packaging, file count, and read order may change without changi
 
 ## 6. Human-Facing Knowledge
 
-Human-facing tutorials, background, rationale, and historical narrative may live under `docs-jp/` or another explicit human-facing area.
+Human-facing project content lives under `docs-jp/`, not under the AI-facing `documents/` tree.
 
-AI-facing vs human-facing is an optimization/routing distinction, not an access restriction.
+```yaml
+docs_jp:
+  language: "Japanese"
+  examples:
+    - "project background and motivation"
+    - "setup tutorials for human developers"
+    - "design rationale and decision explanations"
+    - "Japanese companion/translation material for human review"
+```
 
-Japanese or another language may appear in AI-facing knowledge when the information itself requires it. Language choice must not destroy domain meaning.
+AI-facing vs human-facing is an optimization/routing distinction, not an access restriction: humans may read `documents/`.
+
+AI-facing documents are English by default, but Japanese or another language is allowed when the AI needs that original context and translation could degrade meaning.
+
+### README.md
+
+`README.md` is a brief human-facing project entry. It should summarize the project and route humans to `docs-jp/` when more detail is needed.
+
+AI agents should not rely on README as the canonical project-context source when `documents/` exists; enter through the project knowledge routing instead.
 
 ## 7. Agent Entry Files
 
-Tool-specific files such as `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` should remain small.
+Tool-specific files such as `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md` are the first project entry for the corresponding agent tool and should remain small.
 
-They may own:
+Create one only for an agent tool the project actually uses.
 
-- project-specific constraints;
-- emergency/ambiguity behavior;
-- language/output conventions;
-- the primary project-knowledge entry point;
-- high-priority task routing;
-- truly global current context.
+They own project/tool-specific conventions such as:
 
-They should link to canonical project/reusable knowledge rather than duplicate detailed architecture or generic rules.
+- role;
+- language/output settings;
+- execution constraints;
+- emergency behavior when intent is unclear;
+- `project_ref: documents/INDEX.md`;
+- optional routing to installed derived reusable guidance;
+- focus-file hints;
+- current development priority when genuinely useful across the session.
+
+They should link to canonical project/reusable knowledge rather than duplicate architecture, specifications, or generic guidance.
+
+The generated entry is a project-owned starting template; project maintainers may customize local rules afterward.
 
 ## 8. documents/INDEX.md
 
@@ -166,6 +188,8 @@ A task should not require reading every project document merely to discover one 
 Split and route by semantic concern and lifecycle, not arbitrary file-size thresholds.
 
 Use stable relative links within the repository.
+
+Markdown cross-references are relative to the referencing file. Registry `path` values, by contrast, are repository-root-relative identifiers used for unique document identification.
 
 ## 10. Single Semantic Owner
 
