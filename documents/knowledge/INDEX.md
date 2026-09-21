@@ -1,101 +1,105 @@
-# Knowledge Index
+# Knowledge
 
-```yaml
-文書種別: "第1情報源ルーティング"
-言語: "日本語"
-意味内容の要約: false
-```
+`documents/knowledge/` は、このrepositoryでファイル化された情報における第1情報源である。
 
-`documents/knowledge/` は、このリポジトリでファイル化された情報における第1情報源である。
+ここでは、単に「現在採用されている結論」だけではなく、提言・仮説・反論・調査・実験・採用・却下・訂正などを、その評価関係と時系列を含めて信頼可能な状態で保持する。
 
-このINDEXは知識本文を要約・再解釈しない。原文記録への経路と、記録間の関係だけを示す。
+knowledge内に存在する個々の命題がすべて肯定されている、という意味ではない。
 
-## 情報源の優先順位
+## 情報源モデル
 
 ```text
 第0情報源
-チャット / Issue / 調査 / 実験 / ユーザーまたはAIからの提言
-        ↓ 原文を情報劣化なく記録
-第1情報源
+Chat / Issue / 調査 / 実験 / ユーザー・AIの提言・判断
+        ↓
 documents/knowledge/
-        ↓ 現在の評価・文脈・結論を読み取って変換
+第1情報源
+        ↓
+artifacts等
 第2情報源
-artifacts/ などのAI向け派生情報
 ```
 
-ファイル化された情報同士で矛盾または意味差がある場合、`documents/knowledge/` の記録を最優先して確認する。
+第1情報源では、情報の完全性・正確性・検証可能性を優先する。
 
-第1情報源に記録された個々の発言・仮説・提言が、すべて肯定的に採用されていることを意味しない。提言、反論、評価、却下、採用、後続の訂正を含む**記録全体の関係と内容が正確に保存されていること**を信頼する。
+第2情報源では、第1情報源を根拠としてAI可読性、context圧縮、token効率、progressive disclosureなどを優先してよい。
 
-## 原文記録
+ファイル化された情報同士に疑義や意味差がある場合、knowledgeを最優先して確認する。
 
-INDEXは原文内容を要約しない。記録ID・情報源・時系列・明示された関係だけを管理する。
-
-| 記録 | 情報源 | 日付 | 関係 |
-|---|---|---|---|
-| [K-2026-09-21-000](records/K-2026-09-21-000.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | — |
-| [K-2026-09-21-001](records/K-2026-09-21-001.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | K-2026-09-21-000 の方針を具体化 |
-| [K-2026-09-21-002](records/K-2026-09-21-002.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | K-2026-09-21-001 の「正確」の意味を補足 |
-| [K-2026-09-21-003](records/K-2026-09-21-003.md) | ChatGPT会話内のユーザーメッセージ | 2026-09-21 | — |
-
-## Legacy source log 原文コピー
-
-以下は既存 `docs-jp/**/source-logs/` から本文を変更せずにコピーした記録である。
-
-コピー元snapshot:
+## 構造
 
 ```text
-d68ec413b4bb3dafe90e1aaed3c8de9487b1453c
+documents/knowledge/
+├─ INDEX.md
+├─ system/
+├─ records/
+└─ subjects/
 ```
 
-INDEXは内容を要約しない。source pathとblob同一性だけを記録する。
+### system/
 
-| knowledge record | 元path | blob SHA |
-|---|---|---|
-| [ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md](records/legacy-source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md) | `docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md` | `ecad4ecf22fe510b7f71ef0e7c9be684298d73c9` |
-| [WORK_IDENTITY_DESIGN_JP.md](records/legacy-source-logs/WORK_IDENTITY_DESIGN_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md` | `914c937eb0ae9813b4c736d74723212126bda04e` |
-| [WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md](records/legacy-source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md` | `eb7a9d28d05297128845056b9c019796ad31efad` |
-| [WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md](records/legacy-source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md` | `9fd3fbdc6dc9dfda105bfb4ef956b77fec7557a2` |
-| [WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md](records/legacy-source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md) | `docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md` | `dc5ef3b599a35d6f908f10c536ead3886cfb539c` |
+knowledgeという仕組み自体の規則を置く。
 
-これらの内部にある旧authority/status表現も歴史的記録の一部なので改変しない。現在の情報源優先順位は、後続のユーザー決定recordを含む全記録の時系列・評価関係から判断する。
+- knowledge全体の責務
+- recordの保存方法
+- subjectの整理方法
+- traceability
 
-## docs-jp snapshot
+詳細は `system/` を参照する。
 
-旧 `docs-jp/` のsnapshot移行状況は次を参照する。
+### records/
 
-- [docs-jp snapshot manifest — 2026-09-21](manifests/docs-jp-snapshot-2026-09-21.md)
+第0情報源から得られた原文・記録・snapshotを、可能な限り情報を変えず保存する。
 
-snapshot commit `d68ec413b4bb3dafe90e1aaed3c8de9487b1453c` に存在した16ファイルは、すべてknowledge側に本文無加工で確保済み。
+「実際に何が記録されていたか」を確認するための根拠層。
 
-manifestは内容の要約ではなく、copy元・copy先・分類・blob SHAのprovenanceだけを管理する。
+通常の保存単位は:
 
-## 記録原則
+```text
+records/YYYY-MM-DD-<short-title>/
+```
 
-- 原文本文を要約しない。
-- 原文本文を抜粋して元の意味を失わせない。
-- 原文本文を言い換えない。
-- 原文内の提言・仮説・否定・採用・保留などの評価関係を改変しない。
-- 後から結論が変わっても、以前の記録を書き換えて歴史を消さない。
-- 新しい判断・訂正・反論は、新しい原文記録として追加する。
-- provenanceや記録間の関係を示すmetadataは付与してよいが、原文そのものの代替にはしない。
+### subjects/
 
-## 第2情報源への変換
+recordsを根拠として、責務範囲・概念・domain knowledgeごとに整理した日本語knowledgeを置く。
 
-`artifacts/` などの第2情報源では、第1情報源を根拠として次の変換を許可する。
+subjectsでは情報を理解可能な構造へ整理するが、artifactのようなcontext圧縮は目的にしない。
 
-- コンテキスト圧縮
-- 重複除去
-- 現在有効な結論の抽出
-- AI向けの再構成
-- progressive disclosure
-- token消費効率の最適化
-- 必要に応じた言語・表現形式の変更
+情報劣化を避けるため、必要であれば文書の肥大化を許容する。
 
-ただし、第2情報源は第1情報源の意味を上書きしない。第2情報源に疑義がある場合は第1情報源へ戻って確認する。
+## 基本的な読み方
 
-## 移行中の注意
+通常は、目的に対応するsubjectから読む。
 
-このbranchで以前作成した意味再構成候補は、第1情報源の原文保存要件に適合しないため `documents/project/migration/semantic-preservation-candidate/` へ退避している。
+```text
+subjects
+  ↓ 疑義・詳細確認
+records
+```
 
-それらは意味保存監査の成果物であり、第1情報源ではない。
+knowledgeという仕組み自体を変更・保守する場合は `system/` を読む。
+
+subjectsに存在しない情報を調査する場合はrecordsを直接確認してよい。
+
+## 更新原則
+
+新しい判断・訂正・提言が発生した場合、その意味をsubjectsへ直接発明しない。
+
+```text
+第0情報源
+  ↓
+records
+  ↓
+subjects
+  ↓
+第2情報源
+```
+
+過去のrecordは、後から判断が変わったという理由で書き換えない。
+
+subjectの整理に誤りが見つかった場合はrecordsへ戻って検証し、subject側を修正する。
+
+## 言語
+
+整理されたknowledgeである `subjects/` と、knowledge systemを定義する `system/` は日本語を標準とする。
+
+recordsは原文保持を優先する。技術用語、固有名詞、code、command、API等は意味精度のため原語を維持してよい。
