@@ -244,6 +244,16 @@ The Project Repository tracks:
 
 Repository worktree directories beneath the same Work Root are separate Git checkouts and are not tracked as ordinary Project Repository content.
 
+A compatible Project Repository ignore boundary is:
+
+```gitignore
+.worktrees/*/*/*
+!.worktrees/*/*/documents/
+!.worktrees/*/*/documents/**
+```
+
+This ignore boundary controls **tracking ownership**. It does not prevent Git from materializing already-tracked Project-level Work Documents in another linked worktree; that is a separate materialization concern handled by the Worktree Materialization Contract.
+
 This allows active Work Documents to remain visible from the Project Repository baseline while repository worktrees remain independent.
 
 ## 8. Project Documents vs Work Documents
@@ -321,6 +331,8 @@ Reuse project-scoped images and safe caches when correct.
 When isolated surfaces are created, they must remain traceable to the same Work Identity.
 
 One writable checkout should have one writing agent/owner at a time.
+
+The selected repository/worktree path must propagate consistently to build, test, format, logs, and generated-output operations. Parallel Works receive distinct mutable state wherever sharing would alter results. A branch must not be assigned to two writable worktrees. Removing a worktree must not implicitly delete its branch.
 
 ## 11. Worktree Public Semantics
 
