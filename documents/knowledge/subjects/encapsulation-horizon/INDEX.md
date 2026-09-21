@@ -2,57 +2,57 @@
 
 このsubjectは、**境界面をどのscaleで硬化し、どこから内部自由を許容するか**を扱うEncapsulation Horizonのknowledgeを管理する。
 
-通常は `CORE_PRINCIPLE.md` から読み、設計判断に応じて各責務文書へ進む。
+通常は `S001_CORE_PRINCIPLE.md` から読み、設計判断に応じて各責務文書へ進む。
 
 ## 構成
 
 ```text
 encapsulation-horizon/
 ├─ INDEX.md
-├─ CORE_PRINCIPLE.md
-├─ RESPONSIBILITY_AND_HORIZON.md
-├─ HARDENING_POLICY.md
-├─ CONCEPT_ALTITUDE.md
-├─ CONTRACT_COMPLETENESS.md
-├─ EVOLUTION_AND_GRADUATION.md
-├─ GLOSSARY.md
-├─ OPERATIONAL_GUARDS.md
-└─ HISTORY.md
+├─ S001_CORE_PRINCIPLE.md
+├─ S002_RESPONSIBILITY_AND_HORIZON.md
+├─ S003_HARDENING_POLICY.md
+├─ S004_CONCEPT_ALTITUDE.md
+├─ S005_CONTRACT_COMPLETENESS.md
+├─ S006_EVOLUTION_AND_GRADUATION.md
+├─ S007_GLOSSARY.md
+├─ S008_OPERATIONAL_GUARDS.md
+└─ S009_HISTORY.md
 ```
 
-### CORE_PRINCIPLE.md
+### S001_CORE_PRINCIPLE.md
 
 「境界面は固く、内部は柔軟に」という出発点、boundaryのfractal性、その全面強制が生む破綻、Encapsulation Horizonという解、全体のまとめを扱う。
 
-### RESPONSIBILITY_AND_HORIZON.md
+### S002_RESPONSIBILITY_AND_HORIZON.md
 
 地平線の単位を固定scaleではなくresponsibility / meaning bundle / caller coherenceとして捉える考え方を扱う。
 
-### HARDENING_POLICY.md
+### S003_HARDENING_POLICY.md
 
 hardeningの条件、stability、seam cost、macro→micro、harden-by-default、module=prior、maturity、split decisionを扱う。
 
-### CONCEPT_ALTITUDE.md
+### S004_CONCEPT_ALTITUDE.md
 
 概念の意味が属する高度、YAGNI、最初のconsumer、neutral modeling、physical placement、hardening depthとの独立性を扱う。
 
-### CONTRACT_COMPLETENESS.md
+### S005_CONTRACT_COMPLETENESS.md
 
 内部自由とboundary contract完全性の双対、signature以外のleakage channel、内部自由を安全に成立させる条件を扱う。
 
-### EVOLUTION_AND_GRADUATION.md
+### S006_EVOLUTION_AND_GRADUATION.md
 
 責務の成熟、AND test、inner horizonへのgraduation、outer surfaceの維持、内部自由の将来costを扱う。
 
-### GLOSSARY.md
+### S007_GLOSSARY.md
 
 Encapsulation Horizon subject内で使用する用語を扱う。
 
-### OPERATIONAL_GUARDS.md
+### S008_OPERATIONAL_GUARDS.md
 
 誤読防止、moduleの四義、confirmation levelなど、原理を実際の設計・AI workflowへ適用する際のguardを扱う。
 
-### HISTORY.md
+### S009_HISTORY.md
 
 原本の旧positioning、旧artifactとのauthority関係、artifactへの圧縮対応を歴史的文脈として保持する。
 
@@ -84,6 +84,6 @@ original_preamble_count: 1
 
 - responsibility単位でのfile再配置
 - subject-native title / intro / source参照の追加
-- 旧authority / artifact対応文脈の `HISTORY.md` への分離
+- 旧authority / artifact対応文脈の `S009_HISTORY.md` への分離
 
 今後文体・重複・構造をさらに整理する場合も、recordsへのtraceabilityを維持し、条件・例外・反論・推論・誤読防止を失わないこと。
