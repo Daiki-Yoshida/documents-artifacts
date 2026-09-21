@@ -51,6 +51,13 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 
 旧source log metadata、旧artifactへの反映予定、当時の未検証事項に加え、Work Identity導入以前のTask Worktree / Primary Checkout / task resource identityモデルを保持する。
 
+
+## Workspace Structureとの境界
+
+Project Repository、Project Root、Component Repository、stable repository identity / locationなど、**project全体の静的構造**は `../workspace-structure/` が主所有する。
+
+Work Identityはそれらを前提として、Work Root、Work Documents、Work単位のbranch/worktree/resource lifecycleを所有する。
+
 ## Traceability
 
 主要source record:
