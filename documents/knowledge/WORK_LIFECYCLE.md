@@ -87,6 +87,8 @@ The Work Root is:
 <project-root>/.worktrees/<work-type>/<work-name>/
 ```
 
+Do not introduce a second `.work/<identity>/` hierarchy for the same lifecycle.
+
 The same shape applies to single- and multi-repository projects.
 
 ### Single repository
@@ -251,6 +253,8 @@ The Project Repository tracks:
 ```text
 .worktrees/<work-type>/<work-name>/documents/**
 ```
+
+Do not create a dedicated Git repository solely for Work Documents; they belong to the Project Repository's Work lifecycle and history.
 
 Repository worktree directories beneath the same Work Root are separate Git checkouts and are not tracked as ordinary Project Repository content.
 
@@ -446,8 +450,10 @@ For the selected repository worktree:
 5. warn/refuse when commits are not preserved according to project policy;
 6. stop/remove Work-scoped runtime resources owned by that repository surface when the public operation owns them;
 7. remove the worktree without force;
-8. prune stale metadata only when appropriate;
+8. prune stale metadata only when appropriate; pruning stale Git metadata is not permission to delete live directories;
 9. keep branch deletion as a separate decision.
+
+Force removal belongs only to an explicitly destructive path after the ordinary failure is understood; never hide `--force` behind routine remove.
 
 Routine remove does not delete the Work branch, Work Documents, whole Work Root, or sibling repository worktrees.
 
