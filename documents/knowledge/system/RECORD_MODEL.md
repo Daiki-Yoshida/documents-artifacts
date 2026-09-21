@@ -91,3 +91,8 @@ records/YYYY-MM-DD-<snapshot-name>/
 record本文の変更を許可する代表例は、取り込み時の転記ミスなど「sourceとrecordが一致していない」場合。
 
 判断の変化はrecordの修正ではなく、新しいsource eventとして追加する。
+
+## 根拠records
+
+- `../records/2026-09-21-knowledge-source-model/`
+- `../records/2026-09-21-records-subjects-model/`
