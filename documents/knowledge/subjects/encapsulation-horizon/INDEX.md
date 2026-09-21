@@ -84,6 +84,6 @@ original_preamble_count: 1
 
 - responsibility単位でのfile再配置
 - subject-native title / intro / source参照の追加
-- 旧authority / artifact対応文脈の `HISTORY.md` への分離
+- 旧authority / artifact対応文脈の `S009_HISTORY.md` への分離
 
 今後文体・重複・構造をさらに整理する場合も、recordsへのtraceabilityを維持し、条件・例外・反論・推論・誤読防止を失わないこと。
