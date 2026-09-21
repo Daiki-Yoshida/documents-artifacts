@@ -174,9 +174,24 @@ A normal module may expose one primary surface such as `index` or `contracts`. A
 
 Do not create an interface automatically for every class.
 
-A hard interface/port is justified by a meaningful boundary such as external dependency isolation, genuinely replaceable implementation, cross-layer/module capability, a reusable contract-test seam, or a published/long-lived contract.
+A **Behavioral Boundary Component** such as a service, repository, manager, adapter, or use-case port must define or reuse a project-owned contract when **any** of these holds:
 
-Private/local implementation may remain concrete. The goal is meaningful isolation, not maximizing interface count.
+- it is public or shared across modules;
+- it is DI-injected or is a volatile dependency such as I/O, DB, network, filesystem, clock, or randomness;
+- it protects Domain/Application from Infrastructure across a layer boundary;
+- it must be replaceable, test-substitutable, or runtime-swappable.
+
+Do **not** require an interface for:
+
+- private/internal helpers that cross no boundary;
+- single-implementation logic that forms no meaningful boundary;
+- short-lived prototypes/spikes.
+
+YAGNI applies to meaningless wrappers, not to real architectural boundaries. Prefer a concrete class for contained implementation and extract/harden a contract when a real boundary, volatile dependency, second implementation, or stable cohesive capability appears.
+
+Timing guard: harden only when the responsibility is stable enough to name and the seam is cheap enough to maintain.
+
+Module-local contracts are allowed even with one implementation when they clarify a cohesive internal capability. Public/cross-module contracts require greater stability because they are published.
 
 Domain Entities and Value Objects generally do **not** require an interface merely to represent their state. Introduce polymorphic contracts there only when the domain actually requires interchangeable behavior.
 
