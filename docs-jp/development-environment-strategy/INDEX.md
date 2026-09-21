@@ -27,6 +27,10 @@ Work Identity関連の背景・判断理由・実験証拠は、正本artifact�
   - status: `artifactized_reference`
   - authority: non-canonical source/rationale log
   - 用途: Worktree public command contractの入力、導出、idempotency、rollback、安全境界の設計根拠を確認する
+- [Work Identity Worktree Reference Implementation 検証記録](source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md)
+  - status: `artifactization_source`
+  - authority: non-canonical experiment record
+  - 用途: public command参照実装のfresh-clone検証、base/upstream問題と修正、Primary checkout guard、検証範囲を保持する
 
 これらのsource logは現行artifactを上書きしません。
 
