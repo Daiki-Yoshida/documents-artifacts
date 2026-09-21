@@ -190,6 +190,14 @@ Names should express what the caller can rely on. Document only load-bearing con
 
 Follow Interface Segregation: callers should depend only on the capabilities they actually need.
 
+### Naming and granularity
+
+Follow the programming language's native idiom; language conventions outrank generic examples.
+
+- **C#**: use the conventional `I` prefix for interfaces where idiomatic, e.g. `IJobFetcher`.
+- **TypeScript/Kotlin**: do not add an `I` prefix merely to imitate C#; prefer descriptive names such as `JobFetcher` and `HttpJobFetcher`.
+
+Prefer interfaces that represent a cohesive capability rather than one interface per atomic operation.
 
 ## 12. Layer Responsibilities
 
