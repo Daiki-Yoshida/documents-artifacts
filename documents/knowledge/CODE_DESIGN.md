@@ -358,49 +358,81 @@ Caller-relevant failure semantics are part of the contract.
 
 ## 20. Concurrency and Async Contracts
 
-Concurrency is part of a boundary contract whenever callers can observe it.
+Concurrency is part of the contract, not merely an implementation detail.
 
-Clarify as applicable:
+```yaml
+async_policy:
+  signature: "if an operation is asynchronous, the contract expresses it through Task / Promise / suspend / ecosystem equivalent; do not hide async behind a sync facade"
+  thread_safety: "state thread-safety semantics such as thread-safe, caller-confined, or single-threaded only"
+  cancellation: "long-running or I/O operations should accept and honor a cancellation token/signal when the ecosystem supports it"
+  domain_purity: "threading/scheduling primitives do not leak into Domain contracts; concurrency belongs to Application/Infrastructure"
+  shared_state: "do not share mutable state across a boundary without explicit synchronization or immutability"
+```
 
-- thread-safety;
-- ordering;
-- cancellation;
-- timeout;
-- backpressure;
-- idempotency;
-- retry behavior;
-- shared mutable state;
-- task ownership/lifetime.
+Clarify caller-visible ordering, timeout, backpressure, idempotency, retry behavior, task ownership, and lifetime where relevant.
+
+Never block on async with patterns such as `.Result` / `.Wait()` across a boundary you do not own; propagate async to the edge.
 
 Do not label an escaping concurrency hazard as an "internal detail".
 
 ## 21. Performance-Shaped Contracts
 
-Do not redesign API interaction shape from speculation.
+Optimize **behind the existing contract first**. Do not redesign API interaction shape from intuition or speculative "this may be slow" reasoning.
 
-A performance concern may shape a public contract when:
+A performance requirement becomes contract input only when it is load-bearing and caller-visible, such as a real latency, throughput, memory, bounded-work, cancellation, or backpressure requirement.
 
-- a load-bearing requirement exists;
-- measurement or a defensible structural bound shows the interaction shape is a limiter;
-- implementation-only optimization is insufficient.
+Before changing an existing interaction shape:
 
-Possible contract shapes include batch, stream, pagination, asynchronous operations, and bounded concurrency.
+1. state the required bound and representative workload/conditions;
+2. try implementation-only optimization while preserving the contract;
+3. use representative measurement when practical, or a defensible structural lower bound such as unavoidable N remote round trips or unbounded materialization;
+4. redesign only the interaction shape when evidence shows the current shape itself prevents the bound;
+5. re-check semantic capability, ownership, failure semantics, and compatibility;
+6. verify the resulting contract against the stated bound under the representative workload or an equivalent deterministic bound check.
 
-When public shape changes, evaluate compatibility for the actual contract medium: source/binary API, wire/schema, persisted data, or another relevant medium.
+Possible contract shapes include batch, streaming, pagination, async/cancellation, and bounded-concurrency/backpressure semantics.
+
+Do not expose implementation tactics merely because they are faster. Caching, buffering strategy, vectorization, pooling, unmanaged-code choices, cache layout, arbitrary chunk sizes, or buffer ownership remain internal unless interoperability genuinely makes them caller-visible guarantees.
+
+### Contract medium and blast radius
+
+- **Module-local/internal port**: a shape change can remain contained when all participants are owned by the requested task; keep the published outer module contract stable where possible.
+- **Published in-process/library API**: compatible added batch/stream capability may be additive; changing/removing required existing interaction is breaking unless migration is agreed.
+- **Cross-runtime/wire protocol**: pagination tokens, stream framing, request batching, ordering, retry/idempotency, and backpressure are wire semantics; check rollout/schema compatibility and mixed-version behavior where relevant.
+- **Persistent-data-facing contract**: if performance changes stored representation or migration requirements, classify persistence compatibility separately.
+
+Performance does not bypass ordinary compatibility/deprecation rules.
 
 
 ## 22. Contract Evolution and Compatibility
 
-"Additive" syntax is not proof of compatibility.
+"Additive" describes change shape; it does not prove compatibility.
 
 When evolving an existing contract, identify:
 
 - callers/consumers;
-- providers/implementers;
-- relevant compatibility dimensions;
+- providers/implementers/fakes;
+- relevant compatibility dimensions such as source/binary, wire/schema, or persisted-data compatibility;
 - existing guarantees.
 
 A change is backward-compatible only when existing participants can continue without mandatory changes and previously valid interactions retain their guarantees.
+
+Rules:
+
+- prefer additive evolution when it truly preserves both consumer and provider behavior;
+- a published breaking change follows the L3 confirmation path;
+- a contained module-local break may remain L1/L2 when all participants are owned inside the requested scope;
+- changed **Semantics** is breaking even when the Signature is identical;
+- Application Ports evolve with their use case; version the port, not Domain merely to accommodate integration evolution;
+- an internal maturation split adds inner boundaries while preserving the published outer contract; if the outer contract must break, route that through the normal confirmation gate.
+
+### Deprecation
+
+When a published replacement is needed:
+
+1. mark the old contract deprecated and keep it working;
+2. provide the replacement plus migration guidance in the contract semantics;
+3. remove the old contract only after consumers migrate or at an explicitly agreed major-version boundary.
 
 Classify confirmation/risk according to `ENGINEERING_OPERATING_MODEL.md`.
 
@@ -514,7 +546,11 @@ Prioritize tests at stable boundaries.
 
 ### Contract tests
 
-Reusable contract suites belong beside the contract/port rather than one implementation. Every implementation/fake should satisfy the same caller-visible guarantees.
+Reusable contract suites belong beside the contract/port rather than one implementation.
+
+The contract suite verifies Signature + Semantics + Constraints. Every real implementation, fake, mock, or substitute that claims to implement the contract must satisfy the same suite/guarantees.
+
+Contract conformance is not by itself proof that the user's requested outcome is reachable through composition, UI, runtime, or integration boundaries; verify that outcome separately through the narrowest meaningful path.
 
 ### Unit tests
 
