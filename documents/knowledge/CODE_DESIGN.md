@@ -151,6 +151,8 @@ A hard interface/port is justified by a meaningful boundary such as external dep
 
 Private/local implementation may remain concrete. The goal is meaningful isolation, not maximizing interface count.
 
+Domain Entities and Value Objects generally do **not** require an interface merely to represent their state. Introduce polymorphic contracts there only when the domain actually requires interchangeable behavior.
+
 ## 11. Interface Design
 
 Design capabilities, not implementation-shaped method bags.
@@ -183,6 +185,17 @@ Owns databases, network/filesystem/provider implementations, external SDK/client
 Owns presentation, user interaction, UI-specific formatting, and UI state.
 
 Do not put business policy in controllers/pages/components merely because they are convenient entry points.
+
+### Type placement
+
+| Type | Owning layer | Purpose |
+|---|---|---|
+| Domain Entity / Value Object | Domain | Business rules and invariants |
+| UseCase DTO / Request / Response | Application | Boundary transfer and application-facing formatting |
+| Tech DTO / DbModel / ApiSchema | Infrastructure | Storage/network/provider serialization |
+| ViewModel / Presentation Model | UI | UI-shaped state; never referenced inward |
+
+Application owns mapping between Domain Entities and application-boundary DTOs. Infrastructure owns mapping between Domain Entities and technical persistence/network DTOs.
 
 ## 13. Dependency Direction
 
@@ -419,6 +432,17 @@ Use when the meaningful requested outcome crosses the whole system or user inter
 
 Do not substitute expensive E2E testing for a narrow boundary test when narrower evidence is sufficient.
 
+### Test priority by boundary
+
+Test the most stable meaningful boundary; avoid private-detail tests unless they materially improve confidence.
+
+- **Domain/Core**: prioritize correctness and unit tests.
+- **Public interfaces/ports**: prioritize contract tests.
+- **Infrastructure adapters**: use integration/contract tests against the real external boundary or an appropriate test double.
+- **Application UseCases**: test orchestration and expected-failure handling.
+- **UI**: test pragmatically; invest more when behavior is complex or critical.
+- **Private helpers**: normally verify through the public/module contract unless complex pure logic justifies direct tests.
+
 ## 30. Test Placement
 
 Co-locate tests with ownership when ecosystem conventions allow.
@@ -477,7 +501,31 @@ These rules govern code being added or modified; they do not require automatic r
 - classify cleanup as its own change;
 - prevent opportunistic refactoring from expanding scope.
 
-## 33. Common Misreadings
+## 33. Design Decision Priority
+
+When making design choices, prioritize:
+
+1. **Clarity of boundary and contract**
+2. **Stability of external interface**
+3. **Locality of change**
+4. **Explicitness of side effects**
+5. **Internal elegance or purity**
+
+This priority order evaluates design choices.
+
+### Mistakes to prevent
+
+When reviewing risk, prevent these mistakes in roughly this order:
+
+1. mixing responsibilities in one class/module;
+2. mishandling expected business failures with exceptions, nulls, or boolean flags instead of an explicit expected-failure model;
+3. silently changing a public contract, DTO, or observable behavior;
+4. spreading an external dependency into Domain/core or across unrelated modules;
+5. over-engineering with unnecessary abstractions.
+
+Over-engineering is a real problem, but it ranks below the first four. Do not skip a justified boundary merely to avoid abstraction, and do not add meaningless boundaries either.
+
+## 34. Common Misreadings
 
 - "harden public surfaces" does not mean interface everywhere.
 - an "AND" does not always require a split.
