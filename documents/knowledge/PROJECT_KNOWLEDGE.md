@@ -88,9 +88,12 @@ Reusable AI guidance distributed into a target project is a **derived knowledge 
 A target project may commit the derived snapshot for reproducibility, but:
 
 - the target project does not become the canonical semantic owner;
-- the project's own document registry need not version every derived file;
-- updates should come through the projection's publication/sync mechanism;
-- explicit target-project rules may override generic guidance.
+- the project's own document registry does not version each derived file as ordinary Project Documentation;
+- install/update/remove uses the projection's explicit publication/sync mechanism;
+- omitting an installed guidance set from an update selection is **not** permission to remove it;
+- removal is an explicit operation;
+- direct target-copy edits must not silently fork the reusable guidance;
+- explicit target-project rules may override generic guidance, and such overrides belong in project-owned instructions/documents rather than by rewriting the installed projection.
 
 In this repository:
 
@@ -222,7 +225,9 @@ reference:
 
 Create a topic directory when it establishes a clear routing, ownership, or lifecycle boundary — not because a fixed number of files exists.
 
-Avoid speculative empty structure.
+Signals that may justify a topic directory include a cohesive concern, independent lifecycle/ownership, improved discoverability, and several related files. Three or more related files are useful evidence of a stable grouping, **not a threshold**. One or two files may still justify a directory when the semantic boundary is already clear.
+
+Avoid speculative empty or nearly-empty structure created only for hypothetical future growth.
 
 ## 12. Glossary
 
@@ -443,6 +448,8 @@ Principles:
 - reusable derived guidance may be installed independently per project.
 
 A parent may keep a high-level children overview, but children should remain self-contained unless explicit coordination requires otherwise.
+
+Children do not reference the parent's internal Project Documents as their normal knowledge source, and sibling children remain unaware of each other unless the project explicitly coordinates them through a published/shared boundary.
 
 ## 23. Multi-Developer Index Conflicts
 
