@@ -435,15 +435,21 @@ Use Git/filesystem as the live source of truth rather than a duplicate worktree 
 
 ### Remove
 
-Routine remove:
+Routine removal is addressed by Work Identity + repository selector, not an arbitrary path.
 
-- resolves target from Work + repository selector;
-- refuses dirty worktrees;
-- uses non-force removal;
-- does not delete the Work branch;
-- does not delete Work Documents;
-- does not remove the whole Work Root;
-- does not remove sibling repository worktrees.
+For the selected repository worktree:
+
+1. resolve `WORK + REPO` to the expected repository, branch, and path;
+2. verify that path is a registered worktree of the expected repository;
+3. verify Work/branch ownership;
+4. refuse uncommitted changes;
+5. warn/refuse when commits are not preserved according to project policy;
+6. stop/remove Work-scoped runtime resources owned by that repository surface when the public operation owns them;
+7. remove the worktree without force;
+8. prune stale metadata only when appropriate;
+9. keep branch deletion as a separate decision.
+
+Routine remove does not delete the Work branch, Work Documents, whole Work Root, or sibling repository worktrees.
 
 Worktree removal is not Work completion.
 
@@ -526,18 +532,28 @@ During work:
 
 Before integration, checkout switching, or worktree removal:
 
-- inspect the working tree;
-- preserve intended changes according to project policy;
-- identify untracked/generated state;
-- capture material decisions needed after completion.
+- review the working tree;
+- preserve intended changes in commits according to project policy;
+- identify untracked/generated files;
+- verify remote or other preservation requirements when applicable;
+- ensure material decisions needed after completion are captured in Work Documents or canonical Project Documents.
 
 ### Integrate
 
 Integration belongs to each participating repository's Git history.
 
-Cross-repository validation must be an explicit operation when several repositories jointly satisfy one Work outcome.
+Rules:
+
+- perform merge/rebase/PR operations in the repository that owns the branch;
+- do not commit Component Repository changes into the Workspace/Project Repository by accident;
+- rerun required integration validation after the final integrated HEAD changes;
+- when Workspace tooling changes, verify affected Component Repositories against the intended Workspace ref;
+- return the Primary Checkout to the project-defined stable state after integration when project policy requires it;
+- cross-repository validation must be an explicit operation when several repositories jointly satisfy one Work outcome.
 
 One repository merge is only a component completion signal. A multi-repository Work remains active while any participating repository, cross-repository validation, documentation reconciliation, or Work-scoped resource remains incomplete.
+
+Pull-request approval and release governance remain project-specific.
 
 ### Complete
 
