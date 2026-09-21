@@ -4,7 +4,7 @@
 document_type: "development_environment_philosophy"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 ```
 
 ## Development Environment Contract

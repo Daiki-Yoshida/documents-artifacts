@@ -4,7 +4,7 @@
 document_type: "workspace_structure"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 scope: "repository topology, Work Roots, checkouts, Work Documents placement, and top-level environment layout"
 ```
 

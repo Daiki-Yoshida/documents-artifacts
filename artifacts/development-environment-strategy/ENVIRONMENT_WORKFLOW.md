@@ -4,7 +4,7 @@
 document_type: "environment_workflow"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 scope: "setup, Work Identity lifecycle, checkout selection, validation, integration, cleanup, and recovery"
 ```
 
@@ -150,15 +150,16 @@ For each participating repository, routine callers provide the confirmed `WORK` 
 
 Before mutation:
 
-1. verify the Project Root and `REPO` mapping;
-2. validate the Work Identity syntax;
+1. resolve the Project Root from a stable project-owned anchor; do not infer a linked worktree itself as a new Project Root;
+2. verify the `REPO` mapping and Work Identity syntax;
 3. resolve the repository-specific Work branch deterministically;
-4. if the branch does not exist, resolve its base from explicit `BASE` or a documented project default — never accidental current HEAD;
-5. verify the target path is absent or already the exact registered worktree being requested;
-6. refuse unrelated filesystem content at the target path;
-7. verify the branch is not assigned to another incompatible writable worktree;
-8. verify the Project Repository ignore boundary for the sibling worktree path when applicable;
-9. verify supported Git/materialization capability when the Worktree Materialization Contract applies.
+4. if the branch does not exist, resolve its start/base ref from explicit `BASE` or a documented project default — never accidental current HEAD;
+5. resolve upstream policy separately: a base ref is only a starting point unless project policy intentionally selects a remote Work branch as upstream;
+6. verify the target path is absent or already the exact registered worktree being requested;
+7. refuse unrelated filesystem content at the target path;
+8. verify the branch is not assigned to another incompatible writable worktree;
+9. verify the Project Repository ignore boundary for the sibling worktree path when applicable;
+10. verify supported Git/materialization capability when the Worktree Materialization Contract applies.
 
 If the exact requested worktree already exists and satisfies the contract, return success without recreating it.
 
@@ -225,6 +226,7 @@ Before reporting create success, verify:
 common:
   - "registered worktree path equals the resolved path"
   - "selected branch equals the resolved Work branch"
+  - "branch start/base and upstream tracking semantics match project policy"
   - "one writable checkout ownership invariant holds"
 project_checkout:
   - "Work Documents remain materialized/tracked"

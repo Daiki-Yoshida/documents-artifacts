@@ -5,7 +5,7 @@ document_type: "index_translation"
 target_audience: "human_readers"
 language: "japanese"
 source: "../../artifacts/development-environment-strategy/INDEX.md"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 authority: "英語版 artifacts/ が正本。内容に差がある場合は英語版を優先する"
 ```
 
@@ -27,6 +27,10 @@ Work Identity関連の背景・判断理由・実験証拠は、正本artifact�
   - status: `artifactized_reference`
   - authority: non-canonical source/rationale log
   - 用途: Worktree public command contractの入力、導出、idempotency、rollback、安全境界の設計根拠を確認する
+- [Work Identity Worktree Reference Implementation 検証記録](source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md)
+  - status: `artifactized_reference`
+  - authority: non-canonical experiment record
+  - 用途: artifact化済みのpublic command参照実装検証、base/upstream問題と修正、Primary checkout guard、検証範囲を確認する
 
 これらのsource logは現行artifactを上書きしません。
 
@@ -93,6 +97,10 @@ worktree-remove
 ```
 
 exact CLI syntaxはproject-ownedですが、routine callerは原則としてpath、sparse適用要否、branch名を直接決めません。project-owned helperがWork IdentityとREPOからdeterministically解決します。
+
+新規Work branchでは、`BASE` はbranchの開始点でありupstreamとは別です。mainを開始点にしただけで、そのWork branchのupstreamをmainへ自動設定してはいけません。同名remote Work branchをtrackingする場合は、project policyとして別に選択します。
+
+project-level helperはProject Rootを安定して解決する必要があります。linked worktreeからの呼び出しでProject Rootを誤認する可能性があるprojectでは、Primary checkoutからの実行に限定するか、同等に安全なexplicit resolutionを行います。
 
 ## Worktree Materialization Contract
 

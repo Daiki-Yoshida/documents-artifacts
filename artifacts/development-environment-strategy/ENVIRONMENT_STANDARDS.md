@@ -4,7 +4,7 @@
 document_type: "environment_standards"
 target_audience: "ai_agents"
 language: "english"
-strategy_version: "1.4.0"
+strategy_version: "1.4.1"
 scope: "host boundary, Docker, command interface, Git safety, validation, and CI parity"
 ```
 
@@ -191,8 +191,11 @@ conditional:
 - Derive the Work Root path, repository root, and repository-specific branch from project-owned deterministic policy.
 - Do not require routine callers to provide an arbitrary filesystem path, sparse-checkout decision, or branch name.
 - Never use the currently checked-out HEAD as an accidental base for a missing Work branch; use explicit `BASE` or a documented project default.
+- Treat a branch **base/start ref** and its **upstream tracking ref** as separate decisions. Creating a new Work branch from `main`/another base MUST NOT automatically make that base branch the Work branch's upstream.
+- A same-name remote Work branch may be configured as upstream when project policy explicitly selects it; that is distinct from using a base ref only as the starting commit.
 - Keep Git/filesystem/runtime systems as their own state sources of truth. Do not create a duplicate registry of current worktrees or runtime state merely to support the command.
 - Keep complex resolution, validation, and Git orchestration behind a project-owned script/wrapper rather than inline Make shell.
+- Project-level worktree lifecycle commands must resolve the Project Root from a stable, explicit anchor. If invocation from a linked worktree would make that resolution ambiguous, fail closed or require invocation from the Project Repository Primary checkout rather than treating the linked checkout as a new Project Root.
 
 #### Create semantics
 
