@@ -51,3 +51,16 @@ development-execution
 development-safety
   その操作をどう安全に行い、診断・復旧するか
 ```
+
+## 再編監査
+
+旧development-environment全体の再編監査は、workspace-structure / development-execution / development-safety / work-identityを横断して実施した。
+
+```yaml
+source_documents: 4
+source_h2_sections: 36
+missing: 0
+duplicated: 0
+all_sections_exactly_once: true
+source_preambles_preserved_once: 4
+```
