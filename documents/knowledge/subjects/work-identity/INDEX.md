@@ -49,7 +49,7 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 
 ### S008_HISTORY.md
 
-旧source log metadata、旧artifactへの反映予定、当時の未検証事項など、現在のsubject構造ではnormative本文に混ぜない歴史的文脈を保持する。
+旧source log metadata、旧artifactへの反映予定、当時の未検証事項に加え、Work Identity導入以前のTask Worktree / Primary Checkout / task resource identityモデルを保持する。
 
 ## Traceability
 
@@ -74,3 +74,5 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 - 旧authority / artifact migration文脈の `S008_HISTORY.md` への分離
 
 今後さらに文体や重複を整理する場合も、recordsへのtraceabilityを維持し、条件・例外・反論・検証結果を失わないこと。
+
+旧development-environment分解時に、Work単位の責務へ属する前身モデル9 sectionを `S008_HISTORY.md` へ統合した。
