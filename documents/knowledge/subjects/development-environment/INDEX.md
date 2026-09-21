@@ -55,3 +55,16 @@ Work Identity導入以前のTask Worktree / Primary Checkoutモデル、旧artif
 ```
 
 このsubjectは上記recordを責務単位へ再配置している。旧Task Worktree固有の内容は削除せず `S006_HISTORY.md` へ分離している。
+
+## 再編監査
+
+```yaml
+source_documents: 4
+source_h2_sections: 36
+missing: 0
+duplicated: 0
+all_sections_exactly_once: true
+source_preambles_preserved_once: 4
+```
+
+旧Task Worktree / Primary Checkout固有のsectionは削除せず `S006_HISTORY.md` に保持している。
