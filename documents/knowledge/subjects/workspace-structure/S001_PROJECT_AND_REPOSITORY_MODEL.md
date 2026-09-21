@@ -24,7 +24,7 @@ Project_Root:
 
 Workspace_Repository:
   意味: "複数repository projectで、開発tool・workspace調整・project-level coordinationを所有するrepository"
-  関係: "multi-repository構成では通常Project Repositoryでもある"
+  関係: "複数repositoryを調整するWorkspace Repositoryが存在する場合、そのrepositoryがProject Repositoryを兼ねる"
 
 Component_Repository:
   意味: "productまたは独立versionを持つcomponentと、そのGit履歴を所有するrepository"
