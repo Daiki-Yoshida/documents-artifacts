@@ -1,103 +1,152 @@
 # Workspace構造 — ProjectとRepository
 
-project全体の静的なrepository/filesystem構造を扱う。1つのWorkの動的構造は `../work-identity/` が所有する。
+project全体の**静的なrepository/filesystem構造**を扱う。
 
-## ワークスペース構造の基本用語
+1つのWorkに属するWork Root、Work Documents、repository-specific worktree、branch/worktree lifecycleは `../work-identity/` が所有する。
+
+## 基本用語
 
 ```yaml
+Project_Repository:
+  意味: "Project全体のcoordination stateを所有する最上位repository"
+  主な責務:
+    - "Project Documents"
+    - "Project-level .worktrees/ coordination namespace"
+    - "Work DocumentsのGit ownership"
+    - "project-level helperを安定して実行する基準面"
+
+Project_Root:
+  意味: "Project Repositoryの基準working tree root"
+  用途:
+    - "project-level path解決"
+    - "documents/ と .worktrees/ の所有境界"
+    - "repository selector解決の起点"
+
 Workspace_Repository:
-  意味: "開発ツール、ワークスペース調整、環境文書、必要に応じたworktree管理を所有するリポジトリ"
+  意味: "複数repository projectで、開発tool・workspace調整・project-level coordinationを所有するrepository"
+  関係: "multi-repository構成では通常Project Repositoryでもある"
+
 Component_Repository:
-  意味: "プロダクトコードと、そのGit履歴を所有する独立リポジトリ"
+  意味: "productまたは独立versionを持つcomponentと、そのGit履歴を所有するrepository"
+
 Primary_Checkout:
-  意味: "Component Repositoryの基準checkout。単独作業ではtask branchの実装場所として使ってよい"
-Task_Worktree:
-  意味: "並列書き込みまたは明示的な隔離が必要な場合だけ追加する一時checkout"
+  意味: "repository rootやproject-level helperを安定して解決するための基準checkout"
+  非責務:
+    - "Workごとにどのbranchを使うか決める"
+    - "Workごとにworktreeを作るか決める"
 ```
 
-Workspace RepositoryとComponent Repositoryは、完全に別のGit履歴を持っていて構いません。これはワークスペース上の関係であり、Git submoduleであることを意味しません。
+### 単一repository
 
-すべてのプロジェクトを複数リポジトリへ分ける必要もありません。実際の調整・分離需要がないなら、一つのリポジトリで十分です。
+Project全体が1repositoryで成立する場合、そのrepositoryがProject Repositoryとなる。
 
----
+```text
+Project Repository
+= product repository
+= Project Rootを所有するrepository
+```
 
-## 1. リポジトリ構造
+この場合も、Work単位の構造は `work-identity` が所有する。
 
-### Workspace Repository
+### 複数repository
 
-開発環境の制御面を所有するリポジトリです。
+複数repositoryをまとめるWorkspace Repositoryが存在する場合、
+
+```text
+Workspace Repository
+= Project Repository
+
+Component Repository
+= projectに参加する独立repository
+```
+
+を基本とする。
+
+Workspace RepositoryとComponent Repositoryは別のGit履歴を持ってよく、Git submoduleである必要はない。
+
+## Repository構造
+
+### Project / Workspace Repository
+
+project全体のcoordination責務を持つ。
+
+典型的には次を所有できる。
 
 ```yaml
 担当:
-  - "DockerとCompose定義"
-  - "Makefileと公開command wrapper"
-  - "開発環境script"
-  - "AIエージェント向け環境context"
-  - "必要な場合のworktree作成・削除操作"
-  - "複数componentの調整"
+  - "Project Documents"
+  - "Docker / Compose等のproject-level environment definition"
+  - "Makefileやpublic command wrapper"
+  - "project-level scripts"
+  - "repository/component間の調整"
+  - "Work Identityが利用するProject-level .worktrees/ coordination namespace"
 通常は担当しない:
-  - "componentのproduct履歴"
-  - "componentのsource code"
+  - "独立Component Repositoryのproduct history"
+  - "独立Component Repositoryのsource code"
 ```
 
 ### Component Repository
 
-productまたは独立versionを持つcomponentを所有するリポジトリです。
+product/component固有のsourceとGit履歴を所有する。
 
 ```yaml
 担当:
   - "product source code"
   - "product test"
-  - "component固有のCIとrelease file"
+  - "component固有CI / release file"
   - "componentのGit履歴"
-関係: "Workspace Repository内に置けるが、Workspace側でGit管理しなくてよい"
 ```
 
-WorkspaceとComponentは別のGit履歴を持てます。実際にsubmoduleでないなら、この関係をGit submoduleと呼びません。
+Project Repository配下にcheckoutを置けるが、Project Repositoryの通常fileとして管理しない。
 
-### 単一リポジトリ
+## Project Rootとtop-level構造
 
-Workspace Repositoryを分けることは必須ではありません。
+Project RootはProject Repositoryの基準working tree rootである。
 
-開発toolとproduct codeが同じlifecycleを持ち、別履歴や並列調整が不要なら、一つのrepository rootで同じ原則を適用します。
+複数repository構成でWorkspace RepositoryがProject Repositoryなら、Workspace RootとProject Rootは同じ場所を指す。
 
----
-
-## 5. 推奨トップレベル構成
+典型形:
 
 ```text
-<workspace>/
+<project-root>/
 ├─ Makefile
 ├─ <public-wrapper>
 ├─ compose.yml
 ├─ docker/
 ├─ scripts/
 ├─ documents/
-├─ <component-a>/
-├─ <component-b>/
-└─ .worktrees/              # 任意。空でもよい
-   ├─ <component-a>/
-   │  └─ <task-identity>/
-   └─ <component-b>/
-      └─ <task-identity>/
+├─ <component-a>/        # independent repository checkout when applicable
+├─ <component-b>/        # independent repository checkout when applicable
+└─ .worktrees/           # Work Identity-owned coordination namespace
 ```
 
-filenameは技術ごとに変えて構いません。重要なのは責務です。
+重要:
 
-```yaml
-Makefile: "見つけやすい公開操作名と委譲"
-public_wrapper: "任意の共通CLI入口とcheckout選択"
-compose: "container構造とruntime定義"
-docker: "Dockerfileとcontainer支援file"
-scripts: "開発環境操作の実装"
-documents: "AI向けproject文書。documentation-strategyが管理"
-component_paths: "独立Component RepositoryのPrimary Checkout"
-worktrees: "必要な場合だけ作る一時Task Worktree"
-```
+- `.worktrees/` の**内部構造はこのsubjectで定義しない**。
+- Work Rootのpath、Work Documents、repository-specific worktree配置は `../work-identity/` が所有する。
+- `.worktrees/` が存在すること自体は、worktree作成を要求しない。
+- application内部moduleの配置はこのsubjectの責務ではない。
 
-この構造でapplication内部のmodule配置を決めてはいけません。code内部構造は `design-principles` が担当します。
+## Primary Checkoutの境界
+
+Primary Checkoutはstatic repository resolutionのための概念として扱う。
+
+用途:
+
+- repository rootを安定して解決する
+- project-level helperの安全な実行起点を提供する
+- fetch / status / integration等の基準面にできる
+
+ただし、
+
+> あるWorkでPrimary Checkoutを使うか、repository-specific worktreeを使うか
+
+はWorkspace Structureでは決めない。
+
+その判断はWork Identity / project policyが所有する。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`
+- `../../records/2026-09-22-workspace-work-identity-alignment/`
