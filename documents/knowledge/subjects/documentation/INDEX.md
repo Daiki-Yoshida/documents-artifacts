@@ -54,3 +54,16 @@ Gitによる履歴、commit message、Markdown/YAML等のformatを扱う。
 ```
 
 旧モデルに含まれる情報は削除せず `S006_HISTORY.md` へ分離している。
+
+## 再編監査
+
+```yaml
+source_documents: 3
+source_h2_sections: 30
+missing: 0
+duplicated: 0
+all_sections_exactly_once: true
+source_preambles_preserved_once: 3
+```
+
+現在のknowledge-first構造と競合しうる旧version registryや旧directory authorityは削除せず `S006_HISTORY.md` に保持している。
