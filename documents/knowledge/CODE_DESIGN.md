@@ -115,7 +115,7 @@ Do not mix ownership of these peer-level responsibilities in one component. An o
 
 ## 6. State Ownership and Cross-Boundary Consistency
 
-Each mutable business state has one clear owning boundary.
+Each mutable business state has one clear owning boundary. Other boundaries request changes through that owner's contract; they must not directly mutate another owner's internal state.
 
 When one business outcome spans several owners:
 
