@@ -234,6 +234,16 @@ They are:
 
 They are not disposable scratch merely because their lifecycle is temporary.
 
+Maintain Work Documents when active-work knowledge materially changes, especially when:
+
+- a design decision changes;
+- an investigation resolves uncertainty that affects implementation;
+- cross-repository coordination changes;
+- verification evidence changes the completion judgment;
+- a rejected alternative must be remembered to avoid repeating the same analysis.
+
+Do not turn every command result into a document. Prefer curated context that prevents information loss or repeated reasoning.
+
 ### Git ownership
 
 The Project Repository tracks:
