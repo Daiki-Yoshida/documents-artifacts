@@ -336,34 +336,51 @@ This knowledge model does not decide **when** to commit, whether to branch, or c
 
 For a new project:
 
-1. create a small agent entry file for each supported tool only when needed;
-2. create `documents/INDEX.md`;
-3. create only the project/reference documents needed now;
-4. add human-facing documentation separately when useful;
-5. link derived reusable guidance instead of copying its rules into project-owned documents;
-6. add glossary/topic directories only when a real routing need appears.
+1. create one small agent entry file per AI tool actually used;
+2. create the project-owned `documents/` structure;
+3. create required `documents/INDEX.md` with `index_version: 1.0.0`;
+4. create the needed Project Documents, each starting at `document_version: 1.0.0`;
+5. register every canonical project-owned document in the index with version, reflected commit/state, date, and purpose;
+6. create `docs-jp/` when human-facing content is needed;
+7. add reference/topic documents only when current project knowledge requires them;
+8. link installed derived reusable guidance instead of copying its rules into project-owned documents.
+
+Do not speculatively create empty directories or documentation merely to satisfy a template.
 
 ## 18. Brownfield Documentation Adoption
 
 For an existing project:
 
 1. audit documentation by audience, ownership, accuracy, and current use;
-2. classify each relevant path as canonical project knowledge, reference, human-facing, derived/external guidance, or obsolete;
-3. move/rewrite only when a clearer owner exists;
-4. preserve project-specific facts;
-5. update links/routing;
-6. remove genuine duplication and obsolete material;
-7. do not rewrite unrelated working documentation merely for stylistic uniformity.
+2. classify each relevant path as AI-facing project-owned, distributor-managed derived guidance, human-facing, shared, or obsolete;
+3. map project-owned AI knowledge into `documents/project/`, `documents/reference/`, or a justified topic owner;
+4. keep distributor-managed guidance in its managed location and do not add project-document metadata to it;
+5. move human-facing content to `docs-jp/`;
+6. merge genuine project-owned duplication into one owner and update links;
+7. register migrated project-owned documents in `documents/INDEX.md`;
+8. preserve information — do not delete existing content merely as part of structural migration without user authorization;
+9. report what moved, merged, remained managed, or was identified as obsolete.
+
+Structural migration and content improvement are separate changes. Do not let documentation adoption expand into an unrelated content rewrite.
 
 General brownfield scope rules live in `ENGINEERING_OPERATING_MODEL.md`.
 
 ## 19. Ongoing Updates
 
-Update a Project Document when the accepted/current state it owns changes materially.
+Update canonical Project Documents when accepted/current knowledge materially changes, including architecture, features, constraints, technology, or routing structure.
 
 Do not update every document after every code commit.
 
 When information belongs to an active Work and is not yet accepted, keep it in Work Documents.
+
+Discipline:
+
+- when a canonical document changes, bump its semantic version appropriately;
+- update its INDEX registry metadata through the two-phase workflow;
+- when adding a canonical Project Document, register and route it;
+- when project routing changes, bump `index_version`;
+- check that newly added information does not duplicate an existing semantic owner;
+- do not directly edit distributor-managed guidance merely to encode a target-project exception.
 
 When one concern outgrows a document, split it by semantic ownership and update routing.
 
