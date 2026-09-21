@@ -63,6 +63,10 @@ Do not install host runtimes merely because an agent finds a container command i
 
 A host exception should explain why container execution is unsuitable and how version drift is controlled.
 
+Interactive desktop tools may remain host-owned when containerization would remove essential interaction; keep their CLI/build counterpart container-owned where practical.
+
+Typical host control-plane examples include Docker, Git, GitHub CLI, Make, shell, SSH, and tmux. This is a responsibility model, not a universal package allowlist.
+
 Do not use elevated host privileges as a routine project operation.
 
 ## 4. Docker-First Execution
@@ -174,6 +178,16 @@ Separate stop, normal remove, persistent-state deletion, and destructive purge.
 
 Failed commands return non-zero and preserve actionable diagnostics.
 
+Public routers such as Make should:
+
+- express stable intent rather than copied raw command lines;
+- provide help that lists operations, parameters, and destructive effects;
+- keep complex shell logic in owned scripts;
+- use explicit variables for structured parameters instead of one ambiguous catch-all argument;
+- let local development and CI call the same target or underlying script where practical.
+
+Compatibility aliases may exist temporarily, but the canonical target name must remain documented.
+
 Worktree-specific public semantics are owned by `WORK_LIFECYCLE.md`.
 
 ## 10. Git Operation Safety
@@ -255,6 +269,22 @@ Repository state should control enough of the environment to recreate its behavi
 - make environment-definition changes intentional and reviewable.
 
 Reproducibility does not mean "never update". It means environment changes are attributable.
+
+### External workspace/tool dependency
+
+When a Component Repository consumes tooling from a separate Workspace Repository, select that dependency explicitly.
+
+```yaml
+moving_ref:
+  meaning: "documented branch/current workspace checkout"
+  tradeoff: "easy updates, weaker historical reproducibility"
+
+fixed_ref:
+  meaning: "tag or commit"
+  tradeoff: "strong historical reproducibility, deliberate update required"
+```
+
+Local convenience may use a moving/current workspace checkout. Formal CI/release validation must not accidentally consume an unspecified workspace version/ref.
 
 ## 16. New Project Bootstrap
 
