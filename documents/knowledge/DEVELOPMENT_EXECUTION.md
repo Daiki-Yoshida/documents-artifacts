@@ -194,6 +194,7 @@ Worktree-specific public semantics are owned by `WORK_LIFECYCLE.md`.
 
 For environment tooling:
 
+- operate only on repositories inside the declared project/workspace scope;
 - resolve the intended repository/worktree before mutation;
 - inspect dirty state before switch/remove/rebase-like operations;
 - do not force-delete uncommitted work;
