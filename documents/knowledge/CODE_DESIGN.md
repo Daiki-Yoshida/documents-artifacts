@@ -168,13 +168,52 @@ Follow Interface Segregation: callers should depend only on the capabilities the
 
 Owns business concepts, invariants, state transitions, and domain policy.
 
-Domain should not depend on infrastructure mechanisms. A normal language/runtime concept such as time, text, or color is not automatically impure; judge whether it represents domain meaning or a technical mechanism.
+Domain should not depend on infrastructure mechanisms. Keep DB/HTTP/filesystem I/O, external API DTOs, framework attributes, vendor SDK types, and UI-framework types out of Domain/Core.
+
+A normal concept such as time, text, names, colors, randomness, settings, or records is not automatically impure; judge whether it exists because of the domain or because of UI/technical mechanism.
+
+Examples:
+
+| Case | Rule |
+|---|---|
+| `DateTime.Now` inside an Entity | avoid; inject a `Clock` via an outer boundary |
+| `ExpiresAt` | valid Domain concept |
+| Entity directly using `Logger` | avoid |
+| outer layer logs a Domain event | acceptable |
+| audit logging is itself a business requirement | may belong to Domain/Application |
+| button color | UI |
+| rarity/team color or official/legal name | may be Domain |
+| i18n display text | usually UI/Application |
+
+Origin and meaning decide placement, not the primitive type alone.
 
 ### Application
 
-Owns use cases, orchestration, coordination of domain and technical ports, and transaction/consistency flow at the application boundary.
+Owns use cases, Application Services, orchestration, Application-owned ports, boundary DTOs, and transaction/consistency flow.
 
-Application may coordinate technical work but should not own provider-specific implementation decisions.
+A UseCase may coordinate:
+
+- Domain behavior;
+- project-owned ports such as persistence, clock, email, queue, or external API access;
+- authorization and transactions when appropriate;
+- Application Request/Response DTO ↔ Domain mapping;
+- expected-failure translation into the project's explicit failure model.
+
+It must not own provider-specific HTTP/SDK details, Domain invariants, large unrelated formatting logic, or raw infrastructure exception types.
+
+**Boundary rule:** Application defines its own Request/Response DTOs. Do not expose Domain Entities directly to external API/CLI boundaries.
+
+### Contract placement
+
+Place a contract at the boundary that owns the reason it exists.
+
+| Contract type | Owner | Examples |
+|---|---|---|
+| Domain Contract | Domain | business capability, domain policy, domain error semantics |
+| Application Port | Application | storage, email, clock, external API, queue |
+| Infrastructure Implementation | Infrastructure | database repository, HTTP client, filesystem adapter, message queue adapter |
+
+Do not put every interface into Domain by default. Domain owns business contracts; Application owns orchestration/integration ports; Infrastructure implements them without leaking mechanism outward.
 
 ### Infrastructure
 
@@ -239,6 +278,11 @@ Do not manufacture domain complexity merely to appear "DDD".
 
 Entities may be mutable when mutation is controlled by invariants and clear ownership.
 
+Two supported lifecycle patterns:
+
+1. **Rich mutable model (standard)** — methods mutate internal state for ordinary granular business changes, and every method must leave the entity valid.
+2. **Type-driven state transitions (recommended for critical flows)** — use when a state transition fundamentally changes capabilities/contracts. Example: `UnpaidOrder.Pay() -> PaidOrder`, where only `PaidOrder` exposes `Ship()`. If chosen, use it consistently for that lifecycle.
+
 Use distinct types/state representations when making illegal states unrepresentable materially improves safety.
 
 ## 17. Internal Flexibility
@@ -257,25 +301,58 @@ The more freedom exists inside, the more completely the outer contract must clos
 
 ## 18. Mapping and Conversion
 
-Convert representations at ownership boundaries.
+Mapping is boundary translation. Domain is mapped **from/to**; it must not know outer representations.
 
-Typical conversions:
+**Strong rule:** Domain Entities / Value Objects must not expose `ToDto()`, `ToViewModel()`, `ToDbModel()`, or equivalent external-schema conversion methods.
 
-- external DTO ↔ application/domain type;
-- persistence record ↔ domain model;
-- application/domain result ↔ UI/presentation type.
+Placement:
 
-Place mapping where knowledge of both representations legitimately exists.
+- **Application** maps Domain ↔ UseCase Request/Response DTOs.
+- **Infrastructure** maps DB/API/filesystem models ↔ Domain. An Infrastructure-local `ToDomain()` is acceptable.
+- **UI** maps Application responses ↔ UI ViewModels when needed.
+
+Small one-off mappings may stay inline in the owning UseCase/Adapter. Reused, complex, or semantically meaningful mapping should be extracted within the owning boundary.
+
+Useful naming:
+
+| Name | Role |
+|---|---|
+| `Mapper` | structural DTO ↔ Domain |
+| `Converter` | value/type conversion such as string → Money |
+| `Assembler` | builds a response from multiple sources |
+| `Adapter` | wraps an external API/SDK behind an owned contract |
+| `Translator` | translates vendor/external concepts into owned concepts |
 
 Do not reuse transport/persistence DTOs as domain models merely to avoid mapping. Avoid generic conversion/helper dumping grounds.
 
 ## 19. Error Handling
 
-Use explicit Result-like errors for expected business/operational failure when the language/ecosystem supports it well.
+Distinguish expected business/operational deviations from system/programmer failures.
 
-Programmer/system failures may still throw/panic according to language convention.
+### Expected failure
 
-Translate errors at boundaries so provider/infrastructure exception types do not leak into higher-level contracts.
+Use the project's standard explicit failure type: `Result<T,E>`, `Either`, `Outcome`, or ecosystem-equivalent.
+
+Rules:
+
+- reuse the project's existing standard type;
+- do not create another Result/Outcome type when one already exists;
+- do not use `boolean` success/fail or `null` to represent expected business errors;
+- do not use exceptions as control flow for expected business rules.
+
+If no Result-like core type exists, a minimal project-owned shared-kernel implementation is authorized. This bootstrap utility is not itself a Domain public contract and does not require a separate public-contract confirmation gate.
+
+If the project already standardizes on a Result/Either library, reuse it. When bootstrapping from zero, prefer a minimal project-owned kernel type; adopting a vendor library at the shared kernel is a system-wide external-dependency decision and should be treated as L2 unless already implied by project convention.
+
+### System failure
+
+For failures the system cannot reasonably recover from locally, standard exceptions/panics/top-level failure handling remain appropriate.
+
+### Boundary translation
+
+Raw infrastructure exceptions must not leak into Application or Domain.
+
+Infrastructure catches technical failures such as DB/HTTP/filesystem exceptions and translates them into Domain/Application meaning. Preserve the original exception/cause internally for diagnostics while exposing only the owned semantic failure outward.
 
 Caller-relevant failure semantics are part of the contract.
 
@@ -371,14 +448,23 @@ An abstraction should reduce reasoning/change cost. Remove one that merely obscu
 
 ## 26. Shared Kernel and Cross-Cutting Placement
 
-Use shared placement conservatively.
+A single `shared/` dumping ground is an anti-pattern. Separate shared concepts into four tiers:
 
-A useful conceptual tier model is:
+| Tier | Holds | Dependency rule | Stability |
+|---|---|---|---|
+| **T0 — Kernel** | Result/Option, base error, Id, VO base | depends on nothing; anyone may depend on it | near-frozen |
+| **T1 — Cross-cutting ports** | Clock, Logger, Config, IdGenerator contracts | depend on the port; implementation stays in Infrastructure; wire at composition root | stable |
+| **T2 — Shared contracts** | cross-module / cross-runtime DTOs and wire contracts | both sides may depend on it; keep separate from T0 | evolves under compatibility gate |
+| **T3 — Shared Domain VOs** | truly universal, behavior-light VOs such as Money/Email | promote carefully; keep entity ownership local | deliberate |
 
-- small foundational kernel types;
-- cross-cutting ports;
-- stable shared contracts;
-- shared value objects with genuinely shared semantics.
+Rules:
+
+- T0 depends on nothing.
+- Nothing in shared may depend on a feature module.
+- Current time/randomness/logging/settings enter through T1 ports instead of direct Domain dependencies.
+- Keep T2 separate from T0 because published contracts evolve while the kernel should remain stable.
+- A concept earns shared placement only when at least two modules genuinely need the same semantics and it is stable enough to share.
+- Share Value Objects with care; do not share Entities merely for convenience.
 
 Do not promote code to shared merely because two implementations look similar.
 
@@ -386,18 +472,30 @@ Shared state and utility dumping grounds are especially risky.
 
 ## 27. Runtime Topology
 
-When frontend/backend or several deployables exist, runtime boundaries are contracts too.
+Single-runtime UI and separately deployed frontend/backend are different topologies and should be chosen explicitly.
 
-Each deployable may be its own bounded context with internal modules.
+| | Single runtime | Multiple deployables |
+|---|---|---|
+| Example | SSR/server-rendered one process | SPA/browser + API/server |
+| UI placement | inside each feature/module | frontend is its own bounded context |
+| Use when | one runtime serves the system | runtimes/deploy targets are separate |
 
-The wire/network seam owns:
+The runtime seam is itself a published Bounded Contract. HTTP/RPC DTOs carry signature, semantics, constraints, compatibility, authentication/authorization, failure, and retry expectations. Additive wire shape is not automatically compatible.
 
-- protocol/schema;
-- compatibility;
-- authentication/authorization semantics;
-- failure/retry behavior.
+For a multi-deployable frontend:
 
-Monorepo layout may use `apps/`, `services/`, `packages/`, or ecosystem-native equivalents. Semantic boundaries matter more than one universal directory template.
+- the frontend owns its own UI/application/infrastructure/domain-or-view-model structure;
+- it depends only on the shared T2 contract;
+- it must not import backend Domain/Application/Infrastructure code.
+
+For monorepos, two common shapes are valid:
+
+1. **runtime-first** (recommended for multiple runtimes): thin `apps/{api,web}` shells/composition roots, server feature packages, shared kernel/contracts, frontend features under the web runtime;
+2. **feature-first**: feature packages contain server and UI/contracts together, with thin app entry points; use only when tooling and team ownership reliably prevent browser imports of server infrastructure.
+
+Document the chosen topology.
+
+Each runtime entry point is a composition root: read environment/bindings at the edge, construct adapters, inject use cases, and keep business logic out of the entry point.
 
 ## 28. Composition Root
 
