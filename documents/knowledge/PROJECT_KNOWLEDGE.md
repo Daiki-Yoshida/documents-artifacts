@@ -126,18 +126,26 @@ They should link to canonical project/reusable knowledge rather than duplicate d
 
 ## 8. documents/INDEX.md
 
-The project index should primarily be a routing hub.
+`documents/INDEX.md` is required for a project using this knowledge model.
 
-It may also carry an inventory/version registry when useful, but routing is the essential role.
+It owns the routing hub **and** version registry for canonical project-owned documents under `documents/`.
 
-A good index answers:
+It must provide:
 
-- what knowledge exists;
-- which document owns a question;
-- which documents are always relevant vs on-demand;
-- where derived/external guidance is entered.
+- inventory of every canonical project-owned document and its purpose;
+- task/question routing to the owning project/reference document;
+- each registered document's version and reflected Git commit/state;
+- cross-reference relationships when useful for maintenance;
+- optional entry links to installed derived reusable guidance.
 
-Avoid turning the index into an independently maintained summary of every document.
+Exclude from the project registry:
+
+- active Work Documents;
+- individual files inside distributor-managed derived guidance.
+
+`INDEX.md` has its own `index_version`, `last_updated_commit`, and `last_updated_date`. It does not list itself as a registry entry and does not carry a second `document_version`.
+
+Avoid turning the index into an independently maintained semantic summary of every document. It routes and records metadata; the target document owns the detail.
 
 ## 9. Routing
 
@@ -200,36 +208,67 @@ A glossary owns term meaning. Other documents use the vocabulary instead of rede
 
 Do not create a glossary merely to satisfy a template.
 
-## 13. Versioning
+## 13. Project Document Versioning
 
-Project-document semantic versioning is optional project policy.
-
-When used:
+Canonical project-owned documents under `documents/` use semantic document versions.
 
 ```text
-major = structural/semantic break
-minor = meaningful content addition/change
-patch = correction/clarification
+major = document restructuring/rewrite or scope change that invalidates prior structural understanding
+minor = meaningful content addition or significant update
+patch = small correction, clarification, typo fix, or metadata refresh
+initial = 1.0.0
 ```
 
-The index may carry an `index_version` separately from individual documents.
+Each canonical project-owned document records in its existing top YAML code block:
 
-Derived reusable guidance may use its own publication versioning and should not be forced into the target project's per-document registry.
+```yaml
+document_version: "1.2.0"
+last_updated_commit: "abc1234"
+last_updated_date: "2026-09-21"
+```
+
+Do not use a separate YAML front-matter delimiter merely for these fields.
+
+Exceptions:
+
+- active Work Documents do not require Project Document semantic-version/hash metadata;
+- distributor-managed derived reusable guidance preserves the metadata owned by its publication source and is excluded from the target project's per-file registry.
+
+### INDEX version
+
+`documents/INDEX.md` uses `index_version` as its sole semantic version:
+
+```text
+major = registry/routing structure substantially reorganized
+minor = canonical project-owned document added/removed or routing changed
+patch = metadata/entry correction
+```
+
+A derived-guidance content update alone does not create project-registry entries. Bump the project index only when the project's routing to that guidance changes.
 
 
 ## 14. Commit/State Provenance
 
-When a project records the Git state a document reflects, remember that a commit cannot contain its own final hash as mutable tracked content.
+A commit cannot contain its own final hash as mutable tracked content. Therefore `last_updated_commit` identifies the **content/code state the document was updated or reviewed against**, not the later metadata-recording commit.
 
-A two-phase process may be used:
+Use the two-phase workflow:
 
-1. update content and version;
-2. commit the content;
-3. record the reflected commit/state in a follow-up metadata update.
+1. update document content and bump `document_version`;
+2. leave `last_updated_commit` blank or `pending` when the reflected commit is not yet known;
+3. commit the content;
+4. resolve the reflected commit/state;
+5. update `last_updated_commit` in both the document header and its `documents/INDEX.md` registry entry;
+6. commit that metadata update separately.
 
-The recorded hash refers to the state reviewed/reflected by the document, not the metadata-recording commit itself.
+For a content update, the reflected state is normally the content commit. For a staleness review with no content change, it may be the reviewed code HEAD/state.
 
-Do not recursively chase the metadata commit.
+Do **not** amend a commit trying to embed its own hash. Do **not** recursively update the recorded hash merely because the metadata-recording commit now exists.
+
+The established metadata follow-up form is:
+
+```text
+chore: <document>のコミットハッシュを記録
+```
 
 ## 15. Staleness
 
@@ -247,22 +286,27 @@ Do not apply target-project staleness metadata rules to derived reusable guidanc
 
 ## 16. Documentation Git Commits
 
-A project may use a convention such as:
+Documentation commits use a Conventional Commits-style English prefix with a Japanese description.
 
 ```text
-<conventional-type>: <project-language description>
+<type>: <Japanese description>
 ```
 
-Useful semantic categories include:
+Types:
 
-- `docs:` content/routing;
-- `fix:` incorrect information;
-- `refactor:` restructuring;
-- `chore:` metadata/version maintenance.
+- `docs:` documentation content/routing changes;
+- `feat:` new documentation feature/section/versioning entry;
+- `fix:` correcting inaccurate information;
+- `refactor:` moving/reorganizing/deleting documentation;
+- `chore:` version/metadata/hash maintenance.
 
-Exact language and conventions are project-owned.
+Rules:
 
-This knowledge model does not decide when the project should commit.
+- use Japanese after the English prefix;
+- describe what changed concisely;
+- when a documentation commit accompanies a code change, reference the code commit hash in the commit body.
+
+This knowledge model does not decide **when** to commit, whether to branch, or commit granularity; those remain development-workflow decisions.
 
 ## 17. New Project Knowledge Setup
 
