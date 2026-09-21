@@ -1,159 +1,66 @@
-# Canonical Engineering Knowledge
+# Knowledge Index
 
 ```yaml
-document_type: "knowledge_index"
-authority: "canonical_source"
-audience: ["ai_agents", "human_maintainers"]
-role: "routing hub for reusable engineering knowledge"
+文書種別: "第1情報源ルーティング"
+言語: "日本語"
+意味内容の要約: false
 ```
 
-This directory is the semantic source of truth for reusable engineering knowledge in this repository.
+`documents/knowledge/` は、このリポジトリでファイル化された情報における第1情報源である。
 
-`artifacts/` is a **derived AI delivery surface**. Its layout, file count, read order, packaging, or distribution mechanism may change without changing the knowledge defined here.
+このINDEXは知識本文を要約・再解釈しない。原文記録への経路と、記録間の関係だけを示す。
 
-## Knowledge Model
+## 情報源の優先順位
 
 ```text
-documents/knowledge/              canonical meaning
-        │
-        ├─ ENGINEERING_OPERATING_MODEL.md
-        ├─ WORK_LIFECYCLE.md
-        ├─ CODE_DESIGN.md
-        ├─ DEVELOPMENT_EXECUTION.md
-        └─ PROJECT_KNOWLEDGE.md
-                │
-                ▼
-artifacts/                        derived AI-facing projection(s)
-                │
-                ▼
-target projects                   installed snapshot / local routing
+第0情報源
+チャット / Issue / 調査 / 実験 / ユーザーまたはAIからの提言
+        ↓ 原文を情報劣化なく記録
+第1情報源
+documents/knowledge/
+        ↓ 現在の評価・文脈・結論を読み取って変換
+第2情報源
+artifacts/ などのAI向け派生情報
 ```
 
-Historical rationale, experiments, and migration evidence may live elsewhere in this repository, but they do not override canonical knowledge.
+ファイル化された情報同士で矛盾または意味差がある場合、`documents/knowledge/` の記録を最優先して確認する。
 
-## Read Strategy
+第1情報源に記録された個々の発言・仮説・提言が、すべて肯定的に採用されていることを意味しない。提言、反論、評価、却下、採用、後続の訂正を含む**記録全体の関係と内容が正確に保存されていること**を信頼する。
 
-Do not read every document by default.
+## 原文記録
 
-Start here, then load only the relevant owner.
-
-```yaml
-cross_cutting_engineering_behavior:
-  target: "ENGINEERING_OPERATING_MODEL.md"
-  examples:
-    - "authority / precedence"
-    - "safety"
-    - "confirmation"
-    - "brownfield behavior"
-    - "validation"
-    - "progressive disclosure"
-
-active_development_work:
-  target: "WORK_LIFECYCLE.md"
-  examples:
-    - "Work Identity"
-    - "Work Root"
-    - "Work Documents"
-    - "branch / repository participation"
-    - "optional worktrees"
-    - "Work-scoped resources"
-    - "completion / cleanup"
-
-code_design:
-  target: "CODE_DESIGN.md"
-  examples:
-    - "Bounded Contracts"
-    - "module boundaries"
-    - "domain/application/infrastructure/UI"
-    - "state ownership"
-    - "DI / errors / async"
-    - "testing"
-    - "code change process"
-
-development_execution:
-  target: "DEVELOPMENT_EXECUTION.md"
-  examples:
-    - "host/container boundary"
-    - "Docker-first execution"
-    - "public commands"
-    - "ports / volumes / caches / secrets"
-    - "diagnostics"
-    - "CI parity"
-    - "environment bootstrap/recovery"
-
-project_knowledge:
-  target: "PROJECT_KNOWLEDGE.md"
-  examples:
-    - "Project Documents"
-    - "documents/INDEX.md"
-    - "routing"
-    - "agent entry files"
-    - "version/staleness provenance"
-    - "docs-jp"
-    - "derived reusable guidance"
-```
-
-## Ownership Principles
-
-1. A concept has one canonical semantic owner.
-2. Organize primarily by concept/lifecycle, not by WHY/HOW/WHERE/FLOW facets.
-3. Publication artifacts may split or combine canonical knowledge for AI retrieval efficiency.
-4. Distribution bundles do not define canonical knowledge boundaries.
-5. Target-project rules remain more specific than reusable knowledge.
-
-## Canonical Documents
-
-| Document | Owns |
+| 記録 | 内容 |
 |---|---|
-| `ENGINEERING_OPERATING_MODEL.md` | cross-cutting authority, safety, proportionality, confirmation, brownfield, validation, Git-history principle, progressive disclosure |
-| `WORK_LIFECYCLE.md` | complete Work model: Work Identity, Work Root, Work Documents, repositories/branches/worktrees/resources, integration, reconciliation, completion |
-| `CODE_DESIGN.md` | code boundaries, contracts, architecture, domain/state, DI/errors/async, structure, evolution, implementation and verification |
-| `DEVELOPMENT_EXECUTION.md` | host/container execution, Docker, command interfaces, runtime resources, secrets, diagnostics, reproducibility, CI |
-| `PROJECT_KNOWLEDGE.md` | accepted/current project knowledge, routing, document roles, provenance, staleness, agent entry files, hierarchy, maintenance |
-| `TRACEABILITY.md` | migration map from the legacy artifact files to canonical owners; evidence that knowledge was not intentionally discarded |
+| [K-2026-09-21-000](records/K-2026-09-21-000.md) | 選択モジュール単位を破棄し、artifact構造と知識の正本を分離する提言 |
+| [K-2026-09-21-001](records/K-2026-09-21-001.md) | 第0→第1→第2情報源モデルと、knowledgeを日本語の第1情報源とする決定 |
+| [K-2026-09-21-002](records/K-2026-09-21-002.md) | 「knowledgeの情報が正確」の意味に関する補足 |
 
-## Canonical vs Derived
+## 記録原則
 
-If a future artifact projection disagrees with this directory, this directory owns the reusable semantic meaning.
+- 原文本文を要約しない。
+- 原文本文を抜粋して元の意味を失わせない。
+- 原文本文を言い換えない。
+- 原文内の提言・仮説・否定・採用・保留などの評価関係を改変しない。
+- 後から結論が変わっても、以前の記録を書き換えて歴史を消さない。
+- 新しい判断・訂正・反論は、新しい原文記録として追加する。
+- provenanceや記録間の関係を示すmetadataは付与してよいが、原文そのものの代替にはしない。
 
-Artifacts may intentionally:
+## 第2情報源への変換
 
-- shorten;
-- reorder;
-- combine;
-- split;
-- rename;
-- package by task/profile;
-- add routing metadata.
+`artifacts/` などの第2情報源では、第1情報源を根拠として次の変換を許可する。
 
-They must not silently invent or delete canonical engineering rules.
+- コンテキスト圧縮
+- 重複除去
+- 現在有効な結論の抽出
+- AI向けの再構成
+- progressive disclosure
+- token消費効率の最適化
+- 必要に応じた言語・表現形式の変更
 
-If an artifact requires a new rule, update canonical knowledge first, then update the projection.
+ただし、第2情報源は第1情報源の意味を上書きしない。第2情報源に疑義がある場合は第1情報源へ戻って確認する。
 
-## Change Rule
+## 移行中の注意
 
-A reusable knowledge change follows:
+このbranchで以前作成した意味再構成候補は、第1情報源の原文保存要件に適合しないため `documents/project/migration/semantic-preservation-candidate/` へ退避している。
 
-```text
-new evidence / design decision
-  ↓
-update canonical owner under documents/knowledge/
-  ↓
-review semantic impact + traceability
-  ↓
-regenerate / edit affected artifact projection(s)
-  ↓
-sync into target projects as needed
-```
-
-Do not use artifact layout as the place where semantic design decisions originate.
-
-## Migration Status
-
-The existing `artifacts/` tree remains present during this migration. It is the source material from which this canonical layer was extracted.
-
-Until the artifact redesign is completed:
-
-- do not delete the legacy artifacts;
-- do not assume the current module split is the future publication model;
-- use `TRACEABILITY.md` when checking that a canonical rewrite preserves existing knowledge.
+それらは意味保存監査の成果物であり、第1情報源ではない。
