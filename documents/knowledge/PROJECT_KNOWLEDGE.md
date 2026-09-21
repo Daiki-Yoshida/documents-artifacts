@@ -296,15 +296,36 @@ chore: <document>のコミットハッシュを記録
 
 ## 15. Staleness
 
-A recorded reflected commit/state can help detect possible staleness.
+A canonical Project Document may be stale when relevant code changed after its recorded `last_updated_commit`.
 
-Example:
+Detection:
 
 ```bash
-git log --oneline <last-reviewed-ref>..HEAD -- <relevant-paths>
+git log --oneline <last_updated_commit>..HEAD -- <relevant-code-paths>
 ```
 
-Changes after that state are a signal to review the document, not automatic proof that it is wrong.
+Non-empty output is a **review signal**, not automatic proof that the document is wrong.
+
+Classify the result:
+
+```yaml
+still_accurate:
+  action: "record the reviewed code HEAD/state as last_updated_commit, update the date in document + INDEX entry, bump document_version patch and index_version patch"
+
+needs_update:
+  action: "update content; bump minor or patch according to change; use the two-phase commit workflow"
+
+needs_full_rewrite:
+  action: "major version bump; treat the restructure through the applicable structural confirmation gate"
+```
+
+The established metadata-refresh commit form is:
+
+```text
+chore: <document>のレビュー済みコミットハッシュを更新
+```
+
+Do not recursively record the metadata commit itself.
 
 Do not apply target-project staleness metadata rules to derived reusable guidance as though it were project-owned content.
 
@@ -399,13 +420,16 @@ Do not split merely to reduce line count.
 
 Before deleting a canonical Project Document:
 
-1. verify it is obsolete or ownership moved;
-2. update inbound references;
-3. update/remove index entries;
-4. preserve any still-current knowledge at its new owner;
-5. rely on Git history for historical recovery.
+1. verify it is truly obsolete or its knowledge has moved;
+2. search for and repair every project-owned inbound reference;
+3. preserve any still-current knowledge at its new semantic owner;
+4. remove its `documents/INDEX.md` registry entry;
+5. bump `index_version` minor;
+6. commit with `refactor: <document>を削除` and explain why in the commit body.
 
-Do not delete individual derived artifact files through project-document deletion rules; update the derived projection through its owner.
+Do not delete a project-owned document while references remain unresolved.
+
+Do not delete individual derived artifact files through the Project Document workflow; update/remove the derived projection through its publication/distribution owner.
 
 ## 22. Hierarchical / Multi-Project Repositories
 
@@ -435,25 +459,71 @@ If registry conflict cost becomes high, reconsider whether all metadata belongs 
 
 ## 24. File Format
 
-Default to Markdown for explanatory knowledge and YAML/JSON for structured blocks when they improve precision.
+Default:
+
+```yaml
+base_format: "Markdown with embedded YAML blocks"
+structured_data: "YAML"
+explanations: "Markdown"
+api_specs: "JSON/YAML such as OpenAPI when machine-readable form is appropriate"
+mixed: "Markdown + YAML blocks"
+naming: "lowercase, hyphen-separated filenames and lowercase directories"
+```
 
 Use format to clarify semantics rather than decorate the document.
-
-Naming/layout follow project convention.
 
 ## 25. Re-read / Loading Strategy
 
 Do not require every documentation rule for every project task.
 
-Always-on context should normally include only:
+Always-on context should normally include only project routing, hard local constraints, and current task-relevant knowledge.
 
-- project routing;
-- hard local constraints;
-- current task-relevant project knowledge.
+Re-read the documentation model when:
 
-Load detailed document-maintenance rules when creating/restructuring documentation, changing routing/ownership, diagnosing staleness, or changing version/provenance policy.
+```yaml
+must:
+  - "first contact with a project using the model: enter through documents/INDEX.md"
+  - "creating or restructuring the project-owned documents tree"
+  - "setting up a new AI-agent project"
+  - "brownfield documentation adoption"
 
-## 26. Common Misreadings
+should:
+  - "adding an agent entry file"
+  - "moving project-owned documents between owners/directories"
+  - "changing single ↔ hierarchical project documentation"
+  - "uncertainty about project-owned vs distributor-managed knowledge"
+
+not_needed:
+  - "routine content update inside an existing canonical owner"
+  - "ordinary Work Document maintenance when Work routing is already clear"
+  - "routine derived-artifact sync through an already documented mechanism"
+```
+
+## 26. Documentation Structure Confirmation
+
+Specialize the shared confirmation model for canonical Project Document structure:
+
+```yaml
+L0_content:
+  example: "update content inside an existing project-owned file"
+  action: "proceed"
+
+L1_additive:
+  example: "add a new project-owned file in an existing established directory"
+  action: "proceed and report"
+
+L2_structural:
+  examples: ["move/rename project-owned files", "change routing paths", "delete one project-owned document"]
+  action: "proceed only when clearly implied by the task; report explicitly"
+
+L3_breaking:
+  examples: ["remove a core project document", "restructure the entire project-owned documents tree", "change single ↔ hierarchical documentation model"]
+  action: "require explicit confirmation unless the user already requested that structural effect"
+```
+
+Derived artifact install/update/remove uses the publication/distribution mechanism's own explicit semantics; do not disguise it as an ordinary L0/L1 Project Document edit.
+
+## 27. Common Misreadings
 
 - `documents/` being AI-facing does not mean every file beneath it is project-owned.
 - Work Documents are not canonical accepted knowledge merely because they are Git-tracked.
