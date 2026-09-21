@@ -158,3 +158,142 @@ Design capabilities, not implementation-shaped method bags.
 Names should express what the caller can rely on. Document load-bearing semantics where applicable: side effects, failures, ordering, cancellation, concurrency, resource/performance bounds, determinism, ownership, and lifetime.
 
 Follow Interface Segregation: callers should depend only on the capabilities they actually need.
+
+
+## 12. Layer Responsibilities
+
+### Domain
+
+Owns business concepts, invariants, state transitions, and domain policy.
+
+Domain should not depend on infrastructure mechanisms. A normal language/runtime concept such as time, text, or color is not automatically impure; judge whether it represents domain meaning or a technical mechanism.
+
+### Application
+
+Owns use cases, orchestration, coordination of domain and technical ports, and transaction/consistency flow at the application boundary.
+
+Application may coordinate technical work but should not own provider-specific implementation decisions.
+
+### Infrastructure
+
+Owns databases, network/filesystem/provider implementations, external SDK/client adapters, technical serialization, and provider-specific error/lifecycle translation.
+
+### UI
+
+Owns presentation, user interaction, UI-specific formatting, and UI state.
+
+Do not put business policy in controllers/pages/components merely because they are convenient entry points.
+
+## 13. Dependency Direction
+
+High-level policy depends on stable abstractions rather than low-level mechanisms.
+
+Layer diagrams describe responsibility placement; dependency direction remains toward owned contracts.
+
+Concrete composition/wiring belongs at a composition root or equivalent application/runtime assembly boundary.
+
+## 14. Dependency Injection
+
+Use constructor injection or the ecosystem-equivalent when a real boundary dependency exists.
+
+Inject capabilities/connectors, not every trivial helper.
+
+Domain entities should not become service locators or containers for infrastructure dependencies.
+
+Do not introduce DI ceremony where a concrete local object/value is sufficient.
+
+## 15. External Dependency Containment
+
+Third-party SDK/API/framework types should not cross stable owned boundaries unless the external type is intentionally part of the contract.
+
+Where change impact matters, wrap external capabilities behind owned ports/adapters.
+
+Translate at the boundary:
+
+- request/response representations;
+- provider errors;
+- lifecycle and ownership;
+- retry/timeout behavior;
+- provider-specific semantics.
+
+## 16. Domain Modeling
+
+Use a rich model when the domain contains meaningful invariants, behavior, and state transitions.
+
+Use a lightweight/anemic representation when the domain is genuinely simple.
+
+Do not manufacture domain complexity merely to appear "DDD".
+
+Entities may be mutable when mutation is controlled by invariants and clear ownership.
+
+Use distinct types/state representations when making illegal states unrepresentable materially improves safety.
+
+## 17. Internal Flexibility
+
+Below a hardened boundary, implementation may be pragmatic:
+
+- private helpers;
+- inline mapping;
+- procedural or functional algorithms;
+- small concrete classes;
+- temporary internal structures.
+
+Internal flexibility does not permit caller-visible leakage or unowned chaos.
+
+The more freedom exists inside, the more completely the outer contract must close observable leakage channels.
+
+## 18. Mapping and Conversion
+
+Convert representations at ownership boundaries.
+
+Typical conversions:
+
+- external DTO ↔ application/domain type;
+- persistence record ↔ domain model;
+- application/domain result ↔ UI/presentation type.
+
+Place mapping where knowledge of both representations legitimately exists.
+
+Do not reuse transport/persistence DTOs as domain models merely to avoid mapping. Avoid generic conversion/helper dumping grounds.
+
+## 19. Error Handling
+
+Use explicit Result-like errors for expected business/operational failure when the language/ecosystem supports it well.
+
+Programmer/system failures may still throw/panic according to language convention.
+
+Translate errors at boundaries so provider/infrastructure exception types do not leak into higher-level contracts.
+
+Caller-relevant failure semantics are part of the contract.
+
+## 20. Concurrency and Async Contracts
+
+Concurrency is part of a boundary contract whenever callers can observe it.
+
+Clarify as applicable:
+
+- thread-safety;
+- ordering;
+- cancellation;
+- timeout;
+- backpressure;
+- idempotency;
+- retry behavior;
+- shared mutable state;
+- task ownership/lifetime.
+
+Do not label an escaping concurrency hazard as an "internal detail".
+
+## 21. Performance-Shaped Contracts
+
+Do not redesign API interaction shape from speculation.
+
+A performance concern may shape a public contract when:
+
+- a load-bearing requirement exists;
+- measurement or a defensible structural bound shows the interaction shape is a limiter;
+- implementation-only optimization is insufficient.
+
+Possible contract shapes include batch, stream, pagination, asynchronous operations, and bounded concurrency.
+
+When public shape changes, evaluate compatibility for the actual contract medium: source/binary API, wire/schema, persisted data, or another relevant medium.
