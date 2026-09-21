@@ -1,23 +1,6 @@
-# 開発環境 — 実行基準
+# 開発実行 — ホストとコンテナ
 
-host依存境界、Docker-first、公開command、local/CI parityなど、日常の実行面を成立させる基準を扱う。
-
-## 操作内容を明確にする
-
-コマンド名も開発環境契約の一部です。
-
-```yaml
-原則: "実行前に、操作対象と起こることを判断できなければならない"
-必要なこと:
-  - "曖昧な操作には対象範囲を付ける"
-  - "通常の後片付けと、データを捨てる強制削除を分ける"
-  - "生のツール構文ではなく、安定した目的を公開する"
-  - "失敗を隠さず、次に確認すべきことが分かる出力を残す"
-```
-
-プロジェクト内で意味が一つに定まるなら、短いコマンド名でも構いません。
-
----
+ホスト側の制御責務とコンテナ側の実行責務、Docker-first、resource materialization、mount・cache・network・secretの実装基準を扱う。Work単位のownershipは `../work-identity/` が主所有する。
 
 ## 1. ホスト依存の境界
 
@@ -118,58 +101,6 @@ host依存境界、Docker-first、公開command、local/CI parityなど、日常
 - build-timeとruntimeのsecretは、それぞれに適した方法で渡す。
 - 通常のbuildやtestでAIエージェントがsecret実値を読む必要をなくす。
 
----
-
-## 3. 公開コマンド
-
-projectは、日常操作を見つけやすい公開command interfaceを持ちます。
-
-```yaml
-推奨構成:
-  Makefile: "公開操作名、help、parameter、単純な依存関係"
-  wrapper: "checkout選択や環境準備を共通化する任意のCLI入口"
-  scripts: "複雑な分岐、検証、orchestration、cleanup、provider固有処理"
-```
-
-### Makefile
-
-- targetは生のcommand列ではなく、安定した目的を表す。
-- 複雑なshell処理は `scripts/` などへ分離する。
-- help targetで操作、parameter、破壊的効果を説明する。
-- 構造化parameterには専用変数を使い、quoteが曖昧になる万能引数を避ける。
-- ローカルとCIは、可能な限り同じtargetまたはscriptを呼ぶ。
-
-### target名
-
-対象や副作用が曖昧になる場合は `<scope>-<action>` を使います。
-
-- すべてへ機械的にprefixを付ける必要はない。
-- `help`、`check`、`test`、`validate` はproject内の意味が一つなら短いままでよい。
-- `up`、`down`、`reset`、`clean`、`deploy`、`logs` は通常scopeを必要とする。
-- 互換aliasを残す場合でも、正規targetを明記する。
-
-### 操作の意味
-
-- command文書には対象、見える効果、破壊範囲を書く。
-- 非破壊commandを同じ名前のまま破壊的処理へ変えない。
-- stop、container削除、volume削除、完全purgeを分ける。
-- 最終検証の標準commandを一つ定義する。
-- 部分検証は実装中や診断用であり、最終gateの代替ではない。
-- 失敗時はnon-zeroで終了し、診断可能な出力を残す。
-
----
-
-## 7. ローカルとCI
-
-- CIのworkflow YAMLへbuild/test本体を再実装せず、project管理commandを呼ぶ。
-- provisioningが異なっても、最終的には同じ検証scriptへ合流させる。
-- provider固有準備はCI edgeに置き、project動作はrepository管理commandへ置く。
-- CIで別Workspace Repositoryを利用する場合は、使用refを明示する。
-- 未指定の外部workspace最新版へ偶然依存しない。
-
 ## Sources
 
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`

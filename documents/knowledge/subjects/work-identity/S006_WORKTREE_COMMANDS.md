@@ -91,6 +91,8 @@ WORK=feat/user-auth REPO=back
 
 ## Repository selector
 
+`REPO` が参照するstable repository identity / role /基準locationは `../workspace-structure/` が所有する。Work Identity側は、そのstatic mappingをWork単位のbranch/path/materializationへ変換する責務を持つ。
+
 `REPO`はWork Root直下のdirectory名とrepository identityを安定して対応させるproject-owned selector。
 
 ```text

@@ -65,6 +65,32 @@ S002_RESPONSIBILITY_AND_HORIZON.md
 S003_HARDENING_POLICY.md
 ```
 
+## Subjectの粒度
+
+subjectは単なるカテゴリやumbrellaではなく、**その名前を主語にして独立した概念・責務・制約・lifecycleを説明できる知識領域**とする。
+
+複数の異なる責務を「関連しているから」という理由だけで1subjectへ集約しない。
+
+兆候:
+
+- subject名が広すぎて、内部file間で主語が変わる。
+- 別subjectとownership境界が何度も衝突する。
+- safety / execution / structure / lifecycleなど異なる判断軸が同居する。
+- 新情報を追加するとき「どこに置くか」を毎回例外判断する必要がある。
+
+この状態になったsubjectは、より明確な責務へ分解する。
+
+例として、旧 `development-environment` umbrellaは次へ分解された。
+
+```text
+workspace-structure
+development-execution
+development-safety
+work-identity
+```
+
+`development-environment` という語自体はこれらを総称する人間向けカテゴリとして使用できるが、独立したsubject authorityは持たせない。
+
 ## 分割基準
 
 subject内部はWHY/HOW/WHERE/FLOWのような一律のfacetでは分けない。
@@ -139,3 +165,4 @@ DRYより意味の完全性を優先する。
 
 - `../records/2026-09-21-records-subjects-model/`
 - `../records/2026-09-21-knowledge-structure-implementation/`
+- `../records/2026-09-22-development-environment-subject-split/`

@@ -1,6 +1,6 @@
-# 開発環境 — 導入と移行
+# 開発実行 — 導入と移行
 
-新規projectへの導入とbrownfieldへの段階的導入を扱う。既存環境・データを壊さず、必要な契約を徐々に導入する。
+新規projectへの実行環境導入と、既存projectへ安全に段階導入するbrownfield workflowを扱う。
 
 ## 1. 新規プロジェクトへの導入
 
@@ -98,7 +98,4 @@ CI: "local scriptとの重複や差異"
 
 ## Sources
 
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`

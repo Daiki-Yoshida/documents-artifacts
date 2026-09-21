@@ -1,6 +1,8 @@
 # Work Identity — Work Root and Repositories
 
 Work Identityのfilesystem表現、単一/複数repositoryの統一形状、repository派生identity、Git worktreeの物理配置とProject-level `.worktrees/` の境界を扱う。
+> Project Repository / Project Root / Component Repositoryの**静的な定義と配置**は `../workspace-structure/` が主所有する。ここでは、それらが1つのWorkへ参加するときのWork Root内構造と関係だけを扱う。
+
 
 ## Project Root と `.worktrees/`
 

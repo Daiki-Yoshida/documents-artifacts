@@ -1,6 +1,6 @@
-# 開発環境 — 基本原則
+# 開発実行 — 基本モデル
 
-開発環境を単なるtool集合ではなく、安全性・再現性・責務境界を持つ契約として扱うための基本原則をまとめる。旧Task Worktree固有の記述は履歴側へ分離している。
+開発処理をどこで実行し、どの状態から再現し、どの入口から操作するかという実行契約の基本モデルを扱う。
 
 ## 開発環境は契約である
 
@@ -19,24 +19,6 @@
 ```
 
 内部のDocker構成やスクリプトは変更されても構いません。ただし、日常的に使うビルド、テスト、診断、削除の入口は、意味が明確で安定している必要があります。
-
----
-
-## 優先順位
-
-```yaml
-優先順位:
-  1: "ホストとデータの安全性"
-  2: "再現性"
-  3: "リポジトリとリソースの分離"
-  4: "複数AIエージェントの並列運用"
-  5: "操作内容と副作用の明確さ"
-  6: "診断と復旧のしやすさ"
-  7: "ローカルとCIの実行経路の一致"
-  8: "開発効率"
-```
-
-安全性を理由に、日常作業を不必要に面倒にしてはいけません。安全な操作を最も短く、使いやすい経路にします。
 
 ---
 
@@ -70,46 +52,6 @@
 
 再現性とは、更新を禁止することではありません。変更が意図的で、追跡できることです。
 
----
-
-## 安全性と使いやすさの両立
-
-```yaml
-原則: "安全な操作を最も簡単な操作にする"
-方針:
-  - "日常操作は初期状態で非破壊的"
-  - "破壊的操作は名前と対象範囲を明確にする"
-  - "診断コマンドを見つけやすくする"
-  - "最終検証の標準経路を一つ定義する"
-  - "後片付けは選択したprojectまたはtaskのresourceだけを対象にする"
-```
-
-安全性は、何度も手作業を要求するのではなく、コマンド設計とresource識別へ組み込みます。
-
----
-
-## この戦略が担当する範囲
-
-```yaml
-担当する:
-  - "ホストとcontainerの責務"
-  - "開発toolの実行方法"
-  - "repositoryと任意worktreeの構造"
-  - "開発環境に関するトップレベルfolder"
-  - "公開commandと開発環境script"
-  - "ローカルとCIの実行経路"
-  - "環境状態、診断、後片付け、復旧"
-担当しない:
-  - "application codeの設計"
-  - "domain moduleの境界"
-  - "documents/ の案内やversion管理"
-  - "Issue整理やPull Request承認方針"
-  - "release統制やteam権限"
-```
-
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
-- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`
