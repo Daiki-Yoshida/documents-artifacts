@@ -41,3 +41,34 @@ work-identity
 ## 再編元
 
 旧 `development-environment` のうち、project全体の静的repository/filesystem構造を所有していた情報をこのsubjectへ移管した。
+
+## Work Identity共存監査
+
+`workspace-structure` と `work-identity` の責務境界を再確認し、次を現行contractとして揃えた。
+
+```yaml
+workspace_structure_owns:
+  - "Project Repository / Project Root"
+  - "Workspace Repository / Component Repository"
+  - "stable repository identity / role / base location"
+  - "project-level Git ownership boundary"
+
+work_identity_owns:
+  - "Work Identity / Work Root / Work Documents"
+  - ".worktrees/ 内部のWork単位構造"
+  - "repository-specific worktree"
+  - "Work単位のbranch / resource / lifecycle"
+  - "REPO selectorからWork branch/pathへのmapping"
+```
+
+修正済み:
+
+- 旧 `.worktrees/<component>/<task-identity>/` layoutを現行本文から除外
+- `.worktrees/` 全体ignoreを撤回
+- Work Documents trackingとrepository-specific worktree ignoreを分離
+- 旧Task Worktree定義をhistoryへ移動
+- Project Repository / Project RootとWorkspace Repositoryの関係を明文化
+- stable repository identityとWork Identityの `REPO` selectorを接続
+
+旧定義は `S003_HISTORY.md` に保存している。
+
