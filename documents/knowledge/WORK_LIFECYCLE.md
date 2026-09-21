@@ -40,7 +40,7 @@ Establish it when:
 2. implementation is about to begin;
 3. the project needs a stable ownership/lifecycle identity.
 
-An agent may propose the name. The user/project confirms it before implementation when explicit confirmation is part of the workflow.
+An agent may propose the name, but the **user explicitly confirms the Work Identity before implementation begins**.
 
 ## 2. Work Identity Is Above Its Representations
 
