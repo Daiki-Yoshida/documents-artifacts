@@ -3,17 +3,17 @@
 ```yaml
 document_type: "migration_traceability"
 authority: "migration_evidence"
-canonical_source: "documents/knowledge/"
+audit_candidate: "documents/knowledge/"
 legacy_source: "artifacts/"
-purpose: "prove semantic preservation while retiring legacy knowledge boundaries"
+purpose: "prove semantic preservation while retiring legacy knowledge boundaries; permanent source location is decided separately"
 semantic_preservation_audit: "complete"
 audit_date: "2026-09-21"
 final_source_location_decision: "pending; documents/ vs docs-jp/ will be decided separately"
 ```
 
-This document maps the current legacy artifact tree to the new canonical semantic owners.
+This document maps the current legacy artifact tree to the reorganized semantic owners in the current audit candidate.
 
-It is a migration aid, not a second specification. If this file conflicts with a canonical knowledge document, the canonical owner wins.
+It is a migration aid, not a decision that `documents/` is the permanent source location. The permanent source may later be placed under `documents/`, `docs-jp/`, or another agreed structure without changing the audited semantics.
 
 ## Semantic Preservation Audit Result
 
