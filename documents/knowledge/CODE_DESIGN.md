@@ -297,3 +297,195 @@ A performance concern may shape a public contract when:
 Possible contract shapes include batch, stream, pagination, asynchronous operations, and bounded concurrency.
 
 When public shape changes, evaluate compatibility for the actual contract medium: source/binary API, wire/schema, persisted data, or another relevant medium.
+
+
+## 22. Contract Evolution and Compatibility
+
+"Additive" syntax is not proof of compatibility.
+
+When evolving an existing contract, identify:
+
+- callers/consumers;
+- providers/implementers;
+- relevant compatibility dimensions;
+- existing guarantees.
+
+A change is backward-compatible only when existing participants can continue without mandatory changes and previously valid interactions retain their guarantees.
+
+Classify confirmation/risk according to `ENGINEERING_OPERATING_MODEL.md`.
+
+## 23. Composition Over Inheritance
+
+Prefer composition and delegation.
+
+Inheritance is appropriate mainly for capability/interface inheritance and strict framework/library extension contracts.
+
+Do not use inheritance merely for implementation reuse.
+
+## 24. Reliability and Side Effects
+
+### Fail fast
+
+Validate:
+
+1. construction and invariants;
+2. external input at boundaries;
+3. preconditions before complex operations.
+
+Do not allow invalid state to propagate invisibly.
+
+### Type-driven state
+
+Use distinct types/states when they materially prevent invalid transitions or boolean-flag state explosions.
+
+### Side-effect control
+
+Minimize and isolate side effects.
+
+Prefer safe defaults, temporary/sandboxed resources when appropriate, explicit enablement for destructive effects, and deterministic disposal/cleanup mechanisms.
+
+## 25. Appropriate Complexity
+
+Accept essential domain complexity and remove accidental engineering complexity.
+
+YAGNI means:
+
+- no speculative features;
+- no abstractions without demonstrated boundary value;
+- no premature shared-module extraction.
+
+An abstraction should reduce reasoning/change cost. Remove one that merely obscures a simpler correct design.
+
+## 26. Shared Kernel and Cross-Cutting Placement
+
+Use shared placement conservatively.
+
+A useful conceptual tier model is:
+
+- small foundational kernel types;
+- cross-cutting ports;
+- stable shared contracts;
+- shared value objects with genuinely shared semantics.
+
+Do not promote code to shared merely because two implementations look similar.
+
+Shared state and utility dumping grounds are especially risky.
+
+## 27. Runtime Topology
+
+When frontend/backend or several deployables exist, runtime boundaries are contracts too.
+
+Each deployable may be its own bounded context with internal modules.
+
+The wire/network seam owns:
+
+- protocol/schema;
+- compatibility;
+- authentication/authorization semantics;
+- failure/retry behavior.
+
+Monorepo layout may use `apps/`, `services/`, `packages/`, or ecosystem-native equivalents. Semantic boundaries matter more than one universal directory template.
+
+## 28. Composition Root
+
+Centralize concrete implementation wiring at an application/runtime composition boundary.
+
+Business/domain modules should not construct provider clients throughout the codebase.
+
+## 29. Testing Strategy
+
+Testing serves two distinct goals:
+
+1. **contract conformance**;
+2. **requested-outcome verification**.
+
+Prioritize tests at stable boundaries.
+
+### Contract tests
+
+Reusable contract suites belong beside the contract/port rather than one implementation. Every implementation/fake should satisfy the same caller-visible guarantees.
+
+### Unit tests
+
+Test meaningful domain/application behavior and edge cases.
+
+### Integration tests
+
+Use when behavior crosses real boundaries such as DB/provider/runtime integration.
+
+### E2E/manual verification
+
+Use when the meaningful requested outcome crosses the whole system or user interaction path.
+
+Do not substitute expensive E2E testing for a narrow boundary test when narrower evidence is sufficient.
+
+## 30. Test Placement
+
+Co-locate tests with ownership when ecosystem conventions allow.
+
+- module-internal tests live with/near the module;
+- a contract suite lives beside the contract/port;
+- fakes live where their test ownership is clear;
+- cross-runtime E2E tests live at the system/application level.
+
+## 31. Code Change Process
+
+### Define the required outcome
+
+State the observable result before designing internals.
+
+### Pre-implementation scan
+
+Scale depth to blast radius and inspect:
+
+- affected module/public surface;
+- responsibility and encapsulation horizon;
+- concept altitude and semantic identity;
+- state/consistency ownership;
+- dependency spread and external mapping;
+- caller-visible accuracy vs internal flexibility;
+- load-bearing performance;
+- compatibility when an existing contract changes.
+
+### Resolve contracts
+
+Clarify behavioral/domain guarantees before implementation where a meaningful boundary is involved.
+
+### Classify confirmation
+
+Use the shared confirmation model:
+
+- private/internal change → L0/L1;
+- compatible public capability clearly implied by the task → L2;
+- published breaking behavior, destructive side effect, or persisted migration → L3.
+
+### Implement
+
+Keep the public shell precise and the interior pragmatic.
+
+### Verify
+
+Check contract conformance, requested outcome, boundary leakage, ownership/consistency, and performance evidence when applicable.
+
+## 32. Brownfield Code
+
+These rules govern code being added or modified; they do not require automatic repository cleanup.
+
+- follow explicit target-project conventions when they conflict;
+- do not silently rewrite unrelated violations;
+- note relevant debt when useful;
+- classify cleanup as its own change;
+- prevent opportunistic refactoring from expanding scope.
+
+## 33. Common Misreadings
+
+- "harden public surfaces" does not mean interface everywhere.
+- an "AND" does not always require a split.
+- domain purity does not ban normal concepts such as time/text/color.
+- one public surface does not mean one giant facade.
+- orchestration may coordinate technical work without owning provider internals.
+- expected failures and system failures need not use the same mechanism.
+- YAGNI does not justify giving a general concept a feature-specific meaning.
+- consumer-neutral naming does not prove shared semantic identity.
+- a cross-boundary invariant does not automatically require merging boundaries.
+- passing contract tests does not prove the requested outcome is reachable through the real system.
