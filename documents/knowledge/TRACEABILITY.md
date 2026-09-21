@@ -6,11 +6,51 @@ authority: "migration_evidence"
 canonical_source: "documents/knowledge/"
 legacy_source: "artifacts/"
 purpose: "prove semantic preservation while retiring legacy knowledge boundaries"
+semantic_preservation_audit: "complete"
+audit_date: "2026-09-21"
+final_source_location_decision: "pending; documents/ vs docs-jp/ will be decided separately"
 ```
 
 This document maps the current legacy artifact tree to the new canonical semantic owners.
 
 It is a migration aid, not a second specification. If this file conflicts with a canonical knowledge document, the canonical owner wins.
+
+## Semantic Preservation Audit Result
+
+**Verdict: PASS WITH EXPLICIT EXCLUSIONS.**
+
+The detailed audit compared all 14 legacy artifact Markdown files against the reorganized knowledge content, including strong normative wording (MUST / NEVER / prohibited / refuse), exceptions, lifecycle conditions, and operational safety rules.
+
+During the audit, several initially over-compressed rules were restored, including:
+
+- strict Result/Either/Outcome expected-failure rules and infrastructure error translation;
+- Application Request/Response DTO boundaries and Domain conversion prohibitions;
+- interface requirement thresholds, DI constraints, concurrency/async guarantees, compatibility/deprecation, performance-evidence rules, and test isolation;
+- shared-kernel T0–T3 semantics and multi-runtime frontend/backend boundaries;
+- Work Identity explicit confirmation, Work Root ownership, Project/Work/Run resource semantics, Git tracking/materialization distinction, and the full worktree preflight/rollback/postcondition/removal lifecycle;
+- environment brownfield order, diagnostics, CI parity, integration preservation rules, destructive-operation guards, and re-read triggers;
+- required Project Document version/commit metadata, INDEX registry semantics, staleness workflow, routing/cross-reference rules, glossary behavior, hierarchy rules, Work Document maintenance/reconciliation, and documentation confirmation levels;
+- AI-agent operational defaults such as validation before completion, no commit/push unless requested, and ambiguity handling.
+
+The only semantics intentionally not promoted as reusable engineering knowledge are the structures explicitly classified as `legacy_packaging_only` or `derived_only`:
+
+- selectable artifact modules as a canonical knowledge boundary;
+- the three legacy module names as canonical semantic ownership;
+- WHY / HOW / WHERE / FLOW as the required canonical file partition;
+- first-contact "read every file in this module" behavior;
+- quick-routing/read-order text whose purpose is only to operate the old artifact packaging;
+- sibling-module relationship prose that exists only because of the old packaging.
+
+These exclusions reflect the requested abandonment of selectable-module knowledge boundaries; they are not accidental information loss.
+
+### Mechanical checks
+
+- Legacy artifact Markdown files mapped: **14 / 14**
+- Files under `artifacts/` changed by this audit branch: **0**
+- Markdown fence sanity for all reorganized knowledge files: **PASS**
+- Final source-location choice: **not decided by this audit**
+
+The current reorganized files under `documents/knowledge/` are therefore an **audited semantic-preservation candidate**, not a final decision that `documents/` must be the permanent canonical location.
 
 ## Classification
 
