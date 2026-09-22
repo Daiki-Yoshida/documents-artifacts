@@ -460,3 +460,14 @@ one_idea: "INDEX.mdが地図、ドキュメントが目的地、バージョン�
 Source decision:
 
 - `../../records/2026-09-22-six-subject-cross-audit-fixes/`
+
+
+---
+
+## デフォルトでAI向け
+
+旧modelでは `documents/` をAI向け、`docs-jp/` を人間向けとして固定分離していた。
+
+この規則は現在のnormative modelではない。現在はaudienceだけを理由に固定top-level directoryを強制せず、project固有のrouting・audience・local conventionで表現する。
+
+元の詳細はsource recordおよびこのhistory内の旧top-level placement記録を参照する。
