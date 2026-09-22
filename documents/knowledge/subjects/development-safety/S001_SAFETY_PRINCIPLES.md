@@ -29,10 +29,12 @@
   - "破壊的操作は名前と対象範囲を明確にする"
   - "診断コマンドを見つけやすくする"
   - "最終検証の標準経路を一つ定義する"
-  - "後片付けは選択したprojectまたはtaskのresourceだけを対象にする"
+  - "後片付けは選択したProject / Work scopeのresourceだけを対象にする"
 ```
 
-安全性は、何度も手作業を要求するのではなく、コマンド設計とresource識別へ組み込みます。
+安全性は、何度も手作業を要求するのではなく、command設計とresource identityへ組み込む。
+
+Project / Work / Runのresource ownershipは `../work-identity/` が主所有し、このsubjectはそのscopeを安全な操作境界として利用する。
 
 ## Sources
 
