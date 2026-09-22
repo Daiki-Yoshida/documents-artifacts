@@ -5,56 +5,83 @@ Gitを履歴・説明責任の基盤として使う考え方、commit message、
 ## 記録ツールとしてのGit
 
 ```yaml
-principle: "documentの変更・移動・削除の履歴はGitが所有する"
-use:
-  - "いつ何が変わったか"
-  - "過去の内容"
-  - "rename / deletionの追跡"
-  - "実装変更との対応確認"
-avoid:
-  - "Gitと同じ履歴を複製するarchive directory"
-  - "必須document Semantic Version"
-  - "last_updated_commit registry"
-  - "履歴専用のparallel database"
+principle: "Gitは何がいつ変更されたかを記録する。ドキュメントはこの記録を利用して説明責任を保つ。"
+governed_aspects:
+  commit_message_format: "project conventionを優先し、独自規則がなければConventional Commits系の明示的なprefix + 説明を推奨"
+  history_tracking: "変更・移動・削除の履歴はGit historyを利用する"
+not_governed:
+  - "いつコミットするか（コード側の決定）"
+  - "ブランチを切るかどうか（コード側の決定）"
+  - "レビュープロセス（コード側の決定）"
 ```
 
-documentが現在の実装と一致するかは、必要に応じてGit diff / log、関連source、test、decision recordを照合して判断する。単一metadataがHEADより古いというだけでstaleと確定しない。
+ドキュメント変更はGit historyで追跡可能にする。実装との対応確認が必要な場合はGit log / diffや関連Issue・PRを利用し、document固有の `last_updated_commit` を必須化しない。
+
+---
+
+---
 
 ## 5. Gitコミットメッセージ規約
 
-projectに既存のcommit conventionがある場合はそれを優先する。
+ドキュメントコミットはConventional Commitsプレフィックスと日本語説明を使用する。
 
-独自規則がない場合は、document変更を識別可能な簡潔なmessageを推奨する。
+### フォーマット
 
-```text
-docs: プロジェクト概要を更新
-fix: API仕様の不正確な記述を修正
-refactor: documentation routingを整理
+```yaml
+format: "<type>: <日本語説明>"
+types:
+  docs: "ドキュメント変更（新規ファイル、コンテンツ更新、ルーティング変更）"
+  feat: "新規ドキュメント機能または大きな情報追加"
+  fix: "ドキュメント修正（不正確な情報の訂正）"
+  refactor: "ドキュメント再構築（ファイル移動、セクション再編成）"
+  chore: "documentation tooling / metadata等のmaintenance"
+examples:
+  - "docs: プロジェクト概要を更新"
+  - "fix: API仕様のエンドポイントURLを修正"
+  - "refactor: documents/reference/ 配下を整理"
+  - "feat: セキュリティ要件ドキュメントを追加"
+  - "chore: documentation routing metadataを更新"
 ```
 
-commit message本文には、変更理由・関連Issue・実装commit等が追跡上有用な場合だけ記載する。document自身へcommit hashを埋め込むことは必須ではない。
+### ルール
+
+```yaml
+rules:
+  - "プレフィックス後の説明には日本語を使用する。"
+  - "プレフィックスは英語（docs:, feat:, fix:, refactor:, chore:）。"
+  - "説明は簡潔にし、何が変更されたかを記述する（なぜはdiffが示す）。"
+  - "実装commit / Issue / PRへの参照が追跡上有用な場合はcommit本文等へ記載してよい。"
+```
+
+### 管理外の事項
+
+```yaml
+not_governed:
+  - "いつコミットするか（これはコード側 / 開発ワークフローの決定）"
+  - "ブランチするかどうか（これはコード側 / 開発ワークフローの決定）"
+  - "コミットサイズや粒度（これは開発プラクティスの決定）"
+```
+
+---
+
+---
 
 ## 6. ファイルフォーマット標準
 
-formatは内容の役割に合わせる。
-
 ```yaml
-markdown: "説明、判断、workflow、guide"
-yaml: "人とmachineの双方が扱う構造化情報"
-json_or_schema: "machine-readable specification"
-mixed: "Markdown本文 + 必要なYAML/code block"
+base_format: "埋め込みYAMLブロック付きmarkdown"
+format_selection:
+  structured_data: "YAML（設定、メタデータ、リスト等）"
+  explanations: "markdown（手順、ガイド、根拠）"
+  api_specs: "JSONまたはYAML（OpenAPI、マシン可読スキーマ）"
+  mixed: "markdown + YAMLブロック（1ファイルで構造+コンテキスト）"
+naming: "ファイルは小文字・ハイフン区切り; ディレクトリは小文字"
 ```
 
-format選択の原則:
-
-- projectの既存conventionを尊重する。
-- machine-readableである必要がなければ、構造化のためだけに過剰なmetadataを追加しない。
-- headingとfile nameは内容の主責務を表す。
-- format変換だけを目的に情報の意味を落とさない。
+---
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
-- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
