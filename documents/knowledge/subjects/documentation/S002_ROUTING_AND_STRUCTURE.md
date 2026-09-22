@@ -8,7 +8,7 @@
 principle: "関心事ごとにファイルを分割し、エージェントを正しいファイルにルーティングする。情報を圧縮しない。"
 mechanisms:
   index_file: "documents/INDEX.mdがすべてのドキュメントを目的とルーティングとともにリストする。"
-  cross_references: "各ドキュメントは内容を複製する代わりに関連ドキュメントへリンクする。"
+  cross_references: "同じ規範を独立authorityとして複製せず、必要な局所再述と関連authorityへのlinkを使う。"
   concern_separation: "1ファイル = 1関心事。1つの関心事の変更は1つのファイルを読むだけで済むべき。"
   gradual_disclosure: "INDEX → 概要 → 詳細。エージェントは必要な分だけチェーンをたどる。"
 ```
@@ -96,7 +96,7 @@ rule: "README.mdをProject Documentationの代替authorityにしない。詳細k
 routing_chain: "agent entry → documents/INDEX.md → taskに必要なdocument role / topic → 詳細ファイル"
 principles:
   - "INDEX.mdが唯一のルーティングハブである。すべてのドキュメントがそこにリストされる。"
-  - "各ドキュメントはコンテンツを複製する代わりに関連ドキュメントへリンクする。"
+  - "同じ規範を独立authorityとして複製しない。理解に必要な局所再述は許容し、主authorityへリンクする。"
   - "1ファイル = 1関心事。1つの関心事に関わるタスクは1つのファイルを読むだけで済むべき。"
   - "エージェントは必要な範囲だけルーティングチェーンをたどる。"
   - "相互参照は参照元ファイルからの相対パスを使用する。"
@@ -108,7 +108,7 @@ principles:
 format: "簡潔なコンテキスト付きのmarkdownリンク"
 example_from_index: "アーキテクチャ概要については [project/architecture.md](project/architecture.md) を参照。"
 example_from_project_doc: "API仕様については [../reference/api-specs.md](../reference/api-specs.md) を参照。"
-rule: "他の場所に存在するコンテンツを複製しない。1文の説明付きでリンクする。"
+rule: "別authorityの内容を独立規範として再定義しない。必要な文脈を局所的に再述し、主authorityへリンクする。"
 path_note: "パスはリンクを含むファイルからの相対パスである。documents/INDEX.mdから、documents/project/overview.mdへのリンクは project/overview.md と書く。"
 ```
 
