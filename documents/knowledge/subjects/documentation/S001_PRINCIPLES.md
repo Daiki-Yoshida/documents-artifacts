@@ -1,88 +1,69 @@
 # ドキュメント — 基本原則
 
-project documentationを、情報正確性を優先しつつAIが適切に読める形で維持するための基本原則を扱う。このrepo自身のknowledge保存規則は `../../system/` が優先する。
+project documentationを、情報正確性を優先しつつ必要な読者が適切に到達できる形で維持するための基本原則を扱う。このrepo自身のknowledge保存規則は `../../system/` が優先する。
 
 ## 核心原則: 情報正確性優先
 
-ドキュメントの目的は、AIエージェントに正確で完全な情報を適切なタイミングで提供することである。トークン効率も重要だが、**情報の劣化を代償にして追求してはならない**。
+ドキュメントは、利用者が判断・実装・運用に必要な情報を正確に取得できなければならない。token効率や短さは重要だが、**情報の劣化を代償にして追求しない**。
 
 ```yaml
 priority_order:
-  1: "情報正確性 — ドキュメントは正確かつ完全でなければならない"
-  2: "適切なルーティング — エージェントは必要なときに必要なものだけを読む"
-  3: "トークン効率 — 無駄を最小化するが、トークンを節約するために情報を切り詰めてはならない"
+  1: "情報正確性・意味の完全性"
+  2: "適切なrouting"
+  3: "読み取り効率・token効率"
 ```
 
-正確性とトークン効率が競合する場合、正確性が勝つ。トークンコストの解決策は、ドキュメントを薄くすることではなく、**より良いファイル構造とルーティング**である。
+情報量の問題は、重要情報の削除ではなく、責務分割・INDEX・cross reference・progressive disclosureで解決する。
+
+## Scope
+
+このsubjectが主に所有する:
+
+- Project Documentation内部のfile roleとrouting
+- documentation directory内部の責務分割
+- documentationの導入・更新・保守
+- documentation固有のreview / confirmation boundary
+- documentationに対するGit履歴・formatの利用方針
+
+このsubjectが主所有しない:
+
+- Project Rootやrepositoryの静的配置 → `../workspace-structure/`
+- Work Documentsのidentity / ownership / lifecycle → `../work-identity/`
+- source codeの境界設計 → `../encapsulation-horizon/`
+- 開発commandの実行環境 → `../development-execution/`
+- 破壊操作・host変更等のoperational safety → `../development-safety/`
+
+## Project Documentation
+
+`<project-root>/documents/` を、Project全体の現在knowledgeを保持する **Project Documentation** の代表的なrootとして扱う。
+
+ただし、`documents/project/` や `documents/reference/` などの内部directoryは**意味roleを表す選択肢**であり、全projectへ固定templateとして強制しない。既存の明確なlocal conventionがある場合は、それを尊重する。
+
+人間向け / AI向けという読者差だけを理由に、固定のtop-level directory名へ機械的に分離しない。必要なaudience、language、detail levelはproject documentation自身が明示する。
+
+## Authority と overlap
+
+同じ概念が複数documentで言及されること自体は禁止しない。
 
 ```yaml
-wrong_approach: "トークン予算に合わせてドキュメントを縮小し、重要な詳細を失う。"
-right_approach: "関心事ごとにドキュメントを分割し、エージェントが関連部分だけを読み込むようにする。"
+principle:
+  - "同じ規範・定義を複数箇所で独立authorityとして更新しない"
+  - "主責務を持つdocumentを明確にする"
+  - "理解に必要な局所的再述は許容する"
+  - "DRYより意味の完全性を優先する"
 ```
 
----
+厳密な「1情報 = 1文書」は要求しない。
 
----
+## Git history
 
-## スコープ: 本戦略が管轄するもの
+document固有のSemantic Versionや `last_updated_commit` registryを必須化しない。
 
-```yaml
-governs:
-  - "documents/ ディレクトリ — すべての内容、構造、ルーティング、保守"
-  - "documents/INDEX.md — ルーティングハブとバージョンレジストリ"
-  - "ドキュメント変更のGitコミットメッセージ規約"
-  - "ドキュメントのバージョン管理 — どのコミットにドキュメントが対応しているかの追跡"
-
-does_not_govern:
-  - "ソースコードの設計、アーキテクチャ、パターン"
-  - "Gitコミットのタイミング — いつコミットするかはコード側の関心事"
-  - "Gitブランチ戦略 — これは開発ワークフローの関心事"
-  - "コードレビュープロセス — これは開発プロセスの関心事"
-```
-
-本戦略は**記録とドキュメント化**に関するものであり、コードに関するものではない。Gitは記録ツールであるため部分的に管轄下にある：ドキュメントコミットにどうラベルを付けるか（コミットメッセージ規約）、そしてドキュメントがどのコード状態を記述しているかをどう追跡するか（バージョン + コミットハッシュ）。いつコミットするか、ブランチを切るかどうか、どうレビューするかはコード側の決定である。
-
----
-
----
-
-## デフォルトでAI向け
-
-```yaml
-principle: "documents/ 配下のすべてはAIエージェント向けに書かれる。"
-rationale: |
-  ユーザーは「@documents/ — これを理解して開発して」とAIエージェントに指示する。
-  もしdocuments/に人間向けの散文が含まれていたら、エージェントは実行不可能な
-  内容をパースするためにトークンを無駄にする。したがってdocuments/は完全にAI向けである。
-
-human_facing:
-  location: "docs-jp/（独立したトップレベルディレクトリ）"
-  language: "日本語"
-  purpose: "プロジェクトの背景、セットアップチュートリアル、人間向けの設計根拠"
-  rule: "人間向けの内容はdocuments/配下には置かない"
-```
-
----
-
----
-
-## 汎用性
-
-```yaml
-principle: "本戦略はAIエージェントを使用するあらゆるプロジェクトで機能する。"
-scope:
-  single_project: "1つのリポジトリ、1つのdocuments/ツリー、1つのINDEX.md。"
-  hierarchical_project: "親+子プロジェクト、それぞれが独立したdocuments/ツリーを持つ。"
-  scale_independence: "単一スクリプトのリポジトリからマルチサービスのモノレポまで。"
-```
-
-> **唯一の情報源**: 階層構造ルールは
-> `FILE_AND_STRUCTURE.md` → "階層プロジェクト" にある。
-
----
+履歴・変更過程・削除済み情報の追跡は原則としてGit historyを利用する。現在の正確性は、固定metadataの古さではなく、関連する実装・判断・Git履歴との照合で確認する。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
