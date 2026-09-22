@@ -2,7 +2,7 @@
 
 documentの削除、再読、構造変更時のdocumentation固有の確認境界を扱う。
 
-## 削除
+## ドキュメント削除ワークフロー
 
 documentを削除できる代表条件:
 
@@ -20,7 +20,7 @@ documentを削除できる代表条件:
 
 独自archive directoryやdocument version registryを削除のためだけに作らない。過去内容はGit historyから参照できる。
 
-## 再読条件
+## 再読み込みトリガー
 
 ```yaml
 must_re_read:
@@ -37,7 +37,7 @@ no_re_read_needed:
   - "確立済みroutingに従う局所追加"
 ```
 
-## Documentation Change Level
+## 確認ゲート
 
 このlevelは**documentation構造変更だけ**を分類する。開発操作の破壊性は `../development-safety/S005_CONFIRMATION_AND_REREAD.md`、code contract変更は `../encapsulation-horizon/S008_OPERATIONAL_GUARDS.md` の別軸である。
 
@@ -60,6 +60,10 @@ DOC_L3_model_change:
 ```
 
 同じ作業がhost変更・data破棄・public contract変更を伴う場合、それぞれのsubjectのlevelも独立に評価する。
+
+## 9. ドキュメント削除ルール
+
+削除時は、参照修正・routing更新・knowledgeの移管確認を先に行う。削除済み内容の過去確認はGit historyを使用し、削除のためだけのversion registryやarchiveを追加しない。
 
 ## Sources
 
