@@ -4,7 +4,7 @@ host側の制御責務とcontainer側の実行責務、Docker-first、runtime re
 
 Work / resource scopeそのものは `../work-identity/` が主所有する。ここでは、そこで決まったscope / identityをruntime resourceへどうmaterializeするかを扱う。
 
-## Host boundary
+## 1. ホスト依存の境界
 
 ```yaml
 host_control_plane:
@@ -29,7 +29,7 @@ container_execution_plane:
 - host例外は理由とversion差異の扱いを明示する。
 - 日常operationでsudo等の昇格権限を前提にしない。
 
-## Docker-first
+## 2. Docker基準
 
 - build / test / lint / format / migration / project固有CLIはrepository管理されたruntime definitionから実行する。
 - Dockerfile / Composeはversion管理されたexecution definitionとして扱う。
