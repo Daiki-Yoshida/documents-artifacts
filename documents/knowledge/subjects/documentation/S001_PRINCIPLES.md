@@ -4,72 +4,64 @@ project documentationを、情報正確性を優先しつつ必要な読者が�
 
 ## 核心原則: 情報正確性優先
 
-ドキュメントは、利用者が判断・実装・運用に必要な情報を正確に取得できなければならない。token効率や短さは重要だが、**情報の劣化を代償にして追求しない**。
+ドキュメントの目的は、AIエージェントに正確で完全な情報を適切なタイミングで提供することである。トークン効率も重要だが、**情報の劣化を代償にして追求してはならない**。
 
 ```yaml
 priority_order:
-  1: "情報正確性・意味の完全性"
-  2: "適切なrouting"
-  3: "読み取り効率・token効率"
+  1: "情報正確性 — ドキュメントは正確かつ完全でなければならない"
+  2: "適切なルーティング — エージェントは必要なときに必要なものだけを読む"
+  3: "トークン効率 — 無駄を最小化するが、トークンを節約するために情報を切り詰めてはならない"
 ```
 
-情報量の問題は、重要情報の削除ではなく、責務分割・INDEX・cross reference・progressive disclosureで解決する。
+正確性とトークン効率が競合する場合、正確性が勝つ。トークンコストの解決策は、ドキュメントを薄くすることではなく、**より良いファイル構造とルーティング**である。
+
+```yaml
+wrong_approach: "トークン予算に合わせてドキュメントを縮小し、重要な詳細を失う。"
+right_approach: "関心事ごとにドキュメントを分割し、エージェントが関連部分だけを読み込むようにする。"
+```
+
+---
+
+---
 
 ## スコープ: 本戦略が管轄するもの
 
-このsubjectが主に所有する:
-
-- Project Documentation内部のfile roleとrouting
-- documentation directory内部の責務分割
-- documentationの導入・更新・保守
-- documentation固有のreview / confirmation boundary
-- documentationに対するGit履歴・formatの利用方針
-
-このsubjectが主所有しない:
-
-- Project Rootやrepositoryの静的配置 → `../workspace-structure/`
-- Work Documentsのidentity / ownership / lifecycle → `../work-identity/`
-- source codeの境界設計 → `../encapsulation-horizon/`
-- 開発commandの実行環境 → `../development-execution/`
-- 破壊操作・host変更等のoperational safety → `../development-safety/`
-
-## Project Documentation
-
-`<project-root>/documents/` を、Project全体の現在knowledgeを保持する **Project Documentation** のcanonical rootとして扱う。
-
-ただし、`documents/project/` や `documents/reference/` などの内部directoryは**意味roleを表す選択肢**であり、全projectへ固定templateとして強制しない。既存の明確なlocal conventionがある場合は、それを尊重する。
-
-人間向け / AI向けという読者差だけを理由に、固定のtop-level directory名へ機械的に分離しない。必要なaudience、language、detail levelはproject documentation自身が明示する。
-
-## Authority と overlap
-
-同じ概念が複数documentで言及されること自体は禁止しない。
-
 ```yaml
-principle:
-  - "同じ規範・定義を複数箇所で独立authorityとして更新しない"
-  - "主責務を持つdocumentを明確にする"
-  - "理解に必要な局所的再述は許容する"
-  - "DRYより意味の完全性を優先する"
+governs:
+  - "Project Documentation内部の内容・構造・routing・maintenance"
+  - "documents/INDEX.md — Project Documentationのrouting hub"
+  - "ドキュメント変更のGit commit message / formatに関する規則"
+
+does_not_govern:
+  - "Project Rootやrepositoryの静的配置 — workspace-structure"
+  - "Work Documentsのidentity / ownership / lifecycle — work-identity"
+  - "source codeの設計・architecture・contract — encapsulation-horizon"
+  - "開発commandの実行環境 — development-execution"
+  - "破壊操作・host変更等のoperational safety — development-safety"
 ```
 
-厳密な「1情報 = 1文書」は要求しない。
+`<project-root>/documents/` を **Project Documentation** のcanonical rootとする。top-level placement / Git ownershipは `../workspace-structure/`、その内部routing / file role / maintenanceはこのsubjectが主所有する。
 
-## Git history
+document固有のSemantic Versionや `last_updated_commit` registryは必須化しない。履歴と変更過程は原則Git historyを利用する。
 
-document固有のSemantic Versionや `last_updated_commit` registryを必須化しない。
 
-履歴・変更過程・削除済み情報の追跡は原則としてGit historyを利用する。現在の正確性は、固定metadataの古さではなく、関連する実装・判断・Git履歴との照合で確認する。
 
 ## 汎用性
 
-このsubjectはsingle-repository / multi-repository、small / large projectのいずれにも適用できる。
+```yaml
+principle: "本戦略はAIエージェントを使用するあらゆるプロジェクトで機能する。"
+scope:
+  single_project: "1つのリポジトリ、1つのdocuments/ツリー、1つのINDEX.md。"
+  hierarchical_project: "親+子プロジェクト、それぞれが独立したdocuments/ツリーを持つ。"
+  scale_independence: "単一スクリプトのリポジトリからマルチサービスのモノレポまで。"
+```
 
-Project Documentationのrootは `documents/` に揃える一方、その内部directory templateや特定agent toolを汎用性の前提にしない。project固有の内部構造・audience・tool差異は、routing / authority原則を保ったままlocal conventionで表現する。
+階層projectのdocumentation構造は `S002_ROUTING_AND_STRUCTURE.md` の「階層プロジェクト」を参照する。
+
+---
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
-- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
