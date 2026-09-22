@@ -8,14 +8,14 @@
 
 ```yaml
 Project_Documentation:
-  意味: "Project Root配下の documentation 全体。典型的には <project-root>/documents/ を指す"
+  意味: "<project-root>/documents/ に置く、Project全体の現在knowledge"
 project_level_document:
   意味: "Project Documentation内でproject全体の状態・制約・設計を扱うdocument role"
 Work_Documents:
   意味: "1つのWorkに属する進行中knowledge。配置・lifecycleは work-identity が主所有する"
 ```
 
-Project Root上の `documents/` というtop-level placementは `../workspace-structure/`、Work Documentsは `../work-identity/` が主所有する。このsubjectはProject Documentation内部のrouting・structure・maintenanceを所有する。
+Project Root上の `documents/` というtop-level placementとGit ownershipは `../workspace-structure/`、Work Documentsは `../work-identity/` が主所有する。このsubjectはProject Documentation内部のrouting・structure・maintenanceを所有する。
 
 ## 構成
 
