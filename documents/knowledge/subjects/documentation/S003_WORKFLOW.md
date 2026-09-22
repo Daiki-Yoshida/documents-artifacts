@@ -89,7 +89,7 @@ rule: "audience差だけを理由に固定top-level directoryを強制しない�
 ```yaml
 action: "プロジェクトの成長に合わせてドキュメントを作成する — 一度にすべてではない。"
 trigger: "既存のプロジェクトドキュメントに収まらないコンテキストをタスクが要求する時、新規ファイルを作成する。"
-placement: "documents/reference/<topic>.md または documents/<topic>/（FILE_AND_STRUCTURE.md → §7 Directory Splitting Guideを参照）"
+placement: "documents/reference/<topic>.md または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
 rule: "重複する内容の多い多数ファイルより、明確なルーティングのある少数ファイルを優先する。"
 ```
 
@@ -118,7 +118,7 @@ classification:
 mapping:
   ai_facing: "documents/project/ または documents/reference/（AI向け）"
   human_facing: "project conventionに従う。Project Documentationとauthorityを重複させない"
-  shared: "documents/（デフォルトはAI向け; 必要に応じて人間向けサマリをdocs-jp/に抽出）"
+  shared: "canonical knowledgeはdocuments/へ置き、audience固有の補助表現が必要ならproject conventionに従う"
   obsolete: "削除またはアーカイブ — 移行しない"
 ```
 
