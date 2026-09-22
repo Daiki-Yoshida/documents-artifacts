@@ -35,7 +35,7 @@ priority_order:
 
 ## Project Documentation
 
-`<project-root>/documents/` を、Project全体の現在knowledgeを保持する **Project Documentation** の代表的なrootとして扱う。
+`<project-root>/documents/` を、Project全体の現在knowledgeを保持する **Project Documentation** のcanonical rootとして扱う。
 
 ただし、`documents/project/` や `documents/reference/` などの内部directoryは**意味roleを表す選択肢**であり、全projectへ固定templateとして強制しない。既存の明確なlocal conventionがある場合は、それを尊重する。
 
@@ -65,7 +65,7 @@ document固有のSemantic Versionや `last_updated_commit` registryを必須化�
 
 このsubjectはsingle-repository / multi-repository、small / large projectのいずれにも適用できる。
 
-固定directory templateや特定agent toolを汎用性の前提にしない。project固有の構造・audience・tool差異は、routing / authority原則を保ったままlocal conventionで表現する。
+Project Documentationのrootは `documents/` に揃える一方、その内部directory templateや特定agent toolを汎用性の前提にしない。project固有の内部構造・audience・tool差異は、routing / authority原則を保ったままlocal conventionで表現する。
 
 ## Sources
 
