@@ -1,101 +1,95 @@
 # 開発実行 — 導入と移行
 
-新規projectへの実行環境導入と、既存projectへ安全に段階導入するbrownfield workflowを扱う。
+新規projectへのexecution contract導入と、既存projectへ安全に段階導入するbrownfield workflowを扱う。
 
-## 1. 新規プロジェクトへの導入
+repository構造を新しく設計するworkflowではない。静的構造は `../workspace-structure/`、Work/worktree/resource lifecycleは `../work-identity/`、破壊操作は `../development-safety/` が所有する。
 
-### 手順1: リポジトリ構造を決める
+## New project
 
-```yaml
-単一repository: "product codeと開発環境toolを同じrepositoryで管理する"
-WorkspaceとComponent: "Workspace Repositoryが一つ以上の独立Component Repositoryを管理する"
-```
+### 1. Static structureを確認する
 
-別履歴、安定したcomponent root、共有tool、並列エージェント調整など、実際の必要性がある場合だけ後者を選びます。
+`../workspace-structure/` またはproject固有規則から次を解決する。
 
-### 手順2: ホスト境界を決める
+- Project Root / Project Repository
+- participating repository identity
+- project-level helperを置く基準面
 
-- host制御面へ置くtoolを列挙する。
-- project runtime、package manager、build、test、project固有CLIは原則containerへ置く。
-- host例外とversion差異の管理方法を記録する。
-- 通常commandが昇格権限を要求しないようにする。
+execution導入の都合だけでsingle/multi-repository構成を変更しない。
 
-### 手順3: 公開commandを作る
+### 2. Host / container boundary
 
-- 通常はMakefileを公開command入口にする。
-- checkout選択や環境準備が複雑なら共通wrapperを追加する。
-- 複雑な処理は `scripts/` などへ分離する。
-- help、状態確認、診断、部分検証、最終検証、限定cleanupを用意する。
-- 通常操作と破壊的操作を分ける。
+- host control-plane toolを決める。
+- project runtime / package manager / build / test / project-specific CLIを原則container側へ置く。
+- host例外とversion差異の扱いを記録する。
+- routine operationが昇格権限を要求しないようにする。
 
-### 手順4: resource識別を決める
+### 3. Public operations
 
-次を安定した名前で識別します。
+- discoverableなpublic command surfaceを用意する。
+- 複雑なimplementationはscript等へdelegationする。
+- help / status / partial check / final validation等を必要に応じて用意する。
+- destructive operationとの境界は `../development-safety/` に従う。
 
-- workspaceまたはproject
-- component
-- resourceの役割
-- task固有隔離を使う場合だけtaskまたはworktree
+### 4. Runtime materialization
 
-並列taskには、衝突しない可変resourceとhost portを割り当てます。
+Project / Work / Run resource scopeは `../work-identity/S004_LIFECYCLE_AND_RESOURCES.md` を利用する。
 
-### 手順5: repositoryと任意worktreeのpathを決める
+execution側では、そのidentityをcontainer / network / volume / port / log等へ必要な範囲だけmaterializeする。
 
-- 各Component RepositoryのPrimary Checkoutを決める。
-- 独立Component RepositoryのpathをWorkspace Repository側でignoreする。
-- worktree対応を採用する場合だけ `.worktrees/` を定義してignoreする。
-- 必要時に使うworktree命名規則を決める。
-- command内部を書き換えず、現在checkoutまたは明示worktreeを対象にできるようにする。
-- worktree対応の確認だけを目的に、bootstrap時にTask Worktreeを作らない。
+Work-specific separationが不要ならshared resourceを安全に再利用する。
 
-### 手順6: bootstrapを検証する
+### 5. Worktree support
 
-clean clone相当の状態から、次を確認します。
+worktree path・branch mapping・create/remove semanticsをexecution側で定義しない。
 
-- 環境を作成できる。
-- versionと選択pathを表示できる。
-- 最小checkが通る。
-- 最終検証が通る。
-- 検証で作成したresourceだけを削除できる。
+必要なprojectは `../work-identity/S005_WORKTREE_MATERIALIZATION.md` と `S006_WORKTREE_COMMANDS.md` に従い、generic public command surfaceから呼び出す。
 
-文書化されていないhost前提があれば報告します。
+### 6. Bootstrap validation
 
----
+clean clone相当のstateから:
 
-## 2. 既存プロジェクトへの導入
+- environmentを作成できる。
+- tool/runtime versionを確認できる。
+- public operationが対象を正しく解決する。
+- minimal / final validationが実行できる。
+- 作成したruntime resourceをscope通りに扱える。
 
-開発環境改善を理由に、無関係なrepository構造やcodeを全面改修してはいけません。
+undocumented host prerequisiteがあれば報告する。
 
-### 現状調査
+## Brownfield
+
+現状を先に観察する。
 
 ```yaml
-host依存: "runtime、package manager、SDK、CLI"
-入口command: "文書化・未文書化のbuild、test、deploy"
-container状態: "image、Compose、名前、port、volume、permission"
-Git構造: "repository root、embedded repository、branch、任意worktree"
-CI: "local scriptとの重複や差異"
-破壊経路: "cleanup、reset、force削除、data削除"
+audit:
+  host_dependencies: "runtime / SDK / CLI"
+  public_operations: "build / test / deploy / diagnostics"
+  runtime: "Docker / Compose / port / volume / permission"
+  ci: "local pathとの重複・差異"
+  safety_edges: "cleanup / reset / destructive operation"
 ```
 
-### 移行順序
+Git/repository/worktreeの静的・Work固有状態は対応subjectへroutingし、execution migrationの名目で全面再設計しない。
 
-1. 現在の動作を覆う安定した公開commandを作る。
-2. project固有処理を管理されたcontainerへ移す。
-3. resource識別と所有権を整える。
-4. 診断と最終検証を追加する。
-5. 並列開発または明示的隔離が必要な場合だけworktree対応を追加する。
-6. CIをproject管理commandへ合わせる。
+推奨順序:
 
-一度に一つの開発環境境界だけを変更し、動作を維持します。
+1. 現在の動作を覆うpublic operationを安定させる。
+2. project-specific runtimeをmanaged execution environmentへ移す。
+3. runtime materializationをProject/Work/Run scopeへ接続する。
+4. status / diagnostics / final validationを整える。
+5. 必要な場合だけWork Identityのworktree operationを公開surfaceへ接続する。
+6. CIをproject-owned operationへ合わせる。
 
-### 既存環境の保護
+一度に変更するexecution boundaryを絞り、behaviorを維持する。
 
-- project固有規則とgeneric strategyが衝突した場合はproject規則を優先し、衝突を報告する。
-- repository移動や環境状態削除を黙って行わない。
-- 依頼に必要でないWorkspace・Component分割を導入しない。
-- 現在checkoutで単独作業を安全に行える場合、Task Worktreeを導入しない。
-- scope外の違反は報告し、ついでに全面修正しない。
+## Brownfield guards
+
+- explicit local conventionがgeneric strategyと競合する場合はlocal ruleを優先し、差異を報告する。
+- repository移動やWorkspace/Component再編をexecution改善へ便乗させない。
+- destructive cleanupをmigrationへ隠さない。
+- scope外の問題は記録・報告し、無関係な全面修正へ拡大しない。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
