@@ -1,6 +1,6 @@
 # Work Identity — Work Documents
 
-Work Documents、Project Documentsとの関係、Git所有権、Primary/mainの役割、完了時reconciliation、履歴管理を扱う。
+Work Documents、Project Documentationとの関係、Git所有権、Primary/mainの役割、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
 
 ## Work Documents
 
@@ -44,17 +44,17 @@ Work Documents は、その Work Identity について現在進行している�
 
 ---
 
-## Project Documents と Work Documents
+## Project Documentation と Work Documents
 
 両者は意味が異なる。
 
-### Project Documents
+### Project Documentation
 
 ```text
 <project-root>/documents/
 ```
 
-現在確定しているプロジェクト状態を表す canonical knowledge。
+現在確定しているプロジェクト状態を表す canonical knowledge。内部のdirectory / file role / routingは `../documentation/` が所有する。
 
 ### Work Documents
 
@@ -142,7 +142,7 @@ main は、完成済みコードだけを示す場所ではなく、**プロジ�
 
 これにより main を見るだけで、
 
-- 現在の canonical Project Documents
+- 現在の canonical Project Documentation
 - 現在進行中の Work Identity
 - 各 Work が何を目的としているか
 - 設計・調査・検証の状態
@@ -157,7 +157,7 @@ main は、完成済みコードだけを示す場所ではなく、**プロジ�
 
 ## Work Documents の完了時 reconciliation
 
-Work Documents は、Work 完了後にそのまま Project Documents へ全コピーしない。
+Work Documents は、Work 完了後にそのまま Project Documentation へ全コピーしない。
 
 Work 完了時には **reconciliation** を行う。
 
@@ -167,14 +167,14 @@ Work Documents
 review / reconcile
       ├─ 今後も正本として必要
       │      ↓
-      │   Project Documents へ統合
+      │   Project Documentation へ統合
       │
       └─ 作業中だけ必要
              ↓
           破棄
 ```
 
-Project Documents へ昇格する候補:
+Project Documentation へ昇格する候補:
 
 - 確定した設計
 - 今後も必要な運用知識
