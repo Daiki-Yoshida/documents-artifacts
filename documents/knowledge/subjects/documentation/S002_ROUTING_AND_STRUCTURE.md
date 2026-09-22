@@ -17,7 +17,7 @@ mechanisms:
 
 1 file = 1 information を強制しない。fileの主語や責務が繰り返し変わる場合に分割を検討する。
 
-## INDEX
+## 2. ファイル役割
 
 Project DocumentationにINDEXを置く場合、その主目的は**routing**である。
 
@@ -44,7 +44,7 @@ inventoryを持つ場合も、routingの役に立つ範囲へ限定し、registr
 - 詳細knowledgeを複製せず、Project Documentationへroutingする。
 - agent固有の差異がなければ、同じ情報を各entryへ大量複製しない。
 
-## File role と directory
+## 7. ディレクトリ分割ガイド
 
 `documents/project/`、`documents/reference/`、`documents/<topic>/` は有効な構成例だが必須templateではない。
 
@@ -59,14 +59,14 @@ topic_directory:
 
 directoryを増やす判断はfile数だけではなく、責務の独立性・routing改善・ownership境界で行う。
 
-## Cross reference
+## 3. 相互参照とルーティング戦略
 
 - 相対pathを基本とする。
 - authorityを持たないdocumentは、必要な文脈を短く再述した上で主所有documentへlinkしてよい。
 - linkだけでは読解不能になる場合、意味の完全性を優先する。
 - rename / move時は参照元を同時に更新する。
 
-## Hierarchical / multi-repository project
+## 8. 階層プロジェクト
 
 repository / projectの静的関係は `../workspace-structure/` が所有する。
 
