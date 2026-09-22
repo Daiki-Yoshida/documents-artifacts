@@ -2,7 +2,16 @@
 
 新規project、brownfield、継続的更新、Work completion時のreconciliationという主要documentation workflowを扱う。
 
-## 新規project
+## ユースケース
+
+```yaml
+1_new_project: "新規projectへdocumentation routingを導入する"
+2_existing_project: "brownfieldの既存documentationを保全しながら整合する"
+3_ongoing_updates: "意味変更に応じて継続更新する"
+4_work_reconciliation: "Work Documentsから恒久knowledgeをProject Documentationへ統合する"
+```
+
+## ユースケース1: 新規プロジェクトセットアップ
 
 1. `../workspace-structure/` またはproject固有規則からProject Root / repository構成を確認する。
 2. 既存のdocumentation conventionがあれば再利用する。
@@ -13,7 +22,7 @@
 
 固定の `documents/project/` / `documents/reference/` / `docs-jp/` 構成を導入条件にはしない。
 
-## Brownfield
+## ユースケース2: 既存プロジェクト導入（ブラウンフィールド）
 
 既存documentationを先に監査し、内容を次の観点で把握する。
 
@@ -35,7 +44,7 @@ audit:
 - document version / commit registryを新規導入しない。
 - 移行のためだけにaudience別directoryを強制しない。
 
-## 継続更新
+## ユースケース3: 継続的ドキュメント更新
 
 documentationはcalendarではなく、**意味が変わったとき**に更新する。
 
