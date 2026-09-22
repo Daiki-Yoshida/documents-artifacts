@@ -439,3 +439,24 @@ one_idea: "INDEX.mdが地図、ドキュメントが目的地、バージョン�
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+
+
+---
+
+## 2026-09-22 cross-subject alignment
+
+6 subject横断監査で、旧modelとしてhistoryへ分離済みと宣言していた次の規範が、S001〜S005の現行本文へ残っていることを確認した。
+
+- document Semantic Version / `last_updated_commit` registry
+- INDEXをversion registryとして扱う規則
+- audienceごとの固定 `docs-jp/` placement
+- 厳格な「1情報 = 1文書」運用
+- `FILE_AND_STRUCTURE.md` / `DOCUMENT_WORKFLOW.md` 等の旧file名を現行authorityとして参照する規則
+
+これらは現行normative本文から除去し、このhistoryとsource recordで保持する。
+
+現行modelはGit history、routing、主authority、意味の完全性を優先し、固定registryを新しい状態source of truthとして要求しない。
+
+Source decision:
+
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
