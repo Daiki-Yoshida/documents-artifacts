@@ -42,7 +42,7 @@ Work-specific separationが不要ならshared resourceを安全に再利用す�
 
 worktree path・branch mapping・create/remove semanticsをexecution側で定義しない。
 
-必要なprojectは `../work-identity/S005_WORKTREE_MATERIALIZATION.md` と `S006_WORKTREE_COMMANDS.md` に従い、generic public command surfaceから呼び出す。
+必要なprojectは `../work-identity/S005_WORKTREE_MATERIALIZATION.md` と `../work-identity/S006_WORKTREE_COMMANDS.md` に従い、generic public command surfaceから呼び出す。
 
 ### 6. Bootstrap validation
 
