@@ -23,12 +23,12 @@ not_governed:
 
 ## 5. Gitコミットメッセージ規約
 
-ドキュメントコミットはConventional Commitsプレフィックスと日本語説明を使用する。
+projectに既存のcommit conventionがある場合はそれを優先する。独自規則がない場合は、Conventional Commits系prefix + 日本語説明を推奨する。
 
 ### フォーマット
 
 ```yaml
-format: "<type>: <日本語説明>"
+recommended_format: "<type>: <日本語説明>"
 types:
   docs: "ドキュメント変更（新規ファイル、コンテンツ更新、ルーティング変更）"
   feat: "新規ドキュメント機能または大きな情報追加"
@@ -47,8 +47,8 @@ examples:
 
 ```yaml
 rules:
-  - "プレフィックス後の説明には日本語を使用する。"
-  - "プレフィックスは英語（docs:, feat:, fix:, refactor:, chore:）。"
+  - "project固有規則がなければ、プレフィックス後の説明には日本語を推奨する。"
+  - "project固有規則がなければ、英語prefix（docs:, feat:, fix:, refactor:, chore:）を推奨する。"
   - "説明は簡潔にし、何が変更されたかを記述する（なぜはdiffが示す）。"
   - "実装commit / Issue / PRへの参照が追跡上有用な場合はcommit本文等へ記載してよい。"
 ```
