@@ -4,7 +4,7 @@
 
 repository構造を新しく設計するworkflowではない。静的構造は `../workspace-structure/`、Work/worktree/resource lifecycleは `../work-identity/`、破壊操作は `../development-safety/` が所有する。
 
-## New project
+## 1. 新規プロジェクトへの導入
 
 ### 1. Static structureを確認する
 
@@ -56,7 +56,7 @@ clean clone相当のstateから:
 
 undocumented host prerequisiteがあれば報告する。
 
-## Brownfield
+## 2. 既存プロジェクトへの導入
 
 現状を先に観察する。
 
