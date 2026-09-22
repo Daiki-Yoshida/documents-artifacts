@@ -2,7 +2,7 @@
 
 Gitを履歴・説明責任の基盤として使う考え方、commit message、Markdown/YAML等のformat基準を扱う。
 
-## Gitを履歴機構として使う
+## 記録ツールとしてのGit
 
 ```yaml
 principle: "documentの変更・移動・削除の履歴はGitが所有する"
@@ -20,7 +20,7 @@ avoid:
 
 documentが現在の実装と一致するかは、必要に応じてGit diff / log、関連source、test、decision recordを照合して判断する。単一metadataがHEADより古いというだけでstaleと確定しない。
 
-## Commit message
+## 5. Gitコミットメッセージ規約
 
 projectに既存のcommit conventionがある場合はそれを優先する。
 
@@ -34,7 +34,7 @@ refactor: documentation routingを整理
 
 commit message本文には、変更理由・関連Issue・実装commit等が追跡上有用な場合だけ記載する。document自身へcommit hashを埋め込むことは必須ではない。
 
-## Format
+## 6. ファイルフォーマット標準
 
 formatは内容の役割に合わせる。
 
