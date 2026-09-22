@@ -1,72 +1,66 @@
 # 開発実行 — 公開コマンドとCI
 
-人・AI・CIが利用する公開command、操作意味、local/CIの実行経路を扱う。
+人・AI・CIが利用するgeneric public command interface、operation semantics、local/CIの実行経路を扱う。
 
-## 操作内容を明確にする
+## Operation semantics
 
-コマンド名も開発環境契約の一部です。
+commandは生tool syntaxではなく、project内で安定した**目的**を公開する。
 
-```yaml
-原則: "実行前に、操作対象と起こることを判断できなければならない"
-必要なこと:
-  - "曖昧な操作には対象範囲を付ける"
-  - "通常の後片付けと、データを捨てる強制削除を分ける"
-  - "生のツール構文ではなく、安定した目的を公開する"
-  - "失敗を隠さず、次に確認すべきことが分かる出力を残す"
-```
+- 実行前に対象scopeと主要effectを判断できる名前にする。
+- destructive effectを通常operationの名前へ隠さない。
+- failureを隠さずnon-zero statusと診断可能なoutputを返す。
+- command interfaceの安全境界は `../development-safety/` と整合させる。
 
-プロジェクト内で意味が一つに定まるなら、短いコマンド名でも構いません。
-
----
-
-## 3. 公開コマンド
-
-projectは、日常操作を見つけやすい公開command interfaceを持ちます。
+## Public command surface
 
 ```yaml
-推奨構成:
-  Makefile: "公開操作名、help、parameter、単純な依存関係"
-  wrapper: "checkout選択や環境準備を共通化する任意のCLI入口"
-  scripts: "複雑な分岐、検証、orchestration、cleanup、provider固有処理"
+typical_layers:
+  Makefile: "discoverable operation name / help / parameter / simple delegation"
+  wrapper: "共通routingや環境準備が必要な場合の任意入口"
+  scripts: "複雑な分岐、検証、orchestration、provider固有処理"
 ```
 
-### Makefile
+- Makefileへ複雑なshell implementationを埋め込みすぎない。
+- parameterは意味ごとに明示し、万能raw argsへ寄せすぎない。
+- help/status/validate等、日常利用者が操作を発見できる入口を持つ。
+- final validationの標準operationを定義できる。
 
-- targetは生のcommand列ではなく、安定した目的を表す。
-- 複雑なshell処理は `scripts/` などへ分離する。
-- help targetで操作、parameter、破壊的効果を説明する。
-- 構造化parameterには専用変数を使い、quoteが曖昧になる万能引数を避ける。
-- ローカルとCIは、可能な限り同じtargetまたはscriptを呼ぶ。
+## Domain-specific command contract
 
-### target名
+このsubjectはgeneric command surfaceを所有する。
 
-対象や副作用が曖昧になる場合は `<scope>-<action>` を使います。
+Work Identity固有の、
 
-- すべてへ機械的にprefixを付ける必要はない。
-- `help`、`check`、`test`、`validate` はproject内の意味が一つなら短いままでよい。
-- `up`、`down`、`reset`、`clean`、`deploy`、`logs` は通常scopeを必要とする。
-- 互換aliasを残す場合でも、正規targetを明記する。
+```text
+worktree-create
+worktree-status
+worktree-remove
+```
 
-### 操作の意味
+等のsemantic contract、`WORK + REPO` input、branch/path resolutionは `../work-identity/S006_WORKTREE_COMMANDS.md` が主所有する。
 
-- command文書には対象、見える効果、破壊範囲を書く。
-- 非破壊commandを同じ名前のまま破壊的処理へ変えない。
-- stop、container削除、volume削除、完全purgeを分ける。
-- 最終検証の標準commandを一つ定義する。
-- 部分検証は実装中や診断用であり、最終gateの代替ではない。
-- 失敗時はnon-zeroで終了し、診断可能な出力を残す。
+関係:
 
----
+```text
+development-execution
+  generic public command / implementation routing
+        ↓
+work-identity
+  Work-specific semantic operation
+```
 
-## 7. ローカルとCI
+Work Identity operationもproject public command surfaceへ公開できるが、意味契約をexecution側で複製しない。
 
-- CIのworkflow YAMLへbuild/test本体を再実装せず、project管理commandを呼ぶ。
-- provisioningが異なっても、最終的には同じ検証scriptへ合流させる。
-- provider固有準備はCI edgeに置き、project動作はrepository管理commandへ置く。
-- CIで別Workspace Repositoryを利用する場合は、使用refを明示する。
-- 未指定の外部workspace最新版へ偶然依存しない。
+## Local and CI
+
+- CI workflowへbuild/test logic本体を再実装せずproject-owned operationを呼ぶ。
+- provisioning差があっても最終的なbuild/test/validate pathを共有する。
+- provider固有setupはCI edgeへ置く。
+- 外部Workspace/tool dependencyを使う場合はref/versionを明示する。
+- 未指定の最新版へ偶然依存しない。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
