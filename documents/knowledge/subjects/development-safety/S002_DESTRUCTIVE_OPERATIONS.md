@@ -17,8 +17,10 @@
 ```
 
 - global Docker pruneのようなhost全体操作を通常project lifecycleへ入れない。
-- cleanup対象は決定的なproject/task識別子で限定する。
+- cleanup対象は決定的なProject / Work identityで限定する。
 - DB reset、volume削除、worktree強制削除、remote deploy破棄を曖昧な `clean` にまとめない。
+
+Project / Work / Runのownershipとlifecycleは `../work-identity/` が所有する。このsubjectは、それらを削除・破棄するoperationの安全条件を所有する。
 
 ## Sources
 
