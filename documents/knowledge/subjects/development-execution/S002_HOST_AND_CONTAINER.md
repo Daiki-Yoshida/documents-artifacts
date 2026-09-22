@@ -1,94 +1,112 @@
 # 開発実行 — ホストとコンテナ
 
-host側の制御責務とcontainer側の実行責務、Docker-first、runtime resource materialization、mount・cache・network・secretの実装基準を扱う。
-
-Work / resource scopeそのものは `../work-identity/` が主所有する。ここでは、そこで決まったscope / identityをruntime resourceへどうmaterializeするかを扱う。
+ホスト側の制御責務とコンテナ側の実行責務、Docker-first、resource materialization、mount・cache・network・secretの実装基準を扱う。Project / Work / Runのresource scope・ownershipは `../work-identity/` が主所有し、この文書はそれをruntime systemへmaterializeする。
 
 ## 1. ホスト依存の境界
 
-```yaml
-host_control_plane:
-  examples:
-    - "Docker / Compose"
-    - "Git等のsource control"
-    - "Make / shell等のcommand entry"
-    - "SSH / tmux等の認証・remote control"
+ツールを固定リストだけで判断せず、役割で分類します。
 
-container_execution_plane:
-  examples:
-    - "language runtime"
-    - "package manager"
-    - "compiler / build toolchain"
-    - "test runtime"
-    - "DB / migration CLI"
-    - "project固有cloud / deploy CLI"
+```yaml
+ホスト側の基本役割:
+  - "DockerとCompose"
+  - "Gitなどのソース管理"
+  - "Makeやshellなどのコマンド入口"
+  - "SSH・tmux などの認証と遠隔接続"
+コンテナ側の基本役割:
+  - "言語runtime"
+  - "package manager"
+  - "compilerとbuild toolchain"
+  - "test runtime"
+  - "DB・migration CLI"
+  - "project固有のcloud・deploy CLI"
 ```
 
-- container executionが現実的ならproject runtimeをhostへ要求しない。
-- convenienceだけを理由にhost packageを増やさない。
-- host例外は理由とversion差異の扱いを明示する。
-- 日常operationでsudo等の昇格権限を前提にしない。
+- リポジトリ管理されたコンテナ実行が現実的なら、project runtimeをホストへ要求しない。
+- エージェントがcontainer commandを面倒に感じたという理由だけで、host packageを追加しない。
+- host例外を設ける場合は、container化が不適切な理由とversion差異の管理方法を明記する。
+- 対話的desktop toolはhostに置けるが、buildやCLIは可能な限りcontainer側へ置く。
+- 日常操作でsudoなどの昇格権限を前提にしない。
+
+---
 
 ## 2. Docker基準
 
-- build / test / lint / format / migration / project固有CLIはrepository管理されたruntime definitionから実行する。
-- Dockerfile / Composeはversion管理されたexecution definitionとして扱う。
-- pre-created host network、global package、manual containerへ隠れて依存しない。
-- 重要runtime/toolで無管理の `latest` に依存しない。
-- container内でもlock fileを尊重する。
+### Dockerファースト
 
-## Runtime resource identity
+- build、test、lint、format、migration、project固有CLIは、repository管理のDocker定義から実行する。
+- DockerfileやComposeは個人メモではなく、version管理された開発環境定義である。
+- 事前作成されたhost network、global package、手動containerへ隠れて依存しない。
+- 重要なruntimeやtoolはversionを固定または管理し、重要箇所で `latest` を使わない。
+- container内でもlockファイルを尊重する。
 
-resourceの**意味上のscope / ownership / Work Identity**は `../work-identity/S004_LIFECYCLE_AND_RESOURCES.md` が所有する。
+### resourceの識別
 
-execution側は、それを各runtime systemへdeterministically materializeする。
+すべてのresourceは、どのproject / Workが所有するか分かる必要があります。Work固有の分離が必要な場合だけ、`../work-identity/` が定義するWork Identityを含めます。
 
 ```yaml
-materialized_identity:
-  project: "workspace-structure / project policyから取得"
-  repository_or_component: "必要な場合"
-  work: "Work-scoped resourceの場合のみWork Identityから取得"
-  role: "container / network / volume / database / log等"
+必須:
+  - "workspaceまたはproject名"
+  - "resourceの役割"
+必要な場合だけ追加:
+  - "environment"
+  - "component"
+  - "Work Identity"
+性質:
+  - "決定的"
+  - "人が読める"
+  - "host内で衝突しにくい"
+  - "診断と限定cleanupに使える"
 ```
 
-Work Identityやbranchが存在するだけでは専用resourceを作らない。分離要件があるときだけ必要最小限をmaterializeする。
+- `web`、`api`、`database` のように役割しか分からない名前を避ける。
+- 安定した識別子があるなら無意味な乱数名を避ける。
+- Work固有のCompose project名は、並列または明示的に隔離したruntimeを同時実行する必要がある場合だけ使用する。
+- container、network、可変volume、log、temporary outputへ同じ識別体系を伝播する。
 
-## Creation / reuse
+### resourceの作成と再利用
 
-- build入力が同じならimageや安全なimmutable cacheを再利用できる。
-- mutable stateが並列Work間で影響する場合は分離する。
-- checkout / branch / worktreeが変わっただけでimageをrebuild/retagしない。
-- project / Work / Run scopeの選択はWork Identity contractへ従う。
+- Work Identity、branch、worktreeが存在すること自体は、別のimage、container、network、volumeを作る理由にならない。
+- build入力が同じなら、projectまたはcomponent単位のimageと安全に共有できるcacheを再利用する。
+- 並列実行、可変状態の分離、設定差異、または明示的なproject規則により共有が危険・不正確になる場合だけ、runtime resourceを分ける。
+- checkout、branch、Work、worktreeが変わったという理由だけでimageをrebuild・retagしない。imageのbuild入力または必要toolchainが変わった場合に行う。
+- 実際の分離要件を満たすために必要な、最小限のresourceだけを分ける。
 
-## File ownership / mount
+### file所有権とmount
 
-- containerがhostへ生成するfileはhost userが管理可能にする。
-- bind mount生成物には適切なUID/GID mapping等を使う。
+- containerがhostへ作成したfileは、host userが編集・削除できるようにする。
+- bind mountした生成物にはUID/GID mappingなどを使う。
 - permission問題を理由にcontainer全体をroot実行へしない。
-- generated outputをsourceへ混在させる場合はprojectが意図的に所有すること。
-- cache / build outputは通常Git管理しない。
+- projectが意図的に所有する場合を除き、generated fileをsource directoryへ混在させない。
+- cacheとbuild outputはGit管理から除外する。
 
-## Cache / volume / network / port
+### cacheとvolume
 
-- safely reusable cacheは共有できる。
-- 結果へ影響するmutable stateは必要なscopeで分離する。
-- resource名からownership / cleanup scopeを追えるようにする。
-- shared cacheを1 Workのcleanupで削除しない。
-- host公開不要ならcontainer internal networkを使う。
-- 並列runtimeが必要な場合はhost port衝突を避ける。
+- 安全に再利用できる依存cacheは共有してよい。
+- 複数checkoutの結果へ影響する可変状態は分離する。
+- volume名から所有者と削除範囲を判断できるようにする。
+- 1つのWorkをcleanupするときに、他Workが使う共有cacheを黙って削除しない。
 
-cleanupの破壊性・確認境界は `../development-safety/` が所有する。
+### portとnetwork
 
-## Secret
+- 並列checkoutが同じ固定host portを奪い合わないようにする。
+- host公開が不要ならcontainer内部networkを使う。
+- host portが必要な場合は、隔離が必要なWorkごとに明示的に割り当てる。
+- cleanupは選択したProject / Work scopeのnetworkだけを対象にする。
 
-- secretをimageへ焼き込まない。
-- repositoryへcommitしない。
-- sampleと実値を分離する。
-- command output / log / diagnostics / CI traceへ表示しない。
-- build-time / runtimeで適切なsecret mechanismを使う。
-- routine build/testでAIがsecret実値を読む必要をなくす。
+### secret
+
+- secretをimageへ焼き込まず、repositoryへcommitしない。
+- sampleと実値を分ける。
+- command出力、log、診断、CI traceへsecretを表示しない。
+- build-timeとruntimeのsecretは、それぞれに適した方法で渡す。
+- 通常のbuildやtestでAIエージェントがsecret実値を読む必要をなくす。
+
+## Ownership boundary
+
+resourceがProject / Work / Runのどのscopeへ属するか、Work Identityをどう伝播するかは `../work-identity/S004_LIFECYCLE_AND_RESOURCES.md` が所有する。
+
+このsubjectは、そのidentityをcontainer / network / volume / port / log等へmaterializeする方法を所有する。cleanupの破壊性・confirmation boundaryは `../development-safety/` を参照する。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
-- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
