@@ -2,7 +2,7 @@
 
 開発処理を**どこで・どの実行環境で・どの公開入口から**実行し、どう再現するかというexecution contractを扱う。
 
-## Execution contract
+## 開発環境は契約である
 
 ```yaml
 development_execution_owns:
@@ -35,7 +35,7 @@ container_execution_plane:
 
 内部Docker構成やscriptは変更可能だが、公開operationの意味は安定させる。
 
-## Reproducibility
+## 再現性
 
 あるrepository stateを取得したとき、必要なexecution environmentを再現できる情報がproject側に存在する。
 
