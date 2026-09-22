@@ -1,49 +1,56 @@
 # 開発安全性 — 確認境界と再読
 
-開発環境変更の確認levelと、重大な環境・構造変更時に文書を読み直す条件を扱う。
+開発operationのrisk levelと、重大な環境・構造変更時に関連knowledgeを読み直す条件を扱う。
 
-## 7. 開発環境変更の確認レベル
+## Development Operation Safety Level
+
+このlevelは**実際に行う開発operationの破壊性・host/data影響**を扱う。
+
+code contract変更の `CONTRACT_L0..L3` やdocumentation構造変更の `DOC_L0..L3` とは別軸である。
 
 ```yaml
-L0_観察のみ:
-  例: ["help", "status", "diagnostics", "変更を伴わないversion確認"]
+SAFETY_L0_observe:
+  例: ["help", "status", "diagnostics", "non-mutating version check"]
   対応: "そのまま実行"
-L1_安全なlocal追加:
-  例: ["非破壊target", "診断script", "task専用container設定"]
+
+SAFETY_L1_safe_local:
+  例: ["non-destructive target", "diagnostic script", "reversible local runtime materialization"]
   対応: "実行して報告"
-L2_構造変更:
-  例: ["Workspace・Component分割", "repository root移動", "worktree path変更", "標準command名変更", "CI Workspace ref方針変更"]
-  対応: "依頼から明確に必要な場合だけ実行し、明示報告"
-L3_破壊的またはhost変更:
-  例: ["dirty worktree破棄", "branch・永続volume削除", "DB破棄", "host全体cleanup", "host runtime追加・削除", "history書き換え"]
-  対応: "その破壊効果を明示依頼されていない限り事前確認"
+
+SAFETY_L2_structural:
+  例: ["repository root移動", "worktree path contract変更", "standard command rename", "CI ref policy変更"]
+  対応: "依頼から明確に必要な場合に実行し、明示報告"
+
+SAFETY_L3_destructive_or_host:
+  例: ["dirty worktree破棄", "branch / persistent volume削除", "DB破棄", "host-wide cleanup", "host runtime追加削除", "history rewrite"]
+  対応: "破壊効果が明示的に要求されていない限り実施しない"
 ```
 
-無害に見えるcommand名の裏へ破壊的処理を隠し、確認levelを下げてはいけません。
+無害に見えるcommand名の裏へ破壊的effectを隠してlevelを下げない。
 
----
-
-## 8. 文書を読み直す条件
+## 再読条件
 
 ```yaml
-必ず読み直す:
+must_re_read:
   - "このstrategyを使うprojectへ初めて触れる"
-  - "Workspace・Component構造を作成または変更する"
-  - "worktree対応を追加または再設計する"
-  - "hostとcontainerの境界を変更する"
-  - "破壊的な開発環境操作を追加する"
-読み直すことを推奨:
-  - "Docker resource命名や分離を変える"
-  - "Makefileや公開command構造を変える"
-  - "ローカルとCIの経路を合わせる"
-  - "Workspace tool version選択を変える"
-読み直し不要:
+  - "Workspace / Component構造を変更する"
+  - "worktree contractを追加・再設計する"
+  - "host / container boundaryを変更する"
+  - "destructive operationを追加する"
+
+should_re_read:
+  - "runtime resource naming / isolationを変える"
+  - "public command structureを変える"
+  - "local / CI execution pathを変える"
+  - "external Workspace/tool ref policyを変える"
+
+no_re_read_needed:
   - "確立済みcommandの日常利用"
-  - "単独書き込みtaskで現在checkoutを選ぶ"
-  - "確立済みWork Identity contractに従う通常のrepository-specific worktree作成"
-  - "command契約を変えない小さな内部script修正"
+  - "確立済みWork Identity contractに従うroutine repository-specific worktree作成"
+  - "command contractを変えない小さな内部script修正"
 ```
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
