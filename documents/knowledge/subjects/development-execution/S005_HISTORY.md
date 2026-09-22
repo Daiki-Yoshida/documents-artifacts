@@ -84,3 +84,24 @@ authority: "英語版 artifacts/ が正本。内容に差がある場合は英�
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
+
+
+---
+
+## 2026-09-22 cross-subject alignment
+
+6 subject横断監査で、旧development-environment umbrella由来の責務がdevelopment-executionの現行本文へ残存していたことを確認した。
+
+現行本文から次を除去・委譲した。
+
+- repository / Workspace / Componentの静的構造 → `workspace-structure`
+- Work / branch / worktree / resource lifecycle → `work-identity`
+- destructive operation / diagnostics / recovery / confirmation → `development-safety`
+
+旧modelではexecution workflow自身がrepository構造、Task Worktree path、task resource identity、安全性まで広く所有していた。この意味は本historyとsource recordへ保持する。
+
+現在のdevelopment-executionは、host/container boundary、Docker-first、runtime materialization、public command surface、local/CI、reproducibilityへ責務を限定する。
+
+Source decision:
+
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
