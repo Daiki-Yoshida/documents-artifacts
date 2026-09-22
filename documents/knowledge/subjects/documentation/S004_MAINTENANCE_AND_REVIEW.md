@@ -1,89 +1,69 @@
 # ドキュメント — 保守とレビュー
 
-documentの削除、再読、構造変更時の確認境界を扱う。旧commit-hash version registryに依存したstaleness判定はhistoryへ分離している。
+documentの削除、再読、構造変更時のdocumentation固有の確認境界を扱う。
 
-## ドキュメント削除ワークフロー
+## 削除
 
-```yaml
-when_to_delete:
-  - "ドキュメントが廃止済み — 記述していた内容がもはや存在しない。"
-  - "ドキュメントが別のドキュメントに統合され、重複している。"
-  - "ユーザーが明示的に削除を求めた。"
+documentを削除できる代表条件:
 
-deletion_steps:
-  1: "documents/ツリー全体を検索し、当該ドキュメントへの参照を探す。"
-  2: "参照している全リンクを更新または削除する。"
-  3: "documents/INDEX.mdからドキュメントのエントリを削除する。"
-  4: "INDEX.mdのindex_versionをバンプする（マイナー — レジストリからファイル削除）。"
-  5: "コミット: 'refactor: <document>を削除' とし、本文に理由を記載する。"
+- 内容が廃止され、現在のprojectを説明しない。
+- 別documentへ責務が統合され、旧fileを残すとauthorityが曖昧になる。
+- ユーザーまたはproject規則が明示的に削除を求める。
 
-rule: "他のドキュメントがまだ参照しているドキュメントを、その参照を先に修正せずに削除しない。"
-confirmation: "L2_structural — タスクによって明確に暗示される場合のみ進める; 明示的に報告する。"
-```
+削除時:
 
----
+1. Project Documentation内で参照元を確認する。
+2. link / routing entryを更新する。
+3. 必要なknowledgeが別authorityへ移っていることを確認する。
+4. fileを削除する。
+5. Git historyへ削除理由が残る形でcommitする。
 
----
+独自archive directoryやdocument version registryを削除のためだけに作らない。過去内容はGit historyから参照できる。
 
-## 再読み込みトリガー
-
-AIエージェントが行動前に本戦略を再読み込みすべきタイミング。
+## 再読条件
 
 ```yaml
 must_re_read:
-  - "本戦略を使用するプロジェクトへの初回接触（最初にINDEX.mdを読む）。"
-  - "documents/ディレクトリツリーの作成または再構築。"
-  - "AIエージェントを使用する新規プロジェクトのセットアップ。"
-  - "既存プロジェクトへの本戦略導入（ブラウンフィールド）。"
-
+  - "このdocumentation strategyを使うprojectへの初回接触"
+  - "Project Documentation全体を新設または再構築する"
+  - "brownfieldへstrategyを導入する"
+  - "routing / authority modelそのものを変更する"
 should_re_read:
-  - "新しいエージェントエントリファイルの追加。"
-  - "ドキュメントの再構築（ディレクトリ間でファイルを移動）。"
-  - "プロジェクトを単一から階層に変更（またはその逆）。"
-  - "情報がどこに属するか不確実な場合。"
-
+  - "大規模なfile移動・rename"
+  - "hierarchical / multi-repository documentation構造を変更する"
+  - "情報のauthorityが不明"
 no_re_read_needed:
-  - "既存ファイル内の日常的な内容更新。"
-  - "確立されたディレクトリへの新規ドキュメントの追加。"
-  - "既存のプロジェクトドキュメントの制約やステータスの更新。"
+  - "既存authority内の日常的な内容更新"
+  - "確立済みroutingに従う局所追加"
 ```
 
----
+## Documentation Change Level
 
----
-
-## 確認ゲート
-
-ドキュメント構造を変更する前に、影響を評価する。
+このlevelは**documentation構造変更だけ**を分類する。開発操作の破壊性は `../development-safety/S005_CONFIRMATION_AND_REREAD.md`、code contract変更は `../encapsulation-horizon/S008_OPERATIONAL_GUARDS.md` の別軸である。
 
 ```yaml
-L0_content: "既存ファイル内の内容更新（構造変更なし） — 進める。"
-L1_additive: "既存ディレクトリへの新規ファイルの追加 — 進めて報告する。"
-L2_structural: "ファイルの移動、ルーティングパスの変更、ファイル名変更、ドキュメントの削除 — タスクによって明確に暗示される場合のみ進める; 明示的に報告する。"
-L3_breaking: "コアドキュメントの削除、documents/ツリー全体の再構築、プロジェクトを単一から階層に変更 — 実装前に必ず確認する。"
-rule: "迷った場合はユーザーに聞く。構造変更は将来の全AIエージェントセッションに影響する。"
+DOC_L0_content:
+  意味: "既存authority内の内容更新。routing/ownership変更なし"
+  対応: "進める"
+
+DOC_L1_additive:
+  意味: "既存構造へ新規documentまたはcross referenceを追加"
+  対応: "進めて報告"
+
+DOC_L2_structural:
+  意味: "file移動、rename、routing変更、authority移管、通常document削除"
+  対応: "依頼から明確に必要な場合に進め、明示報告"
+
+DOC_L3_model_change:
+  意味: "Project Documentation全体の再構築、core routing/authority modelの変更"
+  対応: "明示的な変更要求なしに実施しない"
 ```
 
----
-
-## 9. ドキュメント削除ルール
-
-`documents/` 配下のドキュメントが削除される場合:
-
-```yaml
-deletion_steps:
-  1: "ドキュメントが本当に廃止されたことを確認 — まずすべての相互参照をチェックする。"
-  2: "削除されるドキュメントを指すすべてのリンクを削除または更新する（documents/ツリー全体を検索）。"
-  3: "documents/INDEX.mdのバージョンレジストリからドキュメントのエントリを削除する。"
-  4: "INDEX.mdのindex_versionを更新する（minor — レジストリからファイルが削除された）。"
-  5: "コミット: 'refactor: <document>を削除' とし、本文に理由を記載する。"
-rule: "他のドキュメントがまだ参照しているドキュメントを、まずその参照を修正せずに削除しない。"
-```
-
----
+同じ作業がhost変更・data破棄・public contract変更を伴う場合、それぞれのsubjectのlevelも独立に評価する。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`
