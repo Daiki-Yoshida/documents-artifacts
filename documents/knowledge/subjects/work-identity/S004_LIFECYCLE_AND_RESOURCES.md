@@ -25,7 +25,7 @@ verification
        ↓
 integration
        ↓
-Work Documents reconciled into Project Documents
+Work Documents reconciled into Project Documentation
        ↓
 work-scoped resources reconciled / cleaned
        ↓
@@ -47,7 +47,7 @@ feat/hogehoge
 
 この場合、Base Work Identity はまだ active である。
 
-Work 全体の完了判定では、参加 repository の状態と Work Documents の reconciliation を含めて判断する。
+Work 全体の完了判定では、参加 repository の状態と Work Documents の reconciliation を含めて判断する。integration operationの安全規則は `../development-safety/S004_INTEGRATION.md` を参照する。
 
 ---
 
@@ -151,7 +151,7 @@ Work Identity は次を目的としない。
 - Workごとに全volume/network/cacheを複製すること
 - 実行回数をWorkとして管理すること
 - 独自の状態管理DBを作ること
-- Project DocumentsをWork Documentsへ置き換えること
+- Project DocumentationをWork Documentsへ置き換えること
 - Gitを使用できない環境を禁止すること
 
 Work Identity は **意味・ownership・lifecycleを揃えるための共通軸** であり、不要な分離状態を増やす仕組みではない。
