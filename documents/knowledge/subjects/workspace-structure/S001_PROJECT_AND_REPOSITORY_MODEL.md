@@ -70,10 +70,10 @@ Workspace RepositoryとComponent Repositoryは別のGit履歴を持ってよく�
 
 project全体のcoordination責務を持つ。
 
-典型的には次を所有できる。
+典型的には次のartifactを**Git/filesystem上で所有・配置**できる。ここでのownershipは静的配置・Git ownershipを意味し、各artifactのbehavior contractまでこのsubjectが所有するという意味ではない。
 
 ```yaml
-担当:
+静的所有:
   - "Project Documentation"
   - "Docker / Compose等のproject-level environment definition"
   - "Makefileやpublic command wrapper"
@@ -85,7 +85,7 @@ project全体のcoordination責務を持つ。
   - "独立Component Repositoryのsource code"
 ```
 
-`documents/` のtop-level placement / Git ownershipはこのsubjectの静的構造に含まれるが、その内部routing・file role・maintenance contractは `../documentation/` が主所有する。
+`documents/` のtop-level placement / Git ownershipはこのsubjectの静的構造に含まれるが、その内部routing・file role・maintenance contractは `../documentation/` が主所有する。Docker / Compose、Makefile / public command、runtime scriptの実行意味は `../development-execution/` が主所有する。
 
 ### Component Repository
 
