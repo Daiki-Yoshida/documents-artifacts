@@ -52,7 +52,7 @@ Gitを履歴機構として使う方針、commit message、Markdown/YAML等のfo
 
 ### S006_HISTORY.md
 
-旧固定directory / audience分離、厳密な1情報1文書規則、document version / commit registryなど、現在のknowledge-first設計と競合する旧モデルを保持する。
+旧 `documents/`=AI向け / `docs-jp/`=人間向けという固定audience分離、旧 `artifacts/` authority、厳密な1情報1文書規則、document version / commit registryなど、現在のknowledge-first設計と競合する旧モデルを保持する.
 
 ## Traceability
 
@@ -70,11 +70,16 @@ Gitを履歴機構として使う方針、commit message、Markdown/YAML等のfo
 
 ## 再編監査
 
+初回subject-native再編時には、sourceのH2 sectionを欠落・重複なく責務文書へ配置した。
+
 ```yaml
-source_documents: 3
-source_h2_sections: 30
-missing: 0
-duplicated: 0
-all_sections_exactly_once: true
-source_preambles_preserved_once: 3
+initial_reorganization:
+  source_documents: 3
+  source_h2_sections: 30
+  missing: 0
+  duplicated: 0
+  all_sections_exactly_once: true
+  source_preambles_preserved_once: 3
 ```
+
+その後の判断でnormative本文は更新されうる。現在のH2 routing anchorも30 / 30存在することを再確認しているが、これはsource本文との逐語一致を意味しない。原文はrecords、旧判断はhistory / Git historyへ保持する。
