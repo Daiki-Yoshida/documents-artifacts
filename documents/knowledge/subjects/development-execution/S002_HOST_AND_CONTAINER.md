@@ -1,6 +1,6 @@
 # 開発実行 — ホストとコンテナ
 
-ホスト側の制御責務とコンテナ側の実行責務、Docker-first、resource materialization、mount・cache・network・secretの実装基準を扱う。Work単位のownershipは `../work-identity/` が主所有する。
+ホスト側の制御責務とコンテナ側の実行責務、Docker-first、resource materialization、mount・cache・network・secretの実装基準を扱う。Project / Work / Runのresource scope・ownershipは `../work-identity/` が主所有し、この文書はそれをruntime systemへmaterializeする。
 
 ## 1. ホスト依存の境界
 
@@ -41,7 +41,7 @@
 
 ### resourceの識別
 
-すべてのresourceは、どのprojectが所有するか分かる必要があります。task固有の分離を行う場合だけ、taskやworktreeの識別子も含めます。
+すべてのresourceは、どのproject / Workが所有するか分かる必要があります。Work固有の分離が必要な場合だけ、`../work-identity/` が定義するWork Identityを含めます。
 
 ```yaml
 必須:
@@ -50,7 +50,7 @@
 必要な場合だけ追加:
   - "environment"
   - "component"
-  - "taskまたはworktree"
+  - "Work Identity"
 性質:
   - "決定的"
   - "人が読める"
@@ -60,15 +60,15 @@
 
 - `web`、`api`、`database` のように役割しか分からない名前を避ける。
 - 安定した識別子があるなら無意味な乱数名を避ける。
-- task固有のCompose project名は、並列または明示的に隔離したcheckoutを同時実行する場合だけ使用する。
+- Work固有のCompose project名は、並列または明示的に隔離したruntimeを同時実行する必要がある場合だけ使用する。
 - container、network、可変volume、log、temporary outputへ同じ識別体系を伝播する。
 
 ### resourceの作成と再利用
 
-- task、branch、worktreeの識別子があること自体は、別のimage、container、network、volumeを作る理由にならない。
+- Work Identity、branch、worktreeが存在すること自体は、別のimage、container、network、volumeを作る理由にならない。
 - build入力が同じなら、projectまたはcomponent単位のimageと安全に共有できるcacheを再利用する。
 - 並列実行、可変状態の分離、設定差異、または明示的なproject規則により共有が危険・不正確になる場合だけ、runtime resourceを分ける。
-- checkout、branch、task、worktreeが変わったという理由だけでimageをrebuild・retagしない。imageのbuild入力または必要toolchainが変わった場合に行う。
+- checkout、branch、Work、worktreeが変わったという理由だけでimageをrebuild・retagしない。imageのbuild入力または必要toolchainが変わった場合に行う。
 - 実際の分離要件を満たすために必要な、最小限のresourceだけを分ける。
 
 ### file所有権とmount
@@ -84,14 +84,14 @@
 - 安全に再利用できる依存cacheは共有してよい。
 - 複数checkoutの結果へ影響する可変状態は分離する。
 - volume名から所有者と削除範囲を判断できるようにする。
-- Task Worktree削除時に、他taskが使う共有cacheを黙って削除しない。
+- 1つのWorkをcleanupするときに、他Workが使う共有cacheを黙って削除しない。
 
 ### portとnetwork
 
 - 並列checkoutが同じ固定host portを奪い合わないようにする。
 - host公開が不要ならcontainer内部networkを使う。
-- host portが必要な場合は、隔離taskごとに明示的に割り当てる。
-- cleanupは選択したprojectまたはtaskのnetworkだけを対象にする。
+- host portが必要な場合は、隔離が必要なWorkごとに明示的に割り当てる。
+- cleanupは選択したProject / Work scopeのnetworkだけを対象にする。
 
 ### secret
 
@@ -100,6 +100,12 @@
 - command出力、log、診断、CI traceへsecretを表示しない。
 - build-timeとruntimeのsecretは、それぞれに適した方法で渡す。
 - 通常のbuildやtestでAIエージェントがsecret実値を読む必要をなくす。
+
+## Ownership boundary
+
+resourceがProject / Work / Runのどのscopeへ属するか、Work Identityをどう伝播するかは `../work-identity/S004_LIFECYCLE_AND_RESOURCES.md` が所有する。
+
+このsubjectは、そのidentityをcontainer / network / volume / port / log等へmaterializeする方法を所有する。cleanupの破壊性・confirmation boundaryは `../development-safety/` を参照する。
 
 ## Sources
 

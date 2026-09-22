@@ -7,15 +7,15 @@ Gitを履歴・説明責任の基盤として使う考え方、commit message、
 ```yaml
 principle: "Gitは何がいつ変更されたかを記録する。ドキュメントはこの記録を利用して説明責任を保つ。"
 governed_aspects:
-  commit_message_format: "Conventional Commitsのプレフィックス（docs:, feat:, fix:）+ 日本語の説明。FILE_AND_STRUCTURE.mdを参照。"
-  version_tracking: "各ドキュメントは自身のバージョンと最後に更新されたgitコミットハッシュを記録する。FILE_AND_STRUCTURE.mdを参照。"
+  commit_message_format: "project conventionを優先し、独自規則がなければConventional Commits系の明示的なprefix + 説明を推奨"
+  history_tracking: "変更・移動・削除の履歴はGit historyを利用する"
 not_governed:
   - "いつコミットするか（コード側の決定）"
   - "ブランチを切るかどうか（コード側の決定）"
   - "レビュープロセス（コード側の決定）"
 ```
 
-ドキュメントコミットはgit履歴で識別可能であるべき。コード変更を記述するドキュメント変更は、そのコード変更がどのコミットに含まれていたかを記録すべきであり、これにより読者はドキュメントがコードと一致していることを確認できる。
+ドキュメント変更はGit historyで追跡可能にする。実装との対応確認が必要な場合はGit log / diffや関連Issue・PRを利用し、document固有の `last_updated_commit` を必須化しない。
 
 ---
 
@@ -23,34 +23,34 @@ not_governed:
 
 ## 5. Gitコミットメッセージ規約
 
-ドキュメントコミットはConventional Commitsプレフィックスと日本語説明を使用する。
+projectに既存のcommit conventionがある場合はそれを優先する。独自規則がない場合は、Conventional Commits系prefix + 日本語説明を推奨する。
 
 ### フォーマット
 
 ```yaml
-format: "<type>: <日本語説明>"
+recommended_format: "<type>: <日本語説明>"
 types:
   docs: "ドキュメント変更（新規ファイル、コンテンツ更新、ルーティング変更）"
-  feat: "新規ドキュメント機能（新規セクション、新規バージョン管理エントリ）"
+  feat: "新規ドキュメント機能または大きな情報追加"
   fix: "ドキュメント修正（不正確な情報の訂正）"
   refactor: "ドキュメント再構築（ファイル移動、セクション再編成）"
-  chore: "メンテナンス（バージョン更新、メタデータ更新、コミットハッシュ記録）"
+  chore: "documentation tooling / metadata等のmaintenance"
 examples:
   - "docs: プロジェクト概要を更新"
   - "fix: API仕様のエンドポイントURLを修正"
   - "refactor: documents/reference/ 配下を整理"
   - "feat: セキュリティ要件ドキュメントを追加"
-  - "chore: ドキュメントバージョンを1.2.0に更新"
+  - "chore: documentation routing metadataを更新"
 ```
 
 ### ルール
 
 ```yaml
 rules:
-  - "プレフィックス後の説明には日本語を使用する。"
-  - "プレフィックスは英語（docs:, feat:, fix:, refactor:, chore:）。"
+  - "project固有規則がなければ、プレフィックス後の説明には日本語を推奨する。"
+  - "project固有規則がなければ、英語prefix（docs:, feat:, fix:, refactor:, chore:）を推奨する。"
   - "説明は簡潔にし、何が変更されたかを記述する（なぜはdiffが示す）。"
-  - "ドキュメントコミットがコード変更に伴う場合、ドキュメントコミットの本文にコードコミットハッシュを参照として含める。"
+  - "実装commit / Issue / PRへの参照が追跡上有用な場合はcommit本文等へ記載してよい。"
 ```
 
 ### 管理外の事項
@@ -71,7 +71,7 @@ not_governed:
 ```yaml
 base_format: "埋め込みYAMLブロック付きmarkdown"
 format_selection:
-  structured_data: "YAML（設定、メタデータ、バージョンレジストリ、リスト）"
+  structured_data: "YAML（設定、メタデータ、リスト等）"
   explanations: "markdown（手順、ガイド、根拠）"
   api_specs: "JSONまたはYAML（OpenAPI、マシン可読スキーマ）"
   mixed: "markdown + YAMLブロック（1ファイルで構造+コンテキスト）"

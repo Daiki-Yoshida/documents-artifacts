@@ -29,7 +29,7 @@ Project Root、Work Root、単一/複数repositoryの統一形状、repository�
 
 ### S003_WORK_DOCUMENTS.md
 
-Work Documents、Project Documentsとの関係、Git ownership、Primary/mainの役割、完了時reconciliation、Git historyによる履歴管理を扱う。
+Work Documents、Project Documentationとの関係、Git ownership、Primary/mainの役割、完了時reconciliation、Git historyによる履歴管理を扱う。
 
 ### S004_LIFECYCLE_AND_RESOURCES.md
 
@@ -56,7 +56,7 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 
 Project Repository、Project Root、Component Repository、stable repository identity / locationなど、**project全体の静的構造**は `../workspace-structure/` が主所有する。
 
-Work Identityはそれらを前提として、Work Root、Work Documents、Work単位のbranch/worktree/resource lifecycleを所有する。
+Work Identityはそれらを前提として、Work Root、Work Documents、Work単位のbranch/worktree/resource lifecycleを所有する。Project Documentation内部のrouting / structureは `../documentation/` が所有する。
 
 ## Traceability
 

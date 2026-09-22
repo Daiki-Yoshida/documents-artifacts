@@ -1,6 +1,6 @@
 # ドキュメント — 基本原則
 
-project documentationを、情報正確性を優先しつつAIが適切に読める形で維持するための基本原則を扱う。このrepo自身のknowledge保存規則は `../../system/` が優先する。
+project documentationを、情報正確性を優先しつつ必要な読者が適切に到達できる形で維持するための基本原則を扱う。このrepo自身のknowledge保存規則は `../../system/` が優先する。
 
 ## 核心原則: 情報正確性優先
 
@@ -28,43 +28,23 @@ right_approach: "関心事ごとにドキュメントを分割し、エージェ
 
 ```yaml
 governs:
-  - "documents/ ディレクトリ — すべての内容、構造、ルーティング、保守"
-  - "documents/INDEX.md — ルーティングハブとバージョンレジストリ"
-  - "ドキュメント変更のGitコミットメッセージ規約"
-  - "ドキュメントのバージョン管理 — どのコミットにドキュメントが対応しているかの追跡"
+  - "Project Documentation内部の内容・構造・routing・maintenance"
+  - "documents/INDEX.md — Project Documentationのrouting hub"
+  - "ドキュメント変更のGit commit message / formatに関する規則"
 
 does_not_govern:
-  - "ソースコードの設計、アーキテクチャ、パターン"
-  - "Gitコミットのタイミング — いつコミットするかはコード側の関心事"
-  - "Gitブランチ戦略 — これは開発ワークフローの関心事"
-  - "コードレビュープロセス — これは開発プロセスの関心事"
+  - "Project Rootやrepositoryの静的配置 — workspace-structure"
+  - "Work Documentsのidentity / ownership / lifecycle — work-identity"
+  - "source codeの設計・architecture・contract — encapsulation-horizon"
+  - "開発commandの実行環境 — development-execution"
+  - "破壊操作・host変更等のoperational safety — development-safety"
 ```
 
-本戦略は**記録とドキュメント化**に関するものであり、コードに関するものではない。Gitは記録ツールであるため部分的に管轄下にある：ドキュメントコミットにどうラベルを付けるか（コミットメッセージ規約）、そしてドキュメントがどのコード状態を記述しているかをどう追跡するか（バージョン + コミットハッシュ）。いつコミットするか、ブランチを切るかどうか、どうレビューするかはコード側の決定である。
+`<project-root>/documents/` を **Project Documentation** のcanonical rootとする。top-level placement / Git ownershipは `../workspace-structure/`、その内部routing / file role / maintenanceはこのsubjectが主所有する。
 
----
+document固有のSemantic Versionや `last_updated_commit` registryは必須化しない。履歴と変更過程は原則Git historyを利用する。
 
----
 
-## デフォルトでAI向け
-
-```yaml
-principle: "documents/ 配下のすべてはAIエージェント向けに書かれる。"
-rationale: |
-  ユーザーは「@documents/ — これを理解して開発して」とAIエージェントに指示する。
-  もしdocuments/に人間向けの散文が含まれていたら、エージェントは実行不可能な
-  内容をパースするためにトークンを無駄にする。したがってdocuments/は完全にAI向けである。
-
-human_facing:
-  location: "docs-jp/（独立したトップレベルディレクトリ）"
-  language: "日本語"
-  purpose: "プロジェクトの背景、セットアップチュートリアル、人間向けの設計根拠"
-  rule: "人間向けの内容はdocuments/配下には置かない"
-```
-
----
-
----
 
 ## 汎用性
 
@@ -76,8 +56,7 @@ scope:
   scale_independence: "単一スクリプトのリポジトリからマルチサービスのモノレポまで。"
 ```
 
-> **唯一の情報源**: 階層構造ルールは
-> `FILE_AND_STRUCTURE.md` → "階層プロジェクト" にある。
+階層projectのdocumentation構造は `S002_ROUTING_AND_STRUCTURE.md` の「階層プロジェクト」を参照する。
 
 ---
 

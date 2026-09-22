@@ -2,7 +2,7 @@
 
 project全体の**静的なrepository/filesystem構造**を扱う。
 
-1つのWorkに属するWork Root、Work Documents、repository-specific worktree、branch/worktree lifecycleは `../work-identity/` が所有する。
+1つのWorkに属するWork Root、Work Documents、repository-specific worktree、branch/worktree lifecycleは `../work-identity/` が所有する。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が所有する。
 
 ## 基本用語
 
@@ -10,7 +10,7 @@ project全体の**静的なrepository/filesystem構造**を扱う。
 Project_Repository:
   意味: "Project全体のcoordination stateを所有する最上位repository"
   主な責務:
-    - "Project Documents"
+    - "Project DocumentationのGit ownership"
     - "Project-level .worktrees/ coordination namespace"
     - "Work DocumentsのGit ownership"
     - "project-level helperを安定して実行する基準面"
@@ -70,11 +70,11 @@ Workspace RepositoryとComponent Repositoryは別のGit履歴を持ってよく�
 
 project全体のcoordination責務を持つ。
 
-典型的には次を所有できる。
+典型的には次のartifactを**Git/filesystem上で所有・配置**できる。ここでのownershipは静的配置・Git ownershipを意味し、各artifactのbehavior contractまでこのsubjectが所有するという意味ではない。
 
 ```yaml
-担当:
-  - "Project Documents"
+静的所有:
+  - "Project Documentation"
   - "Docker / Compose等のproject-level environment definition"
   - "Makefileやpublic command wrapper"
   - "project-level scripts"
@@ -84,6 +84,8 @@ project全体のcoordination責務を持つ。
   - "独立Component Repositoryのproduct history"
   - "独立Component Repositoryのsource code"
 ```
+
+`documents/` のtop-level placement / Git ownershipはこのsubjectの静的構造に含まれるが、その内部routing・file role・maintenance contractは `../documentation/` が主所有する。Docker / Compose、Makefile / public command、runtime scriptの実行意味は `../development-execution/` が主所有する。
 
 ### Component Repository
 
@@ -124,7 +126,8 @@ Project RootはProject Repositoryの基準working tree rootである。
 
 - `.worktrees/` の**内部構造はこのsubjectで定義しない**。
 - Work Rootのpath、Work Documents、repository-specific worktree配置は `../work-identity/` が所有する。
-- `.worktrees/` が存在すること自体は、worktree作成を要求しない。
+- `.worktrees/` が存在すること自体はworktree作成を要求しない。
+- `documents/` 内部構造は `../documentation/` が所有する。
 - application内部moduleの配置はこのsubjectの責務ではない。
 
 ## Primary Checkoutの境界
@@ -137,11 +140,7 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 - project-level helperの安全な実行起点を提供する
 - fetch / status / integration等の基準面にできる
 
-ただし、
-
-> あるWorkでPrimary Checkoutを使うか、repository-specific worktreeを使うか
-
-はWorkspace Structureでは決めない。
+ただし、あるWorkでPrimary Checkoutを使うかrepository-specific worktreeを使うかはWorkspace Structureでは決めない。
 
 その判断はWork Identity / project policyが所有する。
 
@@ -150,3 +149,4 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`
 - `../../records/2026-09-22-workspace-work-identity-alignment/`
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/`

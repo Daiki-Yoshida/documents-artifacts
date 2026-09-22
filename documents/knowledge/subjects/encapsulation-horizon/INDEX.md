@@ -50,7 +50,7 @@ Encapsulation Horizon subject内で使用する用語を扱う。
 
 ### S008_OPERATIONAL_GUARDS.md
 
-誤読防止、moduleの四義、confirmation levelなど、原理を実際の設計・AI workflowへ適用する際のguardを扱う。
+誤読防止、moduleの四義、Contract Change Levelなど、原理を実際の設計・AI workflowへ適用する際のguardを扱う。
 
 ### S009_HISTORY.md
 

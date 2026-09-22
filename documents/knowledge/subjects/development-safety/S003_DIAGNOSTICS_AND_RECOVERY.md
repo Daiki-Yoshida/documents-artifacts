@@ -9,7 +9,7 @@ project環境は、次に相当する操作を提供します。
 ```yaml
 案内: "利用可能な操作と必要parameterを表示"
 診断: "tool version、選択repository・checkout、container、port、mount、よくある設定不良を表示"
-状態: "変更せず、現在のproject/task resourceを表示"
+状態: "変更せず、現在のProject / Work resourceを表示"
 検証: "完了判定用の標準gateを実行"
 ```
 
@@ -34,11 +34,13 @@ project環境は、次に相当する操作を提供します。
 7_CI差異: "provider準備またはWorkspace ref不一致"
 ```
 
-- host全体cleanupの前に、問題taskのresourceだけを再作成する。
+- host全体cleanupの前に、問題Workのresourceだけを対象に再作成・診断する。
 - rebuildや削除前にsource変更を保存する。
 - 通常失敗の理由を理解する前にforce削除しない。
 - 最初の診断としてglobal Docker pruneや広範囲file削除を行わない。
-- 失敗層と証拠を報告し、失敗操作の再実行が成功するまで修復完了としない。
+- 失敗層と証拠を報告し、失敗operationの再実行が成功するまで修復完了としない。
+
+Work-scoped resourceのidentity / ownershipは `../work-identity/`、runtime materializationの詳細は `../development-execution/` を参照する。
 
 ## Sources
 

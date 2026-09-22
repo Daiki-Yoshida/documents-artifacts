@@ -1,6 +1,6 @@
 # 開発実行 — 公開コマンドとCI
 
-人・AI・CIが利用する公開command、操作意味、local/CIの実行経路を扱う。
+人・AI・CIが利用するgeneric public command surface、操作意味、local/CIの実行経路を扱う。Work Identity固有operationのsemantic contractは `../work-identity/` が主所有する。
 
 ## 操作内容を明確にする
 
@@ -49,7 +49,7 @@ projectは、日常操作を見つけやすい公開command interfaceを持ち�
 
 ### 操作の意味
 
-- command文書には対象、見える効果、破壊範囲を書く。
+- command文書には対象、見える効果、破壊範囲を書く。破壊性・confirmation boundaryは `../development-safety/` と整合させる。
 - 非破壊commandを同じ名前のまま破壊的処理へ変えない。
 - stop、container削除、volume削除、完全purgeを分ける。
 - 最終検証の標準commandを一つ定義する。
@@ -57,6 +57,22 @@ projectは、日常操作を見つけやすい公開command interfaceを持ち�
 - 失敗時はnon-zeroで終了し、診断可能な出力を残す。
 
 ---
+
+## Work Identity固有commandとの接続
+
+このsubjectはMakefile / wrapper / scripts等の**generic public command surface**を所有する。
+
+一方、Work Identityとrepository selectorを入力とするworktree create/status/remove、branch/path resolution等のsemantic contractは `../work-identity/S006_WORKTREE_COMMANDS.md` が主所有する。
+
+```text
+development-execution
+  generic public command / implementation routing
+        ↓
+work-identity
+  Work-specific semantic operation
+```
+
+Work Identity operationをpublic commandとして公開する場合も、その意味契約をこのsubjectへ複製しない。
 
 ## 7. ローカルとCI
 

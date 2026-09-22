@@ -8,7 +8,7 @@
 1_new_project: "ゼロから戦略を適用する。"
 2_existing_project: "既にドキュメントがあるプロジェクトに戦略を導入する。"
 3_ongoing_updates: "プロジェクトは本戦略に従っている; 開発中にドキュメントを更新する。"
-4_staleness_handling: "コミットハッシュがHEADより古いドキュメントを検出し修正する。"
+4_staleness_handling: "実装・判断の変更により古くなったdocumentを検出し修正する。"
 ```
 
 ---
@@ -54,14 +54,11 @@ rule: "内容を投入するディレクトリのみ作成する。投機的に�
 ### ステップ3: documents/INDEX.md作成
 
 ```yaml
-action: "ルーティングハブとバージョンレジストリを作成する。"
+action: "Project Documentationのルーティングハブを作成する。"
 content:
   - "ドキュメントインベントリ: documents/配下の全ファイルとその目的をリストする"
   - "ルーティングマップ: どのタスクにどのドキュメントを読むべきか"
-  - "バージョンレジストリ: 各ドキュメントのバージョン + 最終更新gitコミットハッシュ"
   - "相互参照マップ"
-format: "FILE_AND_STRUCTURE.md → §4 Document Versioning Systemを参照"
-index_version: "1.0.0で開始する。"
 ```
 
 ### ステップ4: プロジェクトドキュメント作成
@@ -74,18 +71,17 @@ content:
   - "制約（ビジネスルール、コンプライアンス、パフォーマンス）"
   - "現在のステータスとロードマップ"
 rule: "1ファイル = 1関心事。複数の関心事をカバーする場合は分割する。"
-versioning: "各ファイルはバージョン1.0.0で開始する。コミットハッシュには二段階ワークフローを使用する（Version Bumpingを参照）。"
 ```
 
-### ステップ5: docs-jp/作成（人間向けコンテンツが必要な場合）
+### ステップ5: audience固有の補助documentを必要に応じて作成
 
 ```yaml
-action: "人間向けドキュメントとしてdocs-jp/を作成する。"
+action: "Project Documentationだけでは満たせないaudience固有の補助documentが必要なら、project conventionに従って配置する。"
 content:
   - "プロジェクト背景と動機"
   - "セットアップチュートリアル"
   - "設計の根拠"
-rule: "人間向けコンテンツはdocuments/配下には置かない。docs-jp/に配置する。"
+rule: "audience差だけを理由に固定top-level directoryを強制しない。Project Documentationとのauthority重複を避ける。"
 ```
 
 ### ステップ6: 参照ドキュメントとトピック固有ドキュメントを必要に応じて追加
@@ -93,9 +89,8 @@ rule: "人間向けコンテンツはdocuments/配下には置かない。docs-j
 ```yaml
 action: "プロジェクトの成長に合わせてドキュメントを作成する — 一度にすべてではない。"
 trigger: "既存のプロジェクトドキュメントに収まらないコンテキストをタスクが要求する時、新規ファイルを作成する。"
-placement: "documents/reference/<topic>.md または documents/<topic>/（FILE_AND_STRUCTURE.md → §7 Directory Splitting Guideを参照）"
+placement: "documents/reference/<topic>.md または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
 rule: "重複する内容の多い多数ファイルより、明確なルーティングのある少数ファイルを優先する。"
-versioning: "新規ファイルはすべてdocuments/INDEX.mdにバージョン1.0.0で登録する。index_versionをマイナーバンプする。"
 ```
 
 ---
@@ -122,8 +117,8 @@ classification:
 ```yaml
 mapping:
   ai_facing: "documents/project/ または documents/reference/（AI向け）"
-  human_facing: "docs-jp/（人間向け）"
-  shared: "documents/（デフォルトはAI向け; 必要に応じて人間向けサマリをdocs-jp/に抽出）"
+  human_facing: "project conventionに従う。Project Documentationとauthorityを重複させない"
+  shared: "canonical knowledgeはdocuments/へ置き、audience固有の補助表現が必要ならproject conventionに従う"
   obsolete: "削除またはアーカイブ — 移行しない"
 ```
 
@@ -139,8 +134,8 @@ note: "これらについてはユースケース1のステップ1〜3に従う�
 ```yaml
 action: "既存ドキュメントを新しい構造に移動または書き直す。"
 rules:
-  - "AI向けコンテンツは適切なバージョニングを行いdocuments/に配置する。"
-  - "人間向けコンテンツはdocs-jp/に配置する。"
+  - "canonicalなproject knowledgeはdocuments/へ配置する。"
+  - "audience固有の補助contentはproject conventionへ従う。"
   - "重複を排除する: 2つのファイルが同じトピックをカバーしていた場合、1つに統合し他方からリンクする。"
   - "情報を保持する — ユーザー確認なしに内容を削除しない。"
   - "移動・統合・廃止フラグを付けたものを報告する。"
@@ -149,7 +144,7 @@ rules:
 ### ステップ5: INDEX.mdと相互参照の更新
 
 ```yaml
-action: "移行した全ドキュメントをdocuments/INDEX.mdにバージョン1.0.0で登録する。"
+action: "移行したdocumentをdocuments/INDEX.mdのroutingへ反映する。"
 check: "エージェントエントリファイルとINDEX.mdの全ルーティングパスが正しい場所を指している。"
 ```
 
@@ -175,9 +170,9 @@ guard:
 
 ```yaml
 update_triggers:
-  architecture_change: "プロジェクトアーキテクチャドキュメントとINDEX.mdのバージョンレジストリを更新する。"
+  architecture_change: "プロジェクトアーキテクチャドキュメントを更新する。"
   new_feature: "必要に応じて参照ドキュメントを追加; INDEX.mdのルーティングを更新する。"
-  constraint_change: "プロジェクト制約ドキュメントとINDEX.mdのバージョンレジストリを更新する。"
+  constraint_change: "プロジェクト制約ドキュメントを更新する。"
   tech_stack_change: "プロジェクトドキュメントを更新; 既存ドキュメントがまだ正確か確認する。"
   directory_restructure: "INDEX.mdとエージェントエントリファイルの全ルーティング参照を更新する。"
 ```
@@ -190,11 +185,11 @@ decision_tree:
   yes:
     action: "documents/配下の関連ドキュメントを更新する。"
     check: "情報は既存ファイルにあるか、新規ファイルが必要か？"
-    existing_file: "ファイルを更新しバージョンをバンプする。"
+    existing_file: "主authorityであるファイルを更新する。"
     new_file: "ファイルを作成し、INDEX.mdに登録し、ルーティングを追加する。"
   no:
-    action: "人間向けコンテンツが影響を受ける場合、docs-jp/を更新する。"
-    ai_docs: "documents/は変更しない。"
+    action: "audience固有の補助contentが影響を受ける場合、project conventionに従って更新する。"
+    project_docs: "canonical knowledgeへ影響しないならdocuments/は変更しない。"
 ```
 
 ### 更新規律
@@ -205,7 +200,7 @@ rules:
   - "比例的: 1行のコード修正に完全なドキュメントレビューは不要。"
   - "ルーティング優先: 新規ドキュメントを追加する場合、INDEX.mdに登録する。"
   - "正確性優先: 更新によってドキュメントが不正確になる場合、不正確さを修正する — 古い情報を放置しない。"
-  - "SSOTチェック: 情報を追加する場合、既存ドキュメントと重複しないか確認する。重複する代わりにリンクする。"
+  - "authorityチェック: 同じ規範・定義を複数箇所で独立更新しない。理解に必要な局所的再述は許容し、主authorityへlinkする。"
 ```
 
 ---

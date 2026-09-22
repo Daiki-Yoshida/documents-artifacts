@@ -6,16 +6,18 @@
 
 開発環境は、各開発者やAIエージェントが手元へ好きにツールを追加して使うだけのものではありません。
 
-開発作業をどこから始め、どこで実行し、どう分離し、どう検証し、最後にどう片付けるかを定めた「契約」として扱います。
+開発作業をどの実行環境で、どの公開入口から実行し、どう再現・検証するかを定めた「契約」として扱います。
+
+Project/repositoryの静的配置は `../workspace-structure/`、Work単位のidentity・ownership・lifecycleは `../work-identity/`、破壊操作・診断・復旧の安全境界は `../development-safety/` が主所有し、このsubjectはそれらを入力として利用します。
 
 ```yaml
 開発環境の契約:
-  構造: "リポジトリ、checkout、worktree、ツール、キャッシュ、生成物をどこへ置くか"
+  静的構造との接続: "Project Root / repository identity等はworkspace-structureから解決する"
   ツール構成: "ホストへ置くツールと、プロジェクト実行環境へ置くツールの境界"
   公開コマンド: "人、AIエージェント、CIが利用する安定した操作"
-  状態管理: "環境を作成、確認、再利用、削除、復旧する方法"
-  分離: "プロジェクト、タスク、branch、並列エージェント同士の衝突を防ぐ方法"
-  安全性: "通常操作、破壊的操作、事前確認が必要な操作の区別"
+  runtime管理: "実行環境を作成、確認、再利用し、必要なresourceへmaterializeする方法"
+  Workとの接続: "必要な分離scope / resource identityはwork-identityから受け取りruntimeへ反映する"
+  安全性との接続: "destructive effect / confirmation boundaryはdevelopment-safetyへ委譲する"
 ```
 
 内部のDocker構成やスクリプトは変更されても構いません。ただし、日常的に使うビルド、テスト、診断、削除の入口は、意味が明確で安定している必要があります。

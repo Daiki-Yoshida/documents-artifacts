@@ -4,14 +4,17 @@
 
 ## 1. 新規プロジェクトへの導入
 
-### 手順1: リポジトリ構造を決める
+### 手順1: リポジトリ構造を確認する
 
 ```yaml
-単一repository: "product codeと開発環境toolを同じrepositoryで管理する"
-WorkspaceとComponent: "Workspace Repositoryが一つ以上の独立Component Repositoryを管理する"
+authority: "../workspace-structure/"
+resolve:
+  - "Project Root / Project Repository"
+  - "Workspace Repository / Component Repository when applicable"
+  - "stable repository identity / base location"
 ```
 
-別履歴、安定したcomponent root、共有tool、並列エージェント調整など、実際の必要性がある場合だけ後者を選びます。
+execution導入の都合だけでsingle/multi-repository構成やrepository rootを変更しません。
 
 ### 手順2: ホスト境界を決める
 
@@ -28,25 +31,18 @@ WorkspaceとComponent: "Workspace Repositoryが一つ以上の独立Component Re
 - help、状態確認、診断、部分検証、最終検証、限定cleanupを用意する。
 - 通常操作と破壊的操作を分ける。
 
-### 手順4: resource識別を決める
+### 手順4: resource identityをruntimeへ接続する
 
-次を安定した名前で識別します。
+Project / Work / RunのscopeとResource Identityは `../work-identity/S004_LIFECYCLE_AND_RESOURCES.md` から解決します。
 
-- workspaceまたはproject
-- component
-- resourceの役割
-- task固有隔離を使う場合だけtaskまたはworktree
+execution側ではproject / repository / Work / resource roleをcontainer・network・volume・port等へdeterministically反映し、分離が必要な場合だけ衝突しない可変resourceとhost portを割り当てます。
 
-並列taskには、衝突しない可変resourceとhost portを割り当てます。
+### 手順5: 必要なWork Identity operationを公開commandへ接続する
 
-### 手順5: repositoryと任意worktreeのpathを決める
-
-- 各Component RepositoryのPrimary Checkoutを決める。
-- 独立Component RepositoryのpathをWorkspace Repository側でignoreする。
-- worktree対応を採用する場合だけ `.worktrees/` を定義してignoreする。
-- 必要時に使うworktree命名規則を決める。
-- command内部を書き換えず、現在checkoutまたは明示worktreeを対象にできるようにする。
-- worktree対応の確認だけを目的に、bootstrap時にTask Worktreeを作らない。
+- worktree path・branch mapping・create/remove semanticsをexecution側で再定義しない。
+- 必要なprojectは `../work-identity/S005_WORKTREE_MATERIALIZATION.md` と `../work-identity/S006_WORKTREE_COMMANDS.md` に従う。
+- Work Identity固有operationをMakefile / wrapper等のgeneric public command surfaceへ接続してよい。
+- worktree対応確認だけを目的に、bootstrap時に不要なWork-scoped worktreeを作らない。
 
 ### 手順6: bootstrapを検証する
 
@@ -64,7 +60,7 @@ clean clone相当の状態から、次を確認します。
 
 ## 2. 既存プロジェクトへの導入
 
-開発環境改善を理由に、無関係なrepository構造やcodeを全面改修してはいけません。
+開発環境改善を理由に、無関係なrepository構造やcodeを全面改修してはいけません。repository/worktree構造のauthorityは `../workspace-structure/` / `../work-identity/`、破壊操作の安全境界は `../development-safety/` にあります。
 
 ### 現状調査
 
@@ -72,7 +68,7 @@ clean clone相当の状態から、次を確認します。
 host依存: "runtime、package manager、SDK、CLI"
 入口command: "文書化・未文書化のbuild、test、deploy"
 container状態: "image、Compose、名前、port、volume、permission"
-Git構造: "repository root、embedded repository、branch、任意worktree"
+Git構造: "repository root / repository identity / branch / worktreeの現状（変更判断はworkspace-structure / work-identityへ委譲）"
 CI: "local scriptとの重複や差異"
 破壊経路: "cleanup、reset、force削除、data削除"
 ```
@@ -81,9 +77,9 @@ CI: "local scriptとの重複や差異"
 
 1. 現在の動作を覆う安定した公開commandを作る。
 2. project固有処理を管理されたcontainerへ移す。
-3. resource識別と所有権を整える。
+3. runtime resource materializationをProject / Work / Run scopeへ接続する。
 4. 診断と最終検証を追加する。
-5. 並列開発または明示的隔離が必要な場合だけworktree対応を追加する。
+5. 並列開発または明示的隔離が必要な場合だけWork Identityのworktree operationをpublic surfaceへ接続する。
 6. CIをproject管理commandへ合わせる。
 
 一度に一つの開発環境境界だけを変更し、動作を維持します。
@@ -93,7 +89,7 @@ CI: "local scriptとの重複や差異"
 - project固有規則とgeneric strategyが衝突した場合はproject規則を優先し、衝突を報告する。
 - repository移動や環境状態削除を黙って行わない。
 - 依頼に必要でないWorkspace・Component分割を導入しない。
-- 現在checkoutで単独作業を安全に行える場合、Task Worktreeを導入しない。
+- 現在checkoutで単独作業を安全に行える場合、不要なWork-scoped worktreeを導入しない。
 - scope外の違反は報告し、ついでに全面修正しない。
 
 ## Sources
