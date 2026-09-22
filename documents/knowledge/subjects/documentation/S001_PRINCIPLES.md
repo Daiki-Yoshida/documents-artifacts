@@ -15,7 +15,7 @@ priority_order:
 
 情報量の問題は、重要情報の削除ではなく、責務分割・INDEX・cross reference・progressive disclosureで解決する。
 
-## Scope
+## スコープ: 本戦略が管轄するもの
 
 このsubjectが主に所有する:
 
@@ -60,6 +60,12 @@ principle:
 document固有のSemantic Versionや `last_updated_commit` registryを必須化しない。
 
 履歴・変更過程・削除済み情報の追跡は原則としてGit historyを利用する。現在の正確性は、固定metadataの古さではなく、関連する実装・判断・Git履歴との照合で確認する。
+
+## 汎用性
+
+このsubjectはsingle-repository / multi-repository、small / large projectのいずれにも適用できる。
+
+固定directory templateや特定agent toolを汎用性の前提にしない。project固有の構造・audience・tool差異は、routing / authority原則を保ったままlocal conventionで表現する。
 
 ## Sources
 
