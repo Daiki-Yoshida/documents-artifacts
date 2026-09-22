@@ -2,7 +2,7 @@
 
 人・AI・CIが利用するgeneric public command interface、operation semantics、local/CIの実行経路を扱う。
 
-## Operation semantics
+## 操作内容を明確にする
 
 commandは生tool syntaxではなく、project内で安定した**目的**を公開する。
 
@@ -11,7 +11,7 @@ commandは生tool syntaxではなく、project内で安定した**目的**を公
 - failureを隠さずnon-zero statusと診断可能なoutputを返す。
 - command interfaceの安全境界は `../development-safety/` と整合させる。
 
-## Public command surface
+## 3. 公開コマンド
 
 ```yaml
 typical_layers:
@@ -51,7 +51,7 @@ work-identity
 
 Work Identity operationもproject public command surfaceへ公開できるが、意味契約をexecution側で複製しない。
 
-## Local and CI
+## 7. ローカルとCI
 
 - CI workflowへbuild/test logic本体を再実装せずproject-owned operationを呼ぶ。
 - provisioning差があっても最終的なbuild/test/validate pathを共有する。
