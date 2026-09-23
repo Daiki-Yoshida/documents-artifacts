@@ -86,6 +86,8 @@ code-designが所有しないもの:
 
 ## 3. Engineering Operation候補の主語
 
+旧AI workflow 8 H2の具体的なsource / gap監査は [LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md](LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md) に分離した。
+
 旧 AI_WORKFLOW.md には、user intent / required outcome、pre-implementation scan、contract confirmation、implementation、requirement verification、commit / push、brownfield、approach question、reportingなど、code-designを超える知識が存在する。
 
 候補 engineering-operation は次の一文で独立して説明できる。
