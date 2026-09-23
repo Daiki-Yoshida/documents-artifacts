@@ -59,7 +59,7 @@ CONTRACT_L3_breaking:
 
 実際のoperationがdata削除・host変更等を伴う場合は、contract levelとは別に `../development-safety/S005_CONFIRMATION_AND_REREAD.md` を評価する。
 
-### 後続判断による互換性の 明確化（2026-09-15）
+### 後続判断による互換性の明確化（2026-09-15）
 
 旧sourceの「追加はL2」の例示に対して、中央PR #10は**追加形状と後方互換性を区別**する規則を採用した。既存callerが変わらなくても必須interface member追加によって既存implementerやfakeが壊れる場合は、L2の互換変更ではない。L2は既存参加者の両側が従来保証のまま成立すると確認できる公開進化に限定し、公開破壊はL3で扱う。変更媒体に応じた互換性dimensionを評価し、変更のblast radiusが局所で完結する場合はL1で評価できる。
 
