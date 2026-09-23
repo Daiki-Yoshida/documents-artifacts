@@ -147,6 +147,8 @@ ENV1〜3は後続の実装説明を含むが、旧env artifactの各行が全て
 
 ## 7. 現在の設計・実装知識で検証対象となる具体的な差分
 
+具体的な契約・条件・例外を17 H2まで深掘りした結果は [LEGACY_CODE_DESIGN_GAP_AUDIT.md](LEGACY_CODE_DESIGN_GAP_AUDIT.md) を参照する。元sourceを確認できるConcept Altitudeと公開契約L2の2件のみ、後続採用判断に基づいて現行encapsulation-horizon本文を訂正した。その他の旧artifactにしか残っていない規範は未移行扱いを維持する。
+
 旧 `CODING_STANDARDS.md` では、Interface Design Rules（契約作成threshold）、Contract Evolution、Performance-Shaped Contracts、Layering、External Dependency Boundary、Domain Purity、DI、Error Handling、Concurrency & Async、Data Model、Mapping & Conversion、Testing Strategyを**それぞれ独立したH2節**として保持する。これに対し、現行のencapsulation-horizonは境界硬化・概念高度・contract completenessなどの設計原理が中心である。
 
 例えば、`encapsulation-horizon/S008_OPERATIONAL_GUARDS.md` にResultと例外の混同を避ける注意はあるが、旧CODING_STANDARDSにある具体的なboundary translationやResultの運用契約全体を意味保存した証拠にはならない。同様に、contractがconcurrency等の制約を含むという原則だけでは、旧Concurrency & Async節の細かい仕様を保持したことにはならない。
