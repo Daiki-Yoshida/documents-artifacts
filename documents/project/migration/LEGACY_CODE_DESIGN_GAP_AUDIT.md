@@ -90,7 +90,23 @@ DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わな�
 
 現時点では、旧module名の `design-principles` をそのまま新subject名として復活させない。**各候補の独立した主語・変更理由・責務衝突・原sourceの網羅性**を確認したうえで、新しいsubjectを作るか既存subjectに委ねるかを決める。
 
-## 6. 残る検証gate
+## 6. 旧design-principles INDEX 5 H2の扱い
+
+旧 `artifacts/design-principles/INDEX.md` の5 H2も確認した。
+
+| 旧INDEX節 | 扱い |
+|---|---|
+| Read Order | WHY / HOW / WHERE / FLOWの旧packaging routing。現在のsubject reading orderへ直接持ち込まない |
+| Document Split Policy | one semantic owner / link-not-duplicateは現行SUBJECT_MODELのownership思想と整合するが、WHY/HOW/WHERE/FLOWというfile分割方式自体は現行subject modelが採用していない |
+| Foundational Lens | Bounded Contracts / recursive boundaries / shell-vs-coreの短い再述。独立規範ではなく、現在はencapsulation-horizonへroute |
+| Ownership Map | 当時の4 artifact文書へのconcept owner一覧。未移行topicのinventoryとして有用だが、現行subject authorityではない |
+| Quick Task Routing | 上記ownerへのrouting table。独立規範は持たず、現行subjectへの単純置換もしない |
+
+PROJECT_STRUCTURE追加commitは当時の `WHY / HOW / WHERE / FLOW` 分割を明示するため、旧INDEXの構造意図のsourceとして利用できる。一方、現在は `SUBJECT_MODEL.md` が「subject内部をWHY/HOW/WHERE/FLOWのような一律facetで分けない」と明示しており、**旧document split policyは現行のsubject構造を拘束しない**。
+
+これにより旧design-principles 5ファイルのH2は、CODING_STANDARDS 12 + PROJECT_STRUCTURE 5 + AI_WORKFLOW 8 + DESIGN_PHILOSOPHY 18 + INDEX 5 = **48 / 48 H2を一次分類済み**となる。ただし、H2分類完了は各H3/本文のsource-backed semantic migration完了を意味しない。
+
+## 7. 残る検証gate
 
 - 旧CODING_STANDARDSのH3以下については表に代表的条件・例外を記載したが、逐語一致や完全なsemantic coverageのPASSではない。項目別source原文を確認して初めて採用できる。
 - source eventを取得できていないL-only項目は**未検証**のまま保持し、後から過去recordを推測修復しない。必要な場合は新しい独立した第0情報源として評価・採用判断を記録する。
