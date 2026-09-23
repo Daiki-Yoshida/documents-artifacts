@@ -53,7 +53,13 @@ done
 
 # Validate navigational Markdown links in the active repository-local entrypoints.
 entrypoints=(
+  README.md
   docs-jp/README.md
+  documents/INDEX.md
+  documents/knowledge/INDEX.md
+  documents/knowledge/system/INDEX.md
+  documents/knowledge/subjects/INDEX.md
+  documents/knowledge/subjects/*/INDEX.md
   documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
   documents/project/REPOSITORY_STRUCTURE.md
   documents/project/migration/KNOWLEDGE_MIGRATION_STATUS.md
@@ -71,11 +77,42 @@ for document in "${entrypoints[@]}"; do
   done < <(grep -Eo '\]\([^)]+\)' "$document" || true)
 done
 
-# The fixed Git tree audit records all 14 legacy artifact Markdown blobs.
+# Verify all 14 unique legacy file entries and their pinned SHA-1 hashes.
+snapshot_commit="e760eb38841650d60739750953c8342b639ce6f0"
 audit=documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md
-count="$(grep -Ec '^\| (design-principles|development-environment-strategy|documentation-strategy) \|' "$audit" || true)"
-[[ "$count" == 14 ]] || fail "expected 14 legacy artifact entries, got $count"
-
+grep -Fqx "legacy_snapshot_commit: \"$snapshot_commit\"" "$audit" \
+  || fail "audit snapshot commit differs from the verified baseline"
+declare -A seen_artifacts=()
+count=0
+if git cat-file -e "${snapshot_commit}^{commit}" 2>/dev/null; then
+  verify_git=1
+else
+  verify_git=0
+  printf 'WARN: snapshot commit unavailable in this checkout; Git blob comparison skipped\n' >&2
+fi
+while IFS='|' read -r _ module file hash _; do
+  module="${module// /}"
+  case "$module" in
+    design-principles|development-environment-strategy|documentation-strategy) ;;
+    *) continue ;;
+  esac
+  file="${file// /}"
+  file="${file//\`/}"
+  hash="${hash// /}"
+  hash="${hash//\`/}"
+  [[ "$file" =~ ^[a-zA-Z0-9_.-]+\.md$ ]] || fail "invalid artifact filename: $file"
+  [[ "$hash" =~ ^[0-9a-f]{40}$ ]] || fail "invalid blob SHA: $module/$file"
+  entry="artifacts/$module/$file"
+  [[ -z "${seen_artifacts[$entry]+x}" ]] || fail "duplicate legacy entry: $entry"
+  seen_artifacts[$entry]=1
+  ((count += 1))
+  if ((verify_git)); then
+    actual="$(git rev-parse "${snapshot_commit}:${entry}" 2>/dev/null)" \
+      || fail "missing historical artifact: $entry"
+    [[ "$actual" == "$hash" ]] || fail "Git blob mismatch: $entry"
+  fi
+done < "$audit"
+[[ "$count" == 14 ]] || fail "expected 14 unique artifact entries, got $count"
 # Direct readers of historical migration candidates must not see them tagged
 # as current canonical knowledge.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do
