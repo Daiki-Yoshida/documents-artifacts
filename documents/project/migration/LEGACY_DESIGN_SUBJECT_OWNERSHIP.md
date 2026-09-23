@@ -27,6 +27,17 @@ engineering-operation
 
 code-design / engineering-operation は候補subject名であり、この文書だけで正式subjectを新設したことにはしない。旧module名 design-principles をそのままsubjectへ復活させる案は採らない。
 
+## 取得できた旧Git履歴による補強
+
+旧 `Daiki-Yoshida/design-principles` のGit commit messageも第0情報源snapshotとして保存した。
+
+- [PROJECT_STRUCTURE追加commit](../../knowledge/records/2026-06-21-project-structure-origin-commit/RECORD.md): `PROJECT_STRUCTURE.md` を「モジュール公開面・共有カーネル・runtime topology・test placementを扱うWHERE」として新設し、`CODING_STANDARDS.md` をHOW、`DESIGN_PHILOSOPHY.md` をWHY、`AI_WORKFLOW.md` をFLOWとして分けた当時の設計意図を確認できる。
+- [review運用版commit](../../knowledge/records/2026-06-22-design-review-guard-commit/RECORD.md): audience別public surface例外、Contract Confirmation Gate、module四義等をレビュー反映したことを確認できる。
+- [brownfield policy commit](../../knowledge/records/2026-07-01-brownfield-policy-commit/RECORD.md): AI workflowへbrownfield policyを追加したことをcommit messageから確認できる。
+- [2026-07-02 design docs update](../../knowledge/records/2026-07-02-design-doc-update-commit/RECORD.md): commit message自体は詳細を持たないため、変更内容の採用理由をこのmessageだけから推論しない。
+
+これらは旧artifactのすべての規範の元sourceではないが、少なくとも**code structureとAI workflowが当時から別の問いとして分割されていた**ことの直接的なGit履歴証拠になる。
+
 ## 1. Encapsulation Horizonとの境界
 
 encapsulation-horizon の現在の主語は「境界面をどのscaleで硬化し、どこから内部自由を許容するか」である。
