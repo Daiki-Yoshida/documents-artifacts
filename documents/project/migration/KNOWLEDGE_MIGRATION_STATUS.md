@@ -24,13 +24,17 @@ checked_date: "2026-09-24"
 ## 未完了
 
 1. **旧artifact14ファイルと現行6 subjectのmeaning coverage**  
-   旧移行候補の14/14 mappingは確認済みだが、現行6 subjectへの意味ごとの採用・保留・history対応を完全には証明していない。根拠と未移行テーマは [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md) を参照する。
+   旧移行候補の14/14 mappingは確認済みだが、現行6 subjectへの意味ごとの採用・保留・history対応を完全には証明していない。14ファイル・129 H2の見出しinventoryを固定し、設計・環境領域の取得可能なGitHub Issue / PR本文を別々の原文recordへ追加保存した。原文sourceだけで説明しきれない項目は未検証のまま保持する。現状は [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md) と [129 H2 inventory](LEGACY_ARTIFACT_SECTION_INVENTORY.md) を参照する。
 2. **旧artifactしか残っていない知識の出典と採用状態**  
    現行artifactは主に英語の第2情報源であり、元の議論・source log・採用判断がすべて揃っているとは限らない。元原文が取得できない項目を、artifact本文だけで第0情報源に昇格させない。元sourceが見つからない場合はprovenanceと評価状態の不足を明示する。
 3. **議論・提案の原文traceability**  
-   短いユーザー承認recordが指す直前のAI提案・監査本文までrecord化されているとは限らない。取得できるsourceの原文とprovenanceを確認し、推測で復元しない。
+   短いユーザー承認recordと後続PRの実装説明を [短文承認provenance監査](SHORT_APPROVAL_PROVENANCE_AUDIT.md) で関連付け、取得可能なPR本文を原文record化した。ただしPR本文は直前AI提案原文を代替しない。確認できないAI提案は未取得と明記して残す。
 4. **legacy artifactの再生成**  
    第1情報源のcoverageとlegacy知識の出典・評価状態が検証できるまで、旧moduleの破壊的置換は行わない。
+
+## 追加取得したsourceの取り扱い
+
+2026-09-24にGitHub Issue・comment・PR本文の現存bodyを、provenance metadataとともに個別のrecordへ取得した。GitHub本文は取得以前に編集されていた可能性があるため、作成時点との逐語一致は未検証。旧artifactの派生テキスト、提案時の内容、後続の実装説明、ユーザーのチャット承認は異なるsourceとして扱う。
 
 ## 旧source logと歴史的記述の扱い
 
