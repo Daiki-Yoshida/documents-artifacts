@@ -28,6 +28,7 @@ for file in \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
   documents/project/migration/LEGACY_DESIGN_SUBJECT_OWNERSHIP.md \
+  documents/project/migration/LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md \
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md \
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md; do
   require_file "$file"
@@ -76,6 +77,7 @@ entrypoints=(
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md
   documents/project/migration/LEGACY_DESIGN_SUBJECT_OWNERSHIP.md
+  documents/project/migration/LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
 )
