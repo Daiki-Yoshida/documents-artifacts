@@ -25,23 +25,21 @@ checked_date: "2026-09-24"
 
 1. **旧artifact14ファイルと現行6 subjectのmeaning coverage**  
    旧移行候補の14/14 mappingは確認済みだが、現行6 subjectへの意味ごとの採用・保留・history対応を完全には証明していない。根拠と未移行テーマは [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md) を参照する。
-2. **非日本語の原文保存方式**  
-   現行artifactは主に英語。原文無加工の保存と、日本語標準のknowledgeの両立について既存の明示判断はまだない。英語artifactのcopyを第0情報源とみなしたり、原文を要約・翻訳して上書きしたりしない。
+2. **旧artifactしか残っていない知識の出典と採用状態**  
+   現行artifactは主に英語の第2情報源であり、元の議論・source log・採用判断がすべて揃っているとは限らない。元原文が取得できない項目を、artifact本文だけで第0情報源に昇格させない。元sourceが見つからない場合はprovenanceと評価状態の不足を明示する。
 3. **議論・提案の原文traceability**  
    短いユーザー承認recordが指す直前のAI提案・監査本文までrecord化されているとは限らない。取得できるsourceの原文とprovenanceを確認し、推測で復元しない。
 4. **legacy artifactの再生成**  
-   第1情報源のcoverageと原文保存方式が解決するまで、新artifact構造の設計・旧moduleの破壊的置換は行わない。
+   第1情報源のcoverageとlegacy知識の出典・評価状態が検証できるまで、旧moduleの破壊的置換は行わない。
 
 ## 旧source logと歴史的記述の扱い
 
 旧文書に書かれたauthority、status、当時の判断は原文の一部として残す。これらは現在も全命題を肯定するものではない。採用・却下・訂正は後続recordとsubjectで判断する。
 
-## 非日本語sourceの取り込みに関する未決事項
+## 原文言語と旧artifactの出典
 
-既存の運用文書に記録されていた候補例は次のとおり。ここでは採否を決めない。
+現在の `documents/knowledge/INDEX.md` は、`records/` では原文保持を優先し、`subjects/` と `system/` では日本語を標準とする。英語等の原文をrecordsへ無加工保存すること自体は、すでにこのモデルで扱える。
 
-- 原文をknowledge内に完全保存し、日本語onlyを「整理本文の標準」と解釈する。
-- 原文bytesを別raw storeへ置き、knowledgeには完全日本語訳とraw参照を置く。
-- 原文と完全日本語訳を同一recordに併記する。
+旧移行状況文書には言語と原文保存の両立方式が未決定と書かれていたが、これは後続の現行knowledge modelと一致しない古い状態である。
 
-いずれの場合も要約・抜粋・意訳によって原文の意味を削らない。
+未解決なのは、**旧artifactに書かれた派生テキストしか取得できないときに、元の議論・source log・採用判断をどう特定し、出典・採用状態の未検証をどう示すか**である。旧artifactをそのまま原文recordと偽らず、元の第0情報源を可能な限り確認する。取得不能なら未検証と記載し、後続の確認・判断を別source eventとして保存する。
