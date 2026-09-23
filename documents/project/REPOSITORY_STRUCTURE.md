@@ -104,6 +104,8 @@ documents/project/
 └─ migration/
    ├─ KNOWLEDGE_MIGRATION_STATUS.md
    ├─ LEGACY_ARTIFACT_COVERAGE_AUDIT.md
+   ├─ LEGACY_ARTIFACT_SECTION_INVENTORY.md
+   ├─ SHORT_APPROVAL_PROVENANCE_AUDIT.md
    └─ semantic-preservation-candidate/
 ```
 
