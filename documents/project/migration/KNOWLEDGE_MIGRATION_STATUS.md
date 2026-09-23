@@ -4,73 +4,44 @@
 document_type: "repository_local_migration_status"
 authority: "derived_from_documents/knowledge"
 language: "Japanese"
+checked_main_commit: "e760eb38841650d60739750953c8342b639ce6f0"
+checked_date: "2026-09-24"
 ```
 
 ## 現在地
 
-第1情報源モデルへの移行を開始済み。
+`documents/knowledge/` を第1情報源として採用済み。旧legacy moduleの分類を正本とは扱わず、recordsを根拠に6 subjectへ整理する段階にある。
 
-### 完了
+### 確認済み
 
-- `documents/knowledge/` を第1情報源として定義。
-- 第0→第1→第2情報源の更新方向をrepo documentationへ反映。
-- user決定メッセージ3件を原文単位でrecord化。
-- 旧 `docs-jp/**/source-logs/` 5件を本文無加工で `documents/knowledge/records/legacy-source-logs/` へコピー。
-- 5件のsource logはcopy元とcopy先のGit blob SHA一致を確認。
-- 旧artifactの意味保存監査用に作成した英語の再構成候補は `documents/project/migration/semantic-preservation-candidate/` へ退避。
-- `artifacts/` 自体は未変更。
+- `documents/knowledge/system/` は `KNOWLEDGE_MODEL.md`、`RECORD_MODEL.md`、`SUBJECT_MODEL.md`、`TRACEABILITY_MODEL.md` とINDEXを所有する。
+- `documents/knowledge/subjects/` にはencapsulation-horizon、documentation、workspace-structure、development-execution、development-safety、work-identityの6 subjectが存在する。
+- `records/` は `YYYY-MM-DD-<short-title>/` 形式。record数は増減するため、個別の数を恒久モデルとは扱わない。
+- 旧 `docs-jp/` 16ファイルは `records/2026-09-21-docs-jp-snapshot/` に保存済み。snapshot元commit `d68ec413b4bb3dafe90e1aaed3c8de9487b1453c` と保存先の16/16 Git blob SHAが一致することを確認済み。うち5ファイルは旧source log。
+- 旧artifact14 Markdownを対象とする英語の意味保存監査候補は `semantic-preservation-candidate/` に保存されている。ただし、候補は第1情報源でも現在の採用状態でもない。
+- 既存 `artifacts/` と `artifacts.sh` はlegacy consumer互換のため変更していない。
 
-## Legacy source log の扱い
+## 未完了
 
-copyした5件は、内容を現在の結論へ書き換えていない。
+1. **旧artifact14ファイルと現行6 subjectのmeaning coverage**  
+   旧移行候補の14/14 mappingは確認済みだが、現行6 subjectへの意味ごとの採用・保留・history対応を完全には証明していない。根拠と未移行テーマは [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md) を参照する。
+2. **非日本語の原文保存方式**  
+   現行artifactは主に英語。原文無加工の保存と、日本語標準のknowledgeの両立について既存の明示判断はまだない。英語artifactのcopyを第0情報源とみなしたり、原文を要約・翻訳して上書きしたりしない。
+3. **議論・提案の原文traceability**  
+   短いユーザー承認recordが指す直前のAI提案・監査本文までrecord化されているとは限らない。取得できるsourceの原文とprovenanceを確認し、推測で復元しない。
+4. **legacy artifactの再生成**  
+   第1情報源のcoverageと原文保存方式が解決するまで、新artifact構造の設計・旧moduleの破壊的置換は行わない。
 
-内部に旧authority、旧status、当時の評価が含まれていても、そのまま保存している。
+## 旧source logと歴史的記述の扱い
 
-これは:
+旧文書に書かれたauthority、status、当時の判断は原文の一部として残す。これらは現在も全命題を肯定するものではない。採用・却下・訂正は後続recordとsubjectで判断する。
 
-```text
-内部の全命題を現在も肯定する
-```
+## 非日本語sourceの取り込みに関する未決事項
 
-という意味ではなく、
+既存の運用文書に記録されていた候補例は次のとおり。ここでは採否を決めない。
 
-```text
-その時点で何が提言・評価・採用・却下されていたかを
-記録として正確に保存する
-```
-
-ため。
-
-## 未完了: legacy artifact-only knowledge
-
-現行artifact 14 Markdownは英語主体であり、かつ第2情報源として圧縮・再構成された文書。
-
-現在のルールには同時に:
-
-1. `documents/knowledge/` は日本語であること。
-2. 第1情報源へ取り込むsource本文は原文を変えないこと。
-
-がある。
-
-そのため、英語のlegacy artifact本文をそのままknowledgeへコピーすると言語方針に反し、日本語へ翻訳して入れると原文無加工方針に反する。
-
-この矛盾を勝手に解消しない。
-
-現時点では:
-
-- 現行artifactはそのままGit上に保持。
-- 意味保存詳細監査結果は `semantic-preservation-candidate/` に保持。
-- source logがある領域はknowledgeへ原文コピー済み。
-- source logが不足するlegacy artifact-only知識はmigration pending。
-
-## 次に決める必要があること
-
-非日本語の第0/legacy sourceをknowledgeへ保存する場合のルール。
-
-候補例:
-
-- 原文をknowledge内に完全保存し、日本語onlyを「説明本文の標準」と解釈する。
-- 原文bytesを別raw storeへ置き、knowledgeには完全な日本語訳とraw参照を置く。
+- 原文をknowledge内に完全保存し、日本語onlyを「整理本文の標準」と解釈する。
+- 原文bytesを別raw storeへ置き、knowledgeには完全日本語訳とraw参照を置く。
 - 原文と完全日本語訳を同一recordに併記する。
 
-どれを採る場合も、情報劣化を起こす要約・抜粋・意訳は不可。
+いずれの場合も要約・抜粋・意訳によって原文の意味を削らない。
