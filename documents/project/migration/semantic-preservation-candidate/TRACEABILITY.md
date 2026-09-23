@@ -11,8 +11,8 @@ audit_date: "2026-09-21"
 final_source_location_decision: "pending; documents/ vs docs-jp/ will be decided separately"
 ```
 
-
 > **歴史的監査資料（2026-09-21）です。** 旧artifact14ファイルから当時の**再構成候補**への対応表であり、現行6 subjectへの意味移行完了を証明するものではありません。`documents/knowledge/` の正本化は後続判断で確定済みです。現在の未移行状況は `../LEGACY_ARTIFACT_COVERAGE_AUDIT.md` を参照してください。
+
 This document maps the current legacy artifact tree to the reorganized semantic owners in the current audit candidate.
 
 It is a migration aid, not a decision that `documents/` is the permanent source location. The permanent source may later be placed under `documents/`, `docs-jp/`, or another agreed structure without changing the audited semantics.
