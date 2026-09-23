@@ -122,28 +122,18 @@ while IFS='|' read -r _ module file hash _; do
   fi
 done < "$audit"
 [[ "$count" == 14 ]] || fail "expected 14 unique artifact entries, got $count"
-# Verify that the H2 inventory enumerates all 14 artifact files and 129 H2 headings.
+# Verify 14 legacy artifact files and 129 H2 entries in the fixed inventory.
 inventory=documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md
-inventory_files="$(grep -Ec '^## \`artifacts/(design-principles|development-environment-strategy|documentation-strategy)/[^\`]+\\.md\`
-# as current canonical knowledge.
-for file in documents/project/migration/semantic-preservation-candidate/*.md; do
-  if grep -Eq '^(document_type: "canonical_knowledge"|authority: "canonical_source")' "$file"; then
-    fail "historical candidate still claims current authority: $file"
-  fi
-done
-
-printf 'PASS: knowledge structure, record envelopes, active links, and legacy audit\n'
- "$inventory" || true)"
-inventory_sections="$(grep -Ec '^\\| [0-9]+ \\| ' "$inventory" || true)"
+inventory_files="$(grep -Ec '^## .*artifacts/' "$inventory" || true)"
+inventory_sections="$(grep -Ec '^\| [0-9]+ \| ' "$inventory" || true)"
 [[ "$inventory_files" == 14 ]] || fail "expected 14 inventory files, got $inventory_files"
 [[ "$inventory_sections" == 129 ]] || fail "expected 129 H2 inventory rows, got $inventory_sections"
 
-# Direct readers of historical migration candidates must not see them tagged
-# as current canonical knowledge.
+# Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do
   if grep -Eq '^(document_type: "canonical_knowledge"|authority: "canonical_source")' "$file"; then
     fail "historical candidate still claims current authority: $file"
   fi
 done
 
-printf 'PASS: knowledge structure, record envelopes, active links, and legacy audit\n'
+printf 'PASS: knowledge structure, source snapshots, links, and legacy inventory\n'
