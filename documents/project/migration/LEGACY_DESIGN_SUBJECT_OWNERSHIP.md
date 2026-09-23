@@ -38,6 +38,8 @@ code-design / engineering-operation は候補subject名であり、この文書�
 
 これらは旧artifactのすべての規範の元sourceではないが、少なくとも**code structureとAI workflowが当時から別の問いとして分割されていた**ことの直接的なGit履歴証拠になる。
 
+旧DESIGN_PHILOSOPHY 18 H2の具体的な移行状況は [LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md](LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md) で監査する。
+
 ## 1. Encapsulation Horizonとの境界
 
 encapsulation-horizon の現在の主語は「境界面をどのscaleで硬化し、どこから内部自由を許容するか」である。
