@@ -87,7 +87,7 @@ for document in "${entrypoints[@]}"; do
     target="${target%%\#*}"
     [[ -e "$(dirname "$document")/$target" ]] \
       || fail "broken Markdown link in $document: $target"
-  done < <(awk '/^[[:space:]]*```/ { fenced = !fenced; next } !fenced { print }' "$document" | grep -Eo '\]\([^)]+\)' || true)
+  done < <(awk '/^[[:space:]]*(```|~~~~)/ { fenced = !fenced; next } !fenced { print }' "$document" | grep -Eo '\]\([^)]+\)' || true)
 done
 
 # Verify all 14 unique legacy file entries and their pinned SHA-1 hashes.
