@@ -47,6 +47,10 @@ done
 
 # Every record directory must identify its raw source event or snapshot.
 for record_dir in documents/knowledge/records/*/; do
+  name="${record_dir%/}"
+  name="${name##*/}"
+  [[ "$name" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[a-z0-9]+(-[a-z0-9]+)*$ ]] \
+    || fail "invalid record directory name: $record_dir"
   [[ -f "${record_dir}RECORD.md" || -f "${record_dir}MANIFEST.md" ]] \
     || fail "record without RECORD.md or MANIFEST.md: $record_dir"
 done
@@ -74,7 +78,7 @@ for document in "${entrypoints[@]}"; do
     target="${target%%\#*}"
     [[ -e "$(dirname "$document")/$target" ]] \
       || fail "broken Markdown link in $document: $target"
-  done < <(grep -Eo '\]\([^)]+\)' "$document" || true)
+  done < <(awk '/^[[:space:]]*```/ { fenced = !fenced; next } !fenced { print }' "$document" | grep -Eo '\]\([^)]+\)' || true)
 done
 
 # Verify all 14 unique legacy file entries and their pinned SHA-1 hashes.
