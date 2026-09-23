@@ -8,8 +8,8 @@ scope: "software boundaries, implementation, structure, evolution, and verificat
 artifact_projection: "derived"
 ```
 
-
 > **2026-09-21時点の歴史的な再構成候補（非正本）。** 現在の正式なknowledgeは `documents/knowledge/` が所有する。以下の本文は当時の監査成果物であり、旧document registry・旧subject分割等を現在の規範へ直接適用しない。未移行項目は `../LEGACY_ARTIFACT_COVERAGE_AUDIT.md` で追跡する。
+
 This document owns reusable knowledge for designing and changing software. It keeps design rationale, normative rules, structural placement, and the change process near the concepts they govern instead of splitting them into separate WHY/HOW/WHERE/FLOW documents.
 
 ## 1. Foundational Model: Bounded Contracts
