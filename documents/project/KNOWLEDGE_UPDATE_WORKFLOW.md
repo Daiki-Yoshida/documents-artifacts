@@ -84,7 +84,7 @@ first_source: "documents/knowledge/"
 
 構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、根拠の追跡規則は `documents/knowledge/system/TRACEABILITY_MODEL.md` に従う。
 
-## 6. 日本語
+## 5. 日本語
 
 `documents/knowledge/` は日本語で人間が監査可能な状態を維持する。
 
