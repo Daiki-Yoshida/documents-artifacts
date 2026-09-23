@@ -8,8 +8,8 @@ scope: "cross-cutting engineering behavior"
 artifact_projection: "derived"
 ```
 
-
 > **2026-09-21時点の歴史的な再構成候補（非正本）。** 現在の正式なknowledgeは `documents/knowledge/` が所有する。以下の本文は当時の監査成果物であり、旧document registry・旧subject分割等を現在の規範へ直接適用しない。未移行項目は `../LEGACY_ARTIFACT_COVERAGE_AUDIT.md` で追跡する。
+
 This document owns the engineering rules that apply across code, documentation, development environments, and active Work. Domain-specific documents may specialize these rules, but should not redefine them.
 
 ## 1. Authority and Precedence
