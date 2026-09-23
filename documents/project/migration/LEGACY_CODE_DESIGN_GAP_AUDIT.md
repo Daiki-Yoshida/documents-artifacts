@@ -80,6 +80,8 @@ DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わな�
 
 ## 5. 独立subjectを判断するための候補境界（未採用）
 
+責務境界の詳細判断は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) に分離した。そこでcode structure / implementationとengineering change processを別のsubject候補として扱い、Encapsulation Horizonへlegacy設計規範を一括吸収しない方針を固定した。
+
 | 候補となる知識対象 | 取り扱う問い | 現行subjectとの差 |
 |---|---|---|
 | コード内部の設計・module構造 | 境界が決まった後、Domain/Application/Infrastructure/UI、port/adapter、DI、モデル、mapping等をどう実装するか | encapsulation-horizonの「どのscaleで境界を硬化するか」とは別の判断軸 |
