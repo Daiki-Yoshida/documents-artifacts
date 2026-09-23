@@ -35,7 +35,9 @@ legacy_docs_jp:
 第0情報源
 Chat / Issue / 調査 / 実験 / 提言
         ↓
-documents/knowledge/
+documents/knowledge/records/
+  ↓
+documents/knowledge/subjects/
 第1情報源
         ↓
 artifacts/
@@ -56,12 +58,26 @@ artifact側で問題を見つけた場合はknowledgeへ戻り、必要なら第
 
 ```text
 documents/knowledge/
-├─ INDEX.md
-└─ records/
-   └─ K-YYYY-MM-DD-NNN.md
+├─ INDEX.md              # 恒久的な入口
+├─ system/               # knowledge管理規則
+│  ├─ INDEX.md
+│  ├─ KNOWLEDGE_MODEL.md
+│  ├─ RECORD_MODEL.md
+│  ├─ SUBJECT_MODEL.md
+│  └─ TRACEABILITY_MODEL.md
+├─ records/              # 原文・source event・snapshot
+│  └─ YYYY-MM-DD-<short-title>/
+│     ├─ RECORD.md       # 原文recordの場合
+│     └─ ...             # snapshotならMANIFEST.md + files/等
+└─ subjects/             # 日本語の整理済みknowledge
+   ├─ INDEX.md
+   └─ <subject>/
+      ├─ INDEX.md
+      ├─ S001_<NAME>.md
+      └─ ...
 ```
 
-`records/` はsource eventの完全記録。
+`records/` はsource event・snapshotの原文を保持する。現在は6 subject（encapsulation-horizon、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
 
 source event例:
 
@@ -73,7 +89,7 @@ source event例:
 - AI提言原文
 - 採用・却下・訂正のユーザーメッセージ
 
-INDEXは本文を要約せず、記録ID、source、時系列、明示された関係をroutingする。
+`documents/knowledge/INDEX.md` は特定のrecord名やsubject数へ依存しない恒久的な入口とする。`subjects/INDEX.md` は現在のsubjectへのroutingを担当する。recordのprovenanceは各recordと必要に応じたmanifestで保持する。
 
 ## documents/project/
 
@@ -86,10 +102,14 @@ documents/project/
 ├─ REPOSITORY_STRUCTURE.md
 ├─ KNOWLEDGE_UPDATE_WORKFLOW.md
 └─ migration/
+   ├─ KNOWLEDGE_MIGRATION_STATUS.md
+   ├─ LEGACY_ARTIFACT_COVERAGE_AUDIT.md
    └─ semantic-preservation-candidate/
 ```
 
-`semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた再構成候補。意味欠落監査には使えるが、第1情報源ではない。
+`semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた**当時の再構成候補**。意味欠落の調査には使えるが、現在の第1情報源ではない。現在の採用・却下・訂正は `documents/knowledge/` を優先し、候補内の旧version registry等を現行規範へ戻さない。
+
+`docs-jp/` の2026-09-21時点の16ファイルは `documents/knowledge/records/2026-09-21-docs-jp-snapshot/` に原文snapshotとして保存済み。今後の旧artifact14ファイルのcoverage監査は別途行う。
 
 ## artifacts/
 

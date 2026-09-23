@@ -21,8 +21,11 @@ first_source: "documents/knowledge/"
         ↓
 第1情報源
   documents/knowledge/
+    records/   原文・source event
+       ↓
+    subjects/  根拠付きで整理した日本語knowledge
         ↓
-        ↓ 用途に合わせて解釈・圧縮・再構成
+        ↓ 第1情報源を根拠に、用途に合わせて圧縮・再構成
         ↓
 第2情報源
   artifacts/ 等のAI向け派生情報
@@ -30,8 +33,8 @@ first_source: "documents/knowledge/"
 
 根拠record:
 
-- `documents/knowledge/records/K-2026-09-21-001.md`
-- `documents/knowledge/records/K-2026-09-21-002.md`
+- [knowledge-source-model](../knowledge/records/2026-09-21-knowledge-source-model/RECORD.md)
+- [knowledge-record-accuracy](../knowledge/records/2026-09-21-knowledge-record-accuracy/RECORD.md)
 
 ## 2. 第0情報源の取り込み
 
@@ -57,7 +60,9 @@ first_source: "documents/knowledge/"
 - 重複を理由とした削除
 - 「現在は不要」という判断による歴史の消去
 
-記録の外側には、source、日時、記録ID、明示された関係などのprovenance metadataを付与してよい。
+記録の外側には、source、日時、記録ID、明示された関係などのprovenance metadataを付与してよい。保存先は原則 `documents/knowledge/records/YYYY-MM-DD-<short-title>/` とし、1 source eventまたは取り込み単位につき1 directoryを使う。
+
+短い採用・修正指示が直前のAI提案や監査結果を参照している場合、その指示だけでは承認対象を復元できない。必要なAI提案・監査結果の原文は、取得可能な第0情報源から別のsource eventとして記録し、record間の関係をprovenanceで接続する。再現できない原文を推測で補わない。
 
 ## 3. 議論の評価を保存する
 
@@ -67,15 +72,25 @@ first_source: "documents/knowledge/"
 
 過去の案が後から否定された場合、過去recordを削除・書き換えて現在の結論だけにしない。否定や新しい判断を新しいsource eventとして追加する。
 
-## 4. 日本語
+## 4. Subjectへの反映
 
-`documents/knowledge/` は日本語で人間が監査可能な状態を維持する。
+`records/` は原文・snapshotの保存、`subjects/` はその根拠に基づく責務別knowledgeの整理を担当する。新しい判断をsubject本文だけで発明しない。
 
-技術用語、固有名詞、path、command、code、API名などは、意味が明確になる場合は原語を維持してよい。
+1. 必要なrecordと、それより後の採用・却下・訂正recordを確認する。
+2. `subjects/INDEX.md` から主責務を持つsubjectを選ぶ。
+3. 主authorityの文書を更新し、関係subjectの局所再述と参照を整合させる。
+4. 根拠recordへのtraceabilityを維持する。
+5. 新subjectを作る場合は、単なる旧module分類ではなく独立した知識対象であることを確認する。
 
-第0情報源が日本語以外の場合の「原文完全保存」と「knowledgeを日本語とする」両立方法は、別途明示的に決定するまで勝手に情報を落とす翻訳を行わない。
+構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、根拠の追跡規則は `documents/knowledge/system/TRACEABILITY_MODEL.md` に従う。
 
-## 5. 第2情報源の生成
+## 5. 日本語
+
+`documents/knowledge/INDEX.md` の現行規則に従い、`records/` は原文の言語を維持し、整理済みの `subjects/` と管理規則の `system/` は日本語を標準とする。技術用語、固有名詞、path、command、code、API名は意味精度のため原語を維持してよい。
+
+日本語以外の第0情報源も、`records/` では要約・抜粋・翻訳せず原文として保存する。日本語による整理や説明は、出典と評価関係を確認したうえで `subjects/` に作成する。翻訳を原文recordと取り違えない。
+
+## 6. 第2情報源の生成
 
 第2情報源では、用途に応じて以下を許可する。
 
@@ -92,16 +107,18 @@ first_source: "documents/knowledge/"
 
 第2情報源の内容に疑義がある場合、第2情報源同士で解決せず、knowledgeへ戻る。
 
-## 6. 更新方向
+## 7. 更新方向
 
 通常の情報更新方向は一方向とする。
 
 ```text
 第0情報源
   ↓
-documents/knowledge/
+documents/knowledge/records/
   ↓
-artifacts/
+documents/knowledge/subjects/
+  ↓
+artifacts/ 等の第2情報源
   ↓
 target projects
 ```
@@ -121,7 +138,7 @@ artifact側で誤りを発見した場合:
 3. knowledgeにも訂正が必要なら、その根拠となる第0情報源を新しいrecordとして取り込む。
 4. その後、第1情報源に基づいてartifactを再更新する。
 
-## 7. recordの修正
+## 8. recordの修正
 
 原文recordの本文は原則append-onlyの履歴として扱う。
 
@@ -129,7 +146,7 @@ artifact側で誤りを発見した場合:
 
 判断の変化・追加情報・反論・採用・却下は新しいrecordにする。
 
-## 8. artifact migration
+## 9. artifact migration
 
 現在の `artifacts/` は旧module構造の派生情報として残っている。
 
@@ -137,7 +154,8 @@ artifact側で誤りを発見した場合:
 
 1. 現行artifactを生んだ既存source log・議論・決定を第1情報源へ完全に取り込む。
 2. 不足しているsourceについては、利用可能な最も一次に近い記録をprovenance付きで保存する。
-3. 第1情報源のcoverageを確認する。
-4. その後にだけ、第2情報源としてartifactを再設計する。
+3. 第1情報源のcoverageを確認する。旧artifact14ファイルの参照一覧と未移行テーマは `documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md` を参照する。
+4. 第0情報源が英語等でも `records/` に原文のまま保存し、`subjects/` は日本語で整理する。一方、旧artifactは第2情報源なので、その本文を元の提言・採用判断の原文だと偽って登録しない。元のsourceが取得できなければ、出典と採用状態が未検証であることを明示する。
+5. その後にだけ、第2情報源としてartifactを再設計する。
 
 旧artifactのlayoutを第1情報源の分類へ持ち込まない。

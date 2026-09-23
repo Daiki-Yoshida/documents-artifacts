@@ -1,24 +1,29 @@
-# 日本語ドキュメント
+# 日本語ドキュメント（legacy）
 
-`docs-jp/` は、人間が各 artifact の目的・背景・設計判断を日本語で確認するための補助ドキュメント領域です。
+> **現在の正本は [documents/knowledge/](../documents/knowledge/INDEX.md) です。**
+> `docs-jp/` は旧来の補助説明・source log・実験経緯を参照するためのlegacy領域であり、現在のnormative authorityではありません。`artifacts/` も現在は第2情報源で、既存consumer向けlegacy projectionを維持しています。
 
-**現在有効な規範の唯一の正本は `artifacts/` 配下の英語ドキュメントです。** `docs-jp/` は `artifacts/` を上書きしません。内容に差異がある場合は、常に `artifacts/` 側を正とします。
+## 保存状態
 
-`docs-jp/` には、現在の artifact を説明する補助文書に加えて、設計判断に至った推論・検討・過去の方針を保存する **source log / rationale log（情報源ログ）** を置くことがあります。
+2026-09-21時点の `docs-jp/` 全16ファイルは、次の原文snapshotに保存されています。
 
-情報源ログの扱いは次のとおりです。
+- [Snapshot manifest](../documents/knowledge/records/2026-09-21-docs-jp-snapshot/MANIFEST.md)
 
-- 現在の規範ではなく、設計判断の背景や将来の再検討材料です。
-- 作成時点の古い方針・用語・判断を意図的に含むことがあります。
-- `artifacts/` と食い違っても、情報源ログ側から `artifacts/` を上書き解釈しません。
-- 情報源ログに有用な考えがある場合は、改めて評価したうえで `artifacts/` を明示的に更新します。
-- 履歴・差分・過去版の復元は Git に任せ、独自の版管理機構は持ちません。
+manifestに記録された旧commitの16ファイルとsnapshotのGit blob SHAが一致することを確認済みです。旧文書内部の「artifactsが正本」という記述は、**当時の歴史的方針**として記録されたものであり、現在の参照順位には適用しません。
+
+## このdirectoryの利用
+
+- 日本語の旧補助説明・設計根拠・実験結果の原文を確認するために参照できます。
+- 特定の提言が現在も採用されているかは、後続recordと `documents/knowledge/subjects/` を確認します。
+- source logの旧表現や旧authorityを、現在の結論として扱いません。
+- 有用な未移行情報を発見した場合は、[Knowledge Update Workflow](../documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md) に従って根拠を確認し、必要ならrecords・subjectsへ反映します。
+- `docs-jp/` の本文は `artifacts.sh` の配布対象ではありません。
 
 ```text
 docs-jp/
 ├─ design-principles/
-├─ documentation-strategy/          # INDEX_JP.md is current routing; detailed 2.1-era files are source logs
+├─ documentation-strategy/
 └─ development-environment-strategy/
 ```
 
-日本語ドキュメントは `artifacts.sh` の配布対象ではありません。対象プロジェクトへ配布するのは、選択された `artifacts/<module>/` のみです。
+第0→第1→第2情報源の順序は [Knowledge Model](../documents/knowledge/system/KNOWLEDGE_MODEL.md) を参照してください。
