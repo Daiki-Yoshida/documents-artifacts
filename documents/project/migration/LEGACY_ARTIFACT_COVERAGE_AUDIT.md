@@ -19,7 +19,7 @@ semantic_coverage_verdict: "未完了"
 
 旧artifactは元々第2情報源であり、現在のGitに存在するからといって第0情報源へ昇格させない。旧source log、当時の議論・Issue・実験を可能な限り原文recordとして辿り、採用・却下・訂正を確認してからsubjectへ整理する。
 
-日本語標準と非日本語原文の無加工保存の両立方式は未決定。ここでは旧英語artifactをrecordsへ複製せず、snapshot commitとGit blob SHAで内容を固定する。原文sourceの取り込み方法は別途決める。
+`records/` は原文言語を維持し、`subjects/` と `system/` は日本語を標準とする現行規則がある。したがって英語の第0情報源を無加工保存する方式自体は未決定ではない。ただし旧英語artifactは第2情報源であるため、それだけを第0情報源と誤認しない。ここではsnapshot commitとGit blob SHAで旧artifactの参照を固定し、元sourceの特定と採用状態の照合を残作業とする。
 
 ## 1. 監査対象（14 / 14）
 
@@ -87,7 +87,7 @@ semantic_coverage_verdict: "未完了"
 
 1. 旧artifact14ファイルのsourceを原文単位で特定し、Git SHA / issue / chat等のprovenanceを固定する。
 2. 承認が短文だけのrecordについて、承認対象となったAI提案・議論の原文が別途保存されているか確認する。取れない場合は「欠落」と明示し推定補完しない。
-3. 英語等の原文保存方法が未決定の間、`documents/knowledge/` へ原文を加工コピーして規則を上書きしない。
+3. 英語等の第0情報源は原文のまま `records/` に保存し、`subjects/` で日本語に整理する。元sourceが特定できない旧artifactの派生本文を、第0情報源の原文として偽って登録しない。
 4. source事実・現在の評価関係を確認してから、独立した責務なら新subject、既存責務なら既存subjectへ情報を移行する。旧module分類は新subjectの根拠にしない。
 5. 完了条件はheading数ではなく、規範の強さ、条件、例外、反論、採否、検証可能性とtraceabilityの保持である。
 
