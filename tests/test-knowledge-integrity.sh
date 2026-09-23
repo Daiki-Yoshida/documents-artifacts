@@ -26,6 +26,7 @@ for file in \
   documents/knowledge/subjects/INDEX.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
+  documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md; do
   require_file "$file"
 done
@@ -71,6 +72,7 @@ entrypoints=(
   documents/project/migration/KNOWLEDGE_MIGRATION_STATUS.md
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md
+  documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
 )
 for document in "${entrypoints[@]}"; do
@@ -128,6 +130,17 @@ inventory_files="$(grep -Ec '^## .*artifacts/' "$inventory" || true)"
 inventory_sections="$(grep -Ec '^\| [0-9]+ \| ' "$inventory" || true)"
 [[ "$inventory_files" == 14 ]] || fail "expected 14 inventory files, got $inventory_files"
 [[ "$inventory_sections" == 129 ]] || fail "expected 129 H2 inventory rows, got $inventory_sections"
+
+# Guard two later, explicitly adopted design-principles corrections against regression.
+altitude=documents/knowledge/subjects/encapsulation-horizon/S004_CONCEPT_ALTITUDE.md
+contract=documents/knowledge/subjects/encapsulation-horizon/S008_OPERATIONAL_GUARDS.md
+grep -Fq 'semantic_identity:' "$altitude" \
+  || fail "Concept Altitude lost semantic identity verification"
+grep -Fq 'CONTRACT_L2_compatible_public_evolution:' "$contract" \
+  || fail "Contract L2 is not compatibility-based"
+if grep -Fq 'CONTRACT_L2_public_additive:' "$contract"; then
+  fail "obsolete Contract L2 additive-only rule reintroduced"
+fi
 
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do
