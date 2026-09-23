@@ -24,7 +24,9 @@ for file in \
   documents/knowledge/system/SUBJECT_MODEL.md \
   documents/knowledge/system/TRACEABILITY_MODEL.md \
   documents/knowledge/subjects/INDEX.md \
-  documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md; do
+  documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
+  documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
+  documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md; do
   require_file "$file"
 done
 
@@ -67,6 +69,9 @@ entrypoints=(
   documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
   documents/project/REPOSITORY_STRUCTURE.md
   documents/project/migration/KNOWLEDGE_MIGRATION_STATUS.md
+  documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md
+  documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md
+  documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
 )
 for document in "${entrypoints[@]}"; do
   require_file "$document"
@@ -117,6 +122,22 @@ while IFS='|' read -r _ module file hash _; do
   fi
 done < "$audit"
 [[ "$count" == 14 ]] || fail "expected 14 unique artifact entries, got $count"
+# Verify that the H2 inventory enumerates all 14 artifact files and 129 H2 headings.
+inventory=documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md
+inventory_files="$(grep -Ec '^## \`artifacts/(design-principles|development-environment-strategy|documentation-strategy)/[^\`]+\\.md\`
+# as current canonical knowledge.
+for file in documents/project/migration/semantic-preservation-candidate/*.md; do
+  if grep -Eq '^(document_type: "canonical_knowledge"|authority: "canonical_source")' "$file"; then
+    fail "historical candidate still claims current authority: $file"
+  fi
+done
+
+printf 'PASS: knowledge structure, record envelopes, active links, and legacy audit\n'
+ "$inventory" || true)"
+inventory_sections="$(grep -Ec '^\\| [0-9]+ \\| ' "$inventory" || true)"
+[[ "$inventory_files" == 14 ]] || fail "expected 14 inventory files, got $inventory_files"
+[[ "$inventory_sections" == 129 ]] || fail "expected 129 H2 inventory rows, got $inventory_sections"
+
 # Direct readers of historical migration candidates must not see them tagged
 # as current canonical knowledge.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do
