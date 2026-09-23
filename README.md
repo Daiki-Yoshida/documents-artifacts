@@ -143,7 +143,14 @@ documents/project/migration/semantic-preservation-candidate/
 
 ## Validation
 
-legacy distribution validation:
+Knowledge structure / repository-local link regression:
+
+```bash
+bash -n tests/test-knowledge-integrity.sh
+bash tests/test-knowledge-integrity.sh
+```
+
+Legacy distribution validation:
 
 ```bash
 bash -n artifacts.sh
