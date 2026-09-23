@@ -8,8 +8,8 @@ scope: "host/container boundary, commands, runtime resources, diagnostics, repro
 artifact_projection: "derived"
 ```
 
-
 > **2026-09-21時点の歴史的な再構成候補（非正本）。** 現在の正式なknowledgeは `documents/knowledge/` が所有する。以下の本文は当時の監査成果物であり、旧document registry・旧subject分割等を現在の規範へ直接適用しない。未移行項目は `../LEGACY_ARTIFACT_COVERAGE_AUDIT.md` で追跡する。
+
 This document owns the reusable execution-environment model. Active Work identity, Work Root, Work Documents, repository participation, worktree lifecycle, and Work completion are owned by `WORK_LIFECYCLE.md`.
 
 ## 1. Development Environment as a Contract
