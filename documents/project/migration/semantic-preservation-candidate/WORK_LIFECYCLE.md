@@ -8,8 +8,8 @@ scope: "identity, active-work knowledge, repository participation, isolation, an
 artifact_projection: "derived"
 ```
 
-
 > **2026-09-21時点の歴史的な再構成候補（非正本）。** 現在の正式なknowledgeは `documents/knowledge/` が所有する。以下の本文は当時の監査成果物であり、旧document registry・旧subject分割等を現在の規範へ直接適用しない。未移行項目は `../LEGACY_ARTIFACT_COVERAGE_AUDIT.md` で追跡する。
+
 This document owns the complete semantic model of one concrete development Work. It deliberately combines identity, active Work knowledge, Git representation, optional worktrees, Work-scoped resources, and completion so those concepts do not become fragmented across code/documentation/environment guidance.
 
 ## 1. Work Identity
