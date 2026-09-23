@@ -86,11 +86,9 @@ first_source: "documents/knowledge/"
 
 ## 5. 日本語
 
-`documents/knowledge/` は日本語で人間が監査可能な状態を維持する。
+`documents/knowledge/INDEX.md` の現行規則に従い、`records/` は原文の言語を維持し、整理済みの `subjects/` と管理規則の `system/` は日本語を標準とする。技術用語、固有名詞、path、command、code、API名は意味精度のため原語を維持してよい。
 
-技術用語、固有名詞、path、command、code、API名などは、意味が明確になる場合は原語を維持してよい。
-
-第0情報源が日本語以外の場合の「原文完全保存」と「knowledgeを日本語とする」両立方法は、別途明示的に決定するまで勝手に情報を落とす翻訳を行わない。
+日本語以外の第0情報源も、`records/` では要約・抜粋・翻訳せず原文として保存する。日本語による整理や説明は、出典と評価関係を確認したうえで `subjects/` に作成する。翻訳を原文recordと取り違えない。
 
 ## 6. 第2情報源の生成
 
@@ -157,7 +155,7 @@ artifact側で誤りを発見した場合:
 1. 現行artifactを生んだ既存source log・議論・決定を第1情報源へ完全に取り込む。
 2. 不足しているsourceについては、利用可能な最も一次に近い記録をprovenance付きで保存する。
 3. 第1情報源のcoverageを確認する。旧artifact14ファイルの参照一覧と未移行テーマは `documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md` を参照する。
-4. 英語など非日本語の原文の保存方式が未確定であれば、原文無加工・日本語標準のどちらかを黙って破らない。
+4. 第0情報源が英語等でも `records/` に原文のまま保存し、`subjects/` は日本語で整理する。一方、旧artifactは第2情報源なので、その本文を元の提言・採用判断の原文だと偽って登録しない。元のsourceが取得できなければ、出典と採用状態が未検証であることを明示する。
 5. その後にだけ、第2情報源としてartifactを再設計する。
 
 旧artifactのlayoutを第1情報源の分類へ持ち込まない。
