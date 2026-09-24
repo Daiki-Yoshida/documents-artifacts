@@ -24,261 +24,238 @@ development-environment-strategy/
 
 ## Packaging Decision
 
-初期案では**install unitを1つ、reading unitを複数**とする。
+**install unitを1つ、reading unitを複数**とする。
 
-```text
-target project
-└─ documents/
-   └─ artifacts/
-      ├─ INDEX.md
-      ├─ DESIGN.md
-      ├─ IMPLEMENTATION.md
-      ├─ CHANGE_WORKFLOW.md
-      ├─ DOCUMENTATION.md
-      ├─ PROJECT_WORK.md
-      ├─ WORKTREES.md
-      ├─ EXECUTION.md
-      └─ SAFETY.md
-```
-
-全fileをtargetへ配置してよい。
-AIは `INDEX.md` からtaskに必要なfileだけ読む。
-
-## Why one install unit
-
-disk上にfileが存在すること自体はcontext tokenを消費しない。
-
-選択installを主戦略にすると、projectごとにknowledge setが異なり、後から「必要なartifactがそもそも入っていない」状態を生みやすい。
-
-そのため初期案では:
+全artifactをtarget projectへ配置してよい。
+AIは小さい `INDEX.md` からtaskに必要なfileだけ読む。
 
 ```yaml
 distribution:
   default: "whole pack"
 context_loading:
-  default: "selective through INDEX routing"
+  default: "selective routing"
+optimization_target: "few filesではなくsmall relevant context"
 ```
 
-とする。
+disk上のfile数そのものはtoken costではない。
+そのためfile countに低い上限を設けず、context co-occurrenceを基準に分割する。
 
-将来、明確に別用途のpackが成立した場合のみ複数install unitを再検討する。
+## Candidate layout
 
-## File responsibilities
+```text
+artifacts/
+├─ INDEX.md
+│
+├─ design/
+│  ├─ INDEX.md
+│  ├─ BOUNDARY_HORIZON.md
+│  ├─ CONTRACTS.md
+│  ├─ RESPONSIBILITY.md
+│  ├─ CONCEPT_ALTITUDE.md
+│  └─ STATE_AND_CONSISTENCY.md
+│
+├─ implementation/
+│  ├─ INDEX.md
+│  ├─ CODE_STRUCTURE.md
+│  ├─ DEPENDENCIES.md
+│  ├─ DOMAIN_AND_DATA.md
+│  ├─ FAILURE_AND_ASYNC.md
+│  ├─ TESTING.md
+│  ├─ COMPATIBILITY.md
+│  └─ PERFORMANCE.md
+│
+├─ operation/
+│  ├─ INDEX.md
+│  ├─ CHANGE_LIFECYCLE.md
+│  ├─ SCOPE_AND_AUTHORITY.md
+│  ├─ PRE_IMPLEMENTATION_SCAN.md
+│  ├─ VERIFICATION_AND_DONE.md
+│  ├─ VERSION_CONTROL_AND_REPORTING.md
+│  └─ BROWNFIELD.md
+│
+├─ documentation/
+│  ├─ INDEX.md
+│  ├─ PRINCIPLES_AND_ROUTING.md
+│  ├─ WORKFLOW_AND_MAINTENANCE.md
+│  └─ FORMAT_AND_GIT.md
+│
+├─ project/
+│  ├─ INDEX.md
+│  ├─ WORKSPACE.md
+│  ├─ WORK_IDENTITY.md
+│  ├─ WORK_LIFECYCLE.md
+│  └─ WORKTREES.md
+│
+├─ execution/
+│  ├─ INDEX.md
+│  ├─ EXECUTION_MODEL.md
+│  ├─ HOST_AND_CONTAINER.md
+│  ├─ COMMANDS_AND_CI.md
+│  └─ ADOPTION_AND_MIGRATION.md
+│
+└─ safety/
+   ├─ INDEX.md
+   ├─ SAFETY_PRINCIPLES.md
+   ├─ DESTRUCTIVE_OPERATIONS.md
+   ├─ DIAGNOSTICS_AND_RECOVERY.md
+   └─ INTEGRATION_AND_CONFIRMATION.md
+```
 
-### INDEX.md
+これはsubject構造の複製ではない。
 
-常に最初に読む小さいrouter。
+- `design/` はencapsulation-horizonとcode-designの設計判断をtask consumption単位で再構成する。
+- `implementation/` はcode-designの実装判断を、同時に読む頻度で分ける。
+- `operation/` はengineering-operationのchange lifecycleをtask phaseで分ける。
+- `project/` はworkspace-structureとwork-identityをproject/work利用文脈で統合する。
+- specializedなworktree detailは通常taskから分離する。
 
-所有するもの:
+## File split rule
 
-- packの読み方
-- project-local ruleとの関係
-- task → artifact routing table
-- 最小限のglobal guard
+artifactの分割基準はsemantic ownershipではなく**context co-occurrence**。
 
-本文規範を大量に複製しない。
+例:
 
-### DESIGN.md
+- Encapsulation Horizonとhardening/YAGNIは同じboundary判断で同時に必要になりやすい → `BOUNDARY_HORIZON.md`
+- contract completenessはAPI/contract判断として単独需要が高い → `CONTRACTS.md`
+- testingとperformanceは同じcode-design ownerでも同時に必要とは限らない → 別file
+- Work Identityとworktree implementationは通常taskで必要度が異なる → 別file
 
-主なsource subjects:
+fileを分けた結果、ほぼ毎回双方を読むなら再統合を検討する。
 
-- `encapsulation-horizon`
-- `code-design` のdesign priority / boundary-level部分
+## Root INDEX responsibilities
 
-扱うもの:
+root `INDEX.md` は小さなrouterとする。
 
-- boundary / responsibility
-- Encapsulation Horizon
-- small surface / strong contract
-- YAGNI across the Horizon
-- contract completeness
-- concept altitude
-- state / consistencyの設計判断
-- compatibility / performanceでinteraction shapeを変える条件
+含める:
 
-### IMPLEMENTATION.md
+- authority / project-local ruleとの関係
+- task → directory / file routing
+- 「全部読むな」というprogressive disclosure rule
+- cross-cuttingな最小global guard
 
-主なsource:
+含めない:
 
-- `code-design`
+- leaf rule本文の長い要約
+- history
+- source provenance
+- 全fileの詳細目次
 
-扱うもの:
+## Directory INDEX responsibilities
 
-- feature/module-first code structure
-- layer responsibility
-- dependency / DI
-- external dependency containment
-- domain / DTO / mapping
-- failure / async
-- testing
-- runtime / composition root
-- implementation freedom
+各directoryの `INDEX.md` は、その領域へrouteされた後の二段目router。
 
-DESIGNとの重複はdecision ruleの短い接続だけにする。
-
-### CHANGE_WORKFLOW.md
-
-主なsource:
-
-- `engineering-operation`
-- 他subjectへのrouting rule
-
-扱うもの:
-
-- intent / required outcome
-- scope / authority
-- pre-implementation scan
-- confirmation routing
-- implementation → verification → done
-- VCS / reporting
-- brownfield
-
-domain-specific ruleを複製せず、必要なartifactへrouteする。
-
-### DOCUMENTATION.md
-
-主なsource:
-
-- `documentation`
-- `work-identity` のWork Documents接続
-
-扱うもの:
-
-- Project Documentation
-- routing-first structure
-- documentation workflow
-- maintenance / review
-- Work Documentsからdurable docsへのreconciliation
-
-### PROJECT_WORK.md
-
-主なsource:
-
-- `workspace-structure`
-- `work-identity` のidentity / root / lifecycle / resources
-
-扱うもの:
-
-- Project Root / repository ownership
-- stable repository identity
-- Work Identity
-- Work Root
-- Work Documents ownership
-- Work lifecycle
-- resource identity / completion reconciliation
-
-worktree-specific implementation detailは `WORKTREES.md` へrouteする。
-
-### WORKTREES.md
-
-主なsource:
-
-- `work-identity` のworktree materialization / commands / validation
-- destructive operation時は `development-safety`
-
-通常のcode taskでは読まないspecialized artifact。
-
-扱うもの:
-
-- worktree materialization contract
-- create / status / remove semantics
-- preflight / postcondition / idempotency / rollback
-- project/work/repository identityとの対応
-
-### EXECUTION.md
-
-主なsource:
-
-- `development-execution`
-
-扱うもの:
-
-- execution model
-- host / container responsibility
-- Docker-first等のenvironment ownership
-- public command interface
-- local / CI parity
-- environment adoption / migration
-
-### SAFETY.md
-
-主なsource:
-
-- `development-safety`
-- `work-identity` / `development-execution` から必要なrisk接続
-
-扱うもの:
-
-- destructive operation
-- scope confirmation
-- diagnostics
-- recovery
-- integration safety
-- reread / confirmation level
-
-## Initial routing table
+例:
 
 ```yaml
-implement_or_refactor:
-  read: ["CHANGE_WORKFLOW.md", "IMPLEMENTATION.md"]
-  add_if_boundary_changes: ["DESIGN.md"]
+implementation:
+  dependency_or_DI: "DEPENDENCIES.md"
+  DTO_mapping_domain: "DOMAIN_AND_DATA.md"
+  failure_async: "FAILURE_AND_ASYNC.md"
+  tests: "TESTING.md"
+  public_contract_evolution: "COMPATIBILITY.md"
+  performance_changes_interaction: "PERFORMANCE.md"
+```
+
+INDEX本文をknowledge要約へ膨らませない。
+
+## Initial task routing
+
+```yaml
+normal_code_change:
+  read:
+    - "operation/CHANGE_LIFECYCLE.md"
+  then:
+    - "implementation/INDEX.md"
+  add_design_when:
+    - "new boundary"
+    - "public contract"
+    - "responsibility split"
+    - "state ownership changes"
 
 new_api_or_architecture:
-  read: ["CHANGE_WORKFLOW.md", "DESIGN.md", "IMPLEMENTATION.md"]
+  read:
+    - "design/INDEX.md"
+    - "operation/CHANGE_LIFECYCLE.md"
+    - "implementation/INDEX.md"
 
-bug_fix:
-  read: ["CHANGE_WORKFLOW.md"]
-  add: ["IMPLEMENTATION.md when code structure/contract is relevant"]
+dependency_or_DI:
+  read:
+    - "implementation/DEPENDENCIES.md"
+
+domain_DTO_mapping:
+  read:
+    - "implementation/DOMAIN_AND_DATA.md"
+
+failure_or_async:
+  read:
+    - "implementation/FAILURE_AND_ASYNC.md"
+
+testing:
+  read:
+    - "implementation/TESTING.md"
+
+public_contract_change:
+  read:
+    - "design/CONTRACTS.md"
+    - "implementation/COMPATIBILITY.md"
+
+performance_redesign:
+  read:
+    - "implementation/PERFORMANCE.md"
+    - "design/CONTRACTS.md when interaction shape changes"
 
 documentation_change:
-  read: ["CHANGE_WORKFLOW.md", "DOCUMENTATION.md"]
+  read:
+    - "documentation/INDEX.md"
+    - "operation/CHANGE_LIFECYCLE.md when part of an engineering change"
 
-repository_or_project_structure:
-  read: ["PROJECT_WORK.md"]
+project_or_repository_structure:
+  read:
+    - "project/WORKSPACE.md"
 
-work_identity_or_worktree:
-  read: ["PROJECT_WORK.md", "WORKTREES.md"]
-  add_if_destructive: ["SAFETY.md"]
+work_identity:
+  read:
+    - "project/WORK_IDENTITY.md"
+    - "project/WORK_LIFECYCLE.md when lifecycle/resources matter"
 
-docker_build_test_ci_environment:
-  read: ["EXECUTION.md"]
-  add: ["CHANGE_WORKFLOW.md for engineering change lifecycle"]
-  add_if_destructive: ["SAFETY.md"]
+worktree:
+  read:
+    - "project/WORKTREES.md"
+    - "safety/DESTRUCTIVE_OPERATIONS.md when removing/resetting"
+
+docker_container_environment:
+  read:
+    - "execution/INDEX.md"
 
 cleanup_delete_reset_recovery:
-  read: ["SAFETY.md"]
-  add: ["PROJECT_WORK.md or EXECUTION.md according to owned resource"]
+  read:
+    - "safety/INDEX.md"
 ```
 
 ## Context budget targets
 
-token数はmodel/tokenizerで変動するためhard contractではなく運用上の初期targetとする。
+token数はmodel/tokenizerで変動するためhard contractではなくrouting reviewの初期targetとする。
 
 ```yaml
-INDEX:
-  target: "roughly <= 1,200 tokens"
+root_INDEX:
+  target: "roughly <= 1,000 tokens"
 
-primary_artifact:
-  target: "roughly 1,500–3,500 tokens"
+directory_INDEX:
+  target: "roughly <= 600 tokens"
 
-specialized_artifact:
-  target: "roughly 1,000–3,000 tokens"
+leaf:
+  preferred: "roughly 700–2,500 tokens"
+  soft_review_trigger: "roughly > 3,000 tokens"
 
-normal_task_read_path:
-  target: "INDEX + 1–2 primary files"
-  preferred_total: "roughly <= 8,000 tokens"
-
-split_review_trigger:
-  - "single file repeatedly exceeds ~4,000 tokens"
-  - "many tasks read less than half of the file"
-  - "specialized detail dominates common rules"
+normal_task:
+  expected: "root INDEX + 1 router or direct leaf + 1–3 relevant leaves"
+  preferred_total: "roughly <= 6,000–8,000 tokens"
 ```
 
-数値目標よりrouting qualityを優先する。
+短さのためにcondition / exception / normative strengthを削らない。
+大きい場合はまずrouting分割を検討する。
 
 ## Projection rules
-
-artifact生成・編集時は各ruleについて最低限次を確認する。
 
 ```yaml
 preserve:
@@ -287,6 +264,7 @@ preserve:
   - "exceptions"
   - "negative guards"
   - "ownership / routing boundaries"
+  - "decision rules needed by an agent"
 
 remove_or_compress:
   - "history"
@@ -296,18 +274,17 @@ remove_or_compress:
   - "obsolete alternatives"
 
 never:
-  - "legacy artifact wordingを現在authorityとしてそのまま復活"
+  - "legacy artifact wordingをcurrent authorityとして復活"
   - "token削減のためにconditionを落とす"
   - "subject間のownership conflictをartifact側で新しく作る"
+  - "directory INDEXへleaf本文を大量複製"
 ```
 
 ## Maintenance traceability
 
-artifact file内へ大量のsource pathを埋め込まない。
+artifact本文へsource bookkeepingを大量に埋め込まない。
 
-repository側でprojection mappingを保持し、artifactのAI-facing本文をsource bookkeepingで膨らませない。
-
-この文書を初期mappingとして利用し、実artifact完成時にfile / section単位のprojection mapへ詳細化する。
+repository-local projection mapで、artifact leafがどのsubject sectionを入力としているか追跡する。
 
 ## Distribution script impact
 
@@ -317,18 +294,17 @@ repository側でprojection mappingを保持し、artifactのAI-facing本文をso
 
 ```text
 ./artifacts.sh --target <project>
-  -> documents/artifacts/ をwhole-pack sync
-
-legacy module selection
-  -> 廃止候補
+  -> documents/artifacts/ をwhole-pack atomic sync
 ```
 
+legacy module selectionは廃止候補。
 remove / symlink safety / atomic replacement / non-interactive execution等の安全性は維持する。
 
 ## Next implementation step
 
-1. このarchitectureに沿って新artifact 8 leaf + INDEXをcandidateとして作る。
-2. 各fileについてsubject → artifact projection mapを作る。
-3. 通常taskのroutingをtoken量と意味欠落の両面でレビューする。
-4. legacy 14 artifactとのsemantic regression auditを行う。
-5. 問題なければ `artifacts/` を置換し、`artifacts.sh` / tests / READMEを新packへ更新する。
+1. candidate layoutのroot / directory routerを作る。
+2. subject → artifact leaf projection mapを作る。
+3. leaf本文をcurrent subjectsからprojectionする。
+4. representative taskでroutingとcontext量をレビューする。
+5. legacy14 artifactとのsemantic regression auditを行う。
+6. 問題なければ `artifacts/` とdistribution toolingを置換する。

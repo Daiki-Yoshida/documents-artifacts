@@ -125,20 +125,33 @@ artifactでは通常落としてよい:
 
 > **compression は semantic weakening ではない。**
 
-## 7. File size
+## 7. File granularity — few filesではなくsmall relevant context
 
-artifact fileは「subjectを丸ごと収める容器」ではない。
-1回のAI判断で共に読む価値の高いknowledgeをまとめる。
+artifactのfile数そのものを最小化しない。
 
-fileが大きくなった場合は、単なる文字数ではなく次を見て分割する。
+最適化対象は**1 taskあたりにAIが読む不要context量**であり、repository上のfile countではない。
 
-- task routingが異なる
-- 読むタイミングが異なる
-- 一方だけ必要なtaskが多い
-- specialized detailがprimary ruleを圧迫している
-- 1 fileを読むだけで不要contextが大量に入る
+artifact fileは「subjectを丸ごと収める容器」ではなく、**1つの判断で同時に必要になるknowledge**をまとめる。
 
-逆に、同じtaskで常に同時に読む小fileを過度に分割しない。
+これを `context co-occurrence` として扱う。
+
+```yaml
+split_when:
+  - "task routingが異なる"
+  - "読むタイミングが異なる"
+  - "一方だけ必要なtaskが多い"
+  - "specialized detailがprimary ruleを圧迫している"
+  - "1 fileを読むだけで不要contextが大量に入る"
+
+keep_together_when:
+  - "同じ判断でほぼ常に同時に必要になる"
+  - "分割すると相互参照だけが増えてrouting chainが深くなる"
+  - "片方だけ読んだ場合に規範を誤読しやすい"
+```
+
+したがって30〜50 file程度になっても、それぞれが適切にrouteされ通常taskで少数fileしか読まないなら問題ではない。
+
+逆にfile数が少なくても、1 fileへ多くの無関係knowledgeを押し込めて毎回読ませる構造はartifactとして不適切である。
 
 ## 8. Self-contained delivery
 
