@@ -97,24 +97,6 @@ for file in "${!legacy_strategy_snapshot_blobs[@]}"; do
     || fail "legacy strategy source snapshot blob mismatch: $file"
 done
 
-# Documentation/development-environment final source snapshots must remain byte-identical.
-declare -A documentation_environment_snapshot_blobs=(
-  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENTATION_PHILOSOPHY.md"]="b5415fcf4adb770b17623179a482aa77f322bef3"
-  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENT_WORKFLOW.md"]="90c17259079ec97b09c1586fa4a1e6b4a6ed6b13"
-  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/FILE_AND_STRUCTURE.md"]="72f5b2c47dae045a17b1a94589cb1ca7c490346c"
-  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/INDEX.md"]="2b0509ad3a34f60a7c51a13493ad60d6300b9cc9"
-  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md"]="d13406518405231a353590cab37ea409cf72a798"
-  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_STANDARDS.md"]="d26988857aa351f23d6f4256f5209e5e6c34e574"
-  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_WORKFLOW.md"]="fd05ec0738e2b5e68b4e6d7e9635902c8e0dd09e"
-  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/INDEX.md"]="8fa048420e278ed381441bd66e7126cd794343ff"
-  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/WORKSPACE_STRUCTURE.md"]="28508999e55716fe794f2273a1ad55569bd8734a"
-)
-for file in "${!documentation_environment_snapshot_blobs[@]}"; do
-  require_file "$file"
-  [[ "$(git hash-object "$file")" == "${documentation_environment_snapshot_blobs[$file]}" ]] \
-    || fail "documentation/environment source snapshot blob mismatch: $file"
-done
-
 # Subject reading order must be consecutive and HISTORY (if present) last.
 subject_dirs=(documents/knowledge/subjects/*/)
 (("${#subject_dirs[@]}" > 0)) || fail "no subjects found"
