@@ -18,10 +18,11 @@ repository_docs:
 
 artifact_projection:
   path: "artifacts/"
-  role: "AI向け第2情報源"
-  optimization: ["context compression", "AI readability", "token efficiency", "progressive disclosure"]
+  role: "Artifact v2 / AI向け第2情報源"
+  optimization: ["task routing", "small relevant context", "token efficiency", "progressive disclosure"]
   authority: "derived from documents/knowledge/"
-  migration_state: "legacy projection retained until redesign"
+  language: "concise English by default"
+  distribution: "whole-pack delivery + selective reading"
 
 legacy_docs_jp:
   path: "docs-jp/"
@@ -41,35 +42,34 @@ documents/knowledge/subjects/
 第1情報源
         ↓
 artifacts/
-第2情報源
+Artifact v2 / 第2情報源
         ↓
-target project
+target project / documents/artifacts/
 ```
 
 通常の情報更新方向は上から下。
 
-第2情報源から意味を逆輸入してknowledgeを書き換えない。
-
-artifact側で問題を見つけた場合はknowledgeへ戻り、必要なら第0情報源となる訂正・判断を新しいrecordとして追加する。
+第2情報源から意味を逆輸入してknowledgeを書き換えない。artifact側で問題を見つけた場合はknowledgeへ戻り、必要なら第0情報源となる訂正・判断を新しいrecordとして追加する。
 
 ## documents/knowledge/
 
-現在の基本形:
+基本形:
 
 ```text
 documents/knowledge/
-├─ INDEX.md              # 恒久的な入口
-├─ system/               # knowledge管理規則
+├─ INDEX.md
+├─ system/
 │  ├─ INDEX.md
 │  ├─ KNOWLEDGE_MODEL.md
 │  ├─ RECORD_MODEL.md
 │  ├─ SUBJECT_MODEL.md
-│  └─ TRACEABILITY_MODEL.md
-├─ records/              # 原文・source event・snapshot
+│  ├─ TRACEABILITY_MODEL.md
+│  └─ ARTIFACT_MODEL.md
+├─ records/
 │  └─ YYYY-MM-DD-<short-title>/
-│     ├─ RECORD.md       # 原文recordの場合
-│     └─ ...             # snapshotならMANIFEST.md + files/等
-└─ subjects/             # 日本語の整理済みknowledge
+│     ├─ RECORD.md
+│     └─ ...
+└─ subjects/
    ├─ INDEX.md
    └─ <subject>/
       ├─ INDEX.md
@@ -77,80 +77,68 @@ documents/knowledge/
       └─ ...
 ```
 
-`records/` はsource event・snapshotの原文を保持する。現在は8 subject（encapsulation-horizon、code-design、engineering-operation、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
-
-source event例:
-
-- Chatの1メッセージ
-- Issue本文
-- Issue comment
-- 調査報告原文
-- 実験結果原文
-- AI提言原文
-- 採用・却下・訂正のユーザーメッセージ
-
-`documents/knowledge/INDEX.md` は特定のrecord名やsubject数へ依存しない恒久的な入口とする。`subjects/INDEX.md` は現在のsubjectへのroutingを担当する。recordのprovenanceは各recordと必要に応じたmanifestで保持する。
+`records/` はsource event・snapshotの原文を保持する。現在は8 subject（encapsulation-horizon、code-design、engineering-operation、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。
 
 ## documents/project/
 
-このrepositoryの運用方法やmigration成果物を置く。
+このrepository自身の運用、migration、projection設計・監査を置く。
 
-現在:
+Artifact v2の主要文書:
 
 ```text
-documents/project/
-├─ REPOSITORY_STRUCTURE.md
-├─ KNOWLEDGE_UPDATE_WORKFLOW.md
-└─ migration/
-   ├─ KNOWLEDGE_MIGRATION_STATUS.md
-   ├─ LEGACY_ARTIFACT_COVERAGE_AUDIT.md
-   ├─ LEGACY_ARTIFACT_SECTION_INVENTORY.md
-   ├─ LEGACY_CODE_DESIGN_GAP_AUDIT.md
-   ├─ LEGACY_DESIGN_SUBJECT_OWNERSHIP.md
-   ├─ LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md
-   ├─ LEGACY_DOCUMENTATION_GAP_AUDIT.md
-   ├─ LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md
-   ├─ LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
-   ├─ SHORT_APPROVAL_PROVENANCE_AUDIT.md
-   └─ semantic-preservation-candidate/
+documents/project/ARTIFACT_ARCHITECTURE_V2.md
+documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md
+documents/project/migration/ARTIFACT_V2_CANDIDATE_AUDIT.md
+documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md
+documents/project/migration/ARTIFACT_V2_ROUTING_SIMULATION.md
+documents/project/migration/ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md
 ```
 
-`semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた**当時の再構成候補**。意味欠落の調査には使えるが、現在の第1情報源ではない。現在の採用・却下・訂正は `documents/knowledge/` を優先し、候補内の旧version registry等を現行規範へ戻さない。
-
-`docs-jp/` の2026-09-21時点の16ファイルは `documents/knowledge/records/2026-09-21-docs-jp-snapshot/` に原文snapshotとして保存済み。旧artifact14ファイルのcoverage監査は `documents/project/migration/` のinventory / gap auditで継続管理する。
+reviewed candidateは正式 `artifacts/` へpromotion済みであり、candidate directoryを重複保持しない。過程はGit historyと上記auditで追跡する。
 
 ## artifacts/
 
-AI向けのmaterialized/derived view。
+Artifact v2のAI-facing runtime guidance。
 
-将来のartifact構造はlegacy module境界に拘束されない。
+```text
+artifacts/
+├─ INDEX.md
+├─ design/
+├─ implementation/
+├─ operation/
+├─ documentation/
+├─ project/
+├─ execution/
+└─ safety/
+```
 
-将来的に可能:
+root `INDEX.md` と各directory `INDEX.md` はrouter。leafはtask consumption単位で分割する。
 
-- small always-on core
-- concept/task-specific references
-- playbook
-- agent/profile別projection
-- single delivery set
-- generated projection
+subject directoryとの1:1対応は要求しない。semantic ownershipはsubjectsが保持し、artifactはcontext co-occurrenceに合わせて非正規化する。
 
-どの形でもknowledgeへのtraceabilityを失ってはならない。
+## Distribution
 
-## Current Legacy Distribution
-
-現在の `artifacts.sh` は:
+`artifacts.sh` はArtifact v2全体を:
 
 ```text
 <target>/documents/artifacts/
 ```
 
-へlegacy moduleをinstall/update/removeする。
+へstaging後にwhole-pack exact replacementする。置換失敗時は旧packへのrollbackを試みる。
 
-このbehaviorは既存consumer互換のため一時維持しているだけで、将来のknowledge architectureを定義しない。
+- 部分module選択は行わない。
+- updateはmanaged rootを完全置換する。
+- removalは `--remove` で明示する。
+- symlinked destination/source packを拒否する。
+- project側のlocal overrideはinstalled artifact copyへ直接patchしない。
+
+## Legacy evidence
+
+旧14 artifactは現行 `artifacts/` には残さない。
+
+旧baseline内容はGit history・fixed blob SHA・migration inventory/auditで追跡し、現在のAI runtime guidanceへ旧packagingを戻さない。
 
 ## Agent Entry
-
-このrepositoryはtarget projectへ一律の `AGENTS.md` / `CLAUDE.md` を強制しない。
 
 このrepository自身を扱うagentは、まず:
 

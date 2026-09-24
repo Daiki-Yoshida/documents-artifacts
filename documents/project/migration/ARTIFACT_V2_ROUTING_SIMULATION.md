@@ -70,12 +70,14 @@ A future regression should be flagged if:
 - the same normative rule must be independently maintained in multiple leaves;
 - task routing requires long chains of INDEX → INDEX → INDEX.
 
-## Promotion gate
+## Promotion result
 
-Before copying the candidate into real `artifacts/`:
+The reviewed candidate was promoted byte-for-byte to formal `artifacts/` after:
 
-1. complete final cross-file semantic review;
-2. re-run link/routing integrity against the final candidate;
-3. decide artifact runtime language policy explicitly;
-4. update distribution semantics and tests;
-5. only then replace legacy `artifacts/`.
+1. cross-file semantic review;
+2. link/routing integrity review;
+3. explicit runtime language decision;
+4. legacy semantic regression review;
+5. whole-pack distribution redesign.
+
+Distribution behavior validation and the remaining full-checkout limitation are recorded in `ARTIFACT_V2_PROMOTION_VALIDATION.md`.

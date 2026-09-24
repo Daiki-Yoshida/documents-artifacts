@@ -43,6 +43,7 @@ knowledgeという仕組み自体の規則を置く。
 - recordの保存方法
 - subjectの整理方法
 - traceability
+- 第1情報源からartifactへprojectionする規則
 
 詳細は `system/` を参照する。
 

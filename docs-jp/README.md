@@ -1,7 +1,7 @@
 # 日本語ドキュメント（legacy）
 
 > **現在の正本は [documents/knowledge/](../documents/knowledge/INDEX.md) です。**
-> `docs-jp/` は旧来の補助説明・source log・実験経緯を参照するためのlegacy領域であり、現在のnormative authorityではありません。`artifacts/` も現在は第2情報源で、既存consumer向けlegacy projectionを維持しています。
+> `docs-jp/` は旧来の補助説明・source log・実験経緯を参照するためのlegacy領域であり、現在のnormative authorityではありません。`artifacts/` は第1情報源からprojectionされたArtifact v2のAI runtime guidanceです。
 
 ## 保存状態
 

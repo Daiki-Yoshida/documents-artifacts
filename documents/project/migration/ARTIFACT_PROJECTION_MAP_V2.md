@@ -1,14 +1,14 @@
-# Artifact v2 Projection Map — Initial
+# Artifact v2 Projection Map
 
 ```yaml
 document_type: "repository_local_projection_map"
-status: "initial"
+status: "active"
 date: "2026-09-24"
 authority: "../ARTIFACT_ARCHITECTURE_V2.md"
 ```
 
 このmapはartifact本文のauthorityではない。
-current subjectsからどのAI-facing leafへprojectionするかを保守するためのrepository-local mappingである。
+current subjectsから正式 `artifacts/` のどのAI-facing leafへprojectionするかを保守するためのrepository-local mappingである。
 
 ## design/
 

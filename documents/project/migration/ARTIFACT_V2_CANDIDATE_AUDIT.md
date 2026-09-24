@@ -2,14 +2,14 @@
 
 ```yaml
 document_type: "repository_local_artifact_candidate_audit"
-candidate_root: "documents/project/migration/artifact-v2-candidate/"
+candidate_root: "historical; promoted to artifacts/ and removed from migration tree"
 checked_head: "c5fd5c3ed4cb13b4e1fa219421440b3112000cb7"
 date: "2026-09-24"
 ```
 
 ## Current candidate
 
-The current candidate is a **whole-pack distribution / selective-reading** structure.
+The reviewed candidate was a **whole-pack distribution / selective-reading** structure and has since been promoted byte-for-byte to the formal `artifacts/` runtime tree.
 
 ```yaml
 files: 41
@@ -96,7 +96,7 @@ Still intentionally not performed in this PR:
 2. replacement of legacy `artifacts.sh --modules` behavior;
 3. distribution/test/README migration for the real pack.
 
-The candidate is now considered **ready for promotion as a separate implementation step**, after this architecture/candidate PR is accepted.
+The candidate passed the promotion gates and was promoted to formal `artifacts/`. The temporary candidate directory was removed to avoid maintaining two derived copies.
 
 
 ## First semantic-review corrections
