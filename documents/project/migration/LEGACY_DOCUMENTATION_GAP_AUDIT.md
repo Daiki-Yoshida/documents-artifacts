@@ -115,3 +115,48 @@ H2単位のowner不在は今回確認していない。一方、次は引き続�
 4. 現在のdocumentation subjectに不要な旧file名・旧directory assumptionがnormative本文へ再混入していないか。
 
 したがって **34 / 34 H2 classified** だが、documentation-strategy全体をsemantic migration PASSとはまだ宣言しない。
+
+
+## 7. H3 / detail監査（2026-09-24）
+
+final英語snapshotのH3・YAML rule・後続commit patchまで確認した。
+
+### source recoveryで追加確認できた変更
+
+- [4-file split commit](../../knowledge/records/2026-07-09-documentation-split-commit/RECORD.md): WHY / HOW+WHERE / FLOW / INDEXへ責務を分けた初期構造。
+- [documentation atomicity commit](../../knowledge/records/2026-07-09-documentation-atomicity-commit/RECORD.md): 一時期「related docsを1 commitで更新」「docs-only branchを作らない」というpolicyを導入。
+- [v2 restructure commit](../../knowledge/records/2026-07-09-documentation-v2-restructure-commit/RECORD.md): accuracy > routing > token efficiency、固定docs-jp分離、version registry等を導入。
+- [consistency fixes commit](../../knowledge/records/2026-07-09-documentation-consistency-fixes-commit/RECORD.md): staleness、directory split、deletion、registry conflict等を追加。
+- [v2.2 review fixes](../../knowledge/records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md): placement固定の撤回、entry fileを「routing only」から「rules + routing」へ修正、version registry細則等を調整。
+
+### 現行normativeへ残すdetail
+
+- entry fileは**routingだけではなく、agent起動直後に必要なproject-local operational constraintを保持してよい**。ただしProject Documentationの詳細knowledgeを複製するauthorityにはしない。
+- INDEXはrouting hubとして保持するが、version registryとしてのcentral state sourceにはしない。
+- cross referenceは局所文脈を許容し、別authorityの規範を独立再定義しない。
+- brownfieldでは構造移行とcontent改善を同じtaskへ黙って拡大しない。
+- deletion時は参照・INDEX routingを先にreconcileする。
+- commit message formatはproject convention優先。documentation subjectはbranch/timingを所有しない。
+
+entry fileの「routingする; 説明しない」という旧表現はv2.2の後続修正と衝突するため、現行S002/S003をrules+routingへ訂正した。
+
+### historyへ留めるdetail
+
+次はcurrent ruleとして復活させない。
+
+- `documents/`=AI / `docs-jp/`=humanの固定分割
+- per-document Semantic Version / `last_updated_commit`
+- INDEX version registry
+- commit hashのtwo-phase update
+- registry中心のstaleness detection
+- registry競合緩和
+- 旧directory decision treeの固定placement
+- intermediateな「documentation-only changeはbranchを作らない」「related docsは必ず1 commit」というGit workflow policy
+
+atomicity policyは2026-07-09途中commitでは明示されたが、その後v2 restructureはcommit timing / branchingをdocumentationの管轄外とした。現行S005は後者を採用する。
+
+## 8. Documentation側の現在判定
+
+旧34 H2に加え、重要なH3 / operational detailを監査した結果、現時点で確認した範囲では新しいsubjectを必要とする未所有detailはない。
+
+残る検証は**逐語的な全YAML field parity**ではなく、旧英語sourceにのみ残る例外・反論がS001〜S006のいずれにも現れないケースの探索である。旧version registry modelは意図的なhistoryであり、未移行扱いに戻さない。
