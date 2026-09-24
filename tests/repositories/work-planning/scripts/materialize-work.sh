@@ -4,8 +4,9 @@ set -euo pipefail
 repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
 identity="${1:-}"
 
-if [[ ! "$identity" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]]; then
-  printf 'usage: materialize-work.sh <work-identity> (lowercase, digits, hyphens)\n' >&2
+if [[ ! "$identity" =~ ^[a-z0-9]+(-[a-z0-9]+)*(/[a-z0-9]+(-[a-z0-9]+)*)?$ ]]; then
+  printf 'usage: materialize-work.sh <work-identity>\n' >&2
+  printf '  <name> or <type>/<name>; lowercase, digits, hyphens; e.g. feat/audit-log-export\n' >&2
   exit 1
 fi
 
