@@ -91,6 +91,11 @@ for subject in "${subject_dirs[@]}"; do
   done
 done
 
+# Every canonical code-design section must expose traceability.
+for file in documents/knowledge/subjects/code-design/S*.md; do
+  grep -Fqx '## Sources' "$file"     || fail "code-design section without Sources: $file"
+done
+
 # Every record directory must identify its raw source event or snapshot.
 for record_dir in documents/knowledge/records/*/; do
   name="${record_dir%/}"
