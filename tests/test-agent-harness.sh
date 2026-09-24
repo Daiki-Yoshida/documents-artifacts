@@ -5,6 +5,8 @@ REPO_ROOT="$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
 PREPARE="$REPO_ROOT/tests/scripts/prepare-agent-test.sh"
 RESET="$REPO_ROOT/tests/scripts/reset-agent-test.sh"
 INSPECT="$REPO_ROOT/tests/scripts/inspect-agent-test.sh"
+TEST_RUNS_ROOT="$(mktemp -d)"
+trap 'rm -rf -- "$TEST_RUNS_ROOT"' EXIT
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -48,8 +50,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
     fail "fixture contains symlink: $FIXTURE"
   fi
 
-  "$PREPARE" --scenario "$scenario" --force >/dev/null
-  run_root="$REPO_ROOT/tests/.runs/$scenario"
+  ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$PREPARE" --scenario "$scenario" --force >/dev/null
+  run_root="$TEST_RUNS_ROOT/$scenario"
   target="$run_root/repo"
 
   [[ -d "$target/.git" ]] || fail "prepared repo missing .git: $scenario"
@@ -70,8 +72,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
     || fail "prepared baseline tag missing: $scenario"
 
-  "$INSPECT" --scenario "$scenario" >/dev/null
-  "$RESET" --scenario "$scenario" >/dev/null
+  ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$INSPECT" --scenario "$scenario" >/dev/null
+  ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$scenario" >/dev/null
   [[ ! -e "$run_root" ]] || fail "reset did not remove run: $scenario"
 done
 

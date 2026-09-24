@@ -24,7 +24,7 @@ bash tests/test-agent-harness.sh
 repositories/  = initial project fixtures
 scenarios/     = agent task + evaluator-only expectations
 scripts/       = run materialization / reset / inspection
-.runs/         = generated runs; Git ignored
+runtime repo  = /tmp配下へgenerated; source repo外でblind evaluation
 ```
 
 ### Prepare
@@ -35,7 +35,7 @@ bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
 
 ### Execute
 
-execution agentのworking directoryを `tests/.runs/contract-boundary/repo/` にして、`tests/.runs/contract-boundary/PROMPT.md` の本文だけをtaskとして渡す。
+execution agentのworking directoryを `/tmp/.../contract-boundary/repo/` にして、`/tmp/.../contract-boundary/PROMPT.md` の本文だけをtaskとして渡す。
 
 **`tests/scenarios/<scenario>/EXPECTATIONS.md` は事前にagentへ見せない。**
 

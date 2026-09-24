@@ -62,7 +62,7 @@ EXPECTATIONS.md
 default:
 
 ```text
-tests/.runs/<scenario>/
+${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 ├─ PROMPT.md
 └─ repo/
    ├─ .git/
@@ -80,7 +80,9 @@ tests/.runs/<scenario>/
 6. agent用PROMPTをrun rootへcopy;
 7. `artifact-test-baseline` tagを作成する。\n8. clean baselineを確認する。
 
-evaluation fileはtarget repositoryへ入れない。
+evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
+
+`ARTIFACT_TEST_RUNS_ROOT` を明示すればrun rootを変更できる。self-testでは独立したtemporary directoryを使う。
 
 ## Agent protocol
 
@@ -141,7 +143,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 ## Fixture immutability
 
-test runは `tests/repositories/` を直接変更しない。generated `tests/.runs/` はGit管理しない。
+test runは `tests/repositories/` を直接変更しない。generated runはsource repository外のtemporary rootへ置く。
 
 ## Growth
 
