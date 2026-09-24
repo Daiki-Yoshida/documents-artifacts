@@ -86,12 +86,15 @@ CI: "local scriptとの重複や差異"
 
 ### 既存環境の保護
 
-- project固有規則とgeneric strategyが衝突した場合はproject規則を優先し、衝突を報告する。
-- repository移動や環境状態削除を黙って行わない。
-- 依頼に必要でないWorkspace・Component分割を導入しない。
+この節は**environment migration固有**の保護だけを所有する。project-local rule優先、周辺違反を黙って直さない、一般的なtask scope disciplineは `../engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md` / `S007_BROWNFIELD_AND_APPROACH.md` が主所有する。
+
+- repository移動やenvironment state削除を黙って行わない。
+- 依頼に必要でないWorkspace・Component分割をexecution改善だけの理由で導入しない。
 - 現在checkoutで単独作業を安全に行える場合、不要なWork-scoped worktreeを導入しない。
-- scope外の違反は報告し、ついでに全面修正しない。
+- current build/test/deploy pathを置換するときは、一度に一つのexecution boundaryを変更し、動作確認可能な状態を維持する。
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
+- `../../records/2026-07-18-environment-workflow-origin-commit/RECORD.md`
+- `../engineering-operation/S007_BROWNFIELD_AND_APPROACH.md`
