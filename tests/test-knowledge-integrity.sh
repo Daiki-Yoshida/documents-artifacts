@@ -31,11 +31,15 @@ for file in \
   documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/MANIFEST.md \
   documents/knowledge/records/2026-01-31-domain-model-refinement-source/MANIFEST.md \
   documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/MANIFEST.md \
+  documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md \
+  documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/MANIFEST.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
   documents/project/migration/LEGACY_DESIGN_SUBJECT_OWNERSHIP.md \
   documents/project/migration/LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md \
+  documents/project/migration/LEGACY_DOCUMENTATION_GAP_AUDIT.md \
+  documents/project/migration/LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md \
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md \
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md; do
   require_file "$file"
@@ -72,6 +76,24 @@ for file in "${!code_design_snapshot_blobs[@]}"; do
   require_file "$file"
   [[ "$(git hash-object "$file")" == "${code_design_snapshot_blobs[$file]}" ]] \
     || fail "code-design source snapshot blob mismatch: $file"
+done
+
+# Recovered documentation / development-environment final source snapshots must remain byte-identical.
+declare -A legacy_strategy_snapshot_blobs=(
+  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENTATION_PHILOSOPHY.md"]="b5415fcf4adb770b17623179a482aa77f322bef3"
+  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENT_WORKFLOW.md"]="90c17259079ec97b09c1586fa4a1e6b4a6ed6b13"
+  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/FILE_AND_STRUCTURE.md"]="72f5b2c47dae045a17b1a94589cb1ca7c490346c"
+  ["documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/INDEX.md"]="2b0509ad3a34f60a7c51a13493ad60d6300b9cc9"
+  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md"]="d13406518405231a353590cab37ea409cf72a798"
+  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_STANDARDS.md"]="d26988857aa351f23d6f4256f5209e5e6c34e574"
+  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_WORKFLOW.md"]="fd05ec0738e2b5e68b4e6d7e9635902c8e0dd09e"
+  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/INDEX.md"]="8fa048420e278ed381441bd66e7126cd794343ff"
+  ["documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/WORKSPACE_STRUCTURE.md"]="28508999e55716fe794f2273a1ad55569bd8734a"
+)
+for file in "${!legacy_strategy_snapshot_blobs[@]}"; do
+  require_file "$file"
+  [[ "$(git hash-object "$file")" == "${legacy_strategy_snapshot_blobs[$file]}" ]] \
+    || fail "legacy strategy source snapshot blob mismatch: $file"
 done
 
 # Subject reading order must be consecutive and HISTORY (if present) last.
@@ -124,6 +146,8 @@ entrypoints=(
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md
   documents/project/migration/LEGACY_DESIGN_SUBJECT_OWNERSHIP.md
   documents/project/migration/LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md
+  documents/project/migration/LEGACY_DOCUMENTATION_GAP_AUDIT.md
+  documents/project/migration/LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
 )
