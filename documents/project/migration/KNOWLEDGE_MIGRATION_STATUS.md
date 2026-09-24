@@ -21,9 +21,9 @@ checked_date: "2026-09-24"
 - 旧artifact14 Markdownを対象とする英語の意味保存監査候補は `semantic-preservation-candidate/` に保存されている。ただし、候補は第1情報源でも現在の採用状態でもない。
 - 既存 `artifacts/` と `artifacts.sh` はlegacy consumer互換のため変更していない。
 
-## 未完了
+## 現在の完了状態と残課題
 
-1. **旧artifact14ファイルと現行8 subjectのmeaning coverage**
+1. **旧artifact14ファイルと現行8 subjectのmeaning / ownership coverage — 分類完了**
 
    design-principles側は次まで進んでいる。
 
@@ -41,13 +41,13 @@ checked_date: "2026-09-24"
 
    development-environment-strategy側は中央legacy baseline 5ファイル・44 / 44 H2（旧個別repo final 42 H2からWork Identity再構成でnet +2）を [development-environment gap audit](LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md) で workspace-structure / development-execution / development-safety / work-identity / history へ分類し、主要H3/detailまで追加監査した。task-scoped resourceの終了責任をsource patchから回収し、Work Identity S004へreconciliation完了条件を補強した。旧repository final substantive commit `821497fad747042de48a3d7b523c4f295496dfb3` の5 artifactを全文snapshot化し、旧Git blobと5 / 5一致を確認した。旧Task Worktree中心のcheckout modelはWork Identity導入後のstatic/dynamic責務分離へ置換されている。
 
-   これによりlegacy artifact 14ファイルの全H2は、design-principles 48 + documentation-strategy 37 + development-environment-strategy 44 = 129 H2 inventory上でowner/history分類まで進んだ。主要H3 / YAML rule / exceptionまで監査範囲を広げたが、全行の逐語的semantic parityを機械的に証明したわけではない。現状は [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md)、[129 H2 inventory](LEGACY_ARTIFACT_SECTION_INVENTORY.md)、[code-design gap audit](LEGACY_CODE_DESIGN_GAP_AUDIT.md)、[documentation gap audit](LEGACY_DOCUMENTATION_GAP_AUDIT.md)、[development-environment gap audit](LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md) を参照する。
+   これによりlegacy artifact 14ファイルの全H2は、design-principles 48 + documentation-strategy 37 + development-environment-strategy 44 = 129 H2について、現行owner / intentional history / replacement decisionへの分類を完了した。主要H3 / YAML rule / exceptionまで監査範囲を広げた。完了の意味はsemantic ownershipを説明できることであり、全行の逐語一致や全source event回収を主張するものではない。現状は [coverage audit](LEGACY_ARTIFACT_COVERAGE_AUDIT.md)、[129 H2 inventory](LEGACY_ARTIFACT_SECTION_INVENTORY.md)、[code-design gap audit](LEGACY_CODE_DESIGN_GAP_AUDIT.md)、[documentation gap audit](LEGACY_DOCUMENTATION_GAP_AUDIT.md)、[development-environment gap audit](LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md) を参照する。
 
-2. **旧artifactしか残っていない知識の出典と採用状態**  
+2. **旧artifactしか残っていない知識の出典と採用状態 — 継続課題**  
    現行artifactは主に英語の第2情報源であり、元の議論・source log・採用判断がすべて揃っているとは限らない。元原文が取得できない項目を、artifact本文だけで第0情報源に昇格させない。元sourceが見つからない場合はprovenanceと評価状態の不足を明示する。
-3. **議論・提案の原文traceability**  
+3. **議論・提案の原文traceability — 継続課題**  
    短いユーザー承認recordと後続PRの実装説明を [短文承認provenance監査](SHORT_APPROVAL_PROVENANCE_AUDIT.md) で関連付け、取得可能なPR本文を原文record化した。ただしPR本文は直前AI提案原文を代替しない。確認できないAI提案は未取得と明記して残す。
-4. **legacy artifactの再生成**  
+4. **legacy artifactの再生成 — 次工程**  
    第1情報源のcoverageとlegacy知識の出典・評価状態が検証できるまで、旧moduleの破壊的置換は行わない。
 
 ## 追加取得したsourceの取り扱い
