@@ -168,6 +168,15 @@ source recovery中に、旧v2.2の `documents/project/` / `documents/reference/`
 
 旧v2.2の固定shapeはfinal source snapshot / historyに残るため、原文は失われない。
 
+### routing modelの最終整合（2026-09-24追加review）
+
+active S002を再確認し、旧model由来の強すぎる表現を2点修正した。
+
+- 「1つの関心事の変更は1ファイルだけ読めばよい」を、**1ファイルは1主関心事 / 1関心事は主authorityを持ち、必要な関連authorityはcross referenceで辿る**へ変更。
+- agent entry fileのpurposeを「documents/INDEX.mdへのrouting」だけでなく、v2.2 sourceどおり**project-local conventions + routing**と明示。
+
+これにより、旧strict SSOTを復活させず、現在の主authority + 局所再述 + reference modelとentry-file responsibilityが一致した。
+
 ## 8. Documentation側の現在判定
 
 旧34 H2に加え、重要なH3 / operational detailを監査した結果、現時点で確認した範囲では新しいsubjectを必要とする未所有detailはない。
