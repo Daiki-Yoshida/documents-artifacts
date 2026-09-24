@@ -104,3 +104,42 @@ load-bearing performance requirementとevidenceがある場合のみinteraction 
 commit/push authority、reporting、task scope、brownfield作業規律、approach question等はcode-designではない。
 
 これらは `documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md` で別途追跡する。
+
+
+## Sources
+
+主要な旧repository state / reference:
+
+- `../../records/2026-01-31-initial-code-design-source/`
+- `../../records/2026-01-31-bounded-contracts-refinement-source/`
+- `../../records/2026-01-31-dependency-boundary-refinement-source/`
+- `../../records/2026-01-31-domain-model-refinement-source/`
+- `../../records/2026-06-13-design-principles-reference-snapshot/`
+- `../../records/2026-07-02-design-principles-final-source-snapshot/`
+
+導入・refinementのGit source event:
+
+- `../../records/2026-01-31-design-principles-foundation-commit/RECORD.md`
+- `../../records/2026-01-31-code-standards-refinement-commit/RECORD.md`
+- `../../records/2026-01-31-dependency-boundary-refinement-commit/RECORD.md`
+- `../../records/2026-01-31-domain-modeling-refinement-commit/RECORD.md`
+- `../../records/2026-06-13-external-boundary-refinement-commit/RECORD.md`
+- `../../records/2026-06-13-module-mapping-testing-refinement-commit/RECORD.md`
+- `../../records/2026-06-21-project-structure-origin-commit/RECORD.md`
+- `../../records/2026-06-22-design-review-guard-commit/RECORD.md`
+
+移行後の訂正・評価:
+
+- `../../records/2026-09-06-design-principles-proposals/RECORD.md`
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`
+- `../../records/2026-09-15-cross-artifact-consistency-issue/RECORD.md`
+- `../../records/2026-09-15-cross-artifact-consistency-pr/RECORD.md`
+- `../../records/2026-09-15-performance-redesign-hold/RECORD.md`
+- `../../records/2026-09-20-performance-contract-evolution/RECORD.md`
+
+移行監査:
+
+- `../../../project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md`
+- `../../../project/migration/LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md`
+- `../../../project/migration/LEGACY_DESIGN_SUBJECT_OWNERSHIP.md`
+- `../../../project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md`
