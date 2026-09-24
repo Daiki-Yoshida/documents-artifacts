@@ -97,7 +97,7 @@ engineering-operationがlevel定義そのものを複製せず、「作業中に
 
 ### Brownfield policyが独立FLOWへ追加された
 
-5048 commit messageはbrownfield policyをAI workflowへ追加したことを直接確認できる。ただし「project-local rule優先」「周辺違反を直さない」等の全詳細をcommit message単独で証明できないため、詳細条文のcurrent adoptionは保留する。
+5048 commit messageとGitHub API patchからbrownfield policyの追加と、project-local rule優先・周辺違反を黙って直さない・scope guard等の詳細を確認できる。
 
 ## 5. source recovery後の採用範囲
 
@@ -130,8 +130,3 @@ source-backedなnormative coreが揃ったため、`documents/knowledge/subjects
 
 この8 H2については**意味の分類・現行owner・source-backed normative coreが揃ったため、engineering-operationへのsemantic migrationを完了扱い**とする。旧固定languageやWorked Example等の非普遍部分は意図的に非採用 / history扱いである。
 
-
-1. 現行ユーザー運用として維持したいengineering-operation規則を、過去の元sourceまたは新しい明示判断から確定する。
-2. source-backedな規則が十分になった時点で、`engineering-operation` という正式subject名・内部file構造を決める。
-3. Encapsulation Horizon / Code Design / Development Safety等が所有するルールは局所再述＋参照に留め、別specを作らない。
-4. 旧 `AI_WORKFLOW.md` は第2情報源のhistorical projectionとして扱い、そこにあるという理由だけで全規範を復活させない。
