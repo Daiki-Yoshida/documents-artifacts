@@ -1,6 +1,6 @@
 # ドキュメント — ルーティングと構造
 
-情報を削るのではなく責務ごとに配置し、INDEX・cross reference・project/reference構造・階層projectによって必要情報へ到達させる考え方を扱う。
+情報を削るのではなく責務ごとに配置し、INDEX・cross reference・project/reference等のrole例・階層projectによって必要情報へ到達させる考え方を扱う。
 
 ## 切り詰めよりルーティング
 
@@ -9,7 +9,7 @@ principle: "関心事ごとにファイルを分割し、エージェントを�
 mechanisms:
   index_file: "documents/INDEX.mdがすべてのドキュメントを目的とルーティングとともにリストする。"
   cross_references: "同じ規範を独立authorityとして複製せず、必要な局所再述と関連authorityへのlinkを使う。"
-  concern_separation: "1ファイル = 1関心事。1つの関心事の変更は1つのファイルを読むだけで済むべき。"
+  concern_separation: "1ファイルは1つの主関心事へ集中させる。1つの関心事には主authorityを定め、必要な関連authorityはcross referenceで辿る。"
   gradual_disclosure: "INDEX → 概要 → 詳細。エージェントは必要な分だけチェーンをたどる。"
 ```
 
@@ -37,7 +37,7 @@ content:
 ### エージェントエントリファイル（CLAUDE.md, AGENTS.md, GEMINI.md）
 
 ```yaml
-purpose: "AIエージェントの入口 — documents/INDEX.mdへルーティングする"
+purpose: "AIエージェントの入口 — project-local conventions + documents/INDEX.mdへのrouting"
 placement: "プロジェクトルート（エージェントツールごとに1つ）"
 content:
   - "role: このプロジェクトにおけるエージェントの責務"
@@ -97,7 +97,7 @@ routing_chain: "agent entry → documents/INDEX.md → taskに必要なdocument 
 principles:
   - "INDEX.mdが唯一のルーティングハブである。すべてのドキュメントがそこにリストされる。"
   - "同じ規範を独立authorityとして複製しない。理解に必要な局所再述は許容し、主authorityへリンクする。"
-  - "1ファイル = 1関心事。1つの関心事に関わるタスクは1つのファイルを読むだけで済むべき。"
+  - "1ファイルは1つの主関心事へ集中させる。関連subject / documentが必要なtaskでは、主authorityから必要なcross referenceだけを辿る。"
   - "エージェントは必要な範囲だけルーティングチェーンをたどる。"
   - "相互参照は参照元ファイルからの相対パスを使用する。"
 ```
