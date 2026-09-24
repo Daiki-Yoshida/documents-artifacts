@@ -3,7 +3,7 @@
 ```yaml
 document_type: "repository_local_artifact_candidate_audit"
 candidate_root: "documents/project/migration/artifact-v2-candidate/"
-checked_head: "f24ffd052e52d3d5d736516bf221554fab1e6eb1"
+checked_head: "c5fd5c3ed4cb13b4e1fa219421440b3112000cb7"
 date: "2026-09-24"
 ```
 
@@ -13,9 +13,9 @@ The current candidate is a **whole-pack distribution / selective-reading** struc
 
 ```yaml
 files: 41
-approx_total_pack_tokens: 17340
+approx_total_pack_tokens: 18692
 largest_leaf_approx_tokens: 1076
-root_INDEX_approx_tokens: 460
+root_INDEX_approx_tokens: 554
 router_broken_links: 0
 ```
 
@@ -74,15 +74,29 @@ Completed:
 - router link check: no broken candidate links
 - representative context-size check
 
-Not yet completed:
+Completed in this design PR:
 
-1. section-level semantic review of every leaf against its current subject source;
-2. legacy 14-artifact semantic regression check;
-3. representative prompt/task simulations for routing behavior;
-4. replacement of real `artifacts/`;
-5. replacement of legacy `artifacts.sh --modules` behavior and tests.
+- section-level semantic review focused on normative strength / condition / exception preservation;
+- all 50 current non-history subject files accounted for in projection mapping;
+- legacy 14-artifact / 129-H2 regression chain reviewed through current owner/history classification;
+- representative task routing simulation completed;
+- all 41 candidate files checked for internal artifact references; **0 broken internal references**;
+- cross-file authority audit completed with no unresolved double-owner conflict;
+- runtime language policy established: concise English artifacts, Japanese canonical knowledge, no bilingual duplication.
 
-Do not promote this candidate to `artifacts/` until semantic review is complete.
+See:
+
+- `ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md`
+- `ARTIFACT_V2_ROUTING_SIMULATION.md`
+- `ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md`
+
+Still intentionally not performed in this PR:
+
+1. replacement of real `artifacts/`;
+2. replacement of legacy `artifacts.sh --modules` behavior;
+3. distribution/test/README migration for the real pack.
+
+The candidate is now considered **ready for promotion as a separate implementation step**, after this architecture/candidate PR is accepted.
 
 
 ## First semantic-review corrections

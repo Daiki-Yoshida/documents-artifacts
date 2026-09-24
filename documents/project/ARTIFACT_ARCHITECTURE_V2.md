@@ -2,7 +2,7 @@
 
 ```yaml
 document_type: "repository_local_artifact_architecture"
-status: "candidate_projected"
+status: "candidate_reviewed"
 authority: "derived_from_documents/knowledge/system/ARTIFACT_MODEL.md"
 base_main_commit: "31d60ab2145860e717f52334aed5796df9e19741"
 date: "2026-09-24"
