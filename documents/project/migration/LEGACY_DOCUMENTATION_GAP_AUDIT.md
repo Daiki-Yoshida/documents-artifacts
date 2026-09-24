@@ -155,6 +155,19 @@ entry fileの「routingする; 説明しない」という旧表現はv2.2の後
 
 atomicity policyは2026-07-09途中commitでは明示されたが、その後v2 restructureはcommit timing / branchingをdocumentationの管轄外とした。現行S005は後者を採用する。 8 subject化後は、commit / push authorityを `engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md`、Work固有branch/worktree materializationを `work-identity/`、documentation固有のcommit message / history利用を `documentation/S005_FORMAT_AND_GIT.md` が主所有する形へroutingを明示した。
 
+### 後続decisionとの再整合（2026-09-24 review）
+
+source recovery中に、旧v2.2の `documents/project/` / `documents/reference/` 固定shapeが現行S002/S003へ再混入していることを検出した。
+
+2026-09-22の後続recordは、Project Documentation rootを `<project-root>/documents/` に統一しつつ、**内部構造は柔軟化**すると明示している。この後続decisionを優先し、現行規範を次へ修正した。
+
+- `documents/INDEX.md` はrouting hubとして維持。
+- `documents/project/` / `documents/reference/` は標準的な配置例であり必須directoryではない。
+- 新規project setupも、root + INDEXを必須とし、内部directoryはproject固有routingに従う。
+- brownfield mappingもAI-facing contentを固定project/referenceへ強制しない。
+
+旧v2.2の固定shapeはfinal source snapshot / historyに残るため、原文は失われない。
+
 ## 8. Documentation側の現在判定
 
 旧34 H2に加え、重要なH3 / operational detailを監査した結果、現時点で確認した範囲では新しいsubjectを必要とする未所有detailはない。
