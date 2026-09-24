@@ -153,7 +153,7 @@ entry fileの「routingする; 説明しない」という旧表現はv2.2の後
 - 旧directory decision treeの固定placement
 - intermediateな「documentation-only changeはbranchを作らない」「related docsは必ず1 commit」というGit workflow policy
 
-atomicity policyは2026-07-09途中commitでは明示されたが、その後v2 restructureはcommit timing / branchingをdocumentationの管轄外とした。現行S005は後者を採用する。
+atomicity policyは2026-07-09途中commitでは明示されたが、その後v2 restructureはcommit timing / branchingをdocumentationの管轄外とした。現行S005は後者を採用する。 8 subject化後は、commit / push authorityを `engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md`、Work固有branch/worktree materializationを `work-identity/`、documentation固有のcommit message / history利用を `documentation/S005_FORMAT_AND_GIT.md` が主所有する形へroutingを明示した。
 
 ## 8. Documentation側の現在判定
 
