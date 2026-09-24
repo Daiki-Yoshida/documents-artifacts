@@ -40,15 +40,16 @@ content:
 rule: "エントリファイルはdocuments/INDEX.mdへルーティングする。agentが起動直後に必要なproject-local operational constraintsは保持してよいが、詳細project knowledgeを複製せずdocuments/配下へ委ねる。"
 ```
 
-### ステップ2: documents/ディレクトリ作成
+### ステップ2: Project Documentation rootを作成する
 
 ```yaml
-action: "ディレクトリツリーを作成する。"
-structure:
-  - "documents/INDEX.md（必須 — ステップ3で作成）"
-  - "documents/project/（プロジェクトレベルのコンテキスト）"
-  - "documents/reference/（参照資料）"
-rule: "内容を投入するディレクトリのみ作成する。投機的に空ディレクトリを作成しない（YAGNI）。"
+action: "<project-root>/documents/ をProject Documentation rootとして用意する。"
+required:
+  - "documents/INDEX.md（ステップ3で作成）"
+optional_structure_examples:
+  - "documents/project/（project-level contextを分離したい場合）"
+  - "documents/reference/（reference materialを分離したい場合）"
+rule: "内部directoryはproject固有routingに従う。project/referenceを必須shapeにせず、内容を投入するdirectoryだけ作る（YAGNI）。"
 ```
 
 ### ステップ3: documents/INDEX.md作成
@@ -61,10 +62,10 @@ content:
   - "相互参照マップ"
 ```
 
-### ステップ4: プロジェクトドキュメント作成
+### ステップ4: プロジェクトレベル文書を作成する
 
 ```yaml
-action: "documents/project/にプロジェクトレベルのコンテキストドキュメントを作成する。"
+action: "projectのroutingに従い、documents/配下の適切なroleへproject-level contextを作成する。"
 content:
   - "プロジェクト概要、目的、スコープ"
   - "アーキテクチャサマリ"
@@ -89,7 +90,7 @@ rule: "audience差だけを理由に固定top-level directoryを強制しない�
 ```yaml
 action: "プロジェクトの成長に合わせてドキュメントを作成する — 一度にすべてではない。"
 trigger: "既存のプロジェクトドキュメントに収まらないコンテキストをタスクが要求する時、新規ファイルを作成する。"
-placement: "documents/reference/<topic>.md または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
+placement: "既存routing内のreference role、documents/reference/<topic>.md（標準例）、または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
 rule: "重複する内容の多い多数ファイルより、明確なルーティングのある少数ファイルを優先する。"
 ```
 
@@ -116,7 +117,7 @@ classification:
 
 ```yaml
 mapping:
-  ai_facing: "documents/project/ または documents/reference/（AI向け）"
+  ai_facing: "canonical project knowledgeならdocuments/配下の既存routingへ置く。project/referenceは配置例であり必須ではない"
   human_facing: "project conventionに従う。Project Documentationとauthorityを重複させない"
   shared: "canonical knowledgeはdocuments/へ置き、audience固有の補助表現が必要ならproject conventionに従う"
   obsolete: "削除またはアーカイブ — 移行しない"
@@ -212,3 +213,4 @@ rules:
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
 - `../../records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md`
 - `../../records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md`
+- `../../records/2026-09-22-six-subject-cross-audit-implementation/RECORD.md`（Project Documentation root固定 + 内部構造柔軟化）
