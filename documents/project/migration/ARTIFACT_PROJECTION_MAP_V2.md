@@ -23,6 +23,8 @@ current subjectsからどのAI-facing leafへprojectionするかを保守する�
 YAGNI across the Horizonは `BOUNDARY_HORIZON.md` と `CONTRACTS.md` の接続規則として扱う。
 同じ本文を両方へ複製せず、boundary側は適用強度、contract側はsmall surface / strong contractを所有する。
 
+`encapsulation-horizon/S007_GLOSSARY.md` は独立runtime leafへ投影しない。artifactで必要な用語定義は、それを実際に使うleafへ局所的に埋め込み、glossary全文を通常contextへ要求しない。
+
 ## implementation/
 
 | Artifact | Primary subject input |
