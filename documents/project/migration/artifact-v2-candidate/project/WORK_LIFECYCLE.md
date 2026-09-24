@@ -40,6 +40,14 @@ Work Identity is not a reason to create:
 
 Reuse safe Project-scoped state. Isolate only when mutable state, parallelism, configuration, or project rules require it.
 
+When a subsystem needs Work-specific isolation, propagate a deterministic identity such as:
+
+```text
+project + optional component + Work Identity + resource role
+```
+
+to containers, mutable volumes, networks, ports, test databases, logs, or generated outputs as appropriate. Do not use random per-run identity when the resource belongs to the Work.
+
 ## Completion state for work-scoped resources
 
 Every actually-created Work-scoped resource must end as one of:

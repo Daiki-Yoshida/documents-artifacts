@@ -17,13 +17,16 @@ Before reorganizing:
 1. inventory existing documentation;
 2. classify current/canonical, audience-specific, duplicate, and obsolete material;
 3. preserve deliberate project-local conventions unless the task intends to change them;
-4. move/merge gradually while keeping routing valid.
+4. move/merge gradually while keeping routing valid;
+5. preserve information during structural migration—do not silently delete content merely because it does not fit the new shape.
 
-Do not use documentation cleanup as an excuse for unrelated project restructuring.
+Treat **structural migration** and **content improvement/rewrite** as separate concerns. Do not turn a routing migration into an uncontrolled rewrite, and do not use documentation cleanup as an excuse for unrelated project restructuring.
 
 ## Ongoing updates
 
 When implementation or a decision changes durable project knowledge, update the owning document and routing references in the same change when practical.
+
+Update proportionally: a tiny implementation change does not require rereading or rewriting the entire documentation set. If a new durable document is added, register it in the routing hub.
 
 Do not maintain parallel manual version registries when Git history already tracks document evolution.
 

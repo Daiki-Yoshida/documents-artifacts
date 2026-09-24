@@ -78,7 +78,9 @@ is formal work-specific knowledge for active design, investigation, decisions, m
 
 Project Documentation describes the current canonical project state; Work Documents describe the active change.
 
-Work Documents are tracked by the Project Repository according to the project model. Reconcile durable conclusions into Project Documentation when the Work completes.
+Work Documents are tracked by the Project Repository according to the project model and should remain visible from the Project Repository's current baseline (normally `main`) while the Work is active. They are not hidden only inside a feature worktree.
+
+Reconcile durable conclusions into Project Documentation when the Work completes.
 
 ## Repository participation
 

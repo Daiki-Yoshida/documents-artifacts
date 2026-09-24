@@ -71,6 +71,24 @@ A hardened module normally exposes a small primary public surface; keep the rest
 
 Additional public surfaces require a named audience, stability scope, and evolution rule.
 
+## Side effects are contained, not denied
+
+State, I/O, time, and external systems are unavoidable in real software.
+
+The goal is to make side effects:
+
+- isolated to an owning boundary;
+- explicit where callers depend on them;
+- traceable and non-contagious.
+
+Do not pursue "purity" by hiding side effects or pushing them into unrelated layers.
+
+## Shared placement
+
+Do not create a single generic `shared` dumping ground.
+
+Promote code/concepts to a shared location only after multiple consumers and sufficiently stable semantic identity are observed. A concept may be consumer-neutral without being physically extracted to shared code yet; see `../design/CONCEPT_ALTITUDE.md`.
+
 ## Interior freedom
 
 Inside a correct boundary, procedural, functional, data-oriented, optimized, or low-level code may be used as appropriate.

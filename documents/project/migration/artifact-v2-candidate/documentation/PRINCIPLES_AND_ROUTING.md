@@ -50,6 +50,10 @@ Files such as `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md` may contain:
 
 Do not make them duplicate authorities for detailed project knowledge. Create only entry files for tools actually used.
 
+## README
+
+Keep the root `README.md` as a concise human-facing introduction and pointer to deeper knowledge. Do not turn README into a duplicate authority for Project Documentation.
+
 ## One primary concern per file
 
 Prefer a clear primary authority for each concern.
@@ -57,6 +61,8 @@ Prefer a clear primary authority for each concern.
 Local restatement for comprehension is fine; do not independently redefine the same rule in multiple documents.
 
 Split by routing value, not by a rigid universal folder taxonomy.
+
+Create a topic directory when it forms a real routed unit (for example several cohesive files that are useful together). Do not create a directory merely to host one small file, and do not treat a numeric file-count threshold as a hard law.
 
 ## Progressive disclosure
 
@@ -76,3 +82,5 @@ Use relative links from the referring document.
 A child project may own an independent `documents/` tree and INDEX.
 
 Parent documentation may describe children at a high level, but should not duplicate each child's detailed authority.
+
+Each child should remain self-contained through its own `documents/INDEX.md`; do not make child documentation depend on the parent's internal documentation as an implicit authority. Cross-project context should be an explicit external reference.

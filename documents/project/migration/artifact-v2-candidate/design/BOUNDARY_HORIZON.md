@@ -77,6 +77,12 @@ Treat `AND` as a warning, not an automatic split:
 
 Prefer maturation that **preserves the existing outer surface** and adds an inner horizon. If internal maturation forces callers to change, re-check whether the original outer responsibility was drawn correctly.
 
+### Graduation is the settlement point
+
+Interior freedom is contained, not free forever. When an internal sub-responsibility graduates into a hard boundary, the project must then define and verify that new surface against code that may have grown freely.
+
+For long-lived interiors, use freedom deliberately: do not pre-harden speculative seams, but remember that a future graduation can have real settlement cost.
+
 ## Guardrails
 
 - "Harden public surfaces" does not mean "create an interface everywhere."

@@ -19,6 +19,8 @@ Managed project/container environment normally owns:
 
 Do not install host runtimes merely because container commands feel inconvenient. Document any deliberate host exception and how version drift is controlled.
 
+Routine development commands should not depend on privilege escalation such as `sudo` unless the project has an explicit, justified host-level operation.
+
 ## Docker-first execution
 
 Run build/test/lint/format/migration/project CLI through repository-managed definitions where practical.

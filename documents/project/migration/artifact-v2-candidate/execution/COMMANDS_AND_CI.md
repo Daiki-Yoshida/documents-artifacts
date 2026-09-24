@@ -16,6 +16,8 @@ A common structure is:
 
 Keep complex shell logic out of a Makefile recipe when a script is clearer/testable.
 
+Provide a discoverable help/status path that explains available operations, required parameters, and destructive effects. Prefer named/structured parameters over one ambiguous catch-all argument.
+
 ## Naming
 
 Short names are fine when project scope is unambiguous.
