@@ -10,7 +10,7 @@ legacy_files_in_scope:
   - "artifacts/design-principles/PROJECT_STRUCTURE.md"
 current_subject_comparison: "現行7 subject。encapsulation-horizonとcode-designを主照合先とする"
 review_unit: "H2の17節と重要なH3・条件・例外"
-semantic_migration_complete: false
+semantic_migration_complete: "core rules promoted; detailed line-by-line parity still open"
 ```
 
 ## この監査の位置付け
@@ -32,6 +32,29 @@ semantic_migration_complete: false
 | DP5 | [中央PR #17](../../knowledge/records/2026-09-20-performance-contract-evolution/RECORD.md) | 以前保留した性能によるcontract形状再設計について、後日条件付きで実装されたこと |
 
 DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わない。DP4のIssue/PRも、修正の提案と実装を区別する。現行 `knowledge/system/TRACEABILITY_MODEL.md` に従い、現在の規範に反映できるのは原文と**その後続評価**を追跡できる部分だけとする。
+
+## 2026-09-24 source recovery後のstatus
+
+2026-01-31の4段階snapshotと2026-07-02最終実質snapshotをrecordsへ回収したため、第1巡で「L中心 / source不足」としていた項目の多くを現行 `code-design` へ昇格した。
+
+```yaml
+promoted:
+  - "Interface requirement / language idiom"
+  - "feature/module first + layer responsibility + contract placement"
+  - "module public surface / shared placement"
+  - "dependency direction / DI / external dependency containment"
+  - "Rich/Lightweight Domain Model / Domain purity / mapping"
+  - "expected/system failure / boundary translation"
+  - "async / cancellation / thread-safety"
+  - "test strategy / test placement / runtime topology / composition root"
+  - "compatibility / requested-outcome verification"
+  - "performance-shaped interaction"
+still_separate:
+  - "hardening horizon / contract change level -> encapsulation-horizon"
+  - "engineering change workflow / VCS / reporting -> engineering-operation candidate"
+```
+
+旧artifactの文言をそのまま採用したのではなく、versioned source snapshotと後続のPR/Issueで訂正された状態を優先している。以下の第1巡表に残る「未移行」表現は、**当時の発見時点の記録**として読む。現在のcanonical ownerは [code-design](../../knowledge/subjects/code-design/INDEX.md) を参照する。
 
 ## 1. CODING_STANDARDS.md：12 H2の意味差分
 
