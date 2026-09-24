@@ -23,6 +23,7 @@ for file in \
   documents/knowledge/system/RECORD_MODEL.md \
   documents/knowledge/system/SUBJECT_MODEL.md \
   documents/knowledge/system/TRACEABILITY_MODEL.md \
+  documents/knowledge/system/ARTIFACT_MODEL.md \
   documents/knowledge/subjects/INDEX.md \
   documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md \
@@ -42,7 +43,14 @@ for file in \
   documents/project/migration/LEGACY_DOCUMENTATION_GAP_AUDIT.md \
   documents/project/migration/LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md \
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md \
-  documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md; do
+  documents/project/ARTIFACT_ARCHITECTURE_V2.md \
+  documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md \
+  documents/project/migration/ARTIFACT_V2_CANDIDATE_AUDIT.md \
+  documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md \
+  documents/project/migration/ARTIFACT_V2_ROUTING_SIMULATION.md \
+  documents/project/migration/ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md \
+  documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md \
+  artifacts/INDEX.md; do
   require_file "$file"
 done
 
@@ -151,6 +159,7 @@ entrypoints=(
   documents/INDEX.md
   documents/knowledge/INDEX.md
   documents/knowledge/system/INDEX.md
+  documents/knowledge/system/ARTIFACT_MODEL.md
   documents/knowledge/subjects/INDEX.md
   documents/knowledge/subjects/*/INDEX.md
   documents/knowledge/subjects/*/S*.md
@@ -166,6 +175,15 @@ entrypoints=(
   documents/project/migration/LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
+  documents/project/ARTIFACT_ARCHITECTURE_V2.md
+  documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md
+  documents/project/migration/ARTIFACT_V2_CANDIDATE_AUDIT.md
+  documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md
+  documents/project/migration/ARTIFACT_V2_ROUTING_SIMULATION.md
+  documents/project/migration/ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md
+  artifacts/INDEX.md
+  artifacts/*/INDEX.md
+  artifacts/*/*.md
 )
 for document in "${entrypoints[@]}"; do
   require_file "$document"
@@ -179,6 +197,21 @@ for document in "${entrypoints[@]}"; do
       || fail "broken Markdown link in $document: $target"
   done < <(awk '/^[[:space:]]*(```|~~~~)/ { fenced = !fenced; next } !fenced { print }' "$document" | grep -Eo '\]\([^)]+\)' || true)
 done
+
+
+# Artifact v2 is the current runtime projection: 41 files, 7 routed domains, no legacy modules.
+artifact_files=(artifacts/INDEX.md artifacts/*/*.md)
+[[ "${#artifact_files[@]}" == 41 ]] || fail "expected 41 Artifact v2 Markdown files, got ${#artifact_files[@]}"
+for dir in design implementation operation documentation project execution safety; do
+  require_file "artifacts/$dir/INDEX.md"
+done
+for legacy_dir in design-principles documentation-strategy development-environment-strategy; do
+  [[ ! -e "artifacts/$legacy_dir" ]] || fail "legacy artifact module reintroduced: $legacy_dir"
+done
+grep -Fq 'Do **not** read every file by default.' artifacts/INDEX.md \
+  || fail "Artifact v2 root lost selective-reading guard"
+grep -Fq 'managed derived snapshot' artifacts/INDEX.md \
+  || fail "Artifact v2 root lost managed-copy guard"
 
 # Verify all 14 unique legacy file entries and their pinned SHA-1 hashes.
 snapshot_commit="e760eb38841650d60739750953c8342b639ce6f0"

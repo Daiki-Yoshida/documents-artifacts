@@ -2,7 +2,7 @@
 
 ```yaml
 document_type: "repository_local_artifact_architecture"
-status: "candidate_reviewed"
+status: "promoted"
 authority: "derived_from_documents/knowledge/system/ARTIFACT_MODEL.md"
 base_main_commit: "31d60ab2145860e717f52334aed5796df9e19741"
 date: "2026-09-24"
@@ -42,7 +42,7 @@ disk上のfile数そのものはtoken costではない。
 
 AI-facing runtime本文は簡潔な英語をdefaultとし、canonical knowledgeの日本語本文を二言語併記しない。language変換はauthorityを変えず、normative strength / condition / exceptionを保持する。
 
-## Candidate layout
+## Current layout
 
 ```text
 artifacts/
@@ -288,25 +288,29 @@ artifact本文へsource bookkeepingを大量に埋め込まない。
 
 repository-local projection mapで、artifact leafがどのsubject sectionを入力としているか追跡する。
 
-## Distribution script impact
+## Distribution
 
-現行 `artifacts.sh --modules` はlegacy 3 module前提なので、新pack確定時に変更する。
-
-初期方向:
+Artifact v2のinstall unitは1 whole pack。
 
 ```text
-./artifacts.sh --target <project>
-  -> documents/artifacts/ をwhole-pack atomic sync
+./artifacts.sh --target <project> --non-interactive
+  -> <project>/documents/artifacts/ をwhole-pack atomic sync
 ```
 
-legacy module selectionは廃止候補。
-remove / symlink safety / atomic replacement / non-interactive execution等の安全性は維持する。
+- syncはmanaged rootを完全置換する。
+- `--remove` はpack全体の明示削除。
+- legacy `--modules` は廃止。
+- source/destination symlinkを拒否する。
+- project-local overrideはinstalled copyへ直接patchしない。
 
-## Next implementation step
+## Maintenance
 
-1. candidate layoutのroot / directory routerを作る。
-2. subject → artifact leaf projection mapを作る。
-3. leaf本文をcurrent subjectsからprojectionする。
-4. representative taskでroutingとcontext量をレビューする。
-5. legacy14 artifactとのsemantic regression auditを行う。
-6. 問題なければ `artifacts/` とdistribution toolingを置換する。
+今後の変更は:
+
+1. current subjectsとprojection mapを確認する。
+2. task routing / context co-occurrenceでleafを更新・分割・統合する。
+3. semantic weakening / cross-file double authorityを監査する。
+4. internal linkとrepresentative routing/token量を検証する。
+5. distribution testsを通してtarget projectへsyncする。
+
+旧3 module packagingはruntime authorityとして復活させない。

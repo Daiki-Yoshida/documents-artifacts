@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-REPO_ROOT="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
-SCRIPT="${REPO_ROOT}/artifacts.sh"
+REPO_ROOT="$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
+SCRIPT="$REPO_ROOT/artifacts.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -17,92 +17,76 @@ assert_absent() {
   [[ ! -e "$1" && ! -L "$1" ]] || fail "expected path to be absent: $1"
 }
 
+bash -n "$SCRIPT" || fail "artifacts.sh syntax check failed"
+
 TMP_ROOT="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_ROOT"' EXIT
 
-SOURCE="${TMP_ROOT}/source"
-TARGET="${TMP_ROOT}/target"
-mkdir -p \
-  "${SOURCE}/artifacts/design-principles" \
-  "${SOURCE}/artifacts/documentation-strategy" \
-  "${SOURCE}/artifacts/development-environment-strategy" \
-  "$TARGET"
-cp "$SCRIPT" "${SOURCE}/artifacts.sh"
-chmod +x "${SOURCE}/artifacts.sh"
+SOURCE="$TMP_ROOT/source"
+TARGET="$TMP_ROOT/target"
+mkdir -p "$SOURCE/artifacts/design" "$SOURCE/artifacts/implementation" "$TARGET"
+cp "$SCRIPT" "$SOURCE/artifacts.sh"
+chmod +x "$SOURCE/artifacts.sh"
 
-printf 'design-v1\n' > "${SOURCE}/artifacts/design-principles/design.md"
-printf 'docs-v1\n' > "${SOURCE}/artifacts/documentation-strategy/docs.md"
-printf 'env-v1\n' > "${SOURCE}/artifacts/development-environment-strategy/env.md"
+printf '# router-v1\n' > "$SOURCE/artifacts/INDEX.md"
+printf 'design-v1\n' > "$SOURCE/artifacts/design/CONTRACTS.md"
+printf 'implementation-v1\n' > "$SOURCE/artifacts/implementation/DEPENDENCIES.md"
 
-# Selective install: unselected modules must not appear.
-"${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --modules design-principles,documentation-strategy \
-  --non-interactive >/dev/null
-assert_file "${TARGET}/documents/artifacts/design-principles/design.md"
-assert_file "${TARGET}/documents/artifacts/documentation-strategy/docs.md"
-assert_absent "${TARGET}/documents/artifacts/development-environment-strategy"
+# Whole-pack sync installs every artifact file.
+"$SOURCE/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null
+assert_file "$TARGET/documents/artifacts/INDEX.md"
+assert_file "$TARGET/documents/artifacts/design/CONTRACTS.md"
+assert_file "$TARGET/documents/artifacts/implementation/DEPENDENCIES.md"
 
-# Updating one module replaces that module exactly, removing stale files only there.
-printf 'stale\n' > "${TARGET}/documents/artifacts/design-principles/stale.md"
-printf 'design-v2\n' > "${SOURCE}/artifacts/design-principles/design.md"
-"${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --modules design-principles \
-  --non-interactive >/dev/null
-[[ "$(cat "${TARGET}/documents/artifacts/design-principles/design.md")" == "design-v2" ]] \
-  || fail "updated module content did not change"
-assert_absent "${TARGET}/documents/artifacts/design-principles/stale.md"
-assert_file "${TARGET}/documents/artifacts/documentation-strategy/docs.md"
+# Exact replacement removes stale and legacy-module content under the managed root.
+mkdir -p "$TARGET/documents/artifacts/design-principles"
+printf 'stale\n' > "$TARGET/documents/artifacts/stale.md"
+printf 'legacy\n' > "$TARGET/documents/artifacts/design-principles/legacy.md"
+printf 'project-owned\n' > "$TARGET/documents/project-owned.md"
+printf 'design-v2\n' > "$SOURCE/artifacts/design/CONTRACTS.md"
 
-# Omitting an installed module from --modules must NOT remove it.
-"${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --modules design-principles \
-  --non-interactive >/dev/null
-assert_file "${TARGET}/documents/artifacts/documentation-strategy/docs.md"
+"$SOURCE/artifacts.sh" --target "$TARGET" --sync --non-interactive >/dev/null
+[[ "$(cat "$TARGET/documents/artifacts/design/CONTRACTS.md")" == "design-v2" ]]   || fail "synced artifact content did not update"
+assert_absent "$TARGET/documents/artifacts/stale.md"
+assert_absent "$TARGET/documents/artifacts/design-principles"
+assert_file "$TARGET/documents/project-owned.md"
 
-# Removal is explicit.
-"${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --remove documentation-strategy \
-  --non-interactive >/dev/null
-assert_absent "${TARGET}/documents/artifacts/documentation-strategy"
+# --list reports the complete source pack by relative file path.
+LIST_OUTPUT="$("$SOURCE/artifacts.sh" --list)"
+grep -qx 'INDEX.md' <<< "$LIST_OUTPUT" || fail "root INDEX missing from --list"
+grep -qx 'design/CONTRACTS.md' <<< "$LIST_OUTPUT" || fail "design artifact missing from --list"
+grep -qx 'implementation/DEPENDENCIES.md' <<< "$LIST_OUTPUT" || fail "implementation artifact missing from --list"
 
-# Invalid module names fail.
-if "${SOURCE}/artifacts.sh" --target "$TARGET" --modules unknown --non-interactive >/dev/null 2>&1; then
-  fail "unknown module unexpectedly succeeded"
+# Legacy partial-install interface is intentionally rejected.
+if "$SOURCE/artifacts.sh" --target "$TARGET" --modules design-principles --non-interactive >/dev/null 2>&1; then
+  fail "legacy --modules unexpectedly succeeded"
 fi
 
-# Non-interactive mode with no requested operation fails.
-if "${SOURCE}/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null 2>&1; then
-  fail "empty non-interactive run unexpectedly succeeded"
+# Conflicting actions fail.
+if "$SOURCE/artifacts.sh" --target "$TARGET" --sync --remove --non-interactive >/dev/null 2>&1; then
+  fail "conflicting sync/remove unexpectedly succeeded"
 fi
 
-# Installing and removing the same module in one run fails.
-if "${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --modules design-principles \
-  --remove design-principles \
-  --non-interactive >/dev/null 2>&1; then
-  fail "conflicting install/remove unexpectedly succeeded"
-fi
-
-# Destination module symlinks are rejected instead of followed/replaced.
-mkdir -p "${TMP_ROOT}/outside"
-ln -s "${TMP_ROOT}/outside" "${TARGET}/documents/artifacts/development-environment-strategy"
-if "${SOURCE}/artifacts.sh" \
-  --target "$TARGET" \
-  --modules development-environment-strategy \
-  --non-interactive >/dev/null 2>&1; then
+# Destination symlinks are rejected and never followed.
+rm -rf "$TARGET/documents/artifacts"
+mkdir -p "$TMP_ROOT/outside"
+ln -s "$TMP_ROOT/outside" "$TARGET/documents/artifacts"
+if "$SOURCE/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null 2>&1; then
   fail "symlinked destination unexpectedly succeeded"
 fi
-assert_absent "${TMP_ROOT}/outside/env.md"
+assert_absent "$TMP_ROOT/outside/INDEX.md"
+rm "$TARGET/documents/artifacts"
 
-# --list is stable and discovers module directories rather than hard-coding them.
-LIST_OUTPUT="$("${SOURCE}/artifacts.sh" --list)"
-grep -qx 'design-principles' <<< "$LIST_OUTPUT" || fail "design-principles missing from --list"
-grep -qx 'documentation-strategy' <<< "$LIST_OUTPUT" || fail "documentation-strategy missing from --list"
-grep -qx 'development-environment-strategy' <<< "$LIST_OUTPUT" || fail "development-environment-strategy missing from --list"
+# Sync again, then explicit whole-pack removal removes only the managed root.
+"$SOURCE/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null
+"$SOURCE/artifacts.sh" --target "$TARGET" --remove --non-interactive >/dev/null
+assert_absent "$TARGET/documents/artifacts"
+assert_file "$TARGET/documents/project-owned.md"
 
-printf 'PASS: artifacts.sh\n'
+# Source pack symlinks are rejected.
+ln -s "$SOURCE/artifacts/design/CONTRACTS.md" "$SOURCE/artifacts/design/link.md"
+if "$SOURCE/artifacts.sh" --list >/dev/null 2>&1; then
+  fail "symlinked source pack unexpectedly succeeded"
+fi
+
+printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
