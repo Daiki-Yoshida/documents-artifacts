@@ -70,12 +70,23 @@ execution agentは原則 `main` へ直接commitせず、最新 `main` からwork
 bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 ```
 
-## Initial scenarios
+## Initial scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
 | `contract-boundary` | minimal | small surface / strong contract + internal YAGNI |
 | `brownfield-scope` | brownfield | task scopeを不必要なrefactorへ拡張しない |
 | `local-rule-precedence` | structured | project-local rulesがgeneric artifactをspecializeできる |
+
+## Second-stage scenarios — definitions ready / runs pending
+
+定義・fixtureのみ整備済み。run / evaluationは未実施。
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `failure-boundary` | failure-service | expected business failure / vendor failure translation / async boundary |
+| `work-identity-confirmation` | work-planning | Work Identity提案とexplicit confirmation前のmaterialize禁止 |
+| `destructive-cleanup` | cleanup-safety | disposable scope限定削除 / persistent・shared・host保全 |
+| `documentation-routing` | documented-project | 既存INDEX経由のowner発見 / duplicate authority回避 |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

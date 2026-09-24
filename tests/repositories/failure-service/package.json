@@ -1,0 +1,8 @@
+{
+  "name": "artifact-test-failure-service",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "test": "node --test"
+  }
+}
