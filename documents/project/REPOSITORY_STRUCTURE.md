@@ -112,6 +112,24 @@ artifacts/
 └─ safety/
 ```
 
+## tests/
+
+deterministic testとexecution-agent behavior testを同じtest rootで管理する。
+
+```text
+tests/
+├─ INDEX.md
+├─ test-*.sh
+├─ scripts/
+├─ repositories/   # Gitなしのfixture templates
+├─ scenarios/      # PROMPT + evaluator-only EXPECTATIONS
+└─ .runs/          # generated / Git ignored
+```
+
+`tests/repositories/` は実行時にcopyされ、そのcopy側だけを `git init` する。fixture原本へnested `.git/` を保持しない。
+
+詳細は `AGENT_ARTIFACT_TEST_HARNESS.md` を参照する。
+
 root `INDEX.md` と各directory `INDEX.md` はrouter。leafはtask consumption単位で分割する。
 
 subject directoryとの1:1対応は要求しない。semantic ownershipはsubjectsが保持し、artifactはcontext co-occurrenceに合わせて非正規化する。
