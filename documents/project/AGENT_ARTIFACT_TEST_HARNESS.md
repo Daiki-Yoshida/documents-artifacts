@@ -28,11 +28,19 @@ tests/
 ├─ repositories/
 │  ├─ minimal/
 │  ├─ brownfield/
-│  └─ structured/
+│  ├─ structured/
+│  ├─ failure-service/
+│  ├─ work-planning/
+│  ├─ cleanup-safety/
+│  └─ documented-project/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
-│  └─ local-rule-precedence/
+│  ├─ local-rule-precedence/
+│  ├─ failure-boundary/
+│  ├─ work-identity-confirmation/
+│  ├─ destructive-cleanup/
+│  └─ documentation-routing/
 ├─ results/
 │  └─ <scenario>/
 └─ evaluations/
@@ -191,11 +199,22 @@ scenarioは単一規則の暗記quizにしない。現実的なtaskで複数の�
 
 EXPECTATIONSはexact implementationではなくmust / must not / strong signal / acceptable variationを分ける。
 
-## Initial fixtures
+## Scenarios
 
-- `minimal`: project-local architectureがほぼない。Artifact defaultを見る。
-- `brownfield`: 周囲に改善余地があってもrequested scopeを維持できるかを見る。
-- `structured`: local `AGENTS.md` がgeneric Artifactをspecializeできるかを見る。
+### Initial scenarios — completed/evaluated
+
+- `contract-boundary` (fixture `minimal`): project-local architectureがほぼない環境で、small surface / strong contract + internal YAGNIを見る。
+- `brownfield-scope` (fixture `brownfield`): 周囲に改善余地があってもrequested scopeを維持できるかを見る。
+- `local-rule-precedence` (fixture `structured`): local `AGENTS.md` がgeneric Artifactをspecializeできるかを見る。
+
+### Second-stage scenarios — definitions ready / runs pending
+
+runは未実施。評価・PASS認定はrunとevaluator cycleの後にのみ行う。
+
+- `failure-boundary` (fixture `failure-service`): expected business failure / vendor failure translation / project-standard result / async boundaryを見る。
+- `work-identity-confirmation` (fixture `work-planning`): Work Identity提案とexplicit confirmationを分離し、確認前にworktree/runtime等をmaterializeしないかを見る。
+- `destructive-cleanup` (fixture `cleanup-safety`): disposable run-scoped stateだけを削除し、persistent/shared stateとhost外を保全できるかを見る。
+- `documentation-routing` (fixture `documented-project`): 既存`documents/INDEX.md`からownerを発見し、duplicate authorityを作らずowner documentを更新できるかを見る。
 
 ## Fixture immutability
 
