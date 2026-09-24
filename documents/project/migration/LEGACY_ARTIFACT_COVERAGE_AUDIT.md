@@ -8,14 +8,15 @@ legacy_snapshot_commit: "e760eb38841650d60739750953c8342b639ce6f0"
 audit_date: "2026-09-24"
 legacy_markdown_files: 14
 candidate_mapping: "14 / 14（2026-09-21時点の旧監査候補）"
-current_subjects: 6
-current_non_history_subject_body_files_scanned: 31
+current_subjects: 7
+baseline_non_history_subject_body_files_scanned_before_code_design: 31
+current_non_history_subject_body_files: 38
 semantic_coverage_verdict: "未完了"
 ```
 
 ## 目的と制約
 
-旧 `artifacts/` 14 Markdownと現在の `documents/knowledge/subjects/` 6 subjectの間で、未移行の意味を発見するための**監査台帳**。現行の正式規範・独立したsource recordではない。
+旧 `artifacts/` 14 Markdownと現在の `documents/knowledge/subjects/` 7 subjectの間で、未移行の意味を発見するための**監査台帳**。現行の正式規範・独立したsource recordではない。
 
 旧artifactは元々第2情報源であり、現在のGitに存在するからといって第0情報源へ昇格させない。旧source log、当時の議論・Issue・実験を可能な限り原文recordとして辿り、採用・却下・訂正を確認してからsubjectへ整理する。
 
@@ -42,20 +43,20 @@ semantic_coverage_verdict: "未完了"
 | documentation-strategy | `FILE_AND_STRUCTURE.md` | `ceeb4082b4584a2876a22394f53ab63c4cda181a` |
 | documentation-strategy | `INDEX.md` | `cb10d7d1932e28f1d98f6311786b5cf90051ee0b` |
 
-旧14ファイルの英語再構成候補と当時のsection mappingは `semantic-preservation-candidate/TRACEABILITY.md`。その候補が示す14/14は**当時の候補内での対応数**であり、現在の6 subjectへの意味移行完了の証明ではない。
+旧14ファイルの英語再構成候補と当時のsection mappingは `semantic-preservation-candidate/TRACEABILITY.md`。その候補が示す14/14は**当時の候補内での対応数**であり、現在のsubjectへの意味移行完了の証明ではない。
 
-## 2. 現行6 subjectへの対応仮説
+## 2. 現行subjectへの対応状況
 
 | 旧file群 | 現在の主な受け皿 | 今回確認できたこと | 残る検証 |
 |---|---|---|---|
-| design-principles: DESIGN_PHILOSOPHY | `encapsulation-horizon`、今後整理するコード設計knowledge | Encapsulation Horizonの原文logは2026-09-21 snapshotで保存済み | Bounded Contractsの周辺知識まで網羅できているか |
-| design-principles: CODING_STANDARDS / PROJECT_STRUCTURE | 現行6 subjectにはコード実装・内部module設計を主語とする独立authorityが存在しない | 旧artifact内にDI、Domain/Application/Infrastructure責務、Result/Either、async契約、testing、shared kernel等の具体節を確認 | 各節のsource原文と採用状態、コード設計の新subjectが必要か |
+| design-principles: DESIGN_PHILOSOPHY | `encapsulation-horizon` / `code-design` | Encapsulation Horizon原文と旧PROGRAMMING_PARADIGM referenceを保存し、48/48 H2を一次分類。source-backedな設計原理をcode-designへ初期移行 | Composition等を含む未回収detailの採否 |
+| design-principles: CODING_STANDARDS / PROJECT_STRUCTURE | `code-design`（source-backed範囲） / `encapsulation-horizon`（hardening） | `code-design` を正式追加。state ownership / compatibility / verification / performance等をsource-backedに移行 | DI、layering、Result/Either詳細、async、mapping、shared kernel、test placement等の元source回収 |
 | design-principles: AI_WORKFLOW | `encapsulation-horizon` のcontract変更、`development-safety` の操作安全性、未整理の横断的作業規律 | 旧artifactにはno commit/push unless requested等のoperation規則が存在 | 複数subjectへ配賦可能か、横断的責務が独立知識対象か |
 | design-principles: INDEX | 主に旧packagingのrouting | 当時の14/14候補はlegacy packaging-onlyを現行意味と区別 | 旧INDEX内にrouting以上の固有規範がないか |
 | documentation-strategy: 4ファイル | `documentation`（旧状態は `S006_HISTORY.md`） | 旧日本語原文3本のH2 routingは30/30として再監査済み | 英語artifact固有の条件・例外・旧規範の採否までの対応 |
 | development-environment-strategy: 5ファイル | `workspace-structure`、`development-execution`、`development-safety`、`work-identity` | 旧日本語4本文の初回再編coverageは36/36として記録済み | 英語artifact固有の条件・例外・横断作業規律の対応 |
 
-この表の「受け皿」は監査時点の**仮説**であり、新subject名や新規範の採用判断ではない。
+この表は現在のroutingと残るgapを示す。`code-design` は正式subject化済みだが、表中の未回収detailを採用済みとみなさない。
 
 ## 3. 優先的に確認する未移行候補
 
@@ -71,9 +72,9 @@ semantic_coverage_verdict: "未完了"
 
 `PROJECT_STRUCTURE.md` にもShared Kernel、runtime topology、test placement等の節が存在する。
 
-2026-09-24時点の現行6 subject中、historyを除く31本文fileを対象に、関連する代表語（DI / dependency injection、Domain/Application Layer、expected failure、async contract、contract/unit/integration testing、shared kernel等）を検索したところ該当なし。このテキスト検索は**未移行の可能性を強く示すが、意味欠落の完全証明ではない**。
+`code-design` 作成前の6 subject baselineで、historyを除く31本文fileを対象に、関連する代表語（DI / dependency injection、Domain/Application Layer、expected failure、async contract、contract/unit/integration testing、shared kernel等）を検索したところ該当なし。このテキスト検索は**未移行の可能性を強く示すが、意味欠落の完全証明ではない**。
 
-従来の英語再構成候補 `semantic-preservation-candidate/CODE_DESIGN.md` には34のH2区分があるが、これは監査候補であって現行の第1情報源ではない。
+従来の英語再構成候補 `semantic-preservation-candidate/CODE_DESIGN.md` には34のH2区分があるが、これは監査候補であって現行の第1情報源ではない。現在の正式なcode-designは `documents/knowledge/subjects/code-design/` であり、回収済みrecordsを根拠にした部分だけを所有する。
 
 ### B. 横断的なengineering operation（要調査）
 
