@@ -22,9 +22,7 @@ temporary_candidate_files_remaining: 0
 artifact_script_mode: "100755"
 artifact_test_mode: "100755"
 knowledge_test_mode: "100755"
-branch_vs_main:
-  ahead: 2
-  behind: 0
+promotion_base: "main 7bc486da868fd1c6d2553ab225ae18b965b1a30c"
 ```
 
 The promotion itself was byte-preserving: each reviewed candidate blob was reused at the corresponding `artifacts/` path.

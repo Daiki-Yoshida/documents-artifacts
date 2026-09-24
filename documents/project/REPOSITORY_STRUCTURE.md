@@ -124,7 +124,7 @@ subject directoryとの1:1対応は要求しない。semantic ownershipはsubjec
 <target>/documents/artifacts/
 ```
 
-へatomicにwhole-pack syncする。
+へstaging後にwhole-pack exact replacementする。置換失敗時は旧packへのrollbackを試みる。
 
 - 部分module選択は行わない。
 - updateはmanaged rootを完全置換する。

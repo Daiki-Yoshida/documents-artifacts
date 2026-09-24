@@ -294,7 +294,7 @@ Artifact v2のinstall unitは1 whole pack。
 
 ```text
 ./artifacts.sh --target <project> --non-interactive
-  -> <project>/documents/artifacts/ をwhole-pack atomic sync
+  -> <project>/documents/artifacts/ をstaged whole-pack exact replacement + rollback
 ```
 
 - syncはmanaged rootを完全置換する。
