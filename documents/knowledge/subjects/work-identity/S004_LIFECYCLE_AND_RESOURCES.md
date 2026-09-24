@@ -110,6 +110,24 @@ feat/pathfinding
 
 ---
 
+## Work-scoped resourceの終了責任
+
+Work-scoped resourceを実際に作成した場合、Work終了時にその最終状態をreconcileする責任が生じる。
+
+```yaml
+completion_states:
+  removed: "resourceが不要になり、通常のscoped cleanupで削除済み"
+  intentionally_retained: "具体的な後続用途があり、resourceと保持理由を報告済み"
+invalid_state: "所有者・用途・保持理由が不明なまま残存"
+rule: "作成したWork-scoped resourceがremovedまたはintentionally_retainedのどちらかへ整理されるまで、resource reconciliationを完了扱いにしない。"
+```
+
+shared resourceやpersistent dataは、Workが利用したという理由だけでcleanup対象にしない。削除operationの安全条件は `../development-safety/S002_DESTRUCTIVE_OPERATIONS.md` が主所有する。
+
+---
+
+---
+
 ## Resource Identity の伝播
 
 Work 固有の分離が必要な場合、同じ Work Identity を各 subsystem へ deterministic に伝播させる。
@@ -161,3 +179,5 @@ Work Identity は **意味・ownership・lifecycleを揃えるための共通軸
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`
+- `../../records/2026-08-02-task-resource-ownership-pr/RECORD.md`
+- `../../records/2026-08-02-task-resource-reconciliation-commit/RECORD.md`

@@ -10,9 +10,9 @@ governed_aspects:
   commit_message_format: "project conventionを優先し、独自規則がなければConventional Commits系の明示的なprefix + 説明を推奨"
   history_tracking: "変更・移動・削除の履歴はGit historyを利用する"
 not_governed:
-  - "いつコミットするか（コード側の決定）"
-  - "ブランチを切るかどうか（コード側の決定）"
-  - "レビュープロセス（コード側の決定）"
+  - "いつcommit/pushするか（engineering-operationのversion-control authority）"
+  - "Work固有branch / worktreeのidentity・lifecycle・materialization（work-identityが主所有。default branch guardやcommit / push authorityはengineering-operation）"
+  - "code changeのreview process（engineering-operation / project-local workflowの責務）"
 ```
 
 ドキュメント変更はGit historyで追跡可能にする。実装との対応確認が必要な場合はGit log / diffや関連Issue・PRを利用し、document固有の `last_updated_commit` を必須化しない。
@@ -57,9 +57,9 @@ rules:
 
 ```yaml
 not_governed:
-  - "いつコミットするか（これはコード側 / 開発ワークフローの決定）"
-  - "ブランチするかどうか（これはコード側 / 開発ワークフローの決定）"
-  - "コミットサイズや粒度（これは開発プラクティスの決定）"
+  - "いつcommit/pushするか（`../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` が主所有）"
+  - "Work固有branch / worktreeをどうmaterializeするか（work-identityが主所有。default branch guardやcommit / push authorityはengineering-operation）"
+  - "commit size / granularity（project-local engineering workflowへroute）"
 ```
 
 ---
@@ -85,3 +85,6 @@ naming: "ファイルは小文字・ハイフン区切り; ディレクトリは
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-07-09-documentation-atomicity-commit/RECORD.md`（historical intermediate policy）
+- `../../records/2026-07-09-documentation-v2-restructure-commit/RECORD.md`（branch/timingをdocumentation scope外へ再整理）
+- `../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md`

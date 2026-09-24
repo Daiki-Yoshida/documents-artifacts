@@ -6,7 +6,7 @@
 first_source:
   path: "documents/knowledge/"
   role: "情報の正本"
-  language: "Japanese"
+  language: "subjects/systemはJapanese標準; recordsは原文言語を維持"
   property: "原文・評価・時系列を情報劣化なく保存"
   precedence: "file化された情報の中で最優先"
 
@@ -26,7 +26,7 @@ artifact_projection:
 legacy_docs_jp:
   path: "docs-jp/"
   role: "従来の人間向け説明・設計経緯・実験/source log"
-  migration_state: "原文単位でdocuments/knowledge/へ順次移行対象"
+  migration_state: "2026-09-21時点の16ファイルは原文snapshot済み。legacy参照領域として残す"
 ```
 
 ## Information Flow
@@ -77,7 +77,7 @@ documents/knowledge/
       └─ ...
 ```
 
-`records/` はsource event・snapshotの原文を保持する。現在は6 subject（encapsulation-horizon、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
+`records/` はsource event・snapshotの原文を保持する。現在は8 subject（encapsulation-horizon、code-design、engineering-operation、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
 
 source event例:
 
@@ -104,12 +104,20 @@ documents/project/
 └─ migration/
    ├─ KNOWLEDGE_MIGRATION_STATUS.md
    ├─ LEGACY_ARTIFACT_COVERAGE_AUDIT.md
+   ├─ LEGACY_ARTIFACT_SECTION_INVENTORY.md
+   ├─ LEGACY_CODE_DESIGN_GAP_AUDIT.md
+   ├─ LEGACY_DESIGN_SUBJECT_OWNERSHIP.md
+   ├─ LEGACY_DESIGN_PHILOSOPHY_GAP_AUDIT.md
+   ├─ LEGACY_DOCUMENTATION_GAP_AUDIT.md
+   ├─ LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md
+   ├─ LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
+   ├─ SHORT_APPROVAL_PROVENANCE_AUDIT.md
    └─ semantic-preservation-candidate/
 ```
 
 `semantic-preservation-candidate/` は旧artifactの意味保存詳細監査で作られた**当時の再構成候補**。意味欠落の調査には使えるが、現在の第1情報源ではない。現在の採用・却下・訂正は `documents/knowledge/` を優先し、候補内の旧version registry等を現行規範へ戻さない。
 
-`docs-jp/` の2026-09-21時点の16ファイルは `documents/knowledge/records/2026-09-21-docs-jp-snapshot/` に原文snapshotとして保存済み。今後の旧artifact14ファイルのcoverage監査は別途行う。
+`docs-jp/` の2026-09-21時点の16ファイルは `documents/knowledge/records/2026-09-21-docs-jp-snapshot/` に原文snapshotとして保存済み。旧artifact14ファイルのcoverage監査は `documents/project/migration/` のinventory / gap auditで継続管理する。
 
 ## artifacts/
 

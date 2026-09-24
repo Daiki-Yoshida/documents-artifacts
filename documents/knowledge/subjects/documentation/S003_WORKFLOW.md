@@ -37,18 +37,19 @@ content:
   efficiency:
     - "focus_files: エージェントが優先すべきglobパターン"
     - "current_priority: 現在の開発フォーカス"
-rule: "エントリファイルはdocuments/INDEX.mdへルーティングする。プロジェクトの詳細は含めない。"
+rule: "エントリファイルはdocuments/INDEX.mdへルーティングする。agentが起動直後に必要なproject-local operational constraintsは保持してよいが、詳細project knowledgeを複製せずdocuments/配下へ委ねる。"
 ```
 
-### ステップ2: documents/ディレクトリ作成
+### ステップ2: Project Documentation rootを作成する
 
 ```yaml
-action: "ディレクトリツリーを作成する。"
-structure:
-  - "documents/INDEX.md（必須 — ステップ3で作成）"
-  - "documents/project/（プロジェクトレベルのコンテキスト）"
-  - "documents/reference/（参照資料）"
-rule: "内容を投入するディレクトリのみ作成する。投機的に空ディレクトリを作成しない（YAGNI）。"
+action: "<project-root>/documents/ をProject Documentation rootとして用意する。"
+required:
+  - "documents/INDEX.md（ステップ3で作成）"
+optional_structure_examples:
+  - "documents/project/（project-level contextを分離したい場合）"
+  - "documents/reference/（reference materialを分離したい場合）"
+rule: "内部directoryはproject固有routingに従う。project/referenceを必須shapeにせず、内容を投入するdirectoryだけ作る（YAGNI）。"
 ```
 
 ### ステップ3: documents/INDEX.md作成
@@ -61,10 +62,10 @@ content:
   - "相互参照マップ"
 ```
 
-### ステップ4: プロジェクトドキュメント作成
+### ステップ4: プロジェクトレベル文書を作成する
 
 ```yaml
-action: "documents/project/にプロジェクトレベルのコンテキストドキュメントを作成する。"
+action: "projectのroutingに従い、documents/配下の適切なroleへproject-level contextを作成する。"
 content:
   - "プロジェクト概要、目的、スコープ"
   - "アーキテクチャサマリ"
@@ -89,7 +90,7 @@ rule: "audience差だけを理由に固定top-level directoryを強制しない�
 ```yaml
 action: "プロジェクトの成長に合わせてドキュメントを作成する — 一度にすべてではない。"
 trigger: "既存のプロジェクトドキュメントに収まらないコンテキストをタスクが要求する時、新規ファイルを作成する。"
-placement: "documents/reference/<topic>.md または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
+placement: "既存routing内のreference role、documents/reference/<topic>.md（標準例）、または documents/<topic>/（S002_ROUTING_AND_STRUCTURE.md → ディレクトリ分割ガイドを参照）"
 rule: "重複する内容の多い多数ファイルより、明確なルーティングのある少数ファイルを優先する。"
 ```
 
@@ -116,7 +117,7 @@ classification:
 
 ```yaml
 mapping:
-  ai_facing: "documents/project/ または documents/reference/（AI向け）"
+  ai_facing: "canonical project knowledgeならdocuments/配下の既存routingへ置く。project/referenceは配置例であり必須ではない"
   human_facing: "project conventionに従う。Project Documentationとauthorityを重複させない"
   shared: "canonical knowledgeはdocuments/へ置き、audience固有の補助表現が必要ならproject conventionに従う"
   obsolete: "削除またはアーカイブ — 移行しない"
@@ -205,8 +206,64 @@ rules:
 
 ---
 
+## Managed Artifact Handling
+
+target projectへ配布された再利用guidanceは、project-owned Project Documentationと同じownershipで直接保守しない。
+
+典型的なmanaged path:
+
+```text
+documents/artifacts/<module>/
+```
+
+ただし実際のinstall先は配布機構 / project conventionが所有する。重要なのはpath名ではなく、**canonical sourceからmaterializeされたmanaged guidanceかどうか**である。
+
+```yaml
+ownership:
+  canonical_content: "artifact / guidanceのcanonical sourceが所有"
+  installed_copy: "target projectへmaterializeされたderived snapshot"
+update:
+  rule: "canonical sourceまたは明示されたdistribution/sync mechanismから更新する"
+  forbidden: "installed copyだけをproject-owned文書として黙ってpatchし、canonical sourceとの差分を恒久化する"
+remove:
+  rule: "distribution mechanismが定める明示的remove semanticsを使う"
+  omission: "update対象から外しただけではremove permissionとみなさない"
+routing:
+  project_index: "installed moduleのentry INDEXへlinkしてよい"
+  internal_inventory: "project側INDEXがmanaged module内部fileの独立authority / version registryになる必要はない"
+local_override:
+  rule: "generic guidanceよりproject-local ruleを優先する必要がある場合、installed copyを書き換えるのではなくproject-owned instruction/documentへoverrideを記録する"
+correction:
+  rule: "generic guidance自体が誤っている場合、canonical sourceを訂正して再配布する"
+```
+
+この規則は、現在のrepositoryで `artifacts/` が第2情報源であることと同じownership原理をtarget project側へ適用する。
+
+具体的なinstall/update/remove commandはartifact source / target projectの配布workflowが所有し、このdocumentation subjectはcommand syntaxを定義しない。
+
+---
+
+## Work DocumentsからProject Documentationへのreconciliation
+
+active Work Documentsのidentity・placement・Git ownership・lifecycleは `../work-identity/S003_WORK_DOCUMENTS.md` / `S004_LIFECYCLE_AND_RESOURCES.md` が主所有する。
+
+documentation側は、Work完了時に**何をProject Documentationへ残すか**を所有する。
+
+- Work中だけ必要だったraw log、棄却案、一時的hypothesisを機械的にcanonicalへ全コピーしない。
+- Work後も真であり、将来のproject taskで参照すべきdurable knowledgeだけを、既存の主authority / routingへreconcileする。
+- destination documentを更新したら、そのdocumentの通常maintenance / routing規則を適用する。
+- active Work Documentsの履歴保存のためだけに別archive treeを作らない。Git historyを利用する。
+- branch mergeだけをreconciliation完了の証拠にしない。Work completionはwork-identityのlifecycleで判断する。
+
+---
+
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md`
+- `../../records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md`
+- `../../records/2026-09-22-six-subject-cross-audit-implementation/RECORD.md`（Project Documentation root固定 + 内部構造柔軟化）
+- `../../records/2026-09-15-cross-artifact-consistency-pr/RECORD.md`（managed artifact ownership boundaryの後続実装）
+- `../../records/2026-09-20-work-identity-artifactization-pr/RECORD.md`（Work Documentsのdocumentation semantics / reconciliation）

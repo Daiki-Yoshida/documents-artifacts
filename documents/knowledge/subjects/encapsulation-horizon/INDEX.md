@@ -2,6 +2,8 @@
 
 このsubjectは、**境界面をどのscaleで硬化し、どこから内部自由を許容するか**を扱うEncapsulation Horizonのknowledgeを管理する。
 
+選択したboundaryを具体的なcode structure・state ownership・compatibility・verificationへ落とす規範は `../code-design/` が主所有する。
+
 通常は `S001_CORE_PRINCIPLE.md` から読み、設計判断に応じて各責務文書へ進む。
 
 ## 構成
