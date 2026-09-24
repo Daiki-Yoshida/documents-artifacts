@@ -40,6 +40,8 @@ optimization_target: "few filesではなくsmall relevant context"
 disk上のfile数そのものはtoken costではない。
 そのためfile countに低い上限を設けず、context co-occurrenceを基準に分割する。
 
+AI-facing runtime本文は簡潔な英語をdefaultとし、canonical knowledgeの日本語本文を二言語併記しない。language変換はauthorityを変えず、normative strength / condition / exceptionを保持する。
+
 ## Candidate layout
 
 ```text

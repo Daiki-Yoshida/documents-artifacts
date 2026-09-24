@@ -153,7 +153,24 @@ keep_together_when:
 
 逆にfile数が少なくても、1 fileへ多くの無関係knowledgeを押し込めて毎回読ませる構造はartifactとして不適切である。
 
-## 8. Self-contained delivery
+## 8. Runtime language
+
+Artifact本文は、AI runtime guidanceとして**簡潔な英語をdefault**とする。
+
+理由はsource languageを英語へ昇格させるためではなく、programming vocabularyとの整合、project横断の可搬性、同一内容の二言語重複を避けるためである。
+
+```yaml
+canonical_knowledge_language: "subjects/systemの現行方針に従う（現在は日本語）"
+artifact_runtime_default: "concise English"
+do_not:
+  - "同じ規範を英日併記してtokenを二重消費する"
+  - "翻訳時にnormative strength / condition / exceptionを弱める"
+override: "明確なconsumer要件がある場合はartifact packaging側で別languageを選べる"
+```
+
+languageはauthorityを変更しない。意味に疑義があれば日本語subject / source recordへ戻る。
+
+## 9. Self-contained delivery
 
 target projectでは通常 `documents/knowledge/` は存在しない前提でartifactを読めるようにする。
 
@@ -161,14 +178,14 @@ artifact本文は、理解に不可欠な規範をupstream subjectへの参照�
 
 一方でartifactのmaintenance時には、repository側でどのsubjectsからprojectionしたかを追跡可能にする。
 
-## 9. Project-local context
+## 10. Project-local context
 
 artifactは再利用可能な共通知識であり、target project固有の事実を発明しない。
 
 project-local rule / architecture / command / documentationが存在する場合、AIはそれをartifactと合わせて解釈する。
 artifactがproject固有の選択を固定的に仮定しない。
 
-## 10. 更新
+## 11. 更新
 
 ```text
 new decision
