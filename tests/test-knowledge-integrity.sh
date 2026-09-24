@@ -44,6 +44,8 @@ for file in \
   documents/project/migration/LEGACY_DEVELOPMENT_ENVIRONMENT_GAP_AUDIT.md \
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md \
   documents/project/ARTIFACT_ARCHITECTURE_V2.md \
+  documents/project/AGENT_ARTIFACT_TEST_HARNESS.md \
+  tests/INDEX.md \
   documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md \
   documents/project/migration/ARTIFACT_V2_CANDIDATE_AUDIT.md \
   documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md \
@@ -177,6 +179,8 @@ entrypoints=(
   documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md
   documents/project/ARTIFACT_ARCHITECTURE_V2.md
+  documents/project/AGENT_ARTIFACT_TEST_HARNESS.md
+  tests/INDEX.md
   documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md
   documents/project/migration/ARTIFACT_V2_CANDIDATE_AUDIT.md
   documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md
