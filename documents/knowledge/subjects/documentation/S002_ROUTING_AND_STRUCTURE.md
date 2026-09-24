@@ -157,30 +157,32 @@ information_flow: "親 → 子（一方向）。子は親の内部ドキュメ�
 external_reference: "子が親のコンテキストを必要とする場合、親を外部プロジェクトとして扱う。"
 ```
 
-### 構造
+### 構造例
+
+内部directory名は固定しない。次は `project/` / `reference/` を採用したprojectでの一例。
 
 ```yaml
 parent_project:
   documents:
     index: "documents/INDEX.md（親のルーティング）"
-    project: "documents/project/（親プロジェクトコンテキスト）"
-    reference: "documents/reference/（共有参照、子概要）"
-    children_overview: "documents/project/children.md（高レベルの子記述、親専用）"
+    project_example: "documents/project/（親project contextの配置例）"
+    reference_example: "documents/reference/（共有referenceの配置例）"
+    children_overview_example: "documents/project/children.md（子概要を置く場合の配置例）"
 
 child_projects:
   each_child:
     documents: "独自のINDEX.mdを持つ独立したdocuments/ツリー"
     parent_awareness: false
-    rule: "子のINDEX.mdは親ドキュメントをリストしない。子は自己完結する。"
+    rule: "子のINDEX.mdは親ドキュメントを自分のauthorityとして列挙しない。子は自身のProject Documentationで自己完結する。"
 ```
 
-### 親のchildren.md
+### 親側の子概要
 
 ```yaml
-placement: "documents/project/children.md"
-purpose: "子プロジェクトの高レベル概要 — 名前、境界、責務、サービス間通信"
-audience: "親レベルのAIエージェントのみ"
-rule: "子はこのファイルを参照しない。明示的に協調されない限り、子は互いを認識しない。"
+placement: "project固有。documents/project/children.md は標準的な配置例"
+purpose: "子projectの高レベル概要 — 名前、境界、責務、service間communication"
+audience: "親レベルの利用者 / agent"
+rule: "子側の詳細authorityを複製しない。協調が必要な場合は明示されたcross-project referenceとして扱う。"
 ```
 
 ---
