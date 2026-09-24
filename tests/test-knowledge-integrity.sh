@@ -33,6 +33,7 @@ for file in \
   documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/MANIFEST.md \
+  documents/knowledge/records/2026-06-13-operational-discipline-commit/RECORD.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -116,6 +117,12 @@ done
 # Every canonical code-design section must expose traceability.
 for file in documents/knowledge/subjects/code-design/S*.md; do
   grep -Fqx '## Sources' "$file"     || fail "code-design section without Sources: $file"
+done
+
+# Every canonical engineering-operation section must expose traceability.
+for file in documents/knowledge/subjects/engineering-operation/S*.md; do
+  grep -Fqx '## Sources' "$file" \
+    || fail "engineering-operation section without Sources: $file"
 done
 
 # Every record directory must identify its raw source event or snapshot.
