@@ -11,7 +11,7 @@ governed_aspects:
   history_tracking: "変更・移動・削除の履歴はGit historyを利用する"
 not_governed:
   - "いつcommit/pushするか（engineering-operationのversion-control authority）"
-  - "branchを作るかどうか（engineering-operation / work-identityの責務）"
+  - "Work固有branch / worktreeのidentity・lifecycle・materialization（work-identityが主所有。default branch guardやcommit / push authorityはengineering-operation）"
   - "code changeのreview process（engineering-operation / project-local workflowの責務）"
 ```
 
@@ -58,7 +58,7 @@ rules:
 ```yaml
 not_governed:
   - "いつcommit/pushするか（`../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` が主所有）"
-  - "branch / worktreeをどうmaterializeするか（engineering-operation / work-identityへroute）"
+  - "Work固有branch / worktreeをどうmaterializeするか（work-identityが主所有。default branch guardやcommit / push authorityはengineering-operation）"
   - "commit size / granularity（project-local engineering workflowへroute）"
 ```
 

@@ -13,7 +13,7 @@ encapsulation-horizon
 code-design
   選択済みboundaryをcodeとしてどう実現するか
 
-engineering-operation（候補）
+engineering-operation
   engineering changeをどう調査・実行・検証・報告するか
 ```
 

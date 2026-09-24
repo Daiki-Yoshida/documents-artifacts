@@ -8,11 +8,15 @@ source_kind: "legacy_second_source_artifact_git_blob"
 file_count: 14
 h2_count: 129
 inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でsemantic auditが必要"
+current_semantic_classification: "129/129 H2 owner/history/replacement classified"
+remaining_gaps: ["provenance", "optional_line_parity", "artifact_reprojection"]
 ```
 
 ## 読み方
 
 旧artifact 14文書について、**基準commitに存在する全H2見出しと開始行**を機械抽出した一覧。H2の一致・数・関連subjectの推定は、原文を追跡できたことや現在の採用状態を証明しない。各項目の完了にはH3・本文の条件/例外/反論・後続recordの採否・現在のsubjectでの表現を突合する必要がある。
+
+**現在のsemantic classificationは129 / 129 H2についてowner / intentional history / replacement decisionへの分類完了。** 下表の「未完了」「詳細突合待ち」は、このmechanical inventoryを作成した初回監査時点のworking statusをhistoricalに残したものであり、現在statusではない。現在判定は [LEGACY_ARTIFACT_COVERAGE_AUDIT.md](LEGACY_ARTIFACT_COVERAGE_AUDIT.md) と各gap auditを参照する。逐語一致・全provenance回収・artifact再projectionは別の残課題である。
 
 - 正本の移行状況: [LEGACY_ARTIFACT_COVERAGE_AUDIT.md](LEGACY_ARTIFACT_COVERAGE_AUDIT.md)
 - 旧再構成候補: [TRACEABILITY.md](semantic-preservation-candidate/TRACEABILITY.md)（当時の別モデルへのmapping。現行6 subjectのcoverage証明ではない）
@@ -22,9 +26,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `6e3e4caccedccb8a13cdc6638c7ad3819a9aef6e`
 - H2: 8件
 - 候補ルート: encapsulation-horizon / 未整理のcode-design・engineering-operation (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 10 | Core Thinking Process | 詳細突合待ち |
 | 27 | Step 1: Define Boundaries & Contracts | 詳細突合待ち |
@@ -40,9 +44,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `5fd238fc44094a2ac1435792cfe2de5993801b2b`
 - H2: 12件
 - 候補ルート: encapsulation-horizon / 未整理のcode-design・engineering-operation (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 20 | Interface Design Rules | 詳細突合待ち |
 | 113 | Contract Evolution & Versioning | 詳細突合待ち |
@@ -62,9 +66,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `bb6103f87c5259b6b339f8a9497631044eedd011`
 - H2: 18件
 - 候補ルート: encapsulation-horizon / 未整理のcode-design・engineering-operation (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 12 | Redefining "Object-Oriented" | 詳細突合待ち |
 | 34 | Core Philosophy: Bounded Contracts & Explicit Interfaces | 詳細突合待ち |
@@ -90,9 +94,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `78b4e0586234ef67a9a880fba5168f6e1e84da3f`
 - H2: 5件
 - 候補ルート: encapsulation-horizon / 未整理のcode-design・engineering-operation (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 13 | Read Order | 詳細突合待ち |
 | 24 | Document Split Policy | 詳細突合待ち |
@@ -105,9 +109,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `4538ada096c5e8ad8b872ca347152715592469d6`
 - H2: 5件
 - 候補ルート: encapsulation-horizon / 未整理のcode-design・engineering-operation (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 29 | 1. Module Public Surface (default-internal) | 詳細突合待ち |
 | 81 | 2. Shared Kernel & Cross-Cutting Placement | 詳細突合待ち |
@@ -120,9 +124,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `45d064572ac884ccb5afd8765387e4662e3a94f2`
 - H2: 12件
 - 候補ルート: workspace-structure / development-execution / development-safety / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 10 | Development Environment Contract | 詳細突合待ち |
 | 26 | Priority Order | 詳細突合待ち |
@@ -142,9 +146,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `90c8e33dd080f9bd18fe9115fc70e2e74937c0df`
 - H2: 7件
 - 候補ルート: workspace-structure / development-execution / development-safety / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 11 | 1. Host Dependency Boundary | 詳細突合待ち |
 | 41 | 2. Docker Standards | 詳細突合待ち |
@@ -159,9 +163,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `fe05113a4cdc8e1166a9ac6ada60b49310250c60`
 - H2: 8件
 - 候補ルート: workspace-structure / development-execution / development-safety / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 11 | 1. New Project Setup | 詳細突合待ち |
 | 72 | 2. Brownfield Adoption | 詳細突合待ち |
@@ -177,9 +181,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `95c831e350559203577e95bb3925f144bb2bbcae`
 - H2: 6件
 - 候補ルート: workspace-structure / development-execution / development-safety / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 14 | Read Order | 詳細突合待ち |
 | 25 | Foundational Lens | 詳細突合待ち |
@@ -193,9 +197,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `b1ed4e30545321a1d19f4340386fe832d4d67479`
 - H2: 11件
 - 候補ルート: workspace-structure / development-execution / development-safety / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 11 | 1. Repository Topology | 詳細突合待ち |
 | 51 | 2. Project Root and Primary Checkouts | 詳細突合待ち |
@@ -214,9 +218,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `0c00113e4cdf39f2e87027f6f4d4fd13a3b54486`
 - H2: 10件
 - 候補ルート: documentation / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 10 | Core Principle: Information Accuracy First | 詳細突合待ち |
 | 33 | Scope: What This Strategy Governs | 詳細突合待ち |
@@ -234,9 +238,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `e51e6570940ec21ac0bba419922bf62529f6e302`
 - H2: 12件
 - 候補ルート: documentation / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 20 | Use Cases | 詳細突合待ち |
 | 33 | Use Case 1: New Project Setup | 詳細突合待ち |
@@ -256,9 +260,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `ceeb4082b4584a2876a22394f53ab63c4cda181a`
 - H2: 11件
 - 候補ルート: documentation / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 21 | 1. Top-Level Directory Layout | 詳細突合待ち |
 | 103 | 2. File Roles | 詳細突合待ち |
@@ -277,9 +281,9 @@ inventory_unit: "H2見出し。H3・本文・条件・例外は別途人手でse
 - Git blob: `cb10d7d1932e28f1d98f6311786b5cf90051ee0b`
 - H2: 4件
 - 候補ルート: documentation / work-identity (候補)
-- 現行subjectへの意味保存判定: **未完了**
+- 初回監査時の意味保存判定: **未完了（historical）**
 
-| 開始行 | 旧H2見出し（原文） | 進捗 |
+| 開始行 | 旧H2見出し（原文） | 初回監査status（historical） |
 |---:|---|---|
 | 13 | Read Order | 詳細突合待ち |
 | 23 | Foundational Lens | 詳細突合待ち |

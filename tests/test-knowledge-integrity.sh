@@ -222,6 +222,11 @@ inventory_files="$(grep -Ec '^## .*artifacts/' "$inventory" || true)"
 inventory_sections="$(grep -Ec '^\| [0-9]+ \| ' "$inventory" || true)"
 [[ "$inventory_files" == 14 ]] || fail "expected 14 inventory files, got $inventory_files"
 [[ "$inventory_sections" == 129 ]] || fail "expected 129 H2 inventory rows, got $inventory_sections"
+grep -Fq 'current_semantic_classification: "129/129 H2 owner/history/replacement classified"' "$inventory" \
+  || fail "inventory current semantic classification is stale"
+if grep -Fq '現行subjectへの意味保存判定: **未完了**' "$inventory"; then
+  fail "inventory still presents initial incomplete status as current"
+fi
 
 # Guard two later, explicitly adopted design-principles corrections against regression.
 altitude=documents/knowledge/subjects/encapsulation-horizon/S004_CONCEPT_ALTITUDE.md
