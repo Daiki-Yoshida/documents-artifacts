@@ -63,7 +63,7 @@ encapsulation-horizon の現在の主語は「境界面をどのscaleで硬化�
 
 > 選択済みのsoftware boundaryと責務を、依存方向・型・port・adapter・失敗・非同期・変換・testを含むcode structureへ落とし込む方法を扱う。
 
-| 知識 | code-design候補の責務 | 既存subjectとの接続 |
+| 知識 | code-designの責務 / 今後の拡張領域 | 既存subjectとの接続 |
 |---|---|---|
 | module public surface | code-level visibility / export / deep-import prevention | hardening対象そのものはencapsulation-horizon |
 | layer responsibilities | Domain / Application / Infrastructure / UIの依存とownership | repositoryの物理配置を扱うworkspace-structureとは別 |
@@ -109,17 +109,17 @@ code-designが所有しないもの:
 
 Performance:
 - caller-visible guarantee / boundary completeness → Encapsulation Horizon
-- batch / stream / pagination / async等のinteraction shape設計 → code-design候補
+- batch / stream / pagination / async等のinteraction shape設計 → code-design
 - benchmarkの実行環境・CI entrypoint → development-execution
 
 Contract Evolution:
 - hardening boundaryのseverity / confirmation level → Encapsulation Horizon
-- API/interface/wireの具体的compatibility mechanism → code-design候補
+- API/interface/wireの具体的compatibility mechanism → code-design
 - destructive migrationのoperation risk → development-safety
 
 Testing:
 - boundaryを独立test可能か → Encapsulation Horizonのsplit/hardening判断材料
-- unit / integration / contract / E2Eの目的、fake、suite、placement → code-design候補
+- unit / integration / contract / E2Eの目的、fake、suite、placement → code-design
 - CIでどのcommandから実行するか → development-execution
 - destructive integration testの安全性 → development-safety
 
