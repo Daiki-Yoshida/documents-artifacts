@@ -45,7 +45,7 @@ DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わな�
 | 179 | Architectural Boundaries (Layering) | feature-first / layer-inside、Domain/Application/Infrastructure/UI依存方向、contract owner、UseCaseの調停と非所有、状態ownerと越境outcomeの失敗責任、DTO配置 | S002は責務意味、S003は硬化面を扱う。**具体的layer依存方向・DTO/port配置の独立規範は未移行** | state ownershipはDP1提案5→DP2で修正採用。他のlayer具体契約の元sourceは要確認 |
 | 281 | External Dependency Boundary Policy | project-owned domain語彙、vendor typeの内向漏洩禁止、wrap/adapt発火条件、UI/Infrastructure内の直接依存例外 | S005が漏洩channelの一般原理を扱うが、**SDK等の例外込み判断基準は未移行** | L中心。元source／現行採否の確認が必要 |
 | 315 | Domain Purity Rules | 技術機構とdomain概念の出自を分離、Date/Color等がdomain概念となる例外、Clock/Logger等の扱い | S008のmisreadingに「Domain purity ≠ Date/Color/Text禁止」がある。**具体例と依存禁止条件は未移行** | EHに関連原文あり。ただし現行の詳細運用に関する独立source要確認 |
-| 338 | Dependency Injection (DI) | behavioral componentのconstructor DI、Service Locator禁止、volatile dependencyのnew禁止、stable Entity/VOはnew可能、Entity/VOはconstructor DIしない・必要サービスはmethod引数 | S001の内部自由・S005の境界完全性は原理的関連のみ。**具体的DI運用契約は現行6 subject内で独立authority未確認** | L中心。特に「全dependencies MUST constructor」の適用境界とEntity例外の採否を元sourceで確認 |
+| 338 | Dependency Injection (DI) | behavioral componentのconstructor DI、Service Locator禁止、volatile dependencyのnew禁止、stable Entity/VOはnew可能、Entity/VOはconstructor DIしない・必要サービスはmethod引数 | S001の内部自由・S005の境界完全性は原理的関連のみ。**具体的DI運用契約は初期code-designでも未昇格** | L中心。特に「全dependencies MUST constructor」の適用境界とEntity例外の採否を元sourceで確認 |
 | 368 | Error Handling Strategy | expected business failureは既存Result/Either/Outcome優先、boolean/null/通常例外を失敗制御に使わない、standard typeがなければbootstrap可能、障害は例外可、技術例外はboundaryで意味へ翻訳・原因は診断用保持 | S008の「Resultは全例外禁止ではない」だけが部分対応。**既存type優先・bootstrap例外・boundary translationの詳細は未移行** | DP4でDbExceptionを外に漏らす例の不整合と修正が確認できる。全体の元sourceは要確認 |
 | 419 | Concurrency & Async Contracts | asyncをsignatureに明示、thread-safety分類、長時間IOのcancel、Domainにscheduler漏洩禁止、共有可変状態保護、所有外境界でasync blocking禁止 | S005にdeterminism / resource / failureのleakage channelはある。**具体的async契約は未移行** | L中心。元source・評価を要確認 |
 | 435 | Data Model & Internal Implementation | domain complexity別のRich/Lightweight選択、domain規則の所有は一貫、内部paradigm自由、rich mutableとtype-driven state transition | S001/S005が内部自由の原則を保持するが、**model選択とstate lifecycleの具体条件は未移行** | L中心。元source・評価を要確認 |
@@ -67,7 +67,7 @@ DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わな�
 - `DESIGN_PHILOSOPHY.md`：EHの原理・地平線・Concept Altitudeは旧日本語原文から再編済み。一方、Composition Over Inheritance、Reliability & Safety、External Dependency Containment、Domain Purity、Design/Mistake Priority、Performance vs. Abstractionは個別に意味照合が必要。特に後続DP2・DP5の採用内容と旧日本語原文のままの記述を同一視しない。
 - `AI_WORKFLOW.md`：境界設計の原理だけでなく、Step 1の要求結果・pre-scan / Step 3の要求達成をcontract conformanceと分ける検証 / Operational Disciplineのreporting・commit/push・確認 / Brownfield方針がある。現行development-executionは**実行環境とcommand**、development-safetyは**操作の安全性**が主責務であり、AI作業過程をすべて自動的に引き受けるわけではない。横断workflowのownerは別途判断する。
 - `DESIGN_PHILOSOPHY.md` のPerformance policyと `CODING_STANDARDS.md` のPerformance-Shaped Contractsは、当初の提案保留（DP2/DP3）から後続の条件付き改訂（DP5）までの履歴をセットで読む。
-- 旧INDEXのOwnership Mapは旧packagingの説明であり、現行6 subjectの単純な置換表として使用しない。
+- 旧INDEXのOwnership Mapは旧packagingの説明であり、現行subjectの単純な置換表として使用しない。
 
 ## 4. 今回のsourceで修正できる現行規範
 
