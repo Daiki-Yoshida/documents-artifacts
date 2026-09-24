@@ -225,6 +225,13 @@ if grep -Fq 'CONTRACT_L2_public_additive:' "$contract"; then
   fail "obsolete Contract L2 additive-only rule reintroduced"
 fi
 
+# Documentation root is stable, but project/reference internal directories are optional examples.
+doc_routing=documents/knowledge/subjects/documentation/S002_ROUTING_AND_STRUCTURE.md
+doc_workflow=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
+grep -Fq 'documents/project/ は標準的な配置例だが必須directoryではない' "$doc_routing"   || fail "documentation project/ layout became mandatory again"
+grep -Fq 'documents/reference/ は標準的な配置例だが必須directoryではない' "$doc_routing"   || fail "documentation reference/ layout became mandatory again"
+grep -Fq 'project/referenceを必須shapeにせず' "$doc_workflow"   || fail "documentation setup lost flexible internal layout rule"
+
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do
   if grep -Eq '^(document_type: "canonical_knowledge"|authority: "canonical_source")' "$file"; then
