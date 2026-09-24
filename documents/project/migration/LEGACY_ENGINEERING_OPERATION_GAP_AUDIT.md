@@ -15,7 +15,7 @@ candidate_subject: "engineering-operation"
 
 旧 `AI_WORKFLOW.md` は、software designそのものだけでなく、要求理解・事前scan・確認境界・実装・検証・version-control・報告・brownfieldという**engineering changeの進め方**を1本のFLOWとして扱っていた。
 
-現行6 subjectのうち、`development-execution` はcommand/runtime、`development-safety` はoperation risk、`work-identity` はWork lifecycleを主語にしており、このFLOW全体の単一ownerではない。
+現行7 subjectのうち、`development-execution` はcommand/runtime、`development-safety` はoperation risk、`work-identity` はWork lifecycleを主語にしており、このFLOW全体の単一ownerではない。
 
 この監査は旧8 H2を現在の責務へ分解し、第0情報源が確認できる部分と旧artifactにしか残らない部分を区別する。
 
@@ -33,9 +33,9 @@ candidate_subject: "engineering-operation"
 | 旧節 | 旧artifactで扱う内容 | 現行subjectとの関係 | source / 評価状態 |
 |---|---|---|---|
 | Core Thinking Process | user intent / required outcome → contract → risk gate → implementation → verification | 全体FLOWのownerなし。Encapsulation Horizonはcontract/boundary判断だけを所有 | baseline L。DP1/DP2はoutcomeとcontractの分離を後続で補強 |
-| Step 1: Define Boundaries & Contracts | component type、pre-implementation scan、proportionality、module/horizon、responsibility、semantic identity、state ownership、dependency spread、mapping、performance、compatibility、L0-L3 confirmation | boundary/horizonはencapsulation-horizon、mapping等はcode-design候補、作業順序と確認はengineering-operation候補 | 41f commit、DP1/DP2、DP5で一部source-backed。全scan項目の原提案は未取得 |
-| Step 2: Implementation | shell/core logic、constructor injection、内部paradigm、contract遵守 | 実装構造はcode-design候補。FLOWとして「設計後に実装」はengineering-operation候補 | 詳細は主にbaseline L。第0情報源不足 |
-| Step 3: Verification | contract conformanceとrequirement satisfactionを別に確認、narrowest meaningful path、boundary check、performance verification | test strategyの具体はcode-design候補。作業完了判定はengineering-operation候補 | DP1提案1→DP2で修正採用。performanceはDP5 |
+| Step 1: Define Boundaries & Contracts | component type、pre-implementation scan、proportionality、module/horizon、responsibility、semantic identity、state ownership、dependency spread、mapping、performance、compatibility、L0-L3 confirmation | boundary/horizonはencapsulation-horizon、mapping等はcode-design、作業順序と確認はengineering-operation候補 | 41f commit、DP1/DP2、DP5で一部source-backed。全scan項目の原提案は未取得 |
+| Step 2: Implementation | shell/core logic、constructor injection、内部paradigm、contract遵守 | 実装構造はcode-design。FLOWとして「設計後に実装」はengineering-operation候補 | 詳細は主にbaseline L。第0情報源不足 |
+| Step 3: Verification | contract conformanceとrequirement satisfactionを別に確認、narrowest meaningful path、boundary check、performance verification | test strategyの具体はcode-design。作業完了判定はengineering-operation候補 | DP1提案1→DP2で修正採用。performanceはDP5 |
 | Operational Discipline | reporting language/content、test before done、commit/pushしない、default branchでbranch作成、clarification | engineering-operation候補。documentationのGit規則やdevelopment-safetyとは別 | 大半はbaseline Lのみ。commit/push等の元チャットsource未取得 |
 | Brownfield Policy | new/modified codeはstandardsに従う、project-local rule優先、周辺違反を勝手に直さない、scope expansion禁止 | engineering-operation候補。development-executionのbrownfield environment adoptionとは別 | 5048 commit messageでpolicy追加は確認。詳細条文の第0情報源は未取得 |
 | Special Instructions | 「どう進める？」では即codeせずapproach比較・trade-off・推奨 | engineering-operation候補。ただしagent interaction guidanceとして独立性要検討 | baseline Lのみ。元source未取得 |
