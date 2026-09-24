@@ -188,10 +188,10 @@ This confirms the projection rule:
 
 > **compression != semantic weakening**
 
-## Verdict for this stage
+## Final verdict
 
 No known legacy/current semantic area requires returning to the old 3-module artifact architecture.
 
-The candidate is suitable for continued routing simulation and final semantic review.
+The candidate subsequently passed routing / cross-file authority review and was promoted to formal `artifacts/`. The old 3-module runtime tree was removed.
 
-This audit does **not** yet authorize replacing `artifacts/`; promotion remains gated on final candidate review and distribution-tool migration.
+This audit remains historical evidence for the semantic promotion decision; current runtime authority is the formal Artifact v2 tree derived from current knowledge.

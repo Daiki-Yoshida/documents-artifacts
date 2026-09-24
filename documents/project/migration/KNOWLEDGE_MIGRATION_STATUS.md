@@ -6,6 +6,7 @@ authority: "derived_from_documents/knowledge"
 language: "Japanese"
 checked_main_base: "7bc486da868fd1c6d2553ab225ae18b965b1a30c"
 artifact_v2_content_promotion_commit: "08785223b2200cf6548b11202c0477c112202aa1"
+artifact_v2_distribution_migration_commit: "728ea48a3c40eb6bbab58721eeb46aca883613af"
 checked_date: "2026-09-24"
 ```
 

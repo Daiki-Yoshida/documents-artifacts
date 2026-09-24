@@ -49,6 +49,7 @@ for file in \
   documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md \
   documents/project/migration/ARTIFACT_V2_ROUTING_SIMULATION.md \
   documents/project/migration/ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md \
+  documents/project/migration/ARTIFACT_V2_PROMOTION_VALIDATION.md \
   documents/project/migration/SHORT_APPROVAL_PROVENANCE_AUDIT.md \
   artifacts/INDEX.md; do
   require_file "$file"
@@ -181,6 +182,7 @@ entrypoints=(
   documents/project/migration/ARTIFACT_V2_LEGACY_REGRESSION_AUDIT.md
   documents/project/migration/ARTIFACT_V2_ROUTING_SIMULATION.md
   documents/project/migration/ARTIFACT_V2_CROSS_FILE_AUTHORITY_AUDIT.md
+  documents/project/migration/ARTIFACT_V2_PROMOTION_VALIDATION.md
   artifacts/INDEX.md
   artifacts/*/INDEX.md
   artifacts/*/*.md
