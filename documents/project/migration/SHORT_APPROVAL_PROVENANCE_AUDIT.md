@@ -25,11 +25,29 @@ audit_date: "2026-09-24"
 | [subject-section-prefix](../../knowledge/records/2026-09-21-subject-section-prefix/RECORD.md)「一旦それやってほしい」 | [PR #25](../../knowledge/records/2026-09-21-subject-prefix-implementation/RECORD.md) | ユーザー原文自身が`S001_CORE_PRINCIPLE.md`例を示し、PRが導入範囲・規則を説明 | `SNNN_`の詳細仕様に至る直前提案全文は未取得 |
 | [add-more-subjects](../../knowledge/records/2026-09-22-add-more-subjects/RECORD.md)「ほかのsubjectsも作成していこう」 | [PR #26](../../knowledge/records/2026-09-21-development-documentation-subjects-implementation/RECORD.md) | 追加指示と後続のdocumentation / development-environment作成が確認可能 | 具体的に何を含めるかの直前AI提案原文は未取得 |
 | [development-environment-subject-split](../../knowledge/records/2026-09-22-development-environment-subject-split/RECORD.md)「行っていく。」 | [PR #27](../../knowledge/records/2026-09-21-development-subject-split-implementation/RECORD.md) | 同一record内にユーザーの分割意見原文も保存。PRが実装した責務分解を説明 | その間のAIによる分割提案の完全原文は未取得 |
-| [workspace-work-identity-alignment](../../knowledge/records/2026-09-22-workspace-work-identity-alignment/RECORD.md)「修正を行って」 | [PR #27](../../knowledge/records/2026-09-21-development-subject-split-implementation/RECORD.md) | 旧recordには承認対象とされた修正案のテキストが既に存在し、PRも後続実装を記載 | 保存済み修正案テキストと元チャットの逐語一致、直前の議論全文は未検証 |
+| [workspace-work-identity-alignment](../../knowledge/records/2026-09-22-workspace-work-identity-alignment/RECORD.md)「修正を行って」 | [PR #27](../../knowledge/records/2026-09-21-development-subject-split-implementation/RECORD.md)、[conversation transition context](../../knowledge/records/2026-09-22-workspace-work-identity-transition-context/RECORD.md) | 旧recordの承認対象テキストに加え、当時作成されたLibraryのcontext移行artifactがworkspace/work-identity監査の問題1〜4・推奨修正・作業方針を詳細に保持する | transition artifactは元チャット直前assistantメッセージそのものとは証明できない。逐語的approval referentの完全復元は未完了 |
 | [six-subject-cross-audit-fixes](../../knowledge/records/2026-09-22-six-subject-cross-audit-fixes/RECORD.md)「修正して」 | [PR #28](../../knowledge/records/2026-09-22-six-subject-cross-audit-implementation/RECORD.md) | 後続PRには実施した横断監査修正とレビュー時の追加修正が記録されている | 指示直前のAI監査・修正提案の完全原文は未取得。PRでの後続レビュー内容を承認対象へ遡及させない |
 | [knowledge-integrity-repair](../../knowledge/records/2026-09-24-knowledge-integrity-repair/RECORD.md)「修正を開始。」 | [PR #31](../../knowledge/records/2026-09-23-knowledge-integrity-implementation/RECORD.md) | 後続PRに実施内容・レビューによる追加修正が記録されている | 指示直前のAI調査本文とPR本文の同一性は未検証 |
 
 上記の関連付けは**話題と時間順に基づく調査用のリンク**であり、PR本文を「AIが直前に提案した原文」として認定するものではない。PRは作成後・レビュー後に更新されるため、取得時点の本文とPR作成当初の本文すら同一とは限らない。
+
+## Library conversation artifactの追加回収
+
+2026-09-22 08:28 JST頃に作成されたChatGPT Library writing blockを取得し、[workspace/work-identity transition context](../../knowledge/records/2026-09-22-workspace-work-identity-transition-context/RECORD.md) として788行の本文を無要約・無抜粋で保存した。
+
+このartifactには、PR #27の作業中contextとして次が詳細に含まれる。
+
+- development-environmentをworkspace-structure / development-execution / development-safetyへ分割し、work-identityを維持する責務整理
+- workspace-structure / work-identityのstatic / dynamic境界
+- `.worktrees/` path矛盾
+- `.worktrees/` tracking / ignore矛盾
+- 旧Task Worktreeのhistory化
+- Workspace Repository / Project Repository / Project Rootの接続
+- REPO selector ownership
+- PR #27へ行う具体的修正案
+- artifactsを明示指示なしに変更しない作業方針
+
+これは**会話由来の保存artifact**として、GitHub PR本文より承認前contextに近い証拠である。一方、Library writing blockが「修正を行って」の直前assistantメッセージそのものをbyte-for-byte保存したものとは証明できない。そのため、Issue #30の「直前AI提案原文を取得」という完了条件を満たしたとは扱わない。
 
 ## 今回保存したGitHub sourceの範囲
 
