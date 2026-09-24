@@ -29,24 +29,24 @@ semantic_migration_complete: false
 
 | 旧節 | 現行knowledgeでの状態 | 主なowner / gap | source状態 |
 |---|---|---|---|
-| Redefining "Object-Oriented" | **部分移行**。shell / internal freedomの原理はEHと接続するが、Rich/Lightweight Domain ModelやDI shellの具体は未移行 | code-design候補 | 詳細はlegacy L中心 |
+| Redefining "Object-Oriented" | **部分移行**。shell / internal freedomの原理はEHと接続するが、Rich/Lightweight Domain ModelやDI shellの具体は未移行 | code-design | 詳細はlegacy L中心 |
 | Core Philosophy: Bounded Contracts & Explicit Interfaces | **原理は移行済み**。contractはsignatureだけでなくsemantics/constraintsを含むことをEHが保持 | encapsulation-horizon | EH source + 1ea/1b1 commitで補強 |
 | Boundaries Are Recursive | **移行済み** | encapsulation-horizon | EH旧原文とcurrent subjectにtraceabilityあり |
-| Module — The Primary Boundary | **原理は移行済み**。module=default prior / floorではない。feature-first/layer-insideの具体は未移行 | EH + code-design候補 | EH source + 1b1等 |
-| Module Shell vs Internal Implementation | **主要原理は移行済み**。boundary strict / interior flexibleとleakage channelをS001/S005が保持。DTO/dependency direction等はcode-design gap | EH + code-design候補 | EH source + 1ea/1b1 |
+| Module — The Primary Boundary | **原理は移行済み**。module=default prior / floorではない。feature-first/layer-insideの具体は未移行 | EH + code-design | EH source + 1b1等 |
+| Module Shell vs Internal Implementation | **主要原理は移行済み**。boundary strict / interior flexibleとleakage channelをS001/S005が保持。DTO/dependency direction等はcode-design gap | EH + code-design | EH source + 1ea/1b1 |
 | Encapsulation Horizon | **移行済み**。current subjectの中心 | encapsulation-horizon | 旧日本語source +関連commit |
-| Common Misreadings to Prevent | **大部分移行**。S008に誤読guardあり。ただしResult/Domain purity等の具体rule ownerは未整備 | EH + code-design候補 | 41f review commit、後続source |
-| Responsibility-Driven Design | **原理は移行済み**。責務・AND・seam costはS002/S003/S006。code-specific anti-patternは未移行 | EH + code-design候補 | EH source、DP2 state ownership |
-| Composition Over Inheritance | **未移行** | code-design候補 | baseline L中心。現行採否の第0情報源不足 |
-| Reliability & Safety | **部分移行**。boundary safety / failure leakageの原理はEHに関連するが、constructor validation、type-driven state、RAII等のcode ruleは未移行 | code-design候補。destructive operationはdevelopment-safetyと別 | baseline L中心 |
-| Appropriate Complexity | **部分移行**。YAGNIはhardening/concept altitudeで扱うが、一般的abstraction complexity規則は独立未移行 | code-design候補またはengineering-operation候補 | baseline L中心 |
+| Common Misreadings to Prevent | **大部分移行**。S008に誤読guardあり。ただしResult/Domain purity等の具体rule ownerは未整備 | EH + code-design | 41f review commit、後続source |
+| Responsibility-Driven Design | **原理は移行済み**。責務・AND・seam costはS002/S003/S006。code-specific anti-patternは未移行 | EH + code-design | EH source、DP2 state ownership |
+| Composition Over Inheritance | **未移行** | code-design | baseline L中心。現行採否の第0情報源不足 |
+| Reliability & Safety | **部分移行**。boundary safety / failure leakageの原理はEHに関連するが、constructor validation、type-driven state、RAII等のcode ruleは未移行 | code-design。destructive operationはdevelopment-safetyと別 | baseline L中心 |
+| Appropriate Complexity | **部分移行**。YAGNIはhardening/concept altitudeで扱うが、一般的abstraction complexity規則は独立未移行 | code-designまたはengineering-operation候補 | baseline L中心 |
 | Concept Altitude | **移行済み＋後続修正済み**。one-sentence testをneutrality signalへ限定 | encapsulation-horizon | EH source + DP1→DP2 |
-| External Dependency Containment | **原理の一部のみ**。leakage/ownershipに接続するが、wrap/allow/prohibitの具体規則は未移行 | code-design候補 | baseline L中心 |
-| Domain Purity (Mechanism vs Concept) | **誤読guardのみ移行**。origin-based ownershipの詳細・例は未移行 | code-design候補 | EHに関連概念、詳細はL中心 |
-| Internal Paradigm Agnosticism | **原理は概ね移行**。inside flexibleはEHに存在。module/file内consistent等の具体規則は未移行 | EH + code-design候補 | EH source / L |
+| External Dependency Containment | **原理の一部のみ**。leakage/ownershipに接続するが、wrap/allow/prohibitの具体規則は未移行 | code-design | baseline L中心 |
+| Domain Purity (Mechanism vs Concept) | **誤読guardのみ移行**。origin-based ownershipの詳細・例は未移行 | code-design | EHに関連概念、詳細はL中心 |
+| Internal Paradigm Agnosticism | **原理は概ね移行**。inside flexibleはEHに存在。module/file内consistent等の具体規則は未移行 | EH + code-design | EH source / L |
 | Design Priority Order | **未移行**。現在のsubject横断priorityとして正式ownerなし | engineering-operation候補またはcode-design判断原則 | baseline L中心 |
 | Mistake Prevention Priority | **未移行**。一部個別ruleは存在するが5段ranking自体はcurrent authorityなし | engineering-operation候補 | baseline L中心 |
-| Performance vs. Abstraction Policy | **source-backedだが完全移行前**。resource guaranteeはEH S005に接続。interaction shape redesignはcode-design候補 | EH + code-design候補 | DP1提案4→保留→PR #17で条件付き実装 |
+| Performance vs. Abstraction Policy | **source-backedだが完全移行前**。resource guaranteeはEH S005に接続。interaction shape redesignはcode-design | EH + code-design | DP1提案4→保留→PR #17で条件付き実装 |
 
 ## 2. Encapsulation Horizonへ残すもの
 
@@ -63,9 +63,9 @@ semantic_migration_complete: false
 
 これらは「どこを硬化し、何をcaller-visible guaranteeとして閉じるか」という一つの問いで説明できる。
 
-## 3. Code Designへ回す候補
+## 3. Code Designへ移した／今後移す知識
 
-次はboundaryを決めた後のcode realizationであり、EHへ入れると主語が変わる。
+次はboundaryを決めた後のcode realizationであり、EHへ入れると主語が変わる。回収済みreferenceで裏付けられる内部paradigm・inheritance・design priority等は `code-design` 初期subjectへ移行した。詳細sourceが不足する項目は未昇格。
 
 - OOP shellの具体的DI / Domain Modelの使い分け
 - feature-first / layer-insideのcode layout
