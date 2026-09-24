@@ -24,6 +24,8 @@ for file in \
   documents/knowledge/system/SUBJECT_MODEL.md \
   documents/knowledge/system/TRACEABILITY_MODEL.md \
   documents/knowledge/subjects/INDEX.md \
+  documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/MANIFEST.md \
+  documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -70,6 +72,7 @@ entrypoints=(
   documents/knowledge/system/INDEX.md
   documents/knowledge/subjects/INDEX.md
   documents/knowledge/subjects/*/INDEX.md
+  documents/knowledge/subjects/*/S*.md
   documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
   documents/project/REPOSITORY_STRUCTURE.md
   documents/project/migration/KNOWLEDGE_MIGRATION_STATUS.md
