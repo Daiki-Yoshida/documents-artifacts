@@ -16,7 +16,7 @@ semantic_coverage_verdict: "未完了"
 
 ## 目的と制約
 
-旧 `artifacts/` 14 Markdownと現在の `documents/knowledge/subjects/` 7 subjectの間で、未移行の意味を発見するための**監査台帳**。現行の正式規範・独立したsource recordではない。
+旧 `artifacts/` 14 Markdownと現在の `documents/knowledge/subjects/` 8 subjectの間で、未移行の意味を発見するための**監査台帳**。現行の正式規範・独立したsource recordではない。
 
 旧artifactは元々第2情報源であり、現在のGitに存在するからといって第0情報源へ昇格させない。旧source log、当時の議論・Issue・実験を可能な限り原文recordとして辿り、採用・却下・訂正を確認してからsubjectへ整理する。
 
@@ -148,7 +148,7 @@ ENV1〜3は後続の実装説明を含むが、旧env artifactの各行が全て
 
 ## 7. 現在の設計・実装知識で検証対象となる具体的な差分
 
-具体的な契約・条件・例外を17 H2まで深掘りした結果は [LEGACY_CODE_DESIGN_GAP_AUDIT.md](LEGACY_CODE_DESIGN_GAP_AUDIT.md) を参照する。元sourceを確認できるConcept Altitudeと公開契約L2の2件のみ、後続採用判断に基づいて現行encapsulation-horizon本文を訂正した。その他の旧artifactにしか残っていない規範は未移行扱いを維持する。
+具体的な契約・条件・例外を17 H2まで深掘りした結果は [LEGACY_CODE_DESIGN_GAP_AUDIT.md](LEGACY_CODE_DESIGN_GAP_AUDIT.md) を参照する。初回監査時点ではConcept Altitudeと公開契約L2の2件だけを修正したが、その後versioned source snapshotとGit commit patchを回収し、source-backedなcode realization規範を `code-design` へ正式移行した。さらにOperational Discipline / Brownfield / initial workflowのsource recovery後、change-process規範を `engineering-operation` へ正式移行した。旧artifact本文だけしか根拠がない細則は引き続き未検証として扱う。
 
 旧 `CODING_STANDARDS.md` では、Interface Design Rules（契約作成threshold）、Contract Evolution、Performance-Shaped Contracts、Layering、External Dependency Boundary、Domain Purity、DI、Error Handling、Concurrency & Async、Data Model、Mapping & Conversion、Testing Strategyを**それぞれ独立したH2節**として保持する。これに対し、現行のencapsulation-horizonは境界硬化・概念高度・contract completenessなどの設計原理が中心である。
 
