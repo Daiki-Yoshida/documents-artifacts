@@ -37,7 +37,7 @@ content:
   efficiency:
     - "focus_files: エージェントが優先すべきglobパターン"
     - "current_priority: 現在の開発フォーカス"
-rule: "エントリファイルはdocuments/INDEX.mdへルーティングする。プロジェクトの詳細は含めない。"
+rule: "エントリファイルはdocuments/INDEX.mdへルーティングする。agentが起動直後に必要なproject-local operational constraintsは保持してよいが、詳細project knowledgeを複製せずdocuments/配下へ委ねる。"
 ```
 
 ### ステップ2: documents/ディレクトリ作成
@@ -210,3 +210,5 @@ rules:
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md`
+- `../../records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md`
