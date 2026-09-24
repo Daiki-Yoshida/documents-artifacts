@@ -363,6 +363,8 @@ success_output:
 - Work Root全体のpurge
 - shared runtime/cache削除
 
+これらの実行可否・確認境界は `../development-safety/S002_DESTRUCTIVE_OPERATIONS.md` / `S005_CONFIRMATION_AND_REREAD.md` が主所有する。この文書は対象Work / repository / branch / pathの解決と通常remove semanticsだけを所有する。
+
 ---
 
 ## なぜREPOを単一repoでも必須にするか
