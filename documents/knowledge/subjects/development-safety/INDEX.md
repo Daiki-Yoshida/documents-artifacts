@@ -2,7 +2,7 @@
 
 このsubjectは、**開発操作をどう安全に行い、失敗をどう診断・復旧するか**を扱う。
 
-Work固有resourceのownership/lifecycleは `../work-identity/`、実行環境の具体的materializationは `../development-execution/` が主所有する。
+Work固有resourceのownership/lifecycleは `../work-identity/`、実行環境の具体的materializationは `../development-execution/` が主所有する。 engineering change全体の進行順序・VCS・reportingは `../engineering-operation/` が主所有し、このsubjectはrisk / destructive operation / diagnosis / recoveryを所有する。
 
 ## 構成
 
