@@ -130,19 +130,21 @@ ENV1〜3は後続の実装説明を含むが、旧env artifactの各行が全て
 | 対象artifact | 利用可能なsource evidence | 既存subjectの主な対応先（暫定） | sourceと意味の未確認部分 |
 |---|---|---|---|
 | design-principles/AI_WORKFLOW.md | initial/final snapshot、Operational Discipline commit、Brownfield commit、DP1/DP2 | engineering-operation +各domain ownerへのrouting | historical wordingをcurrent普遍規範へ過剰一般化しない |
-| design-principles/CODING_STANDARDS.md | DP1〜DP7（主に後続改訂） | encapsulation-horizon（境界原理・変更level） | DI、層責務、外部依存、Result/例外、非同期、モデル・変換、テストの詳細原文と現行owner |
-| design-principles/DESIGN_PHILOSOPHY.md | JP内ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md、DP1〜DP7 | encapsulation-horizon（当該原本17 H2を再配置） | その他の設計原理の原資料、採用後の未移行部分 |
+| design-principles/CODING_STANDARDS.md | versioned source snapshots + DP1〜DP7 | code-design + encapsulation-horizon | source-backed detailをcode-designへ移行済み。EHはboundary hardening / change levelのみ主所有 |
+| design-principles/DESIGN_PHILOSOPHY.md | EH旧日本語原本 + versioned source snapshots + DP1〜DP7 | encapsulation-horizon + code-design | EH原理とcode realizationへ分割。Design/Mistake Priorityもcode-design/S012へ移行 |
 | design-principles/INDEX.md | DP2・DP6・DP7（当時のrouting変更の一部） | subjects/INDEX.mdは現行routingのみ | 旧packaging説明と固有規範の峻別・当時の全ownership mapの対応 |
-| design-principles/PROJECT_STRUCTURE.md | DP5・DP6（runtime seam・contract test）、JPのEncapsulation原本は間接資料 | encapsulation-horizon（公開境界の原理のみ） | shared kernel、runtime topology、composition root、test placementの実装契約 |
-| development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md | JP内同名日本語文書、ENV1〜ENV3 | development-execution / work-identity / workspace-structure / development-safety | 英語版の追加条件・旧思想からの変更の時系列 |
+| design-principles/PROJECT_STRUCTURE.md | PROJECT_STRUCTURE origin commit + final snapshot + DP5/DP6 | code-design + encapsulation-horizon | public surface / shared placement / runtime topology / test placementをcode-designへ移行 |
+| development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md | old-repo final snapshot + ENV1〜3 + PR #19〜#22 | development-execution / work-identity / workspace-structure / development-safety | Work Identity追加を含む12/12 H2を分類済み |
 | development-environment-strategy/ENVIRONMENT_STANDARDS.md | JP内同名日本語文書、ENV1〜ENV3 | development-execution / development-safety | 英語版固有の環境・Docker・CI詳細、後続条件 |
 | development-environment-strategy/ENVIRONMENT_WORKFLOW.md | JP内同名日本語文書・Work Identity source logs、ENV1〜ENV3 | work-identity / development-execution / development-safety | 英語版の実行・統合・cleanup時の差分 |
 | development-environment-strategy/INDEX.md | JP内同名日本語INDEX、ENV1〜ENV3 | subjects/INDEX.mdほか現行入口 | 旧routing / Worktree Selectionに固有規範がないか |
-| development-environment-strategy/WORKSPACE_STRUCTURE.md | JP内同名日本語文書・Work Identity source logs | workspace-structure / work-identity | Git materialization・tool dependency等の英語版固有条件 |
-| documentation-strategy/DOCUMENTATION_PHILOSOPHY.md | JP内日本語哲学文書、中央Issue #14 / PR #17（後続の旧日本語資料の扱い） | documentation / work-identity | 英語版で追加された構造・規範の個々の採用状態 |
-| documentation-strategy/DOCUMENT_WORKFLOW.md | JP内日本語workflow、DP5・DP6のmanaged artifact境界 | documentation / work-identity | 英語版のstaleness / version / managed subtree等の条件の採否 |
+| development-environment-strategy/WORKSPACE_STRUCTURE.md | old-repo final snapshot + Work Identity source logs + PR #19〜#22 | workspace-structure + work-identity | 中央で11 H2へ再構成。Project Root / Work Root / materialization / command semanticsを現行subjectへ分離済み |
+| documentation-strategy/DOCUMENTATION_PHILOSOPHY.md | old-repo final snapshot + PR #19 + 2026-09-22後続decision | documentation + work-identity | 中央追加Work Documentsを含む10/10 H2をowner/history分類済み |
+| documentation-strategy/DOCUMENT_WORKFLOW.md | old-repo final snapshot + PR #16 + PR #19 | documentation + work-identity + engineering-operation routing | Managed Artifact / Work Documentsを含む12/12 H2を分類。旧version registryはhistory |
 | documentation-strategy/FILE_AND_STRUCTURE.md | JP内日本語structure、DP5・DP6の旧version/hash改訂 | documentation（旧version registryはhistory） | 旧file role・互換性・format等の英語版固有条件 |
 | documentation-strategy/INDEX.md | JP内INDEX_JP.md、中央Issue #14 / PR #17の後続整理 | subjects/INDEX.md / documentation/INDEX.md | 旧routing-only記述と実質規範の分離 |
+
+中央legacy baselineのH2内訳は **design-principles 48 + documentation-strategy 37 + development-environment-strategy 44 = 129**。documentationの+3とdevelopment-environmentのnet +2は、旧個別repository終了後の中央PR #16 / #19〜#22等による追加・再構成であり、旧snapshotへ遡及させず後続sourceとして追跡する。
 
 この表は**sourceにたどり着ける範囲と現在の調査方向**を示す。全14ファイルをsemantic coverage PASSと判定するものではない。特に日本語の旧source logと英語artifactの差分、元の議論本文の不在を無視して未移行知識を確定させない。
 
