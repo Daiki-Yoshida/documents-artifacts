@@ -2,45 +2,105 @@
 
 ## 旧design-principlesとの関係
 
-旧 `artifacts/design-principles/` はWHY / HOW / WHERE / FLOWの4文書＋INDEXで配布されていた。
+旧 `design-principles` はWHY / HOW / WHERE / FLOWの複数文書へ設計knowledgeを分けていた。
 
-現在はそのpackagingをsubject authorityとして復活させない。
+現行ではそのfile splitをsubject authorityとして復活させず、主語で分離した。
 
-`code-design` は、旧artifactのうちcode realizationに関係する知識を**source-backedな範囲だけ**再整理するために新設した。
+```text
+encapsulation-horizon
+  boundaryをどこでhardeningするか
 
-## 初期subject化で採用したsource-backed範囲
+code-design
+  選択済みboundaryをcodeとしてどう実現するか
 
-- foundational programming paradigm
-- internal implementation freedom
-- side-effect containment
-- inheritanceの意味と不適切利用
-- state ownership / cross-boundary consistency
-- compatibilityのconsumer/provider両面確認
-- contract conformanceとrequested outcome verificationの分離
-- load-bearing performance requirementとinteraction-shape redesign gate
-- design priority
-
-## 未移行のlegacy detail
-
-次は旧artifactには存在するが、初期subject化時点でsource / adoption traceabilityが不足しているためcanonicalへ昇格していない。
-
-- detailed layering rules
-- constructor DI / Service Locator policy
-- external SDK wrap/allow/prohibitの全条件
-- Result/Either bootstrapとlibrary selection
-- error boundary translationの全条件
-- concurrency / async / cancellation / thread-safetyの全条件
-- Rich / Lightweight Domain Modelの選択
-- DTO / Mapper / Converter / Adapter placement
-- shared kernel T0–T3
-- runtime topology / composition rootの全条件
-- unit / integration / E2E / test placementの全詳細
-- Composition Over Inheritanceという強い一般化（source原本はinheritanceの契約的意味までは定義するが、常にcompositionを選ぶ規範までは直接定義しない）
-
-これらは `documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md` で調査を継続する。
+engineering-operation（候補）
+  engineering changeをどう調査・実行・検証・報告するか
+```
 
 ## Source recovery
 
-2026-09-24に、旧repositoryの非配布reference `PROGRAMMING_PARADIGM.md` と `AI_DOC_STRATEGY.md` をGit blob SHA付きsnapshotとして `records/2026-06-13-design-principles-reference-snapshot/` へ保存した。
+2026-09-24の移行監査で、旧repositoryから次をrecordsへ無加工snapshotとして保存した。
 
-これにより旧artifactだけに依存せず、foundational code-design knowledgeの一部を第0情報源から再構成できるようになった。
+- 2026-01-31 initial code-design state
+- Bounded Contracts / testing / error等のrefinement state
+- dependency direction / DI refinement state
+- domain model refinement state
+- 2026-06-13非配布reference
+- 2026-07-02最後の実質的design-principles state
+- PROJECT_STRUCTURE初出、Encapsulation Horizon反映、review guard等のcommit message
+
+これにより、旧第2情報源artifactだけでなく、**versioned repository stateそのもの**からcode-designを再構成できる範囲が広がった。
+
+## 2026-01-31系の設計規範
+
+初期sourceではinterface / layer / DI / error / testing / composition / fail-fast等が導入された。
+
+後続refinementでは:
+
+- interface keywordとcontract meaningを分離
+- language idiomを優先
+- Domain/Application/Infrastructureのdependency ruleを明確化
+- Entity/VOのDI constraint
+- Result bootstrap
+- testing scope / black-box / contract verification
+- Rich/Lightweight model
+- type-driven state transition
+
+などが段階的に調整された。
+
+現行subjectは最終的なsnapshotと後続decisionを優先し、初期版の古い強い表現をそのまま復活させない。
+
+## 2026-06〜07の構造化
+
+PROJECT_STRUCTURE追加によりpublic surface、shared placement、runtime topology、test placementが独立して整理された。
+
+review反映ではone public surfaceのaudience exception、module四義、confirmation severity等が追加された。
+
+2026-07-02 snapshotを、旧repository側の最後の実質的baselineとして扱う。
+
+## 移行後の訂正
+
+### 2026-09-15
+
+- contract conformanceとrequested outcome verificationを分離。
+- Concept Generalityのone-sentence testをneutrality signalへ限定。
+- compatibilityをconsumer/provider双方で評価。
+- state ownership / coordination responsibilityを明確化。
+- performance-shaped contract提案はいったん保留。
+- raw Infrastructure exception leakageやContract Testの過剰一般化をcross-artifact auditで修正。
+
+### 2026-09-20
+
+load-bearing performance requirementとevidenceがある場合のみinteraction shape redesignを許容する方針を反映。
+
+## 現在canonicalへ移行した範囲
+
+- code realization / internal freedom / side-effect containment
+- inheritance boundary
+- state ownership / consistency
+- feature/module firstとlayer responsibility
+- contract placement / module public surface / shared placement
+- interface requirement / dependency direction / DI
+- external dependency containment
+- Rich/Lightweight Domain Model / Domain purity
+- DTO / mapping ownership
+- expected failure / system failure / boundary translation
+- async / cancellation / thread-safety contract
+- test strategy / placement / runtime topology / composition root
+- compatibility / verification
+- performance-shaped interaction
+- design priority
+
+## 旧表現をそのまま採用していない例
+
+- 「additiveならcompatible」→ consumer/provider双方のcompatibilityへ修正
+- 「Contract Test IS correctness」→ contract conformanceとrequested outcomeを分離
+- performanceでAPIを変える一般論 → load-bearing requirement + evidence gateを必須化
+- interface everywhere → actual boundaryで価値がある場合に限定
+- Rich Domain Modelを常時default → subdomain complexityでRich/Lightweightを選択
+
+## Engineering Operationへ残すもの
+
+commit/push authority、reporting、task scope、brownfield作業規律、approach question等はcode-designではない。
+
+これらは `documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md` で別途追跡する。
