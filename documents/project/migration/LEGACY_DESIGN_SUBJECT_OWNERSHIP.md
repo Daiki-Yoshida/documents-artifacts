@@ -4,14 +4,14 @@
 document_type: "repository_local_subject_design_decision"
 authority: "derived_architecture_decision_not_normative_subject_content"
 decision_date: "2026-09-24"
-status: "subject boundary decision; content migration still gated by source provenance"
+status: "code-design formalized from recovered source; engineering-operation remains candidate"
 ~~~~
 
 ## 結論
 
-旧 design-principles の残存知識は、現在の6 subjectへ無理に押し込まない。
+旧 design-principles の残存知識を既存subjectへ無理に押し込まず、source-backedな範囲から新しい責務へ整理する。
 
-現行の責務モデルと比較すると、少なくとも次の2つの独立した知識対象候補が存在する。
+責務監査と旧reference原本の回収により、`code-design` は正式subjectとして追加した。`engineering-operation` は引き続き独立subject候補として保留する。
 
 ~~~~text
 encapsulation-horizon
@@ -25,7 +25,7 @@ engineering-operation
   「1つのengineering changeを、どう調査・変更・検証・報告するか」
 ~~~~
 
-code-design / engineering-operation は候補subject名であり、この文書だけで正式subjectを新設したことにはしない。旧module名 design-principles をそのままsubjectへ復活させる案は採らない。
+`code-design` は `documents/knowledge/subjects/code-design/` として正式化済み。`engineering-operation` は候補名のままであり、旧module名 `design-principles` をそのままsubject authorityへ復活させない。
 
 ## 取得できた旧Git履歴による補強
 
@@ -57,9 +57,9 @@ encapsulation-horizon の現在の主語は「境界面をどのscaleで硬化�
 
 これらをEncapsulation Horizonへ追加すると「boundaryをどこに置くか」と「そのboundaryの周辺をどう実装するか」が混在し、SUBJECT_MODELの分割兆候に該当する。
 
-## 2. Code Design候補の主語
+## 2. Code Design（正式subject）
 
-候補 code-design は次の一文で独立して説明できる。
+`code-design` は次の一文を主語として正式subject化した。
 
 > 選択済みのsoftware boundaryと責務を、依存方向・型・port・adapter・失敗・非同期・変換・testを含むcode structureへ落とし込む方法を扱う。
 
@@ -123,33 +123,29 @@ Testing:
 - CIでどのcommandから実行するか → development-execution
 - destructive integration testの安全性 → development-safety
 
-## 5. 新subjectを今すぐ正式作成しない理由
+## 5. Code Design正式化の根拠と Engineering Operation保留理由
 
-責務境界は独立しているが、subject本文へ移す情報のprovenanceはまだ不均一である。DI・layering・mapping・async・shared kernel・test placementの多くは、現在取得できている第0情報源より旧第2情報源artifactの方が詳細である。
+2026-09-24に旧repositoryの非配布reference `PROGRAMMING_PARADIGM.md` をGit blob SHA付きsnapshotとして回収した。この原本は、bounded unit / contract-first / internal paradigm freedom / side-effect containment / inheritance / design priorityを、artifactより上流のreference materialとして定義している。
 
-旧artifact本文だけを根拠に現在の正式規範として再採用すると、knowledge-firstの情報源モデルを逆転させる。
+さらにIssue / PR recordから、state ownership、consumer/provider双方のcompatibility、contract conformanceとrequested outcomeの分離、load-bearing performance requirementの後続採用を追跡できる。
 
-順序:
+このため、**source-backedな初期核だけで `code-design` を正式subjectとして成立させられる**と判断した。
 
-1. この文書でsubject ownership boundaryを固定する。
-2. 旧artifact各規範について、第0情報源または後続の明示的採用sourceを探す。
-3. sourceを確認できた規範から、新subjectまたは既存subjectへ日本語で整理する。
-4. sourceが失われた規範はhistorical derived rule / adoption unverifiedとして監査側に残す。
-5. 十分なsource-backed本文が揃った時点でcode-designを正式subjectとして作成する。
-6. engineering-operationはAI_WORKFLOW / cross-cutting recordsの監査を別に完了してから新設判断する。
+ただし、DI・layering・mapping・async・shared kernel・test placementなどは旧第2情報源の方が詳細であり、初期 `code-design` へは推測移行していない。これらはsource recovery後に追加する。
+
+`engineering-operation` は責務自体は独立しているが、commit/push authority、reporting、clarification、brownfield細則などの第0情報源が不足しているため、正式subject化を保留する。
 
 ## 6. 今回確定すること / 確定しないこと
 
 確定:
 - Encapsulation Horizonへ具体的code architectureを大量統合しない。
-- code structure / dependency / translation / failure / async / testingには独立したsubject責務が成立する。
+- code structure / state / compatibility / verification / performanceには独立したsubject責務が成立し、`code-design` として正式化した。
 - AI実装workflow / reporting / VCS権限はcode-designとは別の知識対象として扱う。
-- 現在の6 subjectの既存責務を広げてlegacy内容を吸収する方法は採らない。
+- 既存subjectの責務を広げてlegacy内容を吸収する方法は採らない。
 - design-principlesという旧packaging名そのものを新subject authorityにしない。
 
 未確定:
-- 正式subject名を最終的にcode-designとするか。
-- code-design内部のfile分割。
+- code-designへ未回収legacy detailをどこまで追加採用するか。
 - legacy artifactにしか残らない規範を現在も採用するか。
 - engineering-operationを正式subject化するか。
 - 旧artifactへの再projection方法。
