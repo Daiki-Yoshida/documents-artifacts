@@ -77,7 +77,7 @@ documents/knowledge/
       └─ ...
 ```
 
-`records/` はsource event・snapshotの原文を保持する。現在は6 subject（encapsulation-horizon、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
+`records/` はsource event・snapshotの原文を保持する。現在は7 subject（encapsulation-horizon、code-design、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。subject間の主責務は `../knowledge/subjects/INDEX.md` を参照する。
 
 source event例:
 
