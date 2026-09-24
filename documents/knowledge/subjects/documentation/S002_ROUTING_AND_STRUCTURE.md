@@ -46,7 +46,7 @@ content:
   - "routing: documents/INDEX.mdを主参照とする"
   - "focus_files: エージェントが優先すべきglobパターン"
   - "current_priority: 現在の開発フォーカス"
-design_rule: "エントリファイルはルーティングする; 説明しない。詳細はdocuments/配下に存在する。"
+design_rule: "エントリファイルは、agent固有の入口として必要なproject-local operational constraintsとroutingを保持してよい。一方、project knowledgeの詳細説明や重複authorityにはしない; 詳細はdocuments/配下へrouteする。"
 when_to_create: "プロジェクトが実際に使用する各AIツールについて1つ作成する。使用しないツールのファイルは作成しない（YAGNI）。"
 ```
 
@@ -190,3 +190,5 @@ rule: "子はこのファイルを参照しない。明示的に協調されな�
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
+- `../../records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md`
+- `../../records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md`
