@@ -28,6 +28,7 @@ knowledgeという仕組みそのものを定義する。
 - subjectの整理規則
 - traceability規則
 - knowledgeの更新・保守に必要な構造規則
+- 第1情報源からArtifact v2へprojectionする規則
 
 system文書はknowledge本文の代わりではない。情報をどう保存・整理・検証するかを定義する。
 
@@ -69,7 +70,7 @@ recordsとsubjectsの意味が明確に衝突する場合、recordsを根拠と�
 
 ## 6. 第2情報源との境界
 
-`artifacts/` などの第2情報源では、AI利用効率のための圧縮・要約・再構成を許可する。
+`artifacts/` などの第2情報源では、AI利用効率のための圧縮・要約・再構成を許可する。具体的なprojection / routing規則は `ARTIFACT_MODEL.md` が所有する。
 
 `documents/knowledge/` では、token削減を目的として知識を削らない。
 
