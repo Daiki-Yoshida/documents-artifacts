@@ -10,7 +10,7 @@ legacy_files_in_scope:
   - "artifacts/design-principles/PROJECT_STRUCTURE.md"
 current_subject_comparison: "現行8 subject。encapsulation-horizonとcode-designを主照合先とし、change-processはengineering-operationへrouteする"
 review_unit: "H2の17節と重要なH3・条件・例外"
-semantic_migration_complete: "core rules promoted; detailed line-by-line parity still open"
+semantic_migration_complete: "current owner/normative core established; exhaustive line-by-line parity not claimed"
 ```
 
 ## この監査の位置付け
@@ -51,7 +51,7 @@ promoted:
   - "performance-shaped interaction"
 still_separate:
   - "hardening horizon / contract change level -> encapsulation-horizon"
-  - "engineering change workflow / VCS / reporting -> engineering-operation candidate"
+  - "engineering change workflow / VCS / reporting -> engineering-operation"
 ```
 
 旧artifactの文言をそのまま採用したのではなく、versioned source snapshotと後続のPR/Issueで訂正された状態を優先している。以下の第1巡表に残る「未移行」表現は、**当時の発見時点の記録**として読む。現在のcanonical ownerは [code-design](../../knowledge/subjects/code-design/INDEX.md) を参照する。
@@ -107,11 +107,10 @@ still_separate:
 
 | 候補となる知識対象 | 取り扱う問い | 現行subjectとの差 |
 |---|---|---|
-| code-design（正式subject） | 境界が決まった後、source-backedなstate / compatibility / verification / performance等をどう実現するか。DI / layering / mapping等はsource回収まで未昇格 | encapsulation-horizonの「どのscaleで境界を硬化するか」とは別の判断軸 |
-| code-design内の今後の拡張候補 | error / async / thread-safety / detailed test strategy等。現時点ではsource-backed部分だけcanonical | 境界完全性という抽象原理だけで具体運用を代替できない |
-| AI実装作業の規律 | 事前scan→contract→実装→検証→報告、brownfield、commit/push権限の取り扱い | execution環境・破壊操作risk・Work Identityとは主語が異なる可能性 |
+| code-design（正式subject） | 境界が決まった後、layer / dependency / DI / data / failure / async / testing / runtime / compatibility / performance等をどう実現するか | encapsulation-horizonの「どのscaleで境界を硬化するか」とは別の判断軸 |
+| engineering-operation（正式subject） | 事前scan→routing→実装→検証→VCS/reporting、brownfield、approach question等のchange process | execution環境・破壊操作risk・Work Identityとは別の主語 |
 
-旧module名の `design-principles` はsubject名として復活させない。`code-design` は回収したreference原本と後続の採用recordを根拠に初期核だけ正式化し、source未回収detailはこの監査へ残す。
+旧module名の `design-principles` はsubject名として復活させない。`code-design` と `engineering-operation` は、versioned source snapshot・Git patch・後続の採用recordから責務とnormative coreを復元して正式化した。旧artifactにしか残らず採用根拠を特定できない細則は、この監査にprovenance gapとして残す。
 
 ## 6. 旧design-principles INDEX 5 H2の扱い
 
@@ -131,7 +130,7 @@ PROJECT_STRUCTURE追加commitは当時の `WHY / HOW / WHERE / FLOW` 分割を�
 
 ## 7. 残る検証gate
 
-- 旧CODING_STANDARDSのH3以下については表に代表的条件・例外を記載したが、逐語一致や完全なsemantic coverageのPASSではない。項目別source原文を確認して初めて採用できる。
-- source eventを取得できていないL-only項目は**未検証**のまま保持し、後から過去recordを推測修復しない。必要な場合は新しい独立した第0情報源として評価・採用判断を記録する。
-- 旧 `DESIGN_PHILOSOPHY.md` の18 H2と `AI_WORKFLOW.md` の8 H2は全件inventory済みだが、本文の意味照合は未完了。
-- `artifacts/` の再生成は、対応する現行第1情報源のcoverageが担保されるまで行わない。
+- この監査の第1巡表にある「未移行」は発見時点の状態を保存するhistorical auditであり、現在のowner状態ではない。現在の規範は `code-design/` と `engineering-operation/` を参照する。
+- 旧artifactと現行subjectの**逐語的line-by-line同一性**は完了条件にしない。後続decisionで置換された規範や意図的historyがあるためである。
+- 引き続き未解決なのは、旧artifactにしか残らない細則について元の第0情報源・採用判断を取得できない場合のprovenanceである。取得不能なものを「原文source確認済み」と偽らない。
+- `artifacts/` の再生成は、現行8 subjectからのprojection設計を別工程として決定する。
