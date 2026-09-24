@@ -177,3 +177,61 @@ H2単位のowner不在は今回確認していない。一方、次はsemantic p
 5. cleanup / integration / Git operation safetyがdevelopment-safetyとwork-identity間で二重authority化していないか。
 
 従って **42 / 42 H2 classified** だが、development-environment-strategy全体をsemantic migration PASSとはまだ宣言しない。
+
+
+## 8. H3 / detail監査（2026-09-24）
+
+final英語snapshotのH3・YAML ruleと、導入・変更commit patchを突合した。
+
+### 追加取得したGit source
+
+- [Environment Standards初出](../../knowledge/records/2026-07-18-environment-standards-origin-commit/RECORD.md)
+- [Workspace Structure初出](../../knowledge/records/2026-07-18-workspace-structure-origin-commit/RECORD.md)
+- [Environment Workflow初出](../../knowledge/records/2026-07-18-environment-workflow-origin-commit/RECORD.md)
+- [optional worktree policy](../../knowledge/records/2026-07-19-optional-worktree-policy-commit/RECORD.md)
+- [task resource reconciliation](../../knowledge/records/2026-08-02-task-resource-reconciliation-commit/RECORD.md)
+- [Docker reuse PR](../../knowledge/records/2026-08-03-docker-resource-reuse-pr/RECORD.md)
+
+### H3 detailの現行owner確認
+
+| 旧detail | 現行owner | 判定 |
+|---|---|---|
+| Docker-first / host dependency exceptions | development-execution/S002 | 保持 |
+| resource identity / narrow isolation | work-identity/S004 + development-execution/S002 | 責務分離して保持 |
+| bind mount file ownership | development-execution/S002 | 保持 |
+| cache / volume reuse | development-execution/S002 | 保持 |
+| host port collision / allocation | development-execution + work-identity | 保持 |
+| secretをimage/repo/logへ漏らさない | development-execution/S002 + safety diagnostics | 保持 |
+| Make/public command / target semantics | development-execution/S003 | 保持 |
+| canonical final validation / local-CI parity | development-execution/S003/S004 | 保持 |
+| optional worktree | work-identity + execution adoption | 後続policyに合わせて保持 |
+| destructive cleanup | development-safety/S002 | 保持 |
+| diagnosis / recovery | development-safety/S003 | 保持 |
+| task-scoped resource end responsibility | work-identity/S004 | **今回補強** |
+
+### resource reconciliationの補強
+
+2026-08-02 sourceは、task-scoped resourceを作成した場合にWork終了時の状態を次へ分類する。
+
+- removed
+- concrete follow-upのためintentionally retained + reason reported
+- unexplained residual resourceはcompletion stateとして不可
+
+現行Work Identityは「resources reconciled / cleaned」とだけ書いており、この強い条件が薄かった。S004へ**removed / intentionally_retained / invalid residual**の完了条件を追加し、destructive deletionそのものはdevelopment-safetyへ委ねた。
+
+### worktree modelの後続変更
+
+2026-07-18初版はTask Worktreeを通常flowとして強く扱ったが、2026-07-19 commitで「worktree supportはcapabilityでありper-task mandatoryではない」へ明示修正された。
+
+現在のWork Identityはさらに、Task identityではなくWork identityとoptional materializationとして一般化している。したがって初版の「Primary Checkoutはfeature workに使わない」「taskごとにworktree作成」はcurrent ruleへ戻さない。
+
+## 9. Development Environment側の現在判定
+
+旧42 H2に加え主要H3 detailを確認した範囲では、静的topology / execution / safety / Work lifecycleの4 ownerへ合理的に分離できている。
+
+残る主なsemantic riskは、同一ruleを複数subjectが独立authorityとして再定義すること。特にresource identity、cleanup、integration、checkout selectionは、主ownerを次のように維持する。
+
+- identity / lifecycle → work-identity
+- runtime materialization / reuse → development-execution
+- destructive action safety → development-safety
+- static repository/filesystem ownership → workspace-structure
