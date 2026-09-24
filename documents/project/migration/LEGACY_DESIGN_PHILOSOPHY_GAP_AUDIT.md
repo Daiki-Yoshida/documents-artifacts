@@ -29,23 +29,23 @@ semantic_migration_complete: false
 
 | 旧節 | 現行knowledgeでの状態 | 主なowner / gap | source状態 |
 |---|---|---|---|
-| Redefining "Object-Oriented" | **部分移行**。shell / internal freedomの原理はEHと接続するが、Rich/Lightweight Domain ModelやDI shellの具体は未移行 | code-design | 詳細はlegacy L中心 |
+| Redefining "Object-Oriented" | **移行済み**。boundary-oriented shell / internal freedomはEHとcode-design/S001-S002へ、Rich/Lightweight Domain ModelとDIはS006-S007へ整理 | code-design + EH | 2026-01-31 source snapshots + 2026-06-13 reference + final snapshot |
 | Core Philosophy: Bounded Contracts & Explicit Interfaces | **原理は移行済み**。contractはsignatureだけでなくsemantics/constraintsを含むことをEHが保持 | encapsulation-horizon | EH source + 1ea/1b1 commitで補強 |
 | Boundaries Are Recursive | **移行済み** | encapsulation-horizon | EH旧原文とcurrent subjectにtraceabilityあり |
-| Module — The Primary Boundary | **原理は移行済み**。module=default prior / floorではない。feature-first/layer-insideの具体は未移行 | EH + code-design | EH source + 1b1等 |
+| Module — The Primary Boundary | **移行済み**。module=default prior / floorではない原理はEH、feature-first / layer-insideのcode realizationはcode-design/S005へ整理 | EH + code-design | EH source + recovered code-design source snapshots |
 | Module Shell vs Internal Implementation | **主要原理は移行済み**。boundary strict / interior flexibleとleakage channelをS001/S005が保持。DTO/dependency direction等はcode-design gap | EH + code-design | EH source + 1ea/1b1 |
 | Encapsulation Horizon | **移行済み**。current subjectの中心 | encapsulation-horizon | 旧日本語source +関連commit |
 | Common Misreadings to Prevent | **大部分移行**。S008に誤読guardあり。ただしResult/Domain purity等の具体rule ownerは未整備 | EH + code-design | 41f review commit、後続source |
-| Responsibility-Driven Design | **原理は移行済み**。責務・AND・seam costはS002/S003/S006。code-specific anti-patternは未移行 | EH + code-design | EH source、DP2 state ownership |
-| Composition Over Inheritance | **未移行** | code-design | baseline L中心。現行採否の第0情報源不足 |
-| Reliability & Safety | **部分移行**。boundary safety / failure leakageの原理はEHに関連するが、constructor validation、type-driven state、RAII等のcode ruleは未移行 | code-design。destructive operationはdevelopment-safetyと別 | baseline L中心 |
-| Appropriate Complexity | **部分移行**。YAGNIはhardening/concept altitudeで扱うが、一般的abstraction complexity規則は独立未移行 | code-designまたはengineering-operation候補 | baseline L中心 |
+| Responsibility-Driven Design | **移行済み**。責務・AND・seam costはEH、state ownership / realization detailはcode-design/S004-S005へ整理 | EH + code-design | EH source + DP2 state ownership + source snapshots |
+| Composition Over Inheritance | **移行済み**。inheritanceの意味・許容境界をS003、composition preferenceをS006へ整理 | code-design | 2026-06-13 PROGRAMMING_PARADIGM snapshot + final source |
+| Reliability & Safety | **主要code ruleは移行済み**。side-effect containment / state ownership / failure semanticsをcode-designへ整理。destructive operation safetyはdevelopment-safetyが別所有 | code-design + development-safety | recovered code-design source snapshots + current owner split |
+| Appropriate Complexity | **移行済み**。YAGNIのhardening / placement側はEH、不要なabstractionを避けるdesign判断はcode-design/S012のpriorityへ接続 | EH + code-design | final source + current design priority |
 | Concept Altitude | **移行済み＋後続修正済み**。one-sentence testをneutrality signalへ限定 | encapsulation-horizon | EH source + DP1→DP2 |
-| External Dependency Containment | **原理の一部のみ**。leakage/ownershipに接続するが、wrap/allow/prohibitの具体規則は未移行 | code-design | baseline L中心 |
-| Domain Purity (Mechanism vs Concept) | **誤読guardのみ移行**。origin-based ownershipの詳細・例は未移行 | code-design | EHに関連概念、詳細はL中心 |
-| Internal Paradigm Agnosticism | **原理は概ね移行**。inside flexibleはEHに存在。module/file内consistent等の具体規則は未移行 | EH + code-design | EH source / L |
-| Design Priority Order | **未移行**。現在のsubject横断priorityとして正式ownerなし | engineering-operation候補またはcode-design判断原則 | baseline L中心 |
-| Mistake Prevention Priority | **未移行**。一部個別ruleは存在するが5段ranking自体はcurrent authorityなし | engineering-operation候補 | baseline L中心 |
+| External Dependency Containment | **移行済み**。wrap / allow / prohibitとdependency directionをcode-design/S006へ整理 | code-design | dependency-boundary / final source snapshots |
+| Domain Purity (Mechanism vs Concept) | **移行済み**。origin-based ownershipとmapping境界をcode-design/S007へ整理 | code-design | domain-model / final source snapshots |
+| Internal Paradigm Agnosticism | **移行済み**。inside flexibleの境界原理はEH、code-level implementation freedomはcode-design/S002へ整理 | EH + code-design | EH source + recovered snapshots |
+| Design Priority Order | **移行済み**。code design decisionのconflict priorityとしてcode-design/S012が所有 | code-design | PROGRAMMING_PARADIGM §8–9 + final source |
+| Mistake Prevention Priority | **移行済み**。後続のfailure / compatibility semanticsへ合わせてcode-design/S012へ整理 | code-design | final DESIGN_PHILOSOPHY + S008/S010後続decision |
 | Performance vs. Abstraction Policy | **source-backedだが完全移行前**。resource guaranteeはEH S005に接続。interaction shape redesignはcode-design | EH + code-design | DP1提案4→保留→PR #17で条件付き実装 |
 
 ## 2. Encapsulation Horizonへ残すもの
