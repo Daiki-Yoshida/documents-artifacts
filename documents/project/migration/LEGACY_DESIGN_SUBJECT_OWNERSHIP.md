@@ -4,14 +4,14 @@
 document_type: "repository_local_subject_design_decision"
 authority: "derived_architecture_decision_not_normative_subject_content"
 decision_date: "2026-09-24"
-status: "code-design formalized from recovered source; engineering-operation remains candidate"
+status: "code-design and engineering-operation formalized from recovered source"
 ~~~~
 
 ## 結論
 
 旧 design-principles の残存知識を既存subjectへ無理に押し込まず、source-backedな範囲から新しい責務へ整理する。
 
-責務監査と旧reference原本の回収により、`code-design` は正式subjectとして追加した。`engineering-operation` は引き続き独立subject候補として保留する。
+責務監査と旧repository source recoveryにより、`code-design` と `engineering-operation` をそれぞれ独立subjectとして正式化した。
 
 ~~~~text
 encapsulation-horizon
@@ -25,7 +25,7 @@ engineering-operation
   「1つのengineering changeを、どう調査・変更・検証・報告するか」
 ~~~~
 
-`code-design` は `documents/knowledge/subjects/code-design/` として正式化済み。`engineering-operation` は候補名のままであり、旧module名 `design-principles` をそのままsubject authorityへ復活させない。
+`code-design` は `documents/knowledge/subjects/code-design/`、`engineering-operation` は `documents/knowledge/subjects/engineering-operation/` として正式化済み。旧module名 `design-principles` をそのままsubject authorityへ復活させない。
 
 ## 取得できた旧Git履歴による補強
 
@@ -84,15 +84,15 @@ code-designが所有しないもの:
 - Docker / host / CI command execution → development-execution
 - destructive operation / recovery → development-safety
 - project documentation → documentation
-- AI/agentが変更作業をどう進めるかという横断process → engineering-operation候補
+- AI/agentが変更作業をどう進めるかという横断process → engineering-operation
 
-## 3. Engineering Operation候補の主語
+## 3. Engineering Operation（正式subject）
 
 旧AI workflow 8 H2の具体的なsource / gap監査は [LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md](LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md) に分離した。
 
 旧 AI_WORKFLOW.md には、user intent / required outcome、pre-implementation scan、contract confirmation、implementation、requirement verification、commit / push、brownfield、approach question、reportingなど、code-designを超える知識が存在する。
 
-候補 engineering-operation は次の一文で独立して説明できる。
+engineering-operation は次の一文を主語として正式subject化した。
 
 > 要求を受けたengineering changeを、authority・scope・設計・実装・検証・version-control・報告までどの順序と確認境界で進めるかを扱う。
 
@@ -101,7 +101,7 @@ code-designが所有しないもの:
 - development-execution: commandをどのruntime/environmentで実行するか
 - development-safety: destructive/risky operationをどう安全に実行するか
 - work-identity: 1つのWorkのidentity・resource・lifecycle
-- engineering-operation候補: 1つの変更要求をどう判断・実施・verify・reportするか
+- engineering-operation: 1つの変更要求をどう判断・実施・verify・reportするか
 
 したがって旧 ENGINEERING_OPERATING_MODEL.md のような横断資料をdevelopment-executionへ丸ごと統合しない。
 
@@ -123,29 +123,29 @@ Testing:
 - CIでどのcommandから実行するか → development-execution
 - destructive integration testの安全性 → development-safety
 
-## 5. Code Design正式化の根拠と Engineering Operation保留理由
+## 5. Code Design / Engineering Operation正式化の根拠
 
-2026-09-24に旧repositoryの非配布reference `PROGRAMMING_PARADIGM.md` をGit blob SHA付きsnapshotとして回収した。この原本は、bounded unit / contract-first / internal paradigm freedom / side-effect containment / inheritance / design priorityを、artifactより上流のreference materialとして定義している。
+Code Designは旧reference原本、versioned repository snapshot、後続Issue / PR decisionからbounded unit、layer/dependency、state、failure、testing、compatibility、performance等を追跡できるため正式化した。
 
-さらにIssue / PR recordから、state ownership、consumer/provider双方のcompatibility、contract conformanceとrequested outcomeの分離、load-bearing performance requirementの後続採用を追跡できる。
+Engineering Operationは、当初不足していたsourceを追加回収した。
 
-このため、**source-backedな初期核だけで `code-design` を正式subjectとして成立させられる**と判断した。
+- 2026-01-31 initial AI_WORKFLOW: change processとapproach question
+- 2026-06-13 Operational Discipline commit patch: reporting、test-before-done、commit/push authority、default branch guard、clarification
+- 2026-07-01 Brownfield Policy commit patch: local convention、surrounding violation、scope guard
+- 2026-09-06 proposal + 2026-09-15 adopted decision: contract conformanceとrequested outcomeの分離
 
-ただし、DI・layering・mapping・async・shared kernel・test placementなどは旧第2情報源の方が詳細であり、初期 `code-design` へは推測移行していない。これらはsource recovery後に追加する。
-
-`engineering-operation` は責務自体は独立しているが、commit/push authority、reporting、clarification、brownfield細則などの第0情報源が不足しているため、正式subject化を保留する。
+このため、Engineering Operationも責務境界だけでなくsource-backedなnormative coreが成立した。
 
 ## 6. 今回確定すること / 確定しないこと
 
 確定:
 - Encapsulation Horizonへ具体的code architectureを大量統合しない。
 - code structure / state / compatibility / verification / performanceには独立したsubject責務が成立し、`code-design` として正式化した。
-- AI実装workflow / reporting / VCS権限はcode-designとは別の知識対象として扱う。
+- AI実装workflow / reporting / VCS権限はcode-designとは別の `engineering-operation` が主所有する。
 - 既存subjectの責務を広げてlegacy内容を吸収する方法は採らない。
 - design-principlesという旧packaging名そのものを新subject authorityにしない。
 
 未確定:
 - code-designへ未回収legacy detailをどこまで追加採用するか。
 - legacy artifactにしか残らない規範を現在も採用するか。
-- engineering-operationを正式subject化するか。
 - 旧artifactへの再projection方法。
