@@ -157,6 +157,21 @@ bash tests/test-artifacts.sh
 
 bash -n tests/test-knowledge-integrity.sh
 bash tests/test-knowledge-integrity.sh
+
+bash tests/test-agent-harness.sh
 ```
 
 legacy artifactのGit blob / migration inventoryは監査証拠としてhistoryとmigration docsから引き続き検証するが、現在のruntime `artifacts/` はArtifact v2である。
+
+
+## Execution-agent Artifact tests
+
+Artifact v2のAI routing / behaviorを実project fixture上で検証するharnessは `tests/` に置く。
+
+```bash
+bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
+```
+
+prepare scriptが表示するsource repository外のtemporary `repo/` をexecution agentのworking directoryにし、そのrun rootの `PROMPT.md` のみをtaskとして渡す。評価基準 `tests/scenarios/<scenario>/EXPECTATIONS.md` はagentへ事前提示しない。
+
+詳細: `tests/INDEX.md`

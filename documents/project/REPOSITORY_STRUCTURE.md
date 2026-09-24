@@ -116,6 +116,25 @@ root `INDEX.md` と各directory `INDEX.md` はrouter。leafはtask consumption�
 
 subject directoryとの1:1対応は要求しない。semantic ownershipはsubjectsが保持し、artifactはcontext co-occurrenceに合わせて非正規化する。
 
+## tests/
+
+deterministic testとexecution-agent behavior testを同じtest rootで管理する。
+
+```text
+tests/
+├─ INDEX.md
+├─ test-*.sh
+├─ scripts/
+├─ repositories/   # Gitなしのfixture templates
+└─ scenarios/      # PROMPT + evaluator-only EXPECTATIONS
+```
+
+`tests/repositories/` は実行時にsource repository外のtemporary rootへcopyされ、そのcopy側だけを `git init` する。fixture原本へnested `.git/` を保持しない。
+
+EXPECTATIONSをblind evaluation対象agentから分離するため、generated repoを `tests/` 配下へ置かない。
+
+詳細は `AGENT_ARTIFACT_TEST_HARNESS.md` を参照する。
+
 ## Distribution
 
 `artifacts.sh` はArtifact v2全体を:
