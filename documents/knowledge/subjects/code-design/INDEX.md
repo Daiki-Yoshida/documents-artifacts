@@ -78,7 +78,7 @@ development-execution
   そのcodeをどのruntime/commandでbuild/test/runするか
 ```
 
-AI/agentが要求をどう調査・実装・検証・報告するかというengineering change processは、このsubjectに含めない。これは `documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md` で別候補として監査する。
+AI/agentが要求をどう調査・実装・検証・報告するかというengineering change processは、このsubjectに含めない。これは `../engineering-operation/` が主所有する。移行経緯は `../../../project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md` を参照する。
 
 ## Traceability
 
