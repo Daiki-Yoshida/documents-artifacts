@@ -36,11 +36,11 @@ hardeningの条件、stability、seam cost、macro→micro、harden-by-default�
 
 ### S004_CONCEPT_ALTITUDE.md
 
-概念の意味が属する高度、YAGNI、最初のconsumer、neutral modeling、physical placement、hardening depthとの独立性を扱う。
+概念の意味が属する高度、YAGNI、最初のconsumer、neutral modeling、physical placement、hardening depthとの独立性、およびHorizon内外でのYAGNI適用の非対称を扱う。
 
 ### S005_CONTRACT_COMPLETENESS.md
 
-内部自由とboundary contract完全性の双対、signature以外のleakage channel、内部自由を安全に成立させる条件を扱う。
+内部自由とboundary contract完全性の双対、signature以外のleakage channel、small surface / strong contract、内部自由を安全に成立させる条件を扱う。
 
 ### S006_EVOLUTION_AND_GRADUATION.md
 

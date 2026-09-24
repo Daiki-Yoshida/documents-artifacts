@@ -19,6 +19,9 @@ misreadings:
   - "内部の柔軟 ＝ 内部は雑でよい、ではない（外面が全漏洩チャネルを閉じている前提。§7）"
   - "public contract ＝ メソッド署名だけ、ではない（Semantics+Constraints+副作用+失敗+資源+決定性+データ）"
   - "YAGNI／module より下は柔軟 ＝ 汎用概念を feature 専用に作ってよい、ではない（YAGNI は機構と置き場所を縛る。意味の中立性は縛らない。§6.7）"
+  - "strong contract ＝ 将来あり得るcapabilityを全部surfaceへ追加する、ではない（small surface, strong contract。§6.8 / §7）"
+  - "YAGNI ＝ contract completenessを高コストだから省略してよい、ではない（creation costだけでは選択済みcontractを弱める十分な理由にならない。§6.5 / §6.8）"
+  - "Horizon内側は柔軟 ＝ 内部も将来向けに汎用化しておく、ではない（contractを満たす限り内部の投機的機構にはYAGNIを強く適用する。§6.8）"
 ```
 
 ### 13.2 module の四義（操作前に解決）
@@ -72,3 +75,4 @@ CONTRACT_L3_breaking:
 - `../../records/2026-09-06-design-principles-proposals/RECORD.md`（提案）
 - `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`（修正採用）
 - `../../records/2026-09-15-design-principles-proposal-status/RECORD.md`（移行結果）
+- `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`

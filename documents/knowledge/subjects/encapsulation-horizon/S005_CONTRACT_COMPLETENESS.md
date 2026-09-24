@@ -28,8 +28,28 @@ leakage_channels:
 
 **内部の自由の対価は、境界面の厳密さである。**
 
+### Small surface, strong contract
+
+境界を厳密にすることは、公開能力を無制限に増やすことではない。
+**surfaceは必要最小限に保ち、そのsurfaceで約束した意味は強く閉じる。**
+
+```yaml
+small_surface:
+  rule: "現在の責務から導出されないfuture capabilityやextension pointを公開しない"
+strong_contract:
+  rule: "選択済みsurfaceでは、既知のsemantics / constraints / failure / resource / determinism / dataを必要な範囲で閉じる"
+yagni:
+  allowed: "surface breadthと内部の投機的機構を削る"
+  not_allowed: "既知のcontract completenessを、creation costが高い・今のconsumerが使わないという理由だけで削る"
+```
+
+contract completenessへ投資するほど、その内側はcontractを守る限り自由に交換できる。
+したがって**外側を厳密にすることと、内側でYAGNIを強く使うことは矛盾せず、相互に成立条件を与える。**
+
+
 ---
 
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md`
+- `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`
