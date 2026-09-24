@@ -1,4 +1,4 @@
-# Development Environment Strategy — 旧42 H2の意味差分監査
+# Development Environment Strategy — legacy baseline 44 H2の意味差分監査
 
 ```yaml
 document_type: "repository_local_semantic_gap_audit"
@@ -6,13 +6,14 @@ authority: "derived_analysis_not_normative"
 audit_date: "2026-09-24"
 legacy_source_snapshot: "../../knowledge/records/2026-08-03-development-environment-final-source-snapshot/"
 legacy_files: 5
-legacy_h2_sections: 42
+independent_repository_h2_sections: 42
+central_legacy_baseline_h2_sections: 44
 semantic_migration_complete: false
 ```
 
 ## 結論
 
-旧 `development-environment-strategy` の5ファイル・42 H2は、H2単位では **42 / 42を現行knowledgeへ分類できる**。
+旧独立 `development-environment-strategy` repositoryの最終実質stateは5ファイル・42 H2。その後、中央repositoryでWork Identity / Worktree契約へ再構成され、監査baseline `e760eb38841650d60739750953c8342b639ce6f0` では **44 H2** になっている。現在は **44 / 44を現行knowledgeへ分類できる**。
 
 ただし旧1moduleは現在、責務の主語に応じて次へ分割されている。
 
@@ -30,6 +31,8 @@ semantic_migration_complete: false
 
 [final source snapshot](../../knowledge/records/2026-08-03-development-environment-final-source-snapshot/MANIFEST.md) の5ファイルは、旧repositoryの同commitにあるGit blob SHAと **5 / 5一致**を確認した。
 
+中央統合後はPR #19〜#22でWork Identity、Worktree Materialization Contract、public command contract、reference validationが順次artifactへ追加された。旧repo final snapshotを改変せず、これらは後続source eventとして評価する。
+
 後続評価・再編source:
 
 - [initial PR #1](../../knowledge/records/2026-07-18-development-environment-initial-pr/RECORD.md)
@@ -38,14 +41,19 @@ semantic_migration_complete: false
 - [development-environment subject split](../../knowledge/records/2026-09-22-development-environment-subject-split/RECORD.md)
 - [workspace / work-identity alignment](../../knowledge/records/2026-09-22-workspace-work-identity-alignment/RECORD.md)
 - [six-subject cross audit fixes](../../knowledge/records/2026-09-22-six-subject-cross-audit-fixes/)
+- [Work Identity artifactization PR #19](../../knowledge/records/2026-09-20-work-identity-artifactization-pr/RECORD.md)
+- [Worktree Materialization PR #20](../../knowledge/records/2026-09-20-worktree-materialization-pr/RECORD.md)
+- [Worktree command contract PR #21](../../knowledge/records/2026-09-20-worktree-command-contract-pr/RECORD.md)
+- [Worktree reference validation PR #22](../../knowledge/records/2026-09-21-worktree-reference-validation-pr/RECORD.md)
 
-## 1. DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md — 11 / 11
+## 1. DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md — 12 / 12（旧repo 11 + 中央追加1）
 
 | 旧H2 | 現在の扱い | 現行owner |
 |---|---|---|
 | Development Environment Contract | 現行。environmentを再現可能なcontractとして扱う | development-execution/S001 |
 | Priority Order | 現行。安全性・再現性・明示性等の優先関係をsafety側へ整理 | development-safety/S001 |
 | Control Plane and Execution Plane | 現行。host側制御とcontainer側実行を分離 | development-execution/S001 |
+| Work Identity | 中央PR #19で追加。具体的development goalのsemantic identity / ownership / lifecycleを定義 | work-identity/S001〜S004 |
 | Workspace Topology Concepts | **分割移管**。静的repository topologyはworkspace-structure、Work固有構造はwork-identity | workspace-structure + work-identity |
 | Checkout Selection Rule | **旧Task Worktree modelを置換**。Primary Checkoutは静的基準、Workごとのcheckout/worktree選択はWork Identity / project policy | workspace-structure + work-identity history/current |
 | Parallel-Agent Isolation | 現行思想をWork Identityへ再構成。全Workへworktreeを強制せず、必要なisolationだけmaterialize | work-identity |
@@ -103,20 +111,25 @@ semantic_migration_complete: false
 | Quick Task Routing | 現在は各subject INDEXへrouting |
 | Relationship to Sibling Artifact Sets | 旧artifact packaging関係としてhistory。現在はsubject responsibilityで分離 |
 
-## 5. WORKSPACE_STRUCTURE.md — 10 / 10
+## 5. WORKSPACE_STRUCTURE.md — 11 / 11（旧repo 10 → 中央でWork Identity中心に再構成）
 
-| 旧H2 | 現在の扱い | 現行owner |
+中央legacy baselineでは、旧repo finalのPrimary Checkout / Task Worktree中心の10 H2をそのまま維持せず、PR #19〜#22で11 H2へ再構成した。
+
+| 中央legacy baseline H2 | 現在の扱い | 現行owner |
 |---|---|---|
-| 1. Repository Topology | 現行。Project / Workspace / Component Repositoryへ整理 | workspace-structure/S001 |
-| 2. Primary Checkout | 現行だが責務縮小。static root / resolution基準として保持 | workspace-structure/S001 |
-| 3. Checkout Selection | **dynamic Work decisionをwork-identityへ移管** | work-identity + workspace history |
-| 4. Task Worktrees | **旧modelをhistoryへ保存**。Work Identityではworktreeはoptional materialization | work-identity/S002/S005/S008 |
-| 5. Recommended Top-Level Layout | 現行の静的shapeを柔軟化して保持 | workspace-structure/S001 |
-| 6. Git Tracking Boundaries | 現行。tracked Work Documentsとnested repository-specific worktreeを区別 | workspace-structure/S002 + work-identity |
-| 7. Multi-Component Workspace | 現行 | workspace-structure/S002 |
-| 8. Resource Identity Propagation | Work Identityへ主ownership移管 | work-identity/S004 |
-| 9. Workspace-to-Component Tool Dependency | 現行 | workspace-structure/S002 |
-| 10. Cross-Artifact Boundaries | 旧artifact分類としてhistory。現在はsubject INDEX / cross-linksで表現 | workspace-structure/S003_HISTORY |
+| 1. Repository Topology | Project / Workspace / Component Repository等の静的topology | workspace-structure/S001 |
+| 2. Project Root and Primary Checkouts | Project Rootとstable Primary Checkoutの静的役割 | workspace-structure/S001 |
+| 3. Work Root | Work固有のdynamic root | work-identity/S002 |
+| 4. Uniform Single- and Multi-Repository Shape | stable repository identityはworkspace、Work Root内mappingはwork-identity | workspace-structure + work-identity/S002 |
+| 5. Work Documents Placement and Ownership | Work Documentsのplacement / Git ownership / lifecycle | work-identity/S003 |
+| 6. Repository Worktrees and Identity | Work-specific branch/worktree identity・materialization | work-identity/S002/S005/S006 |
+| 7. Recommended Top-Level Layout | 静的layoutをprojectへ適応可能な形で保持 | workspace-structure/S001 |
+| 8. Git Tracking and Materialization Boundaries | Project-level Git ownershipはworkspace、Work Documents / recursive worktree materializationはwork-identity | workspace-structure/S002 + work-identity/S003/S005 |
+| 9. Multi-Repository Coordination and Resource Identity | repository topologyはworkspace、Work/resource lifecycleはwork-identity | workspace-structure/S002 + work-identity/S004 |
+| 10. Workspace-to-Component Tool Dependency | workspace tool dependency | workspace-structure/S002 |
+| 11. Cross-Artifact Boundaries | 旧artifact分類としてhistory。現在はsubject responsibility / routingへ置換 | workspace-structure/S003_HISTORY + subjects/INDEX |
+
+旧repo finalの `Task Worktrees` 等は履歴として残すが、current ruleへ戻さない。中央PR #19でWork Identityへ置換され、PR #20〜#22でmaterialization / command / validation contractが追加された。
 
 ## 6. 現行4 subjectの責務境界
 
@@ -176,8 +189,18 @@ H2単位のowner不在は今回確認していない。一方、次はsemantic p
 4. `workspace-structure` と `work-identity` のstatic / dynamic境界が各本文で重複定義されていないか。
 5. cleanup / integration / Git operation safetyがdevelopment-safetyとwork-identity間で二重authority化していないか。
 
-従って **42 / 42 H2 classified** だが、development-environment-strategy全体をsemantic migration PASSとはまだ宣言しない。
+従って中央legacy baselineでは **44 / 44 H2 classified**。旧独立repository由来42 H2と、中央でのWork Identity再構成によるnet +2 H2を区別して追跡する。ただしdevelopment-environment-strategy全体を逐語的semantic migration PASSとはまだ宣言しない。
 
+
+## 7.1 中央repository移行後のnet +2 H2
+
+全体inventory 129 H2と旧repo final 42 H2の差は、中央統合後のWork Identity再構成で生じた。
+
+- `DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`: **Work Identity** をPR #19で追加し、11 → 12 H2。
+- `WORKSPACE_STRUCTURE.md`: 旧10 H2をWork Identity中心に再構成し、中央baselineでは11 H2。単なる1節追加ではなく、Primary Checkout / Task Worktree中心の旧heading群をProject Root / Work Root / Work Documents / repository worktree / resource identityへ置換した。
+- `ENVIRONMENT_WORKFLOW.md` と `INDEX.md` はH2数は同じだが、Work Identity modelに合わせてheading / semanticsを置換した。
+
+このため全体は42 + net2 = **44 H2**。後続sourceはPR #19〜#22のrecordで追跡し、旧repo final snapshotへ遡及編集しない。
 
 ## 8. H3 / detail監査（2026-09-24）
 
