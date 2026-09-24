@@ -29,10 +29,14 @@ tests/
 │  ├─ minimal/
 │  ├─ brownfield/
 │  └─ structured/
-└─ scenarios/
-   ├─ contract-boundary/
-   ├─ brownfield-scope/
-   └─ local-rule-precedence/
+├─ scenarios/
+│  ├─ contract-boundary/
+│  ├─ brownfield-scope/
+│  └─ local-rule-precedence/
+├─ results/
+│  └─ <scenario>/
+└─ evaluations/
+   └─ <scenario>/
 ```
 
 ## Repository fixture vs Scenario
@@ -53,9 +57,14 @@ PROMPT.md
 EXPECTATIONS.md
 ```
 
-- `PROMPT.md`: execution agentへ渡してよい。
-- `EXPECTATIONS.md`: evaluator専用。agentへ事前提示しない。
+- `PROMPT.md`: execution agentへ渡してよい。agent task。
+- `EXPECTATIONS.md`: evaluator専用。agentへ事前提示しない。blind evaluator criteria。
 - `scenario.conf`: fixture mapping等のharness metadata。
+
+runの証跡はscenario本体とは別のdirectoryへ役割分離する。
+
+- `tests/results/<scenario>/`: execution agentの**raw run report**。後から期待値に合わせて改変しない。evaluationと同じfileへ混ぜない。
+- `tests/evaluations/<scenario>/`: evaluatorによるEXPECTATIONS照合・Artifact改善判断。raw resultの写しではなく評価結果を置く。
 
 ## Run materialization
 
@@ -78,7 +87,8 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 4. current Artifact v2 whole packをinstall;
 5. artifact installをcommit;
 6. agent用PROMPTをrun rootへcopy;
-7. `artifact-test-baseline` tagを作成する。\n8. clean baselineを確認する。
+7. `artifact-test-baseline` tagを作成する。
+8. clean baselineを確認する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -128,6 +138,52 @@ Artifactの規範が実際の判断へ反映されたか。
 ### Verification / report
 - 実行したcheckと未実行checkを区別したか。
 - 必要に応じてcontract conformanceとrequested outcomeを区別したか。
+
+## Execution / evaluation cycle
+
+Artifact v2改善の標準cycleは次の通り。
+
+```text
+ChatGPT / evaluator
+  ↓ design / evaluation / task definition
+GitHub Issue
+  ↓
+Execution Agent
+  ↓ implementation / verification
+Branch + PR + repository-side result/report
+  ↓
+ChatGPT / evaluator
+  ↓ GitHub上でreview
+  ↓
+merge or next Issue
+```
+
+ユーザーがexecution-agent reportをchatへcopy/pasteすることを前提にしない。
+
+behavior testの1 cycle:
+
+1. agent run — `prepare-agent-test.sh` でgenerated `repo/` + `PROMPT.md` から実施;
+2. raw resultを `tests/results/<scenario>/` へ保存;
+3. push / PR等でGitHubから取得可能にする;
+4. evaluatorがEXPECTATIONSと照合;
+5. evaluationを `tests/evaluations/<scenario>/` へ保存;
+6. Artifact改善が必要ならIssue化;
+7. execution agentが改善を実装;
+8. evaluator review。
+
+### Execution agent VCS rule
+
+execution agentは原則:
+
+- `main` へ直接commitしない;
+- `main` 最新からwork branchを作る;
+- commit;
+- push;
+- PR作成;
+- IssueをPR本文で参照;
+- final reportはPR bodyまたはIssue commentへ残す。
+
+repositoryにより明示的な別local ruleがある場合はそちらを優先する。
 
 ## Scenario design
 

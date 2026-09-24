@@ -24,8 +24,12 @@ bash tests/test-agent-harness.sh
 repositories/  = initial project fixtures
 scenarios/     = agent task + evaluator-only expectations
 scripts/       = run materialization / reset / inspection
+results/       = execution agentのraw run report (後から期待値に合わせて改変しない)
+evaluations/   = evaluatorによるEXPECTATIONS照合・Artifact改善判断
 runtime repo  = /tmp配下へgenerated; source repo外でblind evaluation
 ```
+
+raw resultとevaluationは別directoryへ分離し、同じfileへ混ぜない。
 
 ### Prepare
 
@@ -46,6 +50,19 @@ bash tests/scripts/inspect-agent-test.sh --scenario contract-boundary
 ```
 
 その後evaluatorが `tests/scenarios/contract-boundary/EXPECTATIONS.md` とagent report / Git diff / verification結果を比較する。
+
+### Cycle
+
+1. agent run;
+2. raw resultを `tests/results/<scenario>/` へ保存;
+3. push / PR等でGitHubから取得可能にする;
+4. evaluatorがEXPECTATIONSと照合;
+5. evaluationを `tests/evaluations/<scenario>/` へ保存;
+6. Artifact改善が必要ならIssue化;
+7. execution agentが改善を実装;
+8. evaluator review。
+
+execution agentは原則 `main` へ直接commitせず、最新 `main` からwork branchを作り、commit → push → PR作成し、IssueをPR本文で参照する。final reportはPR bodyまたはIssue commentへ残す。reportのchatへのcopy/pasteは前提にしない。
 
 ### Reset
 
