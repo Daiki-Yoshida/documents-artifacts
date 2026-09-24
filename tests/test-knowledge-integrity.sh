@@ -26,6 +26,11 @@ for file in \
   documents/knowledge/subjects/INDEX.md \
   documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md \
+  documents/knowledge/records/2026-01-31-initial-code-design-source/MANIFEST.md \
+  documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/MANIFEST.md \
+  documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/MANIFEST.md \
+  documents/knowledge/records/2026-01-31-domain-model-refinement-source/MANIFEST.md \
+  documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/MANIFEST.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -43,6 +48,31 @@ ai_doc_strategy=documents/knowledge/records/2026-06-13-design-principles-referen
   || fail "PROGRAMMING_PARADIGM snapshot blob mismatch"
 [[ "$(git hash-object "$ai_doc_strategy")" == "ed2059d8252ca524d45c45106771f6417fa755c4" ]] \
   || fail "AI_DOC_STRATEGY snapshot blob mismatch"
+
+# Recovered code-design source snapshots must remain byte-identical to pinned Git blobs.
+declare -A code_design_snapshot_blobs=(
+  ["documents/knowledge/records/2026-01-31-initial-code-design-source/files/CODING_STANDARDS.md"]="3bae7e4212fcea8b5807edc00906fad6308f1140"
+  ["documents/knowledge/records/2026-01-31-initial-code-design-source/files/DESIGN_PHILOSOPHY.md"]="488998aa85d245c949f9be4e21570a2a64b4dbf4"
+  ["documents/knowledge/records/2026-01-31-initial-code-design-source/files/AI_WORKFLOW.md"]="7043b6d20d01ba4a3e171171400dddd423b3da39"
+  ["documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/CODING_STANDARDS.md"]="cbe3b01a3b8885402c3efc82b4e20c3cde48486a"
+  ["documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/DESIGN_PHILOSOPHY.md"]="e99fdc169f3774cede6fcb7fa64b871e90fa8424"
+  ["documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/AI_WORKFLOW.md"]="42e995f5039fee6b78b7f1d7a93d242567f20fdc"
+  ["documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/CODING_STANDARDS.md"]="c42fdac981bdf9acea01d1644b4d294434833672"
+  ["documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/DESIGN_PHILOSOPHY.md"]="1864b4d0e0b7f23f86b994fd419d597fb84e7912"
+  ["documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/AI_WORKFLOW.md"]="ee8ad718331482e63c3a68ddc997b7966f326501"
+  ["documents/knowledge/records/2026-01-31-domain-model-refinement-source/files/CODING_STANDARDS.md"]="5a5e21b02f175065fbbfa6434ceca8e2dbbc5474"
+  ["documents/knowledge/records/2026-01-31-domain-model-refinement-source/files/DESIGN_PHILOSOPHY.md"]="faa120958f7e727cda476b87407e8ef4eaf32c92"
+  ["documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/DESIGN_PHILOSOPHY.md"]="4a356c81c675e2fb390cee8ff15c34f397570ce6"
+  ["documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/CODING_STANDARDS.md"]="02668d168fbf57ec2f1df38f3a2e94c2c877c192"
+  ["documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/PROJECT_STRUCTURE.md"]="69abc27cca5735a745ae6f19d50c5e276c686f60"
+  ["documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/AI_WORKFLOW.md"]="e3ab73e4957bcbe09a83dfd870811ef81fbafc71"
+  ["documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/INDEX.md"]="63cb47489e585ee119abe1623c61a42599280910"
+)
+for file in "${!code_design_snapshot_blobs[@]}"; do
+  require_file "$file"
+  [[ "$(git hash-object "$file")" == "${code_design_snapshot_blobs[$file]}" ]] \
+    || fail "code-design source snapshot blob mismatch: $file"
+done
 
 # Subject reading order must be consecutive and HISTORY (if present) last.
 subject_dirs=(documents/knowledge/subjects/*/)
