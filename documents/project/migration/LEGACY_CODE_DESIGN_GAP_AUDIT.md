@@ -8,7 +8,7 @@ baseline_legacy_commit: "e760eb38841650d60739750953c8342b639ce6f0"
 legacy_files_in_scope:
   - "artifacts/design-principles/CODING_STANDARDS.md"
   - "artifacts/design-principles/PROJECT_STRUCTURE.md"
-current_subject_comparison: "現行7 subject。encapsulation-horizonとcode-designを主照合先とする"
+current_subject_comparison: "現行8 subject。encapsulation-horizonとcode-designを主照合先とし、change-processはengineering-operationへrouteする"
 review_unit: "H2の17節と重要なH3・条件・例外"
 semantic_migration_complete: "core rules promoted; detailed line-by-line parity still open"
 ```
@@ -103,7 +103,7 @@ still_separate:
 
 ## 5. Subject ownershipの現在地
 
-責務境界の詳細判断は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) に分離した。source recovery後、code structure / implementation側は [code-design](../../knowledge/subjects/code-design/INDEX.md) として正式subject化した。engineering change processは引き続き `engineering-operation` 候補として保留する。Encapsulation Horizonへlegacy設計規範を一括吸収しない方針は維持する。
+責務境界の詳細判断は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) に分離した。source recovery後、code structure / implementation側は [code-design](../../knowledge/subjects/code-design/INDEX.md) として正式subject化した。Operational Discipline / Brownfield / initial workflowのsource recovery後、engineering change processも [engineering-operation](../../knowledge/subjects/engineering-operation/INDEX.md) として正式subject化した。Encapsulation Horizonへlegacy設計規範を一括吸収しない方針は維持する。
 
 | 候補となる知識対象 | 取り扱う問い | 現行subjectとの差 |
 |---|---|---|
