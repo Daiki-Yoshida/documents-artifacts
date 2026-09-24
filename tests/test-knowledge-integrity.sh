@@ -114,6 +114,15 @@ for subject in "${subject_dirs[@]}"; do
   done
 done
 
+# Every subject directory must be routed from the canonical subject inventory.
+subjects_index=documents/knowledge/subjects/INDEX.md
+for subject in "${subject_dirs[@]}"; do
+  subject_name="${subject%/}"
+  subject_name="${subject_name##*/}"
+  grep -Fq "[$subject_name]($subject_name/INDEX.md)" "$subjects_index" \
+    || fail "subject missing from subjects/INDEX.md: $subject_name"
+done
+
 # Every canonical code-design section must expose traceability.
 for file in documents/knowledge/subjects/code-design/S*.md; do
   grep -Fqx '## Sources' "$file"     || fail "code-design section without Sources: $file"
