@@ -46,6 +46,29 @@ yagni:
 contract completenessへ投資するほど、その内側はcontractを守る限り自由に交換できる。
 したがって**外側を厳密にすることと、内側でYAGNIを強く使うことは矛盾せず、相互に成立条件を与える。**
 
+### Strong contract は explicit であり maximally restrictive ではない（2026-09-24 追加）
+
+「strong contract」は**必要な意味・制約を明示的に閉じる**ことであり、
+**現在の実装が偶発的に持つobservable propertyを最大限にpublic guaranteeへ昇格することではない。**
+
+```yaml
+guarantee_promotion:
+  rule: "次のいずれにも該当しないimplementation propertyをpublic guaranteeへ自動昇格させない"
+  promote_only_if:
+    - "selected responsibilityから導出される"
+    - "user / product requirementとしてload-bearingである"
+    - "callerが安定保証として依存すべき性質である"
+  incidental_examples:
+    - "shortestness"
+    - "deterministic tie-breaking"
+    - "ordering"
+    - "complexity"
+    - "caching behavior"
+  note: "これらはalgorithm choiceから偶発的に生じる性質であり、要求または責務上必要でない限りinternal freedomを狭めるcontractへしない"
+```
+
+逆方向も同じである。これらの性質が既にcaller-visible requirementとして必要なら、当然contract completenessとして明示する。
+「保証すべき場合は保証する。しかしcurrent implementation propertyであるだけでは保証へ昇格しない」がこのruleの要点であり、shortestnessやdeterminismを一般に禁止する規範ではない。
 
 ---
 
@@ -53,3 +76,4 @@ contract completenessへ投資するほど、その内側はcontractを守る限
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md`
 - `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`
+- `../../records/2026-09-24-strong-contract-explicit-not-maximal/RECORD.md`

@@ -49,6 +49,18 @@ Examples for a pathfinding capability:
 - unreachable destination, invalid input, cancellation, failure semantics, resource limits → may be part of the capability's meaningful state space;
 - future GPU cluster support or runtime-selectable algorithm registries → implementation/extension speculation unless an actual requirement exists.
 
+## Strong means explicit, not maximally restrictive
+
+A strong contract is explicit about required semantics; it is not maximally restrictive.
+
+Do not promote incidental properties of the current implementation into public guarantees unless they:
+
+- follow from the selected responsibility;
+- are a load-bearing user/product requirement; or
+- are a property callers should rely on for stability.
+
+Properties that arise accidentally from the algorithm choice—such as shortestness, deterministic tie-breaking, ordering, complexity, or caching behavior—must not shrink internal freedom by becoming contract unless a requirement or the responsibility actually needs them. When they are already caller-visible requirements, define them as part of contract completeness as usual.
+
 ## Omission burden
 
 For speculative internal machinery, the proposer must explain why it is needed now.
