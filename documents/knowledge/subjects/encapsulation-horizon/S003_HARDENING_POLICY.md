@@ -17,6 +17,28 @@ guard_2_seam_cost:
 
 > **規則：一責務 かつ 安定 かつ 継ぎ目が安い ときに硬化する。**
 
+### hardening延期とcreation cost
+
+ここでいう `stability` / `seam cost` は、単なる**実装工数の大きさ**ではない。
+責務が安定し、hardeningすべき面が特定でき、継ぎ目自体も妥当であるなら、
+そのcontractを完全に定義・検証するcreation costが高いことだけを理由に
+「YAGNIだから固めない」と再分類しない。
+
+```yaml
+knowledge_immaturity:
+  valid_reason_to_wait: "責務・意味・正しいseam・contractを固定するだけの知識がまだ不足している"
+creation_cost_only:
+  not_sufficient: "実装量・修正量・test量が大きいことだけでは、必要なhardeningを不要へ変えない"
+ownership_or_seam_cost:
+  valid_signal: "作った後の継続的な整合・compatibility・interaction costや不適切なseamは、hardening範囲を狭める根拠になり得る"
+design_conclusion:
+  rule: "creation costが高くても、設計上の必要性そのものをYAGNIで消さない。実施順序・scope分割・移行方法はengineering operation側の判断へ委譲する"
+```
+
+**hardeningを待てるのは「まだ何を固めるべきか分からない」からであり、
+「固めるのが大変だから」だけではない。**
+
+
 ---
 
 ---
@@ -129,3 +151,4 @@ seam_cost:
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md`
+- `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`

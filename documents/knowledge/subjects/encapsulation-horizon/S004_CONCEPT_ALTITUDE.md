@@ -1,6 +1,6 @@
 # Encapsulation Horizon — Concept Altitude
 
-概念の意味が属する高度と、YAGNI・最初のconsumer・physical placement・hardening depthの独立性を扱う。
+概念の意味が属する高度と、YAGNI・最初のconsumer・physical placement・hardening depthの独立性、およびEncapsulation Horizon内外でのYAGNI適用の非対称を扱う。
 
 ## 6.7. 概念の高度 — YAGNI は「機構」を縛るのであって「意味」を縛らない
 
@@ -26,6 +26,55 @@ asymmetry: "作成時に中立を保つのはほぼ無料（命名＋feature 型
 independent_axes: "概念の高度（意味がどの層に属するか）と硬化深度（どこまで契約を強制するか, §6.5）は独立の軸。中立にモデル化しても地平線は下がらず、機構も増えない。"
 ```
 
+## 6.8. YAGNI across the Horizon — surface breadth と contract completeness
+
+YAGNIはEncapsulation Horizonの全領域へ同じ強さで適用しない。
+**Horizon上・外側のcontract completenessには適用を渋り、Horizon内側の投機的な機構には積極的に適用する。**
+
+```yaml
+contract_surface_breadth:
+  yagni: "strong"
+  rule: "現在選択した責務から導出されない将来capability・extension point・公開面を先回りして増やさない"
+selected_contract_completeness:
+  yagni: "strongly_restricted"
+  rule: "既に選択した責務から導出される意味・保証・制約・failure・resource・determinism・data semanticsを『今は使わない』だけで省略しない"
+  burden: "省略する側が、その保証を未定義または弱いまま残してもboundaryの安全性・安定性を損なわない理由を示す"
+internal_mechanism:
+  yagni: "strong"
+  rule: "contractを満たす限り、未観測の将来に備えた内部abstraction・分割・汎用化・最適化を先払いしない"
+```
+
+したがって目標は**広いcontract**ではなく、**small surface, strong contract**である。
+YAGNIはsurfaceの広さを抑制できるが、いったん選択したsurfaceの意味完全性を削る免罪符にはならない。
+
+### 「あり得る未来」と「現在の責務から導出される意味」を分ける
+
+contractへ含める根拠は「可能性が0ではない」ことではない。
+現在選択した責務そのものから意味的に導出できるかを見る。
+
+経路探索を例にすると、到達不能・不正入力・失敗・cancellation・resource上限等は、
+採用する具体的API形状とは別として、経路探索という能力のsemanticsを閉じる際に検討すべき意味空間である。
+一方、将来GPU clusterへ差し替える、複数algorithmをruntime選択する、といった事項は
+現在の責務から必然的に導出されない内部・拡張上の予測であり、YAGNIで落とせる。
+
+```yaml
+responsibility_derivable:
+  treatment: "contract completenessとして検討し、必要な保証を明示する"
+mere_future_possibility:
+  treatment: "surfaceへ先取りせず、必要になるまで実装しない"
+```
+
+### 証明責任の非対称
+
+内部の新しい機構については「なぜ今それを作るのか」を追加側が説明する。
+一方、hardening対象として選択済みのboundaryで既知の保証を省略する場合は、
+**「なぜその保証を未定義または弱いまま残して安全なのか」を省略側が説明する。**
+
+この非対称によって、外面へ設計コストを集中させ、その代わり内部では大胆な実装交換を許容する。
+これは §7 の「内部の自由は境界面の完全性で買う」と同じ方向を向く。
+
+---
+
 ### 後続の採用判断との接続（2026-09-15）
 
 当初の原文は、一文の責務説明を概念の高度を見つける判断材料として用いた。その後の旧design-principles Issue #1では、異なる概念でも抽象化した一文にまとめられる問題が提起された。中央PR #10は、そのテストを**中立性を示すsignal**に限定し、意味の同一性を不変条件・事前/事後条件・失敗時の意味・lifecycle・変更理由で確認する修正を採用した。
@@ -44,3 +93,4 @@ independent_axes: "概念の高度（意味がどの層に属するか）と硬�
 - `../../records/2026-09-06-design-principles-proposals/RECORD.md`（提案時点）
 - `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`（修正採用）
 - `../../records/2026-09-15-design-principles-proposal-status/RECORD.md`（後続の移行結果報告）
+- `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`（YAGNI / Horizonの後続判断）
