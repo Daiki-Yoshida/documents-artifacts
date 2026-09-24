@@ -8,7 +8,7 @@ legacy_source_snapshot: "../../knowledge/records/2026-07-09-documentation-strate
 legacy_files: 4
 independent_repository_h2_sections: 34
 central_legacy_baseline_h2_sections: 37
-semantic_migration_complete: false
+semantic_migration_complete: "owner/history classification complete; exhaustive line-by-line parity not claimed"
 ```
 
 ## 結論
@@ -199,4 +199,4 @@ active S002を再確認し、旧model由来の強すぎる表現を2点修正し
 
 旧34 H2に加え、重要なH3 / operational detailを監査した結果、現時点で確認した範囲では新しいsubjectを必要とする未所有detailはない。
 
-残る検証は**逐語的な全YAML field parity**ではなく、旧英語sourceにのみ残る例外・反論がS001〜S006のいずれにも現れないケースの探索である。旧version registry modelは意図的なhistoryであり、未移行扱いに戻さない。
+今後の確認はmigration blockerではなくregression auditとして扱う。旧英語sourceにのみ残る例外・反論が新しい後続sourceと衝突していないかは継続確認できるが、旧version registry model等の意図的historyを未移行扱いへ戻さない。
