@@ -68,6 +68,8 @@ The standard Work Root shape is:
 
 Use the same conceptual shape for single- and multi-repository projects.
 
+Do not introduce a parallel `.work/<identity>/` root merely to duplicate this Work Root. External systems may own state outside the filesystem when appropriate.
+
 ## Work Documents
 
 ```text

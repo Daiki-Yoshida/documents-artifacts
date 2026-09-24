@@ -8,6 +8,8 @@ Do **not** read every file by default. Start here, identify the task, then open 
 
 Project-local instructions, architecture, commands, and constraints take precedence where they intentionally specialize this reusable guidance. Do not invent project-local facts from these artifacts.
 
+This directory is a **managed derived snapshot**. Do not edit the installed artifact copy to create project-specific rules or permanent corrections. Put local overrides in project-owned instructions/documentation; fix reusable guidance at its canonical source and redistribute it.
+
 ## Route by task
 
 | Task | Read |
@@ -20,7 +22,7 @@ Project-local instructions, architecture, commands, and constraints take precede
 | Tests | `implementation/TESTING.md` |
 | Public contract change | `design/CONTRACTS.md` + `implementation/COMPATIBILITY.md` |
 | Performance-driven redesign | `implementation/PERFORMANCE.md`; add `design/CONTRACTS.md` if interaction shape changes |
-| Documentation | `documentation/INDEX.md` |
+| Documentation | `documentation/INDEX.md`; also use `operation/CHANGE_LIFECYCLE.md` when documentation is part of an engineering change |
 | Project / repository structure | `project/WORKSPACE.md` |
 | Work identity / lifecycle | `project/WORK_IDENTITY.md`; add `project/WORK_LIFECYCLE.md` when needed |
 | Worktree operation | `project/WORKTREES.md`; add safety guidance for destructive actions |

@@ -12,6 +12,10 @@ Read this when creating or restructuring project documentation.
 
 If accuracy and token cost conflict, accuracy wins. Solve token cost primarily with **file structure and routing**, not by deleting conditions or detail that changes meaning.
 
+## AI-facing canonical knowledge
+
+Project Documentation is the canonical project knowledge that AI agents should be able to route into during development. Human-facing setup/tutorial/background material may coexist, but should not become a competing authority for the same project facts.
+
 ## Canonical project documentation root
 
 Use:
