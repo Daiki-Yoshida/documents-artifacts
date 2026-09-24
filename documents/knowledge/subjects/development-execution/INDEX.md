@@ -2,7 +2,7 @@
 
 このsubjectは、**開発処理をどこで・どの実行環境で・どの公開入口から実行するか**を扱う。
 
-Project/repositoryの静的配置は `../workspace-structure/`、Work単位のownership/lifecycleは `../work-identity/`、破壊操作や診断・復旧の安全境界は `../development-safety/` が主所有する。
+Project/repositoryの静的配置は `../workspace-structure/`、Work単位のownership/lifecycleは `../work-identity/`、破壊操作や診断・復旧の安全境界は `../development-safety/` が主所有する。 要求をどう調査・実装・検証・報告するかというengineering change processは `../engineering-operation/` が主所有する。
 
 ## 構成
 
