@@ -6,13 +6,12 @@ SCENARIOS_ROOT="$REPO_ROOT/tests/scenarios"
 FIXTURES_ROOT="$REPO_ROOT/tests/repositories"
 RUNS_ROOT="$REPO_ROOT/tests/.runs"
 SCENARIO=""
-OUTPUT=""
 FORCE=0
 
 usage() {
   cat <<'USAGE'
 Usage:
-  bash tests/scripts/prepare-agent-test.sh --scenario NAME [--output PATH] [--force]
+  bash tests/scripts/prepare-agent-test.sh --scenario NAME [--force]
 USAGE
 }
 fail() { printf 'Error: %s\n' "$*" >&2; exit 1; }
@@ -20,7 +19,6 @@ fail() { printf 'Error: %s\n' "$*" >&2; exit 1; }
 while (($# > 0)); do
   case "$1" in
     --scenario) (($# >= 2)) || fail "--scenario requires a name"; SCENARIO="$2"; shift 2 ;;
-    --output) (($# >= 2)) || fail "--output requires a path"; OUTPUT="$2"; shift 2 ;;
     --force) FORCE=1; shift ;;
     -h|--help) usage; exit 0 ;;
     *) fail "unknown argument: $1" ;;
@@ -47,17 +45,18 @@ FIXTURE_DIR="$FIXTURES_ROOT/$FIXTURE"
 if find "$FIXTURE_DIR" -name .git -print -quit | grep -q .; then fail "fixture must not contain nested .git state"; fi
 if find "$FIXTURE_DIR" -type l -print -quit | grep -q .; then fail "fixture must not contain symlinks"; fi
 
-if [[ -z "$OUTPUT" ]]; then OUTPUT="$RUNS_ROOT/$SCENARIO"; elif [[ "$OUTPUT" != /* ]]; then OUTPUT="$REPO_ROOT/$OUTPUT"; fi
-if [[ -e "$OUTPUT" ]]; then
-  ((FORCE == 1)) || fail "run root already exists: $OUTPUT (use --force)"
-  rm -rf -- "$OUTPUT"
+RUN_ROOT="$RUNS_ROOT/$SCENARIO"
+[[ "$RUN_ROOT" == "$RUNS_ROOT/"* ]] || fail "refusing unsafe run path"
+if [[ -e "$RUN_ROOT" ]]; then
+  ((FORCE == 1)) || fail "run root already exists: $RUN_ROOT (use --force)"
+  rm -rf -- "$RUN_ROOT"
 fi
 
-mkdir -p -- "$OUTPUT/repo"
-cp -a -- "$FIXTURE_DIR/." "$OUTPUT/repo/"
-cp -- "$PROMPT" "$OUTPUT/PROMPT.md"
+mkdir -p -- "$RUN_ROOT/repo"
+cp -a -- "$FIXTURE_DIR/." "$RUN_ROOT/repo/"
+cp -- "$PROMPT" "$RUN_ROOT/PROMPT.md"
 
-TARGET="$OUTPUT/repo"
+TARGET="$RUN_ROOT/repo"
 git -C "$TARGET" init -q -b main
 git -C "$TARGET" config user.name "documents-artifacts test"
 git -C "$TARGET" config user.email "documents-artifacts-test@example.invalid"
@@ -67,7 +66,8 @@ git -C "$TARGET" commit -qm "test: fixture baseline"
 "$REPO_ROOT/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null
 git -C "$TARGET" add documents/artifacts
 git -C "$TARGET" commit -qm "test: install Artifact v2"
+git -C "$TARGET" tag artifact-test-baseline
 [[ -z "$(git -C "$TARGET" status --porcelain)" ]] || fail "prepared repository is not clean"
 
-printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$OUTPUT/PROMPT.md"
+printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$RUN_ROOT/PROMPT.md"
 printf 'Evaluator expectations (do not give to agent): %s\n' "$EXPECTATIONS"

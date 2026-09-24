@@ -78,7 +78,7 @@ tests/.runs/<scenario>/
 4. current Artifact v2 whole packをinstall;
 5. artifact installをcommit;
 6. agent用PROMPTをrun rootへcopy;
-7. clean baselineを確認する。
+7. `artifact-test-baseline` tagを作成する。\n8. clean baselineを確認する。
 
 evaluation fileはtarget repositoryへ入れない。
 
@@ -112,7 +112,7 @@ requested behavior / design outcomeを満たしたか。
 ### Routing
 - root INDEXから始めたか。
 - taskに関係するleafへ到達したか。
-- Artifact全41fileを「念のため」読むような動作をしていないか。
+- Artifact pack全体を「念のため」読むような動作をしていないか。
 - conditional concernだけを必要時に追加したか。
 
 ### Semantic adoption

@@ -27,7 +27,7 @@ Exact path set is not mandatory if the agent reaches equivalent necessary guidan
 - Treat YAGNI as a reason to leave unreachable/invalid-input semantics ambiguous.
 - Add strategy registries, plugin systems, GPU/parallel execution surfaces, generic factories, or other future-only machinery.
 - Build a large framework around the pathfinder.
-- Read all 41 artifacts without a concrete reason.
+- Read the entire artifact pack without a concrete reason.
 
 ## Acceptable variation
 

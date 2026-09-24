@@ -26,7 +26,7 @@ The agent does **not** need architecture/horizon guidance merely because those f
 - Create `domain/`, `application/`, or `infrastructure/` layers.
 - Convert IDs to numbers.
 - Claim generic Artifact guidance overrides explicit project-local rules.
-- Read all artifacts by default.
+- Read the entire artifact pack by default.
 
 ## Key observation
 

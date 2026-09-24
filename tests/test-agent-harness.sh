@@ -20,7 +20,7 @@ scenario_dirs=("$REPO_ROOT"/tests/scenarios/*/)
 (("${#scenario_dirs[@]}" > 0)) || fail "no scenarios found"
 
 source_artifact_count="$(find "$REPO_ROOT/artifacts" -type f | wc -l | tr -d ' ')"
-[[ "$source_artifact_count" == "41" ]] || fail "expected 41 source artifacts, got $source_artifact_count"
+((source_artifact_count > 1)) || fail "artifact source pack is unexpectedly empty"
 
 for scenario_dir in "${scenario_dirs[@]}"; do
   scenario="${scenario_dir%/}"
@@ -67,6 +67,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
 
   [[ -z "$(git -C "$target" status --porcelain)" ]] || fail "prepared repo is dirty: $scenario"
   [[ "$(git -C "$target" rev-list --count HEAD)" == "2" ]]     || fail "prepared repo should contain fixture + artifact commits: $scenario"
+  git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
+    || fail "prepared baseline tag missing: $scenario"
 
   "$INSPECT" --scenario "$scenario" >/dev/null
   "$RESET" --scenario "$scenario" >/dev/null

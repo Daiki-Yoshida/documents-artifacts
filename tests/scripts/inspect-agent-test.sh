@@ -15,13 +15,15 @@ done
 RUN_ROOT="$REPO_ROOT/tests/.runs/$SCENARIO"
 TARGET="$RUN_ROOT/repo"
 [[ -d "$TARGET/.git" ]] || fail "prepared Git repository not found: $TARGET"
+git -C "$TARGET" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
+  || fail "artifact-test-baseline tag missing: $TARGET"
 
 printf '=== scenario ===\n%s\n\n' "$SCENARIO"
 printf '=== status ===\n'; git -C "$TARGET" status --short
-printf '\n=== changed files vs HEAD ===\n'; git -C "$TARGET" diff --name-status HEAD
-printf '\n=== diff stat ===\n'; git -C "$TARGET" diff --stat HEAD
+printf '\n=== changed files vs prepared baseline ===\n'; git -C "$TARGET" diff --name-status artifact-test-baseline
+printf '\n=== diff stat vs prepared baseline ===\n'; git -C "$TARGET" diff --stat artifact-test-baseline
 printf '\n=== recent commits ===\n'; git -C "$TARGET" --no-pager log --oneline -5
 printf '\n=== managed artifact modifications ===\n'
-artifact_changes="$(git -C "$TARGET" status --short -- documents/artifacts || true)"
+artifact_changes="$(git -C "$TARGET" diff --name-status artifact-test-baseline -- documents/artifacts || true)"
 if [[ -n "$artifact_changes" ]]; then printf '%s\n' "$artifact_changes"; else printf 'none\n'; fi
 printf '\nEvaluator expectations: %s\n' "$REPO_ROOT/tests/scenarios/$SCENARIO/EXPECTATIONS.md"
