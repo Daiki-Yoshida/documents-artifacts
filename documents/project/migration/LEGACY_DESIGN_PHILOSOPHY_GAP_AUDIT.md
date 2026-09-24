@@ -7,7 +7,7 @@ audit_date: "2026-09-24"
 baseline_legacy_commit: "e760eb38841650d60739750953c8342b639ce6f0"
 legacy_file: "artifacts/design-principles/DESIGN_PHILOSOPHY.md"
 legacy_h2_sections: 18
-semantic_migration_complete: false
+semantic_migration_complete: "current owner/normative core established; exhaustive line-by-line parity not claimed"
 ```
 
 ## 位置付け
@@ -78,18 +78,17 @@ semantic_migration_complete: false
 
 詳細は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) と [LEGACY_CODE_DESIGN_GAP_AUDIT.md](LEGACY_CODE_DESIGN_GAP_AUDIT.md) で追跡する。
 
-## 4. Engineering Operationへ回す候補
+## 4. Engineering Operation / Code Designへの現在の割当
 
-Design Priority Order / Mistake Prevention Priorityはcode structureの一個別規則ではなく、複数のdesign decisionをどう優先するかという横断判断である。
+Design Priority Order / Mistake Prevention Priorityは、回収したPROGRAMMING_PARADIGM referenceとfinal DESIGN_PHILOSOPHYを根拠に `code-design/S012_DESIGN_PRIORITY.md` へ移行した。task scope / VCS / reporting等の作業規律は `engineering-operation/` が別所有する。
 
-ただし現在はbaseline artifact以外の第0情報源が不足している。現在の正式priorityとして復活させず、[LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md](LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md) のsource recoveryと合わせて判断する。
+## 5. 現在のcoverage判断
 
-## 5. 現時点のcoverage判断
+旧 `DESIGN_PHILOSOPHY.md` 18 H2は、現在の8 subject上でowner / history / replacementを説明できる状態にある。
 
-旧 `DESIGN_PHILOSOPHY.md` 18 H2について:
+- Bounded Contracts / Recursive Boundaries / Module prior / Shell-vs-Interior / Encapsulation Horizon / Responsibility / Concept Altitude → 主に `encapsulation-horizon`
+- OOP reinterpretation / Composition-Inheritance boundary / side-effect-state / External Dependency / Domain Purity / Internal Paradigm / Design Priority / Mistake Prevention / performance interaction → 主に `code-design`
+- task進行上のscope / verification / VCS / reporting → `engineering-operation`
+- destructive operation safety → `development-safety`
 
-- Encapsulation Horizonの原理として現在のsubjectへ意味が明確に引き継がれている節: Bounded Contracts / Recursive Boundaries / Module prior / Shell-vs-Interior / Encapsulation Horizon / Responsibility / Concept Altitudeを中心とする。
-- 現行subjectに一部だけ存在し、code-level detailが不足する節: OOP reinterpretation / Misreadings / Reliability / Appropriate Complexity / External Dependency / Domain Purity / Internal Paradigm / Performance。
-- 現在の正式ownerがなく、source回収が必要な節: Composition Over Inheritance / Design Priority / Mistake Preventionを中心とする。
-
-この分類は節全体のPASS/FAILではなく、次のsource recovery優先順位を決めるための監査結果である。
+旧sourceと現行subjectが逐語一致することは要求しない。後続sourceで訂正されたsemantic identity / compatibility / performance等は後続decisionを優先する。元sourceを取得できないlegacy-only細則はprovenance gapとして残し、現在採用済みと偽らない。
