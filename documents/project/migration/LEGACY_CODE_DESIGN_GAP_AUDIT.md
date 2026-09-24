@@ -8,7 +8,7 @@ baseline_legacy_commit: "e760eb38841650d60739750953c8342b639ce6f0"
 legacy_files_in_scope:
   - "artifacts/design-principles/CODING_STANDARDS.md"
   - "artifacts/design-principles/PROJECT_STRUCTURE.md"
-current_subject_comparison: "現行6 subject。既存原則の主照合先はencapsulation-horizon"
+current_subject_comparison: "現行7 subject。encapsulation-horizonとcode-designを主照合先とする"
 review_unit: "H2の17節と重要なH3・条件・例外"
 semantic_migration_complete: false
 ```
@@ -78,17 +78,17 @@ DP1→DP2→DP3→DP5を一つの時点の「同時採用」として扱わな�
 
 これ以外のL由来の詳細規範は、旧artifact本文が存在するだけでは新しいnormative subjectへ転載しない。
 
-## 5. 独立subjectを判断するための候補境界（未採用）
+## 5. Subject ownershipの現在地
 
-責務境界の詳細判断は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) に分離した。そこでcode structure / implementationとengineering change processを別のsubject候補として扱い、Encapsulation Horizonへlegacy設計規範を一括吸収しない方針を固定した。
+責務境界の詳細判断は [LEGACY_DESIGN_SUBJECT_OWNERSHIP.md](LEGACY_DESIGN_SUBJECT_OWNERSHIP.md) に分離した。source recovery後、code structure / implementation側は [code-design](../../knowledge/subjects/code-design/INDEX.md) として正式subject化した。engineering change processは引き続き `engineering-operation` 候補として保留する。Encapsulation Horizonへlegacy設計規範を一括吸収しない方針は維持する。
 
 | 候補となる知識対象 | 取り扱う問い | 現行subjectとの差 |
 |---|---|---|
-| コード内部の設計・module構造 | 境界が決まった後、Domain/Application/Infrastructure/UI、port/adapter、DI、モデル、mapping等をどう実装するか | encapsulation-horizonの「どのscaleで境界を硬化するか」とは別の判断軸 |
-| 契約の実装上の保証・検証 | error / async / thread-safety / contract suite / requirement outcomeをどう保証するか | 境界完全性という抽象原理だけで具体運用を代替できない。上記のコード内部設計と一subjectにすべきかも未判断 |
+| code-design（正式subject） | 境界が決まった後、source-backedなstate / compatibility / verification / performance等をどう実現するか。DI / layering / mapping等はsource回収まで未昇格 | encapsulation-horizonの「どのscaleで境界を硬化するか」とは別の判断軸 |
+| code-design内の今後の拡張候補 | error / async / thread-safety / detailed test strategy等。現時点ではsource-backed部分だけcanonical | 境界完全性という抽象原理だけで具体運用を代替できない |
 | AI実装作業の規律 | 事前scan→contract→実装→検証→報告、brownfield、commit/push権限の取り扱い | execution環境・破壊操作risk・Work Identityとは主語が異なる可能性 |
 
-現時点では、旧module名の `design-principles` をそのまま新subject名として復活させない。**各候補の独立した主語・変更理由・責務衝突・原sourceの網羅性**を確認したうえで、新しいsubjectを作るか既存subjectに委ねるかを決める。
+旧module名の `design-principles` はsubject名として復活させない。`code-design` は回収したreference原本と後続の採用recordを根拠に初期核だけ正式化し、source未回収detailはこの監査へ残す。
 
 ## 6. 旧design-principles INDEX 5 H2の扱い
 
