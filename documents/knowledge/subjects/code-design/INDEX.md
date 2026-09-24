@@ -2,9 +2,9 @@
 
 このsubjectは、**Encapsulation Horizonで選択したsoftware boundaryと責務を、codeとしてどう実現・進化・検証するか**を扱う。
 
-境界をどのscaleで硬化するかは `../encapsulation-horizon/` が主所有する。repository/filesystem構造は `../workspace-structure/`、開発command/runtimeは `../development-execution/`、破壊操作や復旧は `../development-safety/` が主所有する。
+境界をどのscaleで硬化するかは `../encapsulation-horizon/`、repository/filesystem構造は `../workspace-structure/`、開発command/runtimeは `../development-execution/`、破壊操作や復旧は `../development-safety/` が主所有する。
 
-旧 `design-principles` の全規範を復活させたsubjectではない。第0情報源または後続の明示的採用を追跡できる知識だけを初期本文へ移している。
+旧 `design-principles` のpackagingをそのまま復活させたsubjectではない。旧repositoryのGit snapshot/commitと、移行後の後続PR・Issueをrecordsとして固定し、現在採用する意味へ再整理している。
 
 ## 構成
 
@@ -15,74 +15,89 @@ code-design/
 ├─ S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md
 ├─ S003_INHERITANCE_BOUNDARY.md
 ├─ S004_STATE_OWNERSHIP_AND_CONSISTENCY.md
-├─ S005_COMPATIBILITY_AND_VERIFICATION.md
-├─ S006_PERFORMANCE_SHAPED_INTERACTION.md
-├─ S007_DESIGN_PRIORITY.md
-└─ S008_HISTORY.md
+├─ S005_CODE_STRUCTURE.md
+├─ S006_DEPENDENCY_AND_EXTERNALS.md
+├─ S007_DOMAIN_AND_DATA_BOUNDARIES.md
+├─ S008_FAILURE_ASYNC_AND_CONTRACTS.md
+├─ S009_TESTING_AND_RUNTIME.md
+├─ S010_COMPATIBILITY_AND_VERIFICATION.md
+├─ S011_PERFORMANCE_SHAPED_INTERACTION.md
+├─ S012_DESIGN_PRIORITY.md
+└─ S013_HISTORY.md
 ```
 
 ### S001_REALIZATION_MODEL.md
-
-boundary-first / contract-firstの設計観を、code realization側から扱う。classやinterface自体を目的にせず、選択済みboundaryの外面を安定させ、内部を交換可能に保つ。
+boundary-first / contract-firstのcode realizationモデルを扱う。
 
 ### S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md
-
-boundary内部のparadigm自由と、state / I/O / time / external systemsなどのside effect containmentを扱う。
+boundary内部のparadigm自由とside-effect containmentを扱う。
 
 ### S003_INHERITANCE_BOUNDARY.md
-
-inheritanceをcode reuseの既定手段ではなく、behavior / lifecycle / framework assumptionを強く拘束するcontract-enforcement mechanismとして扱う。
+inheritanceをcontract-enforcement mechanismとして使う条件を扱う。
 
 ### S004_STATE_OWNERSHIP_AND_CONSISTENCY.md
+mutable state、cross-boundary business outcome、consistency/failure ownershipを扱う。
 
-mutable stateのowner、複数state ownerをまたぐbusiness outcomeのcoordination / failure ownership、atomicityが使えないtopologyでのconsistency strategyを扱う。
+### S005_CODE_STRUCTURE.md
+feature/module first、Domain/Application/Infrastructure/UI、contract placement、public surface、shared placementを扱う。
 
-### S005_COMPATIBILITY_AND_VERIFICATION.md
+### S006_DEPENDENCY_AND_EXTERNALS.md
+interface requirement、dependency direction、DI、external dependency containmentを扱う。
 
-公開contractの互換性をconsumer / provider双方から評価すること、contract conformanceとrequested outcomeのverificationを分離することを扱う。change levelそのものはEncapsulation Horizonを参照する。
+### S007_DOMAIN_AND_DATA_BOUNDARIES.md
+Rich/Lightweight model、Domain purity、state ownership、DTO/mappingを扱う。
 
-### S006_PERFORMANCE_SHAPED_INTERACTION.md
+### S008_FAILURE_ASYNC_AND_CONTRACTS.md
+expected/system failure、error translation、async/concurrency、code-level contract semanticsを扱う。
 
-load-bearing performance requirementがcode interaction shapeへ影響する条件、内部最適化優先、evidence gate、compatibility接続を扱う。
+### S009_TESTING_AND_RUNTIME.md
+unit/integration/contract/E2E、test placement、runtime topology、composition rootを扱う。
 
-### S007_DESIGN_PRIORITY.md
+### S010_COMPATIBILITY_AND_VERIFICATION.md
+consumer/provider双方のcompatibility、contract conformanceとrequested outcome verificationの分離を扱う。
 
-design decisionの優先順位と、内部の美しさをboundary / external stability / locality / side-effect explicitnessより上位に置かない原則を扱う。
+### S011_PERFORMANCE_SHAPED_INTERACTION.md
+load-bearing performance requirement、evidence gate、interaction-shape redesignを扱う。
 
-### S008_HISTORY.md
+### S012_DESIGN_PRIORITY.md
+boundary / stability / locality / side-effect explicitnessを内部eleganceより優先するdesign decision ruleを扱う。
 
-旧 `design-principles` からの復元範囲、未移行のlegacy規範、初期subject化の制約を保持する。
+### S013_HISTORY.md
+旧design-principlesからのsource recovery、後続訂正、移行履歴を保持する。
 
 ## 境界
 
 ```text
 encapsulation-horizon
-  どこを硬いboundaryとして扱うか
-        ↓ boundary chosen
-
+  どこをhard boundaryにするか
+        ↓
 code-design
   そのboundaryをcodeとしてどう実現・進化・検証するか
+        ↓
+development-execution
+  そのcodeをどのruntime/commandでbuild/test/runするか
 ```
 
-次は現時点ではこのsubjectのcanonical規範へ昇格していない。
-
-- Domain / Application / Infrastructure / UIの詳細layer rule
-- constructor DI / Service Locator禁止等の具体DI policy
-- DTO / Mapper / Converter / Adapterの詳細placement rule
-- Result/Eitherの標準type選択、error translationの全詳細
-- async / cancellation / thread-safetyの具体policy
-- shared-kernel tier / test placementの具体rule
-
-これらは旧artifactでは詳細だが、第0情報源・採用状態の回収が未完了である。監査は `documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md` を参照する。
+AI/agentが要求をどう調査・実装・検証・報告するかというengineering change processは、このsubjectに含めない。これは `documents/project/migration/LEGACY_ENGINEERING_OPERATION_GAP_AUDIT.md` で別候補として監査する。
 
 ## Traceability
 
-主要source:
+基準source snapshots:
 
+- `../../records/2026-01-31-initial-code-design-source/`
+- `../../records/2026-01-31-bounded-contracts-refinement-source/`
+- `../../records/2026-01-31-dependency-boundary-refinement-source/`
+- `../../records/2026-01-31-domain-model-refinement-source/`
 - `../../records/2026-06-13-design-principles-reference-snapshot/`
+- `../../records/2026-07-02-design-principles-final-source-snapshot/`
+
+後続の採用・訂正:
+
 - `../../records/2026-09-06-design-principles-proposals/RECORD.md`
 - `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`
-- `../../records/2026-09-15-performance-redesign-hold/RECORD.md`
 - `../../records/2026-09-15-cross-artifact-consistency-issue/RECORD.md`
 - `../../records/2026-09-15-cross-artifact-consistency-pr/RECORD.md`
+- `../../records/2026-09-15-performance-redesign-hold/RECORD.md`
 - `../../records/2026-09-20-performance-contract-evolution/RECORD.md`
+
+旧artifactそのものではなく、旧repositoryのversioned source stateと後続decision recordから現在の日本語knowledgeを導出する。
