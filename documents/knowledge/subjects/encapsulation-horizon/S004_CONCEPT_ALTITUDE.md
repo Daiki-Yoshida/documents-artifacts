@@ -36,8 +36,9 @@ contract_surface_breadth:
   yagni: "strong"
   rule: "現在選択した責務から導出されない将来capability・extension point・公開面を先回りして増やさない"
 selected_contract_completeness:
-  yagni: "weak"
+  yagni: "strongly_restricted"
   rule: "既に選択した責務から導出される意味・保証・制約・failure・resource・determinism・data semanticsを『今は使わない』だけで省略しない"
+  burden: "省略する側が、その保証を未定義または弱いまま残してもboundaryの安全性・安定性を損なわない理由を示す"
 internal_mechanism:
   yagni: "strong"
   rule: "contractを満たす限り、未観測の将来に備えた内部abstraction・分割・汎用化・最適化を先払いしない"

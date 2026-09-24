@@ -31,8 +31,8 @@ creation_cost_only:
   not_sufficient: "実装量・修正量・test量が大きいことだけでは、必要なhardeningを不要へ変えない"
 ownership_or_seam_cost:
   valid_signal: "作った後の継続的な整合・compatibility・interaction costや不適切なseamは、hardening範囲を狭める根拠になり得る"
-operation_response:
-  rule: "必要性は維持したまま段階化・移行計画・scope分割で扱う。高コストをYAGNIの根拠へ置き換えない"
+design_conclusion:
+  rule: "creation costが高くても、設計上の必要性そのものをYAGNIで消さない。実施順序・scope分割・移行方法はengineering operation側の判断へ委譲する"
 ```
 
 **hardeningを待てるのは「まだ何を固めるべきか分からない」からであり、
