@@ -60,13 +60,13 @@ current_subject: "documents/knowledge/subjects/engineering-operation/"
 
 Work Identityは一つのWorkのidentity / Work Root / resource / lifecycleを扱う。engineering change processはWork Rootの有無に依存せず成立する。
 
-## 3. Engineering Operation候補の責務
+## 3. Engineering Operationの責務
 
-候補subjectの主語:
+formalize前の責務監査で確認した主語（現在は正式subjectとして採用済み）:
 
 > **要求を受けたengineering changeを、どのauthority・scope・判断順序・verification・version-control・reportingで完了させるか。**
 
-候補として整理できる内部責務:
+正式subjectへ整理した内部責務:
 
 1. authority / local convention / user intent
 2. task outcomeとscope
@@ -79,7 +79,7 @@ Work Identityは一つのWorkのidentity / Work Root / resource / lifecycleを�
 9. reporting
 10. approach question等のagent interaction
 
-ただし、この一覧は**構造候補**であって、旧artifactの全条文を現在採用したものではない。
+この一覧は責務構造を示す。旧artifactの全条文を無条件に採用したわけではなく、正式subject本文はsource recoveryで確認できたnormative coreだけを採用する。
 
 ## 4. source-backedで現在使える知識
 
