@@ -11,7 +11,7 @@ candidate_mapping: "14 / 14（2026-09-21時点の旧監査候補）"
 current_subjects: 8
 baseline_non_history_subject_body_files_scanned_before_code_design: 31
 current_non_history_subject_body_files: 50
-semantic_coverage_verdict: "未完了"
+semantic_coverage_verdict: "129/129 H2 owner/history classified; provenance gaps and reprojection remain"
 ```
 
 ## 目的と制約
@@ -58,9 +58,9 @@ semantic_coverage_verdict: "未完了"
 
 この表は現在のroutingと残るgapを示す。`code-design` は正式subject化済みだが、表中の未回収detailを採用済みとみなさない。
 
-## 3. 優先的に確認する未移行候補
+## 3. 初回監査で検出したgapと現在の解消状態
 
-### A. Code design / implementation（重要）
+### A. Code design / implementation（正式subject化済み）
 
 `artifacts/design-principles/CODING_STANDARDS.md` の現存headingを確認:
 
@@ -72,7 +72,7 @@ semantic_coverage_verdict: "未完了"
 
 `PROJECT_STRUCTURE.md` にもShared Kernel、runtime topology、test placement等の節が存在する。
 
-`code-design` 作成前の6 subject baselineで、historyを除く31本文fileを対象に、関連する代表語（DI / dependency injection、Domain/Application Layer、expected failure、async contract、contract/unit/integration testing、shared kernel等）を検索したところ該当なし。このテキスト検索は**未移行の可能性を強く示すが、意味欠落の完全証明ではない**。
+`code-design` 作成前の6 subject baselineでは、historyを除く31本文fileにDI / layering / async / testing等の明確なownerが見当たらなかった。この発見を起点にversioned sourceを回収し、現在は `code-design` を正式subject化している。初回検索結果はmigration前状態の証拠として保持する。
 
 従来の英語再構成候補 `semantic-preservation-candidate/CODE_DESIGN.md` には34のH2区分があるが、これは監査候補であって現行の第1情報源ではない。現在の正式なcode-designは `documents/knowledge/subjects/code-design/` であり、回収済みrecordsを根拠にした部分だけを所有する。
 
@@ -146,7 +146,7 @@ ENV1〜3は後続の実装説明を含むが、旧env artifactの各行が全て
 
 中央legacy baselineのH2内訳は **design-principles 48 + documentation-strategy 37 + development-environment-strategy 44 = 129**。documentationの+3とdevelopment-environmentのnet +2は、旧個別repository終了後の中央PR #16 / #19〜#22等による追加・再構成であり、旧snapshotへ遡及させず後続sourceとして追跡する。
 
-この表は**sourceにたどり着ける範囲と現在の調査方向**を示す。全14ファイルをsemantic coverage PASSと判定するものではない。特に日本語の旧source logと英語artifactの差分、元の議論本文の不在を無視して未移行知識を確定させない。
+この表は**sourceにたどり着ける範囲と現在のowner/history分類**を示す。129/129 H2は現行8 subjectまたは意図的history/replacementへ分類済みである。一方、これは旧14ファイルとの逐語一致や、すべての元チャット/提案source回収を意味しない。取得できないprovenanceを推測で補完しない。
 
 ## 7. 現在の設計・実装知識で検証対象となる具体的な差分
 
