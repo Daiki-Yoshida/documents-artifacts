@@ -50,11 +50,11 @@ design_rule: "エントリファイルは、agent固有の入口として必要�
 when_to_create: "プロジェクトが実際に使用する各AIツールについて1つ作成する。使用しないツールのファイルは作成しない（YAGNI）。"
 ```
 
-### プロジェクトドキュメント（documents/project/）
+### プロジェクトレベル文書（配置はproject routingに従う）
 
 ```yaml
-purpose: "AIエージェントがすべてのタスクで必要とするプロジェクトレベルのコンテキスト"
-placement: "documents/project/"
+purpose: "AIエージェントが複数taskで参照するproject-level context"
+placement: "project固有。documents/project/ は標準的な配置例だが必須directoryではない。documents/直下やtopic directoryでもよい。"
 content_examples:
   - "プロジェクト概要、目的、スコープ"
   - "アーキテクチャサマリー"
@@ -63,11 +63,11 @@ content_examples:
 routing_rule: "INDEX.mdがこれらのファイルへルーティングする。各ファイルは1つの関心事を扱う。"
 ```
 
-### 参照ドキュメント（documents/reference/）
+### 参照ドキュメント（配置はproject routingに従う）
 
 ```yaml
 purpose: "エージェントがオンデマンドで読む参照資料"
-placement: "documents/reference/"
+placement: "project固有。documents/reference/ は標準的な配置例だが必須directoryではない。topic directoryや既存の明示されたrole directoryでもよい。"
 content_examples:
   - "API仕様、データモデル、スキーマ"
   - "プロジェクト固有のコーディング標準"
@@ -118,25 +118,25 @@ path_note: "パスはリンクを含むファイルからの相対パスであ�
 
 ## 7. ディレクトリ分割ガイド
 
-新しい `documents/<topic>/` ディレクトリを作成するか、ファイルを
-`documents/project/` または `documents/reference/` に配置するかの判断基準。
+新しい `documents/<topic>/` directoryを作成するか、既存のproject-level / reference-level roleへ置くかの判断基準。
 
 ```yaml
-default_placement:
-  project_level: "documents/project/ — project-level documentの標準的な配置例"
-  reference_level: "documents/reference/ — reference documentの標準的な配置例"
+default_placement_examples:
+  project_level: "documents/project/ — project-level documentを分けたい場合の標準例。既存project routingを優先"
+  reference_level: "documents/reference/ — reference documentを分けたい場合の標準例。既存project routingを優先"
+  rule: "これらのdirectoryを存在必須にしない。Project Documentation rootはdocuments/だが、その内部shapeはprojectの責務とroutingに合わせる"
 
 when_to_create_topic_directory:
   criteria:
     - "トピックに3つ以上のファイルがあり、それらがまとまった単位を形成する。"
     - "トピックが自己完結している — エージェントはそのディレクトリだけを読めばトピックを理解できる。"
     - "ファイルをproject/またはreference/に配置すると、それらのディレクトリが雑然とする。"
-  rule: "1〜2ファイルだけなら既存role directoryを優先し、独立した責務・まとまりが明確になった時点でtopic directoryを検討する。file数は判断材料の一つであり固定閾値ではない。"
+  rule: "1〜2ファイルだけなら既存routing内の適切なroleを優先し、独立した責務・まとまりが明確になった時点でtopic directoryを検討する。file数は判断材料の一つであり固定閾値ではない。"
 
 when_not_to_create:
-  - "トピックがproject/またはreference/のコンテンツと重複する。"
-  - "ファイル間で相互参照が頻繁に必要（1つのディレクトリにまとめる）。"
-  - "トピックが単一ファイル — project/またはreference/を使用する。"
+  - "トピックが既存のproject-level / reference-level roleと重複する。"
+  - "ファイル間で相互参照が頻繁に必要（1つのdirectoryにまとめる）。"
+  - "トピックが単一fileなら、既存routing内の最も近いroleへ置く。"
 ```
 
 ---
@@ -192,3 +192,4 @@ rule: "子はこのファイルを参照しない。明示的に協調されな�
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md`
 - `../../records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md`
 - `../../records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md`
+- `../../records/2026-09-22-six-subject-cross-audit-implementation/RECORD.md`（Project Documentation root固定 + 内部構造柔軟化）
