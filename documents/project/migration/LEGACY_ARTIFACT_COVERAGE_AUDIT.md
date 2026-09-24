@@ -8,9 +8,9 @@ legacy_snapshot_commit: "e760eb38841650d60739750953c8342b639ce6f0"
 audit_date: "2026-09-24"
 legacy_markdown_files: 14
 candidate_mapping: "14 / 14（2026-09-21時点の旧監査候補）"
-current_subjects: 7
+current_subjects: 8
 baseline_non_history_subject_body_files_scanned_before_code_design: 31
-current_non_history_subject_body_files: 38
+current_non_history_subject_body_files: 50
 semantic_coverage_verdict: "未完了"
 ```
 
@@ -51,10 +51,10 @@ semantic_coverage_verdict: "未完了"
 |---|---|---|---|
 | design-principles: DESIGN_PHILOSOPHY | `encapsulation-horizon` / `code-design` | Encapsulation Horizon原文と旧PROGRAMMING_PARADIGM referenceを保存し、48/48 H2を一次分類。source-backedな設計原理をcode-designへ初期移行 | Composition等を含む未回収detailの採否 |
 | design-principles: CODING_STANDARDS / PROJECT_STRUCTURE | `code-design`（source-backed範囲） / `encapsulation-horizon`（hardening） | `code-design` を正式追加。state ownership / compatibility / verification / performance等をsource-backedに移行 | DI、layering、Result/Either詳細、async、mapping、shared kernel、test placement等の元source回収 |
-| design-principles: AI_WORKFLOW | `encapsulation-horizon` のcontract変更、`development-safety` の操作安全性、未整理の横断的作業規律 | 旧artifactにはno commit/push unless requested等のoperation規則が存在 | 複数subjectへ配賦可能か、横断的責務が独立知識対象か |
+| design-principles: AI_WORKFLOW | `engineering-operation`（change process）+ `encapsulation-horizon` / `code-design` / `development-safety`へのrouting | Operational Discipline / Brownfield / verification sourceを回収し、engineering-operationを正式subject化 | 固定reporting language等、current普遍規範にしないhistorical detailの扱い |
 | design-principles: INDEX | 主に旧packagingのrouting | 当時の14/14候補はlegacy packaging-onlyを現行意味と区別 | 旧INDEX内にrouting以上の固有規範がないか |
-| documentation-strategy: 4ファイル | `documentation`（旧状態は `S006_HISTORY.md`） | 旧日本語原文3本のH2 routingは30/30として再監査済み | 英語artifact固有の条件・例外・旧規範の採否までの対応 |
-| development-environment-strategy: 5ファイル | `workspace-structure`、`development-execution`、`development-safety`、`work-identity` | 旧日本語4本文の初回再編coverageは36/36として記録済み | 英語artifact固有の条件・例外・横断作業規律の対応 |
+| documentation-strategy: 4ファイル | `documentation` + Work Documents lifecycleは`work-identity` | 中央legacy baseline 37/37 H2を分類。Managed Artifact HandlingをS003へ復元し、Work Documentsは後続subject splitへ接続 | 全YAML fieldの逐語parityではなく、未所有exceptionの探索を継続 |
+| development-environment-strategy: 5ファイル | `workspace-structure`、`development-execution`、`development-safety`、`work-identity` | 中央legacy baseline 44/44 H2を分類。Work Identity / Worktree後続sourceをPR #19〜#22へ追跡 | 4 subject間でidentity / materialization / destructive safetyを二重authority化しないことを継続監査 |
 
 この表は現在のroutingと残るgapを示す。`code-design` は正式subject化済みだが、表中の未回収detailを採用済みとみなさない。
 
@@ -76,13 +76,13 @@ semantic_coverage_verdict: "未完了"
 
 従来の英語再構成候補 `semantic-preservation-candidate/CODE_DESIGN.md` には34のH2区分があるが、これは監査候補であって現行の第1情報源ではない。現在の正式なcode-designは `documents/knowledge/subjects/code-design/` であり、回収済みrecordsを根拠にした部分だけを所有する。
 
-### B. 横断的なengineering operation（要調査）
+### B. 横断的なengineering operation（正式subject化済み）
 
-旧 `AI_WORKFLOW.md` と候補 `ENGINEERING_OPERATING_MODEL.md` には、作業前の要求確認・既存資産調査・実装・検証・報告、commit/pushの扱い等がある。現在のsubjectはcontract / runtime / safety / Workの各領域を所有するが、横断規律の単一ownerを設けるべきかは未判断。
+旧 `AI_WORKFLOW.md` のOperational Discipline、Brownfield、verification、approach questionのsourceを回収し、`engineering-operation` を正式subject化した。各domain ruleを複製せず、change lifecycle・authority/scope・pre-scan・confirmation routing・verification/done・VCS/reportingを所有する。
 
-### C. 旧documentation規範の採否（要確認）
+### C. Documentationの中央追加detail（分類済み）
 
-旧version registry、固定audience分離、strict SSOT等は現行documentationのhistoryへ分類されている。ただし、これは「旧artifact固有情報も含めて採用・却下・例外が全項目照合済み」という意味ではない。過去判断と現在の適用範囲をsource recordで確認する。
+旧repo final 34 H2に加え、中央PR #16/#19でManaged Artifact HandlingとWork Documents関連3 H2が増え、legacy baselineは37 H2となった。Managed Artifact Handlingはdocumentation/S003へ復元し、Work Documentsのactive lifecycleはwork-identity、Project Documentationへのdurable reconciliationはdocumentationへ分担した。version registry、固定audience分離、strict SSOT等は後続decisionによりhistoryへ留める。
 
 ## 4. 実装前のgate
 
@@ -129,7 +129,7 @@ ENV1〜3は後続の実装説明を含むが、旧env artifactの各行が全て
 
 | 対象artifact | 利用可能なsource evidence | 既存subjectの主な対応先（暫定） | sourceと意味の未確認部分 |
 |---|---|---|---|
-| design-principles/AI_WORKFLOW.md | DP1・DP2・DP7（特定のcontract変更・要求検証） | encapsulation-horizon / development-safety（各担当範囲） | 旧workflow全体の原提案、AIの横断的作業規律のowner |
+| design-principles/AI_WORKFLOW.md | initial/final snapshot、Operational Discipline commit、Brownfield commit、DP1/DP2 | engineering-operation +各domain ownerへのrouting | historical wordingをcurrent普遍規範へ過剰一般化しない |
 | design-principles/CODING_STANDARDS.md | DP1〜DP7（主に後続改訂） | encapsulation-horizon（境界原理・変更level） | DI、層責務、外部依存、Result/例外、非同期、モデル・変換、テストの詳細原文と現行owner |
 | design-principles/DESIGN_PHILOSOPHY.md | JP内ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md、DP1〜DP7 | encapsulation-horizon（当該原本17 H2を再配置） | その他の設計原理の原資料、採用後の未移行部分 |
 | design-principles/INDEX.md | DP2・DP6・DP7（当時のrouting変更の一部） | subjects/INDEX.mdは現行routingのみ | 旧packaging説明と固有規範の峻別・当時の全ownership mapの対応 |
