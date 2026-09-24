@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 REPO_ROOT="$(cd -- "$(dirname -- "$BASH_SOURCE")/../.." && pwd -P)"
+RUNS_ROOT="${ARTIFACT_TEST_RUNS_ROOT:-${TMPDIR:-/tmp}/documents-artifacts-agent-tests-${UID:-user}}"
 SCENARIO=""
 fail() { printf 'Error: %s\n' "$*" >&2; exit 1; }
 while (($# > 0)); do
@@ -12,6 +13,6 @@ while (($# > 0)); do
 done
 [[ -n "$SCENARIO" ]] || fail "--scenario is required"
 [[ "$SCENARIO" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || fail "invalid scenario name"
-RUN_ROOT="$REPO_ROOT/tests/.runs/$SCENARIO"
-[[ "$RUN_ROOT" == "$REPO_ROOT/tests/.runs/"* ]] || fail "refusing unsafe run path"
+RUN_ROOT="$RUNS_ROOT/$SCENARIO"
+[[ "$RUN_ROOT" == "$RUNS_ROOT/"* ]] || fail "refusing unsafe run path"
 if [[ -e "$RUN_ROOT" ]]; then rm -rf -- "$RUN_ROOT"; printf 'Removed run: %s\n' "$RUN_ROOT"; else printf 'Run already absent: %s\n' "$RUN_ROOT"; fi

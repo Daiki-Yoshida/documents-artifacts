@@ -4,7 +4,7 @@ set -euo pipefail
 REPO_ROOT="$(cd -- "$(dirname -- "$BASH_SOURCE")/../.." && pwd -P)"
 SCENARIOS_ROOT="$REPO_ROOT/tests/scenarios"
 FIXTURES_ROOT="$REPO_ROOT/tests/repositories"
-RUNS_ROOT="$REPO_ROOT/tests/.runs"
+RUNS_ROOT="${ARTIFACT_TEST_RUNS_ROOT:-${TMPDIR:-/tmp}/documents-artifacts-agent-tests-${UID:-user}}"
 SCENARIO=""
 FORCE=0
 
