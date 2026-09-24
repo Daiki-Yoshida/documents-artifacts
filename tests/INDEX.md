@@ -35,7 +35,7 @@ bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
 
 ### Execute
 
-execution agentのworking directoryを `/tmp/.../contract-boundary/repo/` にして、`/tmp/.../contract-boundary/PROMPT.md` の本文だけをtaskとして渡す。
+prepare scriptが表示したtemporary `repo/` をexecution agentのworking directoryにして、同じrun rootの `PROMPT.md` の本文だけをtaskとして渡す。
 
 **`tests/scenarios/<scenario>/EXPECTATIONS.md` は事前にagentへ見せない。**
 

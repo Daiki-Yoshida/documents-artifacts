@@ -2,7 +2,7 @@
 
 ```yaml
 document_type: "repository_local_test_architecture"
-status: "initial"
+status: "implemented"
 date: "2026-09-24"
 target: "Artifact v2 AI consumption / routing behavior"
 ```
@@ -82,7 +82,7 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
-`ARTIFACT_TEST_RUNS_ROOT` を明示すればrun rootを変更できる。self-testでは独立したtemporary directoryを使う。
+`ARTIFACT_TEST_RUNS_ROOT` を明示すればrun rootを変更できる。ただしabsolute pathかつsource repository外でなければならない。self-testでは独立したtemporary directoryを使う。
 
 ## Agent protocol
 
