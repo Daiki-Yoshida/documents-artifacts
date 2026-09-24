@@ -235,3 +235,18 @@ final英語snapshotのH3・YAML ruleと、導入・変更commit patchを突合�
 - runtime materialization / reuse → development-execution
 - destructive action safety → development-safety
 - static repository/filesystem ownership → workspace-structure
+- general task authority / scope / brownfield discipline → engineering-operation
+
+
+## 10. 8 subject横断のbrownfield authority確認
+
+`development-execution/S004_ADOPTION_AND_MIGRATION.md` に残っていた「project-local rule優先」「scope外違反をついでに全面修正しない」は、実行環境固有の規則ではなく一般的engineering change disciplineである。
+
+8 subject化後は次へ整理した。
+
+- local convention / task scope / surrounding violation → `engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md` / `S007_BROWNFIELD_AND_APPROACH.md`
+- existing build/test/deploy pathを段階移行し、environment状態を黙って破壊しない → `development-execution/S004_ADOPTION_AND_MIGRATION.md`
+- destructive cleanup → `development-safety/`
+- branch/worktree/resource lifecycle → `work-identity/`
+
+これにより、brownfieldという同じ語を複数subjectが使っていても、一般scope disciplineとenvironment migration disciplineを二重authorityとして定義しない。
