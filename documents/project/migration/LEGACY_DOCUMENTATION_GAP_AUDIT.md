@@ -1,4 +1,4 @@
-# Documentation Strategy — 旧34 H2の意味差分監査
+# Documentation Strategy — legacy baseline 37 H2の意味差分監査
 
 ```yaml
 document_type: "repository_local_semantic_gap_audit"
@@ -6,13 +6,14 @@ authority: "derived_analysis_not_normative"
 audit_date: "2026-09-24"
 legacy_source_snapshot: "../../knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/"
 legacy_files: 4
-legacy_h2_sections: 34
+independent_repository_h2_sections: 34
+central_legacy_baseline_h2_sections: 37
 semantic_migration_complete: false
 ```
 
 ## 結論
 
-旧 `documentation-strategy` の4ファイル・34 H2は、H2単位では **34 / 34を現行knowledgeへ分類できる**。
+旧独立 `documentation-strategy` repositoryの最終実質stateは4ファイル・34 H2。その後、中央repositoryへ統合されたlegacy artifactへ3 H2が追加され、監査baseline `e760eb38841650d60739750953c8342b639ce6f0` では **37 H2** になっている。現在は **37 / 37を現行knowledgeへ分類できる**。
 
 ただし分類は「同じH2 titleが存在する」という意味ではない。現在のdocumentation subjectでは、旧modelのうち後続判断で維持するものをS001〜S005へ整理し、現在採用しないものをS006_HISTORYへ明示的に分離している。
 
@@ -33,12 +34,15 @@ semantic_migration_complete: false
 
 [final source snapshot](../../knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md) の4ファイルは、旧repositoryの同commitにあるGit blob SHAと **4 / 4一致**を確認した。
 
-## 1. DOCUMENTATION_PHILOSOPHY.md — 9 / 9
+中央統合後はPR #16でManaged Artifact ownershipが追加され、PR #19でWork Documents semanticsが追加された。最終legacy baselineで増えた3 H2は、旧repository snapshotを改変して保存したものではなく、後続source eventとして別に評価する。
+
+## 1. DOCUMENTATION_PHILOSOPHY.md — 10 / 10（旧repo 9 + 中央追加1）
 
 | 旧H2 | 現在の扱い | 現行owner |
 |---|---|---|
 | Core Principle: Information Accuracy First | 現行。情報量削減より意味の正確性を優先 | documentation/S001 |
 | Scope: What This Strategy Governs | 現行。Project Documentationの責務境界 | documentation/S001 |
+| Work Documents: Active-Work Knowledge | 中央PR #19で追加。active Work側のidentity/lifecycleはwork-identityが主所有し、Project Documentationへ残すdurable knowledgeのreconciliationはdocumentation/S003が所有 | work-identity/S003/S004 + documentation/S003 |
 | AI-Facing by Default | **旧model**。audienceだけを理由に固定top-levelを強制しない | documentation/S006_HISTORY |
 | Routing Over Truncation | 現行。情報を切り捨てずroutingで必要範囲を読む | documentation/S002 |
 | Git as a Recording Tool | 現行。Git historyを記録機構として利用 | documentation/S005 |
@@ -47,7 +51,7 @@ semantic_migration_complete: false
 | Relationship to design-principles | **旧artifact packagingの関係**としてhistory。現在はsubject routingで分離 | documentation/S006_HISTORY |
 | Common Misreadings | 旧model固有の誤読guardをhistoryとして保持。現行規範の解釈はS001〜S005自身で決まる | documentation/S006_HISTORY |
 
-## 2. DOCUMENT_WORKFLOW.md — 10 / 10
+## 2. DOCUMENT_WORKFLOW.md — 12 / 12（旧repo 10 + 中央追加2）
 
 | 旧H2 | 現在の扱い | 現行owner |
 |---|---|---|
@@ -56,6 +60,8 @@ semantic_migration_complete: false
 | Existing Project Adoption (Brownfield) | 現行 | documentation/S003 |
 | Ongoing Document Updates | 現行 | documentation/S003 |
 | Staleness Handling | **旧version registry依存model**としてhistory | documentation/S006_HISTORY |
+| Managed Artifact Handling | 中央PR #16で追加。installed guidanceはproject-owned文書として直接保守せず、canonical source / distribution mechanismから更新・削除する | documentation/S003 |
+| Work Documents | 中央PR #19で追加。active lifecycleはwork-identity、durable Project Documentationへのreconciliationはdocumentation | work-identity/S003/S004 + documentation/S003 |
 | Version Bumping Workflow | **非採用**。document Semantic Version / commit-hash二段階更新を現行必須にしない | documentation/S006_HISTORY |
 | Document Creation Decision Tree | **旧固定directory/audience model**としてhistory。現在はrouting responsibilityをS002が所有 | documentation/S006_HISTORY |
 | Document Deletion Workflow | 現行 | documentation/S004 |
@@ -114,8 +120,20 @@ H2単位のowner不在は今回確認していない。一方、次は引き続�
 3. `Git Commit Message Conventions` 等、旧repository固有運用と一般Project Documentation規範の境界。
 4. 現在のdocumentation subjectに不要な旧file名・旧directory assumptionがnormative本文へ再混入していないか。
 
-したがって **34 / 34 H2 classified** だが、documentation-strategy全体をsemantic migration PASSとはまだ宣言しない。
+したがって中央legacy baselineでは **37 / 37 H2 classified**。旧独立repository由来34 H2と中央追加3 H2を区別して追跡する。ただしdocumentation-strategy全体を逐語的semantic migration PASSとはまだ宣言しない。
 
+
+## 6.1 中央repository移行後に追加された3 H2
+
+旧repository final snapshotの34 H2だけでは、中央legacy baseline 37 H2を説明できない。追加3節は次の後続sourceから導入された。
+
+| 中央追加H2 | source | 現在の扱い |
+|---|---|---|
+| Work Documents: Active-Work Knowledge | [PR #19](../../knowledge/records/2026-09-20-work-identity-artifactization-pr/RECORD.md) | Work Documents自体はwork-identity、durable Project Documentationへのreconciliationはdocumentation |
+| Managed Artifact Handling | [PR #16](../../knowledge/records/2026-09-15-cross-artifact-consistency-pr/RECORD.md) | documentation/S003へ復元。managed copyをproject-owned文書として直接patchしない |
+| Use Case 6: Work Documents | [PR #19](../../knowledge/records/2026-09-20-work-identity-artifactization-pr/RECORD.md) | Work lifecycleはwork-identity、documentation destination semanticsはdocumentation/S003 |
+
+これらは旧repo final snapshotへ後知恵で追加せず、中央repositoryの後続sourceとしてtraceする。
 
 ## 7. H3 / detail監査（2026-09-24）
 
