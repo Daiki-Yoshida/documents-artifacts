@@ -172,6 +172,6 @@ Artifact v2のAI routing / behaviorを実project fixture上で検証するharnes
 bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
 ```
 
-生成された `tests/.runs/<scenario>/repo/` をexecution agentのworking directoryにし、run rootの `PROMPT.md` のみをtaskとして渡す。評価基準 `tests/scenarios/<scenario>/EXPECTATIONS.md` はagentへ事前提示しない。
+prepare scriptが表示するsource repository外のtemporary `repo/` をexecution agentのworking directoryにし、そのrun rootの `PROMPT.md` のみをtaskとして渡す。評価基準 `tests/scenarios/<scenario>/EXPECTATIONS.md` はagentへ事前提示しない。
 
 詳細: `tests/INDEX.md`

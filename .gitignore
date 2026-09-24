@@ -20,5 +20,3 @@ tmp/
 *.tmp
 *~
 
-# Generated execution-agent test repositories
-tests/.runs/
