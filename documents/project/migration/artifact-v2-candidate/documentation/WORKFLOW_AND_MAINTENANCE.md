@@ -27,6 +27,18 @@ When implementation or a decision changes durable project knowledge, update the 
 
 Do not maintain parallel manual version registries when Git history already tracks document evolution.
 
+## Managed artifact copies
+
+Reusable guidance installed into a target project is a **managed derived snapshot**, not ordinary project-owned documentation.
+
+- update it from its canonical source or the explicit distribution/sync mechanism;
+- do not patch only the installed copy and let it permanently diverge;
+- omitting a managed artifact from an update does not imply permission to remove it;
+- record project-specific overrides in project-owned instructions/documentation rather than editing the managed copy;
+- if the reusable guidance itself is wrong, fix the canonical source and redistribute it.
+
+The project INDEX may route to the installed artifact entrypoint; it does not need to mirror every internal artifact file as an independent authority.
+
 ## Work Documents reconciliation
 
 Work-specific investigation/design lives with the Work while it is active.
@@ -72,3 +84,22 @@ DOC_L3_model_change:
 ```
 
 Documentation risk is separate from code-contract and destructive-operation risk.
+
+
+## Re-read triggers
+
+Re-read the documentation-routing guidance before:
+
+- first applying it to a project;
+- creating/rebuilding the `documents/` tree;
+- new-project documentation setup;
+- brownfield adoption.
+
+Re-read or re-check the relevant routing when:
+
+- adding a new agent entry file;
+- moving documents across directories;
+- changing single-project ↔ hierarchical-project structure;
+- uncertain where new information belongs.
+
+Routine content edits inside an established routing structure do not require a full strategy re-read.

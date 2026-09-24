@@ -83,3 +83,16 @@ Not yet completed:
 5. replacement of legacy `artifacts.sh --modules` behavior and tests.
 
 Do not promote this candidate to `artifacts/` until semantic review is complete.
+
+
+## First semantic-review corrections
+
+First-pass review found two cases where compression weakened current normative meaning. Both were corrected:
+
+1. `project/WORK_IDENTITY.md`
+   - restored the current rule that AI may propose a Work Identity but the **user explicitly confirms it before implementation begins**.
+2. `documentation/WORKFLOW_AND_MAINTENANCE.md`
+   - restored managed-artifact ownership/update semantics;
+   - restored documentation strategy re-read triggers.
+
+These are examples of the projection rule `compression != semantic weakening`: omission was shorter, but materially changed runtime guidance.

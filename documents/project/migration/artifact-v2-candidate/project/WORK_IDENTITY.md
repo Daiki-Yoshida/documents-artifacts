@@ -30,7 +30,13 @@ Git represents Work Identity where useful; Git does not define it.
 
 Do not create Work Identity for every early idea or exploratory discussion.
 
-Establish it when the implementation goal has become concrete and the project workflow is moving into implementation. Follow the project's confirmation/approval convention before materializing work-scoped state.
+Establish it when the implementation goal has become concrete and the project workflow is moving into implementation.
+
+- AI may propose a Work Identity.
+- **Before implementation begins, the user explicitly confirms the Work Identity.**
+- Do not rush to create one during an exploratory discussion whose implementation goal is still unclear.
+
+Materialize work-scoped state only after that identity is confirmed.
 
 ## Naming
 
