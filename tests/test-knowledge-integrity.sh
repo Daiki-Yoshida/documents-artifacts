@@ -36,6 +36,14 @@ for file in \
   require_file "$file"
 done
 
+# Recovered external reference snapshots must remain byte-identical to their pinned Git blobs.
+programming_paradigm=documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md
+ai_doc_strategy=documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/AI_DOC_STRATEGY.md
+[[ "$(git hash-object "$programming_paradigm")" == "c417009102059cc1d42d2f8578cf22fc889d8547" ]] \
+  || fail "PROGRAMMING_PARADIGM snapshot blob mismatch"
+[[ "$(git hash-object "$ai_doc_strategy")" == "ed2059d8252ca524d45c45106771f6417fa755c4" ]] \
+  || fail "AI_DOC_STRATEGY snapshot blob mismatch"
+
 # Subject reading order must be consecutive and HISTORY (if present) last.
 subject_dirs=(documents/knowledge/subjects/*/)
 (("${#subject_dirs[@]}" > 0)) || fail "no subjects found"
