@@ -20,7 +20,7 @@ repository構造:
 
 legacy_source_logs:
   target: "../docs-jp/"
-  note: "旧来の人間向け説明・実験/source log。第1情報源への原文移行対象"
+  note: "旧来の人間向け説明・実験/source log。2026-09-21時点はknowledge/recordsへ原文snapshot済みで、現在のauthorityではない"
 ```
 
 ## 優先順位
