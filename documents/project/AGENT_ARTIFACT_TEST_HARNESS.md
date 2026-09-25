@@ -93,6 +93,7 @@ default:
 ```text
 ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 ├─ PROMPT.md
+├─ RUN_METADATA.txt
 └─ repo/
    ├─ .git/
    ├─ documents/artifacts/
@@ -109,6 +110,7 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 6. agent用PROMPTをrun rootへcopy;
 7. `artifact-test-baseline` tagを作成する。
 8. clean baselineを確認する。
+9. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -224,7 +226,7 @@ bash tests/scripts/capture-agent-test.sh --scenario <scenario> --run-id <run-id>
 
 ```text
 evidence/
-├─ metadata.txt              scenario / run-id / fixture / source HEAD / baseline SHA / HEAD / capture時刻
+├─ metadata.txt              scenario / run-id / fixture / prepare時source HEAD / capture時source HEAD / baseline SHA / HEAD / timestamps
 ├─ status.txt                git status --short + ignored paths (names only)
 ├─ changed-files.txt         baseline対比の完全なname-status (untracked新規fileを含む)
 ├─ diff-stat.txt             同上のstat
@@ -236,7 +238,9 @@ evidence/
 
 設計上の要点:
 
-- `changes.patch` はalternate index (`GIT_INDEX_FILE`) へbaseline treeをread-treeしてworktreeをoverlayし、`diff --cached artifact-test-baseline --binary` で生成する。untracked新規fileをpatchへ含めつつ、generated repoの本物のindex/worktreeは変更しない。status系の読み取りは `GIT_OPTIONAL_LOCKS=0` で行う。
+- `changes.patch` はalternate index (`GIT_INDEX_FILE`) へbaseline treeをread-treeしてworktreeをoverlayし、`diff --cached artifact-test-baseline --binary` で生成する。non-ignored untracked新規fileをpatchへ含めつつ、generated repoの本物のindex/worktreeは変更しない。status系の読み取りは `GIT_OPTIONAL_LOCKS=0` で行う。
+- untracked fileの内容をGitHubへ永続化する前に、secret-like path (例: `.env`, private-key系) と代表的なsecret-like content patternを検査する。該当時はevidence directoryを作る前にfail closedし、内容をarchiveしない。sample/template用env filenameは明示例外にできる。
+- source baselineはcapture時のsource worktree HEADから推測せず、prepare時に `RUN_METADATA.txt` へ固定したSHAをmachine evidenceの `source_repo_head_at_prepare` として使用する。capture時HEADも別fieldで記録し、両者を混同しない。
 - `.git/` internalsは絶対にtask変更として採取しない。
 - gitignoreされたruntime/work-scoped stateはpatchへ入らないが、`status.txt`・`filesystem.txt`・`inspection.txt` が存在・種別・sizeを記録する。任意のfile内容を無差別archiveしない。
 - evidenceはcapture後immutableとして扱う。EXPECTATIONSへ合わせて書き換えない。
