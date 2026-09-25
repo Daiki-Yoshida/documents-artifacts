@@ -86,7 +86,7 @@ done
 
 # --- evidence capture contract (focused single-scenario check) ---
 
-cap_scenario="$(basename -- "\${scenario_dirs[0]%/}")"
+cap_scenario="$(basename -- "${scenario_dirs[0]%/}")"
 
 # capture must reject malformed input and un-started runs
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
