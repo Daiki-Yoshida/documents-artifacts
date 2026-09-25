@@ -60,8 +60,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ -f "$run_root/PROMPT.md" ]] || fail "run prompt missing: $scenario"
   [[ -f "$run_root/RUN_METADATA.txt" ]] || fail "run metadata missing: $scenario"
   cmp -s "$prompt" "$run_root/PROMPT.md" || fail "run prompt differs from scenario prompt: $scenario"
-  grep -q "^scenario: $scenario\$" "$run_root/RUN_METADATA.txt" || fail "run metadata scenario mismatch: $scenario"
-  grep -q "^source_repo_head: $(git -C "$REPO_ROOT" rev-parse HEAD)\$" "$run_root/RUN_METADATA.txt" \
+  grep -Fqx "scenario: $scenario" "$run_root/RUN_METADATA.txt" || fail "run metadata scenario mismatch: $scenario"
+  grep -Fqx "source_repo_head: $(git -C "$REPO_ROOT" rev-parse HEAD)" "$run_root/RUN_METADATA.txt" \
     || fail "run metadata missing prepare-time source SHA: $scenario"
   [[ ! -e "$target/EXPECTATIONS.md" ]] || fail "expectations leaked into target repo: $scenario"
   if find "$target" -name EXPECTATIONS.md -print -quit | grep -q .; then
@@ -83,9 +83,10 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ ! -e "$run_root" ]] || fail "reset did not remove run: $scenario"
 done
 
+
 # --- evidence capture contract (focused single-scenario check) ---
 
-cap_scenario="$(basename -- "${scenario_dirs[0]%/}")"
+cap_scenario="$(basename -- "\${scenario_dirs[0]%/}")"
 
 # capture must reject malformed input and un-started runs
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
@@ -137,26 +138,22 @@ for f in metadata.txt status.txt changed-files.txt diff-stat.txt changes.patch \
   [[ -f "$evidence/$f" ]] || fail "evidence file missing: $f"
 done
 
-grep -q "^scenario: $cap_scenario\$" "$evidence/metadata.txt" \
-  || fail "metadata missing scenario"
-grep -q '^baseline_sha: ' "$evidence/metadata.txt" \
-  || fail "metadata missing baseline sha"
-grep -q "^source_repo_head_at_prepare: $(git -C "$REPO_ROOT" rev-parse HEAD)\$" "$evidence/metadata.txt" \
+grep -Fqx "scenario: $cap_scenario" "$evidence/metadata.txt" || fail "metadata missing scenario"
+grep -q '^baseline_sha: ' "$evidence/metadata.txt" || fail "metadata missing baseline sha"
+grep -Fqx "source_repo_head_at_prepare: $(git -C "$REPO_ROOT" rev-parse HEAD)" "$evidence/metadata.txt" \
   || fail "metadata missing prepare-time source repo head"
-grep -q '^source_repo_head_at_capture: [0-9a-f]\{40\}
-grep -q " M $tracked_file\$" "$evidence/status.txt" \
-  || fail "status.txt missing tracked modification"
-grep -q "?? zz-untracked-probe.txt" "$evidence/status.txt" \
-  || fail "status.txt missing untracked file"
+capture_source_sha="$(sed -n 's/^source_repo_head_at_capture: //p' "$evidence/metadata.txt")"
+[[ "$capture_source_sha" =~ ^[0-9a-f]{40}$ ]] || fail "metadata missing capture-time source repo head"
+grep -q '^prepared_at_utc: ' "$evidence/metadata.txt" || fail "metadata missing prepare timestamp"
+grep -q '^fixture: ' "$evidence/metadata.txt" || fail "metadata missing fixture"
 
-grep -q "zz-untracked-probe.txt" "$evidence/changed-files.txt" \
-  || fail "changed-files.txt lost untracked file"
-grep -q "zz-untracked-probe.txt" "$evidence/changes.patch" \
-  || fail "changes.patch lost untracked file name"
-grep -q "untracked evidence probe" "$evidence/changes.patch" \
-  || fail "changes.patch lost untracked file content"
-grep -q "$tracked_file" "$evidence/changed-files.txt" \
-  || fail "changed-files.txt missing tracked change"
+grep -Fqx " M $tracked_file" "$evidence/status.txt" || fail "status.txt missing tracked modification"
+grep -Fqx "?? zz-untracked-probe.txt" "$evidence/status.txt" || fail "status.txt missing untracked file"
+
+grep -q "zz-untracked-probe.txt" "$evidence/changed-files.txt" || fail "changed-files.txt lost untracked file"
+grep -q "zz-untracked-probe.txt" "$evidence/changes.patch" || fail "changes.patch lost untracked file name"
+grep -q "untracked evidence probe" "$evidence/changes.patch" || fail "changes.patch lost untracked file content"
+grep -q "$tracked_file" "$evidence/changed-files.txt" || fail "changed-files.txt missing tracked change"
 
 [[ ! -s "$evidence/managed-artifacts.patch" ]] \
   || fail "managed-artifacts.patch should be empty for untouched artifacts"
@@ -199,55 +196,5 @@ fi
 [[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/secret-probe/evidence" ]] \
   || fail "failed secret capture left persisted evidence"
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
-
-printf 'PASS: execution-agent harness fixtures and scenarios\n'
- "$evidence/metadata.txt" \
-  || fail "metadata missing capture-time source repo head"
-grep -q '^prepared_at_utc: ' "$evidence/metadata.txt" || fail "metadata missing prepare timestamp"
-grep -q "^fixture: " "$evidence/metadata.txt" || fail "metadata missing fixture"
-
-grep -q " M $tracked_file\$" "$evidence/status.txt" \
-  || fail "status.txt missing tracked modification"
-grep -q "?? zz-untracked-probe.txt" "$evidence/status.txt" \
-  || fail "status.txt missing untracked file"
-
-grep -q "zz-untracked-probe.txt" "$evidence/changed-files.txt" \
-  || fail "changed-files.txt lost untracked file"
-grep -q "zz-untracked-probe.txt" "$evidence/changes.patch" \
-  || fail "changes.patch lost untracked file name"
-grep -q "untracked evidence probe" "$evidence/changes.patch" \
-  || fail "changes.patch lost untracked file content"
-grep -q "$tracked_file" "$evidence/changed-files.txt" \
-  || fail "changed-files.txt missing tracked change"
-
-[[ ! -s "$evidence/managed-artifacts.patch" ]] \
-  || fail "managed-artifacts.patch should be empty for untouched artifacts"
-
-grep -q '\.test-runtime/state\.bin' "$evidence/filesystem.txt" \
-  || fail "filesystem.txt missing ignored runtime path evidence"
-grep -q '\.test-runtime/' "$evidence/inspection.txt" \
-  || fail "inspection.txt missing ignored path listing"
-if grep -q 'state\.bin' "$evidence/changes.patch"; then
-  fail "changes.patch included gitignored runtime file"
-fi
-
-# capture must not mutate the generated repo's real index/status
-index_after="$(sha1sum "$cap_target/.git/index" | cut -d' ' -f1)"
-status_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" status --porcelain)"
-[[ "$index_before" == "$index_after" ]] \
-  || fail "capture mutated the generated repo's real index"
-[[ "$status_before" == "$status_after" ]] \
-  || fail "capture mutated the generated repo's real status"
-
-# duplicate run id must refuse to overwrite captured evidence
-if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
-    "$CAPTURE" --scenario "$cap_scenario" --run-id run-1 >/dev/null 2>&1; then
-  fail "capture overwrote an existing run id"
-fi
-
-# reset removes the temporary run but never persisted result evidence
-ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
-[[ ! -e "$TEST_RUNS_ROOT/$cap_scenario" ]] || fail "reset did not remove prepared run"
-[[ -f "$evidence/changes.patch" ]] || fail "reset removed persisted evidence"
 
 printf 'PASS: execution-agent harness fixtures and scenarios\n'
