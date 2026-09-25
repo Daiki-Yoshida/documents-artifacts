@@ -64,6 +64,57 @@ TARGET="$RUN_ROOT/repo"
 git -C "$TARGET" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
   || fail "artifact-test-baseline tag missing: $TARGET"
 
+RUN_METADATA="$RUN_ROOT/RUN_METADATA.txt"
+[[ -f "$RUN_METADATA" ]] || fail "prepare-time metadata missing: $RUN_METADATA"
+
+metadata_value() {
+  local key="$1"
+  sed -n "s/^\${key}: //p" "$RUN_METADATA" | head -1
+}
+
+PREPARED_SCENARIO="$(metadata_value scenario)"
+PREPARED_FIXTURE="$(metadata_value fixture)"
+PREPARED_SOURCE_SHA="$(metadata_value source_repo_head)"
+PREPARED_BASE_SHA="$(metadata_value baseline_sha)"
+PREPARED_AT="$(metadata_value prepared_at_utc)"
+
+[[ "$PREPARED_SCENARIO" == "$SCENARIO" ]] || fail "run metadata scenario mismatch"
+[[ "$PREPARED_FIXTURE" == "$FIXTURE" ]] || fail "run metadata fixture mismatch"
+[[ "$PREPARED_SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]] || fail "invalid prepare-time source SHA"
+[[ "$PREPARED_BASE_SHA" =~ ^[0-9a-f]{40}$ ]] || fail "invalid prepare-time baseline SHA"
+[[ -n "$PREPARED_AT" ]] || fail "prepare-time timestamp missing"
+
+BASE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
+HEAD_SHA="$(git -C "$TARGET" rev-parse HEAD)"
+CAPTURE_SOURCE_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
+[[ "$PREPARED_BASE_SHA" == "$BASE_SHA" ]] || fail "prepared baseline SHA no longer matches generated repo tag"
+
+# changes.patch intentionally includes non-ignored untracked file contents so
+# evaluator review can inspect newly-created files. Fail closed on obvious
+# secret-bearing paths/content before creating any persisted evidence.
+mapfile -d '' UNTRACKED_FILES < <(
+  env GIT_OPTIONAL_LOCKS=0 git -C "$TARGET" ls-files --others --exclude-standard -z
+)
+for rel in "\${UNTRACKED_FILES[@]}"; do
+  base="\${rel##*/}"
+  case "$base" in
+    .env.example|.env.sample|.env.template)
+      ;;
+    .env|.env.*|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|id_rsa|id_rsa.*|id_ed25519|id_ed25519.*|credentials|credentials.*|secrets|secrets.*|.netrc|.npmrc|.pypirc)
+      fail "refusing to persist content from secret-like untracked path: $rel"
+      ;;
+  esac
+
+  full="$TARGET/$rel"
+  if [[ -f "$full" && ! -L "$full" ]]; then
+    if LC_ALL=C grep -I -i -E -q \
+      '(BEGIN ([A-Z]+ )?PRIVATE KEY|AKIA[0-9A-Z]{16}|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|password)[[:space:]]*[:=][[:space:]]*[^[:space:]]{8,})' \
+      "$full"; then
+      fail "refusing to persist content from secret-like untracked file: $rel"
+    fi
+  fi
+done
+
 OUT="$RESULTS_ROOT/$SCENARIO/$RUN_ID"
 [[ "$OUT" == "$RESULTS_ROOT/"* ]] || fail "refusing unsafe output path"
 EV="$OUT/evidence"
@@ -73,16 +124,14 @@ mkdir -p -- "$EV"
 TMP_INDEX="$(mktemp)"
 trap 'rm -f -- "$TMP_INDEX"' EXIT
 
-BASE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
-HEAD_SHA="$(git -C "$TARGET" rev-parse HEAD)"
-SRC_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
-
 {
   printf 'scenario: %s\n' "$SCENARIO"
   printf 'run_id: %s\n' "$RUN_ID"
   printf 'fixture: %s\n' "$FIXTURE"
+  printf 'prepared_at_utc: %s\n' "$PREPARED_AT"
   printf 'captured_at_utc: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-  printf 'source_repo_head: %s\n' "$SRC_SHA"
+  printf 'source_repo_head_at_prepare: %s\n' "$PREPARED_SOURCE_SHA"
+  printf 'source_repo_head_at_capture: %s\n' "$CAPTURE_SOURCE_SHA"
   printf 'generated_repo: %s\n' "$TARGET"
   printf 'baseline_tag: artifact-test-baseline\n'
   printf 'baseline_sha: %s\n' "$BASE_SHA"
@@ -98,9 +147,10 @@ SRC_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 } > "$EV/status.txt"
 
 # Temp-index diff: seed an alternate index with the baseline tree, overlay the
-# worktree, then diff. This represents untracked new files in the patch without
-# touching the generated repository's real index/worktree. Ignored files stay
-# out of the patch; their existence is recorded in status.txt/filesystem.txt.
+# worktree, then diff. This represents non-ignored untracked new files in the
+# patch without touching the generated repository's real index/worktree.
+# Secret-like untracked content is rejected above; ignored files stay out of
+# the patch and only their path/type/size evidence is recorded.
 env GIT_INDEX_FILE="$TMP_INDEX" git -C "$TARGET" read-tree artifact-test-baseline
 env GIT_INDEX_FILE="$TMP_INDEX" git -C "$TARGET" add -A
 env GIT_INDEX_FILE="$TMP_INDEX" git -C "$TARGET" --no-pager diff --cached --binary artifact-test-baseline \
