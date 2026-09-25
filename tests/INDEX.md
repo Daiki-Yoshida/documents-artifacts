@@ -49,7 +49,7 @@ bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
 
 ### Execute
 
-prepare scriptが表示したtemporary `repo/` をexecution agentのworking directoryにして、同じrun rootの `PROMPT.md` の本文だけをtaskとして渡す。
+prepare scriptが表示したtemporary `repo/` をexecution agentのworking directoryにして、同じrun rootの `PROMPT.md` の本文だけをtaskとして渡す。prepare時点のsource HEAD / generated baselineは `RUN_METADATA.txt` に固定し、後続captureがその値をmachine evidenceへ引き継ぐ。
 
 **`tests/scenarios/<scenario>/EXPECTATIONS.md` は事前にagentへ見せない。**
 
@@ -62,6 +62,8 @@ bash tests/scripts/capture-agent-test.sh --scenario contract-boundary --run-id 2
 ```
 
 `tests/results/<scenario>/<run-id>/evidence/` へbundleを書き、agent-authored `REPORT.md` を同じ `<run-id>/` 配下へ記録する。
+
+`changes.patch` はnon-ignored untracked fileも含める。ただしsecret-like path/contentを検出した場合は、evidenceを作成する前にfail closedする。ignored runtime stateは内容をarchiveせず、path/type/sizeの存在証跡だけを残す。
 
 ### Inspect
 
