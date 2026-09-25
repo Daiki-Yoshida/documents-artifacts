@@ -111,4 +111,12 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 | `destructive-cleanup` | cleanup-safety | disposable scope限定削除 / persistent・shared・host保全 |
 | `documentation-routing` | documented-project | 既存INDEX経由のowner発見 / duplicate authority回避 |
 
+## Third-stage scenarios — definitions ready / runs pending
+
+定義・fixtureのみ整備済み。run / evaluationは未実施。
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `worktree-materialization` | worktree-project | deterministic linked worktree materialization / nested `.worktrees/` 不発生 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

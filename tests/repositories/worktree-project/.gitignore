@@ -1,0 +1,2 @@
+.worktrees/*
+!.worktrees/PROJECT_COORDINATION.md
