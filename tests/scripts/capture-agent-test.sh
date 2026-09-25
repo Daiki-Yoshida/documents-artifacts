@@ -69,7 +69,7 @@ RUN_METADATA="$RUN_ROOT/RUN_METADATA.txt"
 
 metadata_value() {
   local key="$1"
-  sed -n "s/^\${key}: //p" "$RUN_METADATA" | head -1
+  sed -n "s/^${key}: //p" "$RUN_METADATA" | head -1
 }
 
 PREPARED_SCENARIO="$(metadata_value scenario)"
@@ -95,8 +95,8 @@ CAPTURE_SOURCE_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 mapfile -d '' UNTRACKED_FILES < <(
   env GIT_OPTIONAL_LOCKS=0 git -C "$TARGET" ls-files --others --exclude-standard -z
 )
-for rel in "\${UNTRACKED_FILES[@]}"; do
-  base="\${rel##*/}"
+for rel in "${UNTRACKED_FILES[@]}"; do
+  base="${rel##*/}"
   case "$base" in
     .env.example|.env.sample|.env.template)
       ;;
