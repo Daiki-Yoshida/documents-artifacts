@@ -33,7 +33,8 @@ tests/
 │  ├─ failure-service/
 │  ├─ work-planning/
 │  ├─ cleanup-safety/
-│  └─ documented-project/
+│  ├─ documented-project/
+│  └─ worktree-project/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -41,7 +42,8 @@ tests/
 │  ├─ failure-boundary/
 │  ├─ work-identity-confirmation/
 │  ├─ destructive-cleanup/
-│  └─ documentation-routing/
+│  ├─ documentation-routing/
+│  └─ worktree-materialization/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -265,6 +267,12 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 - `work-identity-confirmation` (fixture `work-planning`): Work Identity提案とexplicit confirmationを分離し、確認前にworktree/runtime等をmaterializeしないかを見る。
 - `destructive-cleanup` (fixture `cleanup-safety`): disposable run-scoped stateだけを削除し、persistent/shared stateとhost外を保全できるかを見る。
 - `documentation-routing` (fixture `documented-project`): 既存`documents/INDEX.md`からownerを発見し、duplicate authorityを作らずowner documentを更新できるかを見る。
+
+### Third-stage scenarios — definitions ready / runs pending
+
+runは未実施。評価・PASS認定はrunとevaluator cycleの後にのみ行う。
+
+- `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
 
 ## Fixture immutability
 
