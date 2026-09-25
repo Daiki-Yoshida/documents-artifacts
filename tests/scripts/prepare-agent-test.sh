@@ -75,5 +75,16 @@ git -C "$TARGET" commit -qm "test: install Artifact v2"
 git -C "$TARGET" tag artifact-test-baseline
 [[ -z "$(git -C "$TARGET" status --porcelain)" ]] || fail "prepared repository is not clean"
 
+SOURCE_REPO_HEAD="$(git -C "$REPO_ROOT" rev-parse HEAD)"
+BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
+{
+  printf 'scenario: %s\n' "$SCENARIO"
+  printf 'fixture: %s\n' "$FIXTURE"
+  printf 'source_repo_head: %s\n' "$SOURCE_REPO_HEAD"
+  printf 'baseline_sha: %s\n' "$BASELINE_SHA"
+  printf 'prepared_at_utc: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+} > "$RUN_ROOT/RUN_METADATA.txt"
+
 printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$RUN_ROOT/PROMPT.md"
+printf 'Run metadata: %s\n' "$RUN_ROOT/RUN_METADATA.txt"
 printf 'Evaluator expectations (do not give to agent): %s\n' "$EXPECTATIONS"
