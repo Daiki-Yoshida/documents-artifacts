@@ -1,0 +1,9 @@
+=== recent commits ===
+3ce4582 test: install Artifact v2
+05e7bf6 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.worktrees/feat/audit-log-export/main/

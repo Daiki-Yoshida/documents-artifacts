@@ -1,0 +1,11 @@
+scenario: worktree-materialization
+run_id: 2026-09-26-devin
+fixture: worktree-project
+prepared_at_utc: 2026-09-25T19:57:12Z
+captured_at_utc: 2026-09-25T19:58:21Z
+source_repo_head_at_prepare: 39e74574d58e8938e67db63778e5da39363f08f8
+source_repo_head_at_capture: 39e74574d58e8938e67db63778e5da39363f08f8
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/worktree-materialization/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 3ce458256ab829d7a38bf9ee0076ecabdd5baf58
+head_sha_at_capture: 3ce458256ab829d7a38bf9ee0076ecabdd5baf58
