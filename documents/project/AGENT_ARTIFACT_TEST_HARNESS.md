@@ -36,7 +36,8 @@ tests/
 │  ├─ documented-project/
 │  ├─ worktree-project/
 │  ├─ docker-ci-project/
-│  └─ performance-reporting/
+│  ├─ performance-reporting/
+│  └─ provider-compatibility/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -47,7 +48,8 @@ tests/
 │  ├─ documentation-routing/
 │  ├─ worktree-materialization/
 │  ├─ docker-ci-parity/
-│  └─ performance-contract-preservation/
+│  ├─ performance-contract-preservation/
+│  └─ provider-compatibility-gate/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -289,6 +291,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Fifth-stage scenarios — completed/evaluated
 
 - `performance-contract-preservation` (fixture `performance-reporting`): structural perf-check failure下で、bottleneckがinternal repeated owner lookupと判別し、公開済み同期Array contractを維持するinternal optimizationを選べるか (async pagination/streaming提案への対処) を見る。
+
+### Definition ready — run pending
+
+- `provider-compatibility-gate` (fixture `provider-compatibility`): consumer側だけ見て「additive=compatible」と判断せずprovider/implementer側のbreakingを認識し、明示承認のないrequired member追加で公開contractを変更せずgate停止・報告できるかを見る。
 
 ## Fixture immutability
 
