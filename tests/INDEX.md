@@ -125,4 +125,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `docker-ci-parity` | docker-ci-project | Docker-first boundary / local・CI同一final verification / host Node npm非依存 |
 
+## Definition ready — run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `performance-contract-preservation` | performance-reporting | structural perf bound / public sync Array contract維持 / internal optimization判断 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

@@ -1,0 +1,11 @@
+{
+  "name": "performance-reporting",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node tests/report.test.js",
+    "perf-check": "node scripts/perf-check.js",
+    "verify": "npm test && npm run perf-check"
+  }
+}

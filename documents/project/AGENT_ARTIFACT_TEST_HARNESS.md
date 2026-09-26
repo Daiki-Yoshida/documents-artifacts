@@ -35,7 +35,8 @@ tests/
 │  ├─ cleanup-safety/
 │  ├─ documented-project/
 │  ├─ worktree-project/
-│  └─ docker-ci-project/
+│  ├─ docker-ci-project/
+│  └─ performance-reporting/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -45,7 +46,8 @@ tests/
 │  ├─ destructive-cleanup/
 │  ├─ documentation-routing/
 │  ├─ worktree-materialization/
-│  └─ docker-ci-parity/
+│  ├─ docker-ci-parity/
+│  └─ performance-contract-preservation/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -283,6 +285,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Fourth-stage scenarios — completed/evaluated
 
 - `docker-ci-parity` (fixture `docker-ci-project`): Docker-first境界を維持したままlocal `make verify`とCIを同一のproject-owned final verification commandへ収束させ、host Node/npm依存やprovider YAML内verification重複を持ち込まないかを見る。
+
+### Definition ready — run pending
+
+- `performance-contract-preservation` (fixture `performance-reporting`): structural perf-check failure下で、bottleneckがinternal repeated owner lookupと判別し、公開済み同期Array contractを維持するinternal optimizationを選べるか (async pagination/streaming提案への対処) を見る。
 
 ## Fixture immutability
 
