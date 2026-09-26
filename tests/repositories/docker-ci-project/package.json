@@ -1,0 +1,11 @@
+{
+  "name": "docker-ci-project",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node scripts/test.js",
+    "contract-check": "node scripts/contract-check.js"
+  }
+}

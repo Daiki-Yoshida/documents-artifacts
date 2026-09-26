@@ -119,4 +119,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `worktree-materialization` | worktree-project | deterministic linked worktree materialization / nested `.worktrees/` 不発生 |
 
+## Definition ready — run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `docker-ci-parity` | docker-ci-project | Docker-first boundary / local・CI同一final verification / host Node npm非依存 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
