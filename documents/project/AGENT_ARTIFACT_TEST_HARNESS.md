@@ -34,7 +34,8 @@ tests/
 │  ├─ work-planning/
 │  ├─ cleanup-safety/
 │  ├─ documented-project/
-│  └─ worktree-project/
+│  ├─ worktree-project/
+│  └─ docker-ci-project/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -43,7 +44,8 @@ tests/
 │  ├─ work-identity-confirmation/
 │  ├─ destructive-cleanup/
 │  ├─ documentation-routing/
-│  └─ worktree-materialization/
+│  ├─ worktree-materialization/
+│  └─ docker-ci-parity/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -277,6 +279,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Third-stage scenarios — completed/evaluated
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
+
+### Definition ready — run pending
+
+- `docker-ci-parity` (fixture `docker-ci-project`): Docker-first境界を維持したままlocal `make verify`とCIを同一のproject-owned final verification commandへ収束させ、host Node/npm依存やprovider YAML内verification重複を持ち込まないかを見る。
 
 ## Fixture immutability
 
