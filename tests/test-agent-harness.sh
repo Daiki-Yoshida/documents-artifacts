@@ -119,22 +119,44 @@ tracked_file="$(git -C "$cap_target" ls-files | grep -v '^documents/artifacts/' 
 [[ -n "$tracked_file" ]] || fail "no tracked fixture file to mutate: $cap_scenario"
 printf 'harness mutation\n' >> "$cap_target/$tracked_file"
 printf 'untracked evidence probe\n' > "$cap_target/zz-untracked-probe.txt"
-printf '.test-runtime/\n' > "$cap_target/.gitignore"
+printf '.test-runtime/\nharness-wt/\n' > "$cap_target/.gitignore"
 mkdir -p "$cap_target/.test-runtime"
 printf 'x' > "$cap_target/.test-runtime/state.bin"
 
-# stabilize the real index (status may refresh stat cache once), then record
-# pre-capture index + status so capture side effects are observable
+# worktree evidence probes: an in-run linked worktree with sparse checkout
+# enabled, plus a registered worktree outside the run boundary that must be
+# recorded as registered but never recursively inspected
+link_wt="$cap_target/harness-wt/linked"
+git -C "$cap_target" worktree add --no-checkout -b harness-wt-branch \
+  "$link_wt" artifact-test-baseline >/dev/null
+git -C "$link_wt" sparse-checkout set --no-cone '/*' '!/documents/' >/dev/null
+git -C "$link_wt" reset --hard HEAD >/dev/null
+ext_wt="$TEST_RUNS_ROOT/outside-worktree"
+git -C "$cap_target" worktree add --no-checkout -b harness-ext-branch \
+  "$ext_wt" artifact-test-baseline >/dev/null
+printf 'outside marker\n' > "$ext_wt/zz-external-marker.txt"
+cap_target_real="$(cd "$cap_target" && pwd -P)"
+link_wt_real="$(cd "$link_wt" && pwd -P)"
+
+# stabilize the real indexes (status may refresh stat caches once), then
+# record pre-capture state so capture side effects are observable
 git -C "$cap_target" status --porcelain >/dev/null
+git -C "$link_wt" status --porcelain >/dev/null
 index_before="$(sha1sum "$cap_target/.git/index" | cut -d' ' -f1)"
 status_before="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" status --porcelain)"
+link_index="$(git -C "$link_wt" rev-parse --git-dir)/index"
+link_index_before="$(sha1sum "$link_index" | cut -d' ' -f1)"
+link_status_before="$(env GIT_OPTIONAL_LOCKS=0 git -C "$link_wt" status --porcelain)"
+link_sparse_before="$(git -C "$link_wt" sparse-checkout list)"
+link_sparse_cfg_before="$(git -C "$link_wt" config --get core.sparseCheckout)"
+wt_list_before="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" worktree list --porcelain)"
 
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
   "$CAPTURE" --scenario "$cap_scenario" --run-id run-1 >/dev/null
 
 evidence="$TEST_RESULTS_ROOT/$cap_scenario/run-1/evidence"
 for f in metadata.txt status.txt changed-files.txt diff-stat.txt changes.patch \
-         managed-artifacts.patch filesystem.txt inspection.txt; do
+         managed-artifacts.patch filesystem.txt inspection.txt worktrees.txt; do
   [[ -f "$evidence/$f" ]] || fail "evidence file missing: $f"
 done
 
@@ -166,6 +188,74 @@ if grep -q 'state\.bin' "$evidence/changes.patch"; then
   fail "changes.patch included gitignored runtime file"
 fi
 
+# worktree evidence: registration + safe in-boundary inspection
+wt_block() {
+  awk -v t="worktree: $1" '
+    $0==t {on=1; print; next}
+    on && /^worktree: / {exit}
+    on {print}
+  ' "$evidence/worktrees.txt"
+}
+grep -q '^=== git worktree list --porcelain' "$evidence/worktrees.txt" \
+  || fail "worktrees.txt missing raw registration"
+grep -Fxq "worktree $cap_target" "$evidence/worktrees.txt" \
+  || fail "worktrees.txt missing primary registration"
+grep -Fxq "worktree $link_wt" "$evidence/worktrees.txt" \
+  || fail "worktrees.txt missing linked worktree registration"
+grep -Fxq "worktree $ext_wt" "$evidence/worktrees.txt" \
+  || fail "worktrees.txt missing external worktree registration"
+
+primary_block="$(wt_block "$cap_target")"
+link_block="$(wt_block "$link_wt")"
+ext_block="$(wt_block "$ext_wt")"
+[[ -n "$primary_block" && -n "$link_block" && -n "$ext_block" ]] \
+  || fail "worktrees.txt missing per-worktree inspection blocks"
+
+grep -Fx '  boundary_scope: primary-generated-repo' <<<"$primary_block" >/dev/null \
+  || fail "primary worktree not scoped as primary-generated-repo"
+grep -Fx "  resolved_path: $cap_target_real" <<<"$primary_block" >/dev/null \
+  || fail "primary worktree resolved path missing"
+grep -Fx '  inspected: yes' <<<"$primary_block" >/dev/null \
+  || fail "primary worktree not inspected"
+grep -Fx "  head: $(git -C "$cap_target" rev-parse HEAD)" <<<"$primary_block" >/dev/null \
+  || fail "primary worktree HEAD missing"
+grep -Fx "  branch: $(git -C "$cap_target" branch --show-current)" <<<"$primary_block" >/dev/null \
+  || fail "primary worktree branch missing"
+grep -Fx '  status: dirty' <<<"$primary_block" >/dev/null \
+  || fail "primary worktree dirty state not captured"
+grep -Fx '  sparse_checkout: disabled' <<<"$primary_block" >/dev/null \
+  || fail "primary worktree sparse state missing"
+
+grep -Fx "  resolved_path: $link_wt_real" <<<"$link_block" >/dev/null \
+  || fail "linked worktree resolved path missing"
+grep -Fx '  boundary_scope: linked-under-run' <<<"$link_block" >/dev/null \
+  || fail "linked worktree not scoped as linked-under-run"
+grep -Fx '  inspected: yes' <<<"$link_block" >/dev/null \
+  || fail "linked worktree not inspected"
+grep -Fx "  head: $(git -C "$link_wt" rev-parse HEAD)" <<<"$link_block" >/dev/null \
+  || fail "linked worktree HEAD missing"
+grep -Fx '  registration_ref: refs/heads/harness-wt-branch' <<<"$link_block" >/dev/null \
+  || fail "linked worktree registration ref missing"
+grep -Fx '  branch: harness-wt-branch' <<<"$link_block" >/dev/null \
+  || fail "linked worktree branch missing"
+grep -Fx '  status: clean' <<<"$link_block" >/dev/null \
+  || fail "linked worktree clean state missing"
+grep -Fx '  sparse_checkout: enabled' <<<"$link_block" >/dev/null \
+  || fail "linked worktree sparse enablement missing"
+grep -Fx '    /*' <<<"$link_block" >/dev/null \
+  || fail "linked worktree sparse pattern /* missing"
+grep -Fx '    !/documents/' <<<"$link_block" >/dev/null \
+  || fail "linked worktree sparse pattern !/documents/ missing"
+
+# out-of-boundary worktree: recorded but never recursively inspected
+grep -Fx '  inspected: no' <<<"$ext_block" >/dev/null \
+  || fail "external worktree was inspected"
+grep -Fx '  skip_reason: resolved path outside safe inspection boundary' <<<"$ext_block" >/dev/null \
+  || fail "external worktree skip reason missing"
+if grep -q 'zz-external-marker' "$evidence/worktrees.txt"; then
+  fail "external worktree contents leaked into worktree evidence"
+fi
+
 # capture must not mutate the generated repo's real index/status
 index_after="$(sha1sum "$cap_target/.git/index" | cut -d' ' -f1)"
 status_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" status --porcelain)"
@@ -173,6 +263,27 @@ status_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" status --porcelain
   || fail "capture mutated the generated repo's real index"
 [[ "$status_before" == "$status_after" ]] \
   || fail "capture mutated the generated repo's real status"
+
+# capture must not mutate linked worktree index/status, sparse state,
+# or the worktree registration list
+link_index_after="$(sha1sum "$link_index" | cut -d' ' -f1)"
+link_status_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$link_wt" status --porcelain)"
+link_sparse_after="$(git -C "$link_wt" sparse-checkout list)"
+link_sparse_cfg_after="$(git -C "$link_wt" config --get core.sparseCheckout)"
+wt_list_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$cap_target" worktree list --porcelain)"
+[[ "$link_index_before" == "$link_index_after" ]] \
+  || fail "capture mutated the linked worktree's index"
+[[ "$link_status_before" == "$link_status_after" ]] \
+  || fail "capture mutated the linked worktree's status"
+[[ "$link_sparse_before" == "$link_sparse_after" ]] \
+  || fail "capture mutated the linked worktree's sparse patterns"
+[[ "$link_sparse_cfg_before" == "$link_sparse_cfg_after" ]] \
+  || fail "capture mutated the linked worktree's sparse config"
+[[ "$wt_list_before" == "$wt_list_after" ]] \
+  || fail "capture mutated worktree registration"
+
+# external worktree probe is done; release its registration before reset
+git -C "$cap_target" worktree remove --force "$ext_wt" >/dev/null
 
 # duplicate run id must refuse to overwrite captured evidence
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \

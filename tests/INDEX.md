@@ -65,6 +65,8 @@ bash tests/scripts/capture-agent-test.sh --scenario contract-boundary --run-id 2
 
 `changes.patch` はnon-ignored untracked fileも含める。ただしsecret-like path/contentを検出した場合は、evidenceを作成する前にfail closedする。ignored runtime stateは内容をarchiveせず、path/type/sizeの存在証跡だけを残す。
 
+`evidence/worktrees.txt` は `git worktree list --porcelain` のregistrationと、run directory内へ解決されるworktreeに限った read-only inspect (HEAD / branch / clean-dirty / sparse-checkout状態とpatterns) を記録する。境界外のregistered worktreeは `inspected: no` + `skip_reason` で記録し、外部host pathを再帰inspectしない。旧bundleはworktree evidenceを持たないため、その旨はevaluation側でlimitationとして扱う。
+
 ### Inspect
 
 ```bash
