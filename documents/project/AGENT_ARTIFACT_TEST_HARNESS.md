@@ -235,7 +235,8 @@ evidence/
 ├─ changes.patch             baseline対比の完全なpatch (--binary; untracked内容を含む)
 ├─ managed-artifacts.patch   documents/artifacts/ に限定したpatch (無変更なら空)
 ├─ filesystem.txt            type/size/pathの存在証跡 (.git除外、content不採取)
-└─ inspection.txt            recent commits / tags / ignored path listing
+├─ inspection.txt            recent commits / tags / ignored path listing
+└─ worktrees.txt             git worktree registration + safe範囲内のper-worktree Git state
 ```
 
 設計上の要点:
@@ -245,7 +246,12 @@ evidence/
 - source baselineはcapture時のsource worktree HEADから推測せず、prepare時に `RUN_METADATA.txt` へ固定したSHAをmachine evidenceの `source_repo_head_at_prepare` として使用する。capture時HEADも別fieldで記録し、両者を混同しない。
 - `.git/` internalsは絶対にtask変更として採取しない。
 - gitignoreされたruntime/work-scoped stateはpatchへ入らないが、`status.txt`・`filesystem.txt`・`inspection.txt` が存在・種別・sizeを記録する。任意のfile内容を無差別archiveしない。
+- `worktrees.txt` は `git worktree list --porcelain` のregistrationをraw保存し、加えて各worktreeの `registration_head` / `registration_ref` (branch ref・`detached`・`bare`) / `locked`・`prunable` attrsを記録する。safe boundary内のworktreeについてのみ `head`・`branch`・`status` (clean/dirty + status_detail)・`sparse_checkout` (enabled/disabled)・`sparse_patterns` を `git -C <worktree>` のread-onlyコマンド (`GIT_OPTIONAL_LOCKS=0`) で採取する。
+- safe inspection boundaryは**prepared run directoryのresolved real path内**のみ。primary generated repositoryと、そのrun directory内へ解決されるlinked worktreeだけをinspectする。境界外・解決不能・非絶対pathのregistered worktreeは `inspected: no` + `skip_reason` を記録して詳細inspectしない。`.git/worktrees/**` の内部実装は直接読まず、sparse patternは `git sparse-checkout list` (Git ≥ 2.26) で取得し、非対応では内部config fileをfallbackとして読まない。
+- captureはprimary・linked worktreeどちらのindex/status/sparse config/worktree registrationも変更しない。
 - evidenceはcapture後immutableとして扱う。EXPECTATIONSへ合わせて書き換えない。
+
+linked worktree evidenceが存在しない旧bundle (`worktree-materialization/2026-09-26-devin`) は当時のlimitationとしてそのまま残す。新しいevidence項目をhistorical runへ後付けしない。
 
 ## Scenario design
 
@@ -268,9 +274,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 - `destructive-cleanup` (fixture `cleanup-safety`): disposable run-scoped stateだけを削除し、persistent/shared stateとhost外を保全できるかを見る。
 - `documentation-routing` (fixture `documented-project`): 既存`documents/INDEX.md`からownerを発見し、duplicate authorityを作らずowner documentを更新できるかを見る。
 
-### Third-stage scenarios — definitions ready / runs pending
-
-runは未実施。評価・PASS認定はrunとevaluator cycleの後にのみ行う。
+### Third-stage scenarios — completed/evaluated
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
 
