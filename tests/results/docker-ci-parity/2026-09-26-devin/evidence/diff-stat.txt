@@ -1,0 +1,4 @@
+ .github/workflows/ci.yml | 7 +------
+ Makefile                 | 2 +-
+ package.json             | 3 ++-
+ 3 files changed, 4 insertions(+), 8 deletions(-)

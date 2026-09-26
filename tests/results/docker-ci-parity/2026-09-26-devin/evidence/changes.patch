@@ -1,0 +1,41 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index 72afe4a..b6dfa95 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -10,9 +10,4 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+-      - uses: actions/setup-node@v4
+-        with:
+-          node-version: '20'
+-          cache: npm
+-      - run: npm ci
+-      - run: npm test
++      - run: make verify
+diff --git a/Makefile b/Makefile
+index 37ee673..d3fb3fe 100644
+--- a/Makefile
++++ b/Makefile
+@@ -4,7 +4,7 @@ APP := docker compose run --rm app
+ 
+ # Canonical final verification: runs inside the managed app service.
+ verify:
+-	$(APP) npm test
++	$(APP) npm run verify
+ 
+ # Convenience partial check (not the final gate).
+ test:
+diff --git a/package.json b/package.json
+index 6ac5740..3eb1559 100644
+--- a/package.json
++++ b/package.json
+@@ -6,6 +6,7 @@
+   "scripts": {
+     "start": "node src/app.js",
+     "test": "node scripts/test.js",
+-    "contract-check": "node scripts/contract-check.js"
++    "contract-check": "node scripts/contract-check.js",
++    "verify": "npm test && npm run contract-check"
+   }
+ }
