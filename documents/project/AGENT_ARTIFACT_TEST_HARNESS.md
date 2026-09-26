@@ -280,7 +280,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
 
-### Definition ready — run pending
+### Fourth-stage scenarios — completed/evaluated
 
 - `docker-ci-parity` (fixture `docker-ci-project`): Docker-first境界を維持したままlocal `make verify`とCIを同一のproject-owned final verification commandへ収束させ、host Node/npm依存やprovider YAML内verification重複を持ち込まないかを見る。
 
