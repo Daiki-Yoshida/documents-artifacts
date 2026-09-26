@@ -1,0 +1,11 @@
+{
+  "name": "provider-compatibility",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node tests/provider.test.js",
+    "compatibility-check": "node scripts/compatibility-check.js",
+    "verify": "npm test && npm run compatibility-check"
+  }
+}

@@ -131,4 +131,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `performance-contract-preservation` | performance-reporting | structural perf bound / public sync Array contract維持 / internal optimization判断 |
 
+## Definition ready — run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `provider-compatibility-gate` | provider-compatibility | additive≠compatible / provider側breaking判定 / 未授权breakingのgate停止 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
