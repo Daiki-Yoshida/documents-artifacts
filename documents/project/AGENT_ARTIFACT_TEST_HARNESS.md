@@ -274,9 +274,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 - `destructive-cleanup` (fixture `cleanup-safety`): disposable run-scoped stateだけを削除し、persistent/shared stateとhost外を保全できるかを見る。
 - `documentation-routing` (fixture `documented-project`): 既存`documents/INDEX.md`からownerを発見し、duplicate authorityを作らずowner documentを更新できるかを見る。
 
-### Third-stage scenarios — definitions ready / runs pending
-
-runは未実施。評価・PASS認定はrunとevaluator cycleの後にのみ行う。
+### Third-stage scenarios — completed/evaluated
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
 
