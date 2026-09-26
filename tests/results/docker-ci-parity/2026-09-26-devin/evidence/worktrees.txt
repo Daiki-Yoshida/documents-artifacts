@@ -1,0 +1,25 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/docker-ci-parity/repo
+HEAD 3c5281a8b809417b0ed45a36fafdbfdb15f6b115
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/docker-ci-parity
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/docker-ci-parity/repo
+  registration_head: 3c5281a8b809417b0ed45a36fafdbfdb15f6b115
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/docker-ci-parity/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 3c5281a8b809417b0ed45a36fafdbfdb15f6b115
+  branch: main
+  status: dirty
+  status_detail:
+     M .github/workflows/ci.yml
+     M Makefile
+     M package.json
+  sparse_checkout: disabled

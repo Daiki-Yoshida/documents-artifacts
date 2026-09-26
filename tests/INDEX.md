@@ -119,7 +119,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `worktree-materialization` | worktree-project | deterministic linked worktree materialization / nested `.worktrees/` 不発生 |
 
-## Definition ready — run pending
+## Fourth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|

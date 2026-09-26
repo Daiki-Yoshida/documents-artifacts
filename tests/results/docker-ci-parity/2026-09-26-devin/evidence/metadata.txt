@@ -1,0 +1,11 @@
+scenario: docker-ci-parity
+run_id: 2026-09-26-devin
+fixture: docker-ci-project
+prepared_at_utc: 2026-09-26T14:42:19Z
+captured_at_utc: 2026-09-26T14:44:29Z
+source_repo_head_at_prepare: 06ec2e112f443865fc199b51cbe7e3071540a474
+source_repo_head_at_capture: 06ec2e112f443865fc199b51cbe7e3071540a474
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/docker-ci-parity/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 3c5281a8b809417b0ed45a36fafdbfdb15f6b115
+head_sha_at_capture: 3c5281a8b809417b0ed45a36fafdbfdb15f6b115
