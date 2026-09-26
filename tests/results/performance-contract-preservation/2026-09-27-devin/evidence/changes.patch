@@ -1,0 +1,16 @@
+diff --git a/src/report.js b/src/report.js
+index a64a4bd..3fc55a0 100644
+--- a/src/report.js
++++ b/src/report.js
+@@ -9,8 +9,10 @@
+  *   Array in input record order. `ownerName` is null when no owner matches.
+  */
+ function buildReport(records, owners) {
++  const ownersById = new Map();
++  for (const owner of owners) ownersById.set(owner.id, owner);
+   return records.map((record) => {
+-    const owner = owners.find((o) => o.id === record.ownerId);
++    const owner = ownersById.get(record.ownerId);
+     return {
+       id: record.id,
+       ownerId: record.ownerId,
