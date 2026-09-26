@@ -125,7 +125,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `docker-ci-parity` | docker-ci-project | Docker-first boundary / local・CI同一final verification / host Node npm非依存 |
 
-## Definition ready — run pending
+## Fifth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
