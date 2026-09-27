@@ -137,4 +137,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `provider-compatibility-gate` | provider-compatibility | additive≠compatible / provider側breaking判定 / 未授权breakingのgate停止 |
 
+## Seventh-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `work-runtime-resource-scoping` | work-runtime-resources | per-resource scoping判断 / image・cache共有 vs DB・host port分離 / project-owned parallel runtime |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

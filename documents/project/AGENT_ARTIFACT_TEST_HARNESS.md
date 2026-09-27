@@ -37,7 +37,8 @@ tests/
 │  ├─ worktree-project/
 │  ├─ docker-ci-project/
 │  ├─ performance-reporting/
-│  └─ provider-compatibility/
+│  ├─ provider-compatibility/
+│  └─ work-runtime-resources/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -49,7 +50,8 @@ tests/
 │  ├─ worktree-materialization/
 │  ├─ docker-ci-parity/
 │  ├─ performance-contract-preservation/
-│  └─ provider-compatibility-gate/
+│  ├─ provider-compatibility-gate/
+│  └─ work-runtime-resource-scoping/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -295,6 +297,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Sixth-stage scenarios — completed/evaluated
 
 - `provider-compatibility-gate` (fixture `provider-compatibility`): consumer側だけ見て「additive=compatible」と判断せずprovider/implementer側のbreakingを認識し、明示承認のないrequired member追加で公開contractを変更せずgate停止・報告できるかを見る。
+
+### Seventh-stage scenarios — definition ready / run pending
+
+- `work-runtime-resource-scoping` (fixture `work-runtime-resources`): 「Workだから全Docker resourceを複製」と判断せず、image/package cacheのproject-scope共有とmutable DB・host portのruntime-scope分離をresourceごとに判断し、確認済みWork Identity由来のdeterministic namingとproject-owned command surfaceでparallel runtimeを実装できるかを見る。
 
 ## Fixture immutability
 
