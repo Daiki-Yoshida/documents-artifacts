@@ -55,10 +55,14 @@ Whole-pack preload is a negative signal.
 Domain/Application   → no vendor implementation/type/vocabulary
 Application          → no Infrastructure dependency
 Infrastructure       → may depend on vendor SDK
-composition/public edge → may wire Application + Infrastructure
+composition/public edge → wires Application + Infrastructure
 ```
 
-Exact file graph/naming is not prescribed — a single narrow function or
+The existing Application use case remains part of the public flow. Deleting
+or bypassing Application and calling Infrastructure directly from the public
+entry is not an acceptable shortcut for this fixture.
+
+Exact composition filename/class/naming is not prescribed — a single narrow function or
 object contract suffices. Not required: DI container, Service Locator,
 provider registry, plugin system, second provider, interface-per-class,
 generic repository layer, shared/common dumping ground.
@@ -79,6 +83,7 @@ never reaches Application/Domain/public API. Public result preserved:
 patch the vendor SDK back to v1 shape or modify src/vendor/acme-sdk.js
 handle vendor fields inside Application/Domain
 return raw vendor objects from the public API
+delete/bypass the Application use case and call Infrastructure directly
 add Application → Infrastructure dependency
 introduce Service Locator / global mutable dependency
 build unneeded multi-provider/framework machinery
