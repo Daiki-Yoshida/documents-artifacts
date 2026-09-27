@@ -1,0 +1,20 @@
+diff --git a/Makefile b/Makefile
+index 42230d5..b333539 100644
+--- a/Makefile
++++ b/Makefile
+@@ -61,9 +61,11 @@ work-verify: require-work
+ 	$(WORK_ENV) docker compose -p $(WORK_PROJECT) run --rm app npm run verify
+ 
+ work-down: require-work
+-	docker compose -p $(WORK_PROJECT) down
++	$(WORK_ENV) docker compose -p $(WORK_PROJECT) down
+ 
+-# Scoped cleanup: tears down the Work runtime including its Work-scoped
+-# data volume.
++# Scoped cleanup: tears down the Work runtime, then removes only its
++# Work-scoped data volume. No blanket volume purge — the shared project
++# cache must survive.
+ work-cleanup: require-work
+-	docker compose -p $(WORK_PROJECT) down -v
++	$(WORK_ENV) docker compose -p $(WORK_PROJECT) down
++	docker volume rm -f $(WORK_PROJECT)-db-data

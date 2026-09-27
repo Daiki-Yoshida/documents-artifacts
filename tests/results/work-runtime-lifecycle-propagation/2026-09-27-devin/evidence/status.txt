@@ -1,0 +1,5 @@
+=== git status --short ===
+ M Makefile
+
+=== ignored paths present (names only) ===
+none
