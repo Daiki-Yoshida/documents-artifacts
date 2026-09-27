@@ -1,0 +1,13 @@
+=== recent commits ===
+7c53721 fix: adapt export config to repository protocol 2
+edd2517 Merge branch 'feature/export'
+06c0324 chore: bump repository protocol to 2
+4973c2b feat: add export service config
+d9a1d7a test: install Artifact v2
+975e6c8 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+none
