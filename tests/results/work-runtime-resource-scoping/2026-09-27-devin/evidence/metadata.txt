@@ -1,0 +1,11 @@
+scenario: work-runtime-resource-scoping
+run_id: 2026-09-27-devin
+fixture: work-runtime-resources
+prepared_at_utc: 2026-09-27T00:50:18Z
+captured_at_utc: 2026-09-27T00:54:34Z
+source_repo_head_at_prepare: c5f3badd185aa596bdc53c023c43d47ce310b017
+source_repo_head_at_capture: c5f3badd185aa596bdc53c023c43d47ce310b017
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/work-runtime-resource-scoping/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: bfa4d3f5a3ee4d288fff6a08f6e8d3098dbe8917
+head_sha_at_capture: bfa4d3f5a3ee4d288fff6a08f6e8d3098dbe8917

@@ -1,0 +1,5 @@
+ Makefile                     | 35 ++++++++++++++++++++
+ README.md                    | 18 ++++++++++-
+ compose.yml                  |  8 +++--
+ scripts/resource-identity.js | 77 ++++++++++++++++++++++++++++++++++++++++----
+ 4 files changed, 129 insertions(+), 9 deletions(-)

@@ -1,0 +1,204 @@
+diff --git a/Makefile b/Makefile
+index cac934c..3991a19 100644
+--- a/Makefile
++++ b/Makefile
+@@ -18,3 +18,38 @@ up:
+ 
+ down:
+ 	docker compose down
++
++# --- Parallel Work runtime ----------------------------------------------
++# Usage: make work-up WORK=feat/schema-preview  (confirmed Work identity)
++#
++# Work-scoped resource identities derive deterministically from
++# project + confirmed Work identity + role, matching
++# scripts/resource-identity.js (same slug/cksum derivation in POSIX tools):
++#   compose project / db volume / network  →  wrr-<work-slug>[-role]
++#   host port                               →  8100 + cksum(work) % 900
++# The toolchain image and package cache are project-scoped and shared.
++
++WORK ?=
++WORK_SLUG := $(shell printf '%s' '$(WORK)' | tr '[:upper:]' '[:lower:]' | sed -e 's/[^a-z0-9][^a-z0-9]*/-/g' -e 's/^-//' -e 's/-$$//')
++WORK_PROJECT := wrr-$(WORK_SLUG)
++WORK_PORT := $(shell printf '%s' '$(WORK)' | cksum | awk '{print 8100 + ($$1 % 900)}')
++WORK_ENV = DB_VOLUME_NAME=$(WORK_PROJECT)-db-data RUNTIME_NETWORK_NAME=$(WORK_PROJECT)-net APP_HOST_PORT=$(WORK_PORT)
++
++require-work:
++	@test -n "$(WORK)" || { \
++		echo 'make: WORK=<confirmed-work-identity> is required, e.g. make work-up WORK=feat/schema-preview'; \
++		exit 2; \
++	}
++	@test -n "$(WORK_SLUG)" || { echo "make: WORK '$(WORK)' has no usable slug"; exit 2; }
++
++work-up: require-work
++	$(WORK_ENV) docker compose -p $(WORK_PROJECT) up -d app
++
++work-down: require-work
++	docker compose -p $(WORK_PROJECT) down
++
++work-verify: require-work
++	$(WORK_ENV) docker compose -p $(WORK_PROJECT) run --rm app npm run verify
++
++work-config: require-work
++	$(WORK_ENV) docker compose -p $(WORK_PROJECT) config
+diff --git a/README.md b/README.md
+index 062a082..e2e4cfb 100644
+--- a/README.md
++++ b/README.md
+@@ -34,7 +34,7 @@ Facts about this project's runtime resources:
+ runtime resource policy; project tooling derives resource names/ports
+ from it rather than hardcoding them per command.
+ 
+-Only the **default runtime** is supported today:
++The **default runtime**:
+ 
+ ```bash
+ make up       # start default runtime
+@@ -42,6 +42,22 @@ make down     # stop default runtime
+ make verify   # final verification gate (container-managed checks)
+ ```
+ 
++A **parallel Work runtime** runs alongside it for one confirmed Work
++identity:
++
++```bash
++make work-up WORK=<type>/<name>      # start a Work runtime
++make work-verify WORK=<type>/<name>  # run verification in the Work runtime
++make work-config WORK=<type>/<name>  # render its Compose config
++make work-down WORK=<type>/<name>    # stop it (volumes retained)
++```
++
++Work-scoped identities derive deterministically from the confirmed Work
++identity (`wrr-<work-slug>-<role>`, port `8100 + cksum(work) % 900`); the
++toolchain image and package cache are shared with the default runtime,
++while the DB volume, host port, network, and container namespace are
++per-runtime.
++
+ ## Verification
+ 
+ - `make verify` — host entry point; runs the project verification inside
+diff --git a/compose.yml b/compose.yml
+index bab3160..646b3df 100644
+--- a/compose.yml
++++ b/compose.yml
+@@ -15,9 +15,13 @@ services:
+       - db-data:/data
+ volumes:
+   pkg-cache:
++    # Shared package/download cache — project-scoped, same name for every
++    # runtime.
+     name: work-runtime-resources-pkg-cache
+   db-data:
+-    name: work-runtime-resources-db-data
++    # Mutable state — per-runtime. Default keeps the project name; a Work
++    # runtime passes its own derived name.
++    name: "${DB_VOLUME_NAME:-work-runtime-resources-db-data}"
+ networks:
+   default:
+-    name: work-runtime-resources-net
++    name: "${RUNTIME_NETWORK_NAME:-work-runtime-resources-net}"
+diff --git a/scripts/resource-identity.js b/scripts/resource-identity.js
+index 98c271f..6f211ab 100644
+--- a/scripts/resource-identity.js
++++ b/scripts/resource-identity.js
+@@ -6,16 +6,30 @@
+ //
+ // Scopes:
+ //  - 'default': the default runtime.
+-//  - Work-specific parallel runtimes are not implemented yet.
++//  - 'work':    a parallel runtime for one confirmed Work identity.
++//
++// Resource scoping (see README "Runtime resources"):
++//  - image and package cache are project-scoped and shared by every
++//    runtime — the image carries only the toolchain (source is
++//    bind-mounted), and downloads are identical for any consumer;
++//  - db volume, host port, network and container namespace are
++//    per-runtime: Work runtimes must not share mutable state or collide
++//    on the host port with the default runtime.
++//
++// Work-scoped identities derive deterministically from
++//   project + confirmed Work identity + resource role.
++// The same derivation is used by the Make work-* targets (POSIX
++// tr/sed/cksum) so host commands and this module agree.
+ 
+ const PROJECT = 'work-runtime-resources';
+ 
+-// The default runtime — the only supported runtime today.
++// The default runtime.
+ function defaultRuntime() {
+   return {
+     scope: 'default',
+     work: null,
+     project: PROJECT,
++    composeProject: null,
+     image: 'work-runtime-dev:node20',   // toolchain image (project resource)
+     cacheVolume: `${PROJECT}-pkg-cache`, // shared package/download cache
+     dbVolume: `${PROJECT}-db-data`,     // mutable state for this runtime
+@@ -24,12 +38,63 @@ function defaultRuntime() {
+   };
+ }
+ 
+-// Parallel runtime for a confirmed Work identity — not implemented yet.
++// POSIX cksum (CRC32, 0x04C11DB7 non-reflected, length appended) over the
++// Work identity — identical to `printf '%s' "$work" | cksum` on the host,
++// so Make targets and this module derive the same port.
++const CK_TABLE = (() => {
++  const t = new Uint32Array(256);
++  for (let i = 0; i < 256; i++) {
++    let c = i << 24;
++    for (let j = 0; j < 8; j++) {
++      c = (c & 0x80000000) ? ((c << 1) ^ 0x04c11db7) >>> 0 : (c << 1) >>> 0;
++    }
++    t[i] = c;
++  }
++  return t;
++})();
++
++function cksum(str) {
++  const buf = Buffer.from(str, 'utf8');
++  let crc = 0;
++  const upd = (b) => {
++    crc = (((crc << 8) >>> 0) ^ CK_TABLE[((crc >>> 24) ^ b) & 0xff]) >>> 0;
++  };
++  for (const b of buf) upd(b);
++  let n = buf.length;
++  while (n !== 0) {
++    upd(n & 0xff);
++    n = Math.floor(n / 256);
++  }
++  return ~crc >>> 0;
++}
++
++// Compose-safe slug for a confirmed Work identity:
++// lowercase, runs of non [a-z0-9] collapsed to '-', edges trimmed.
++function workSlug(work) {
++  return work
++    .toLowerCase()
++    .replace(/[^a-z0-9]+/g, '-')
++    .replace(/^-+|-+$/g, '');
++}
++
++// Parallel runtime for a confirmed Work identity.
+ function workRuntime(work) {
+-  if (!work || typeof work !== 'string') {
++  if (!work || typeof work !== 'string' || workSlug(work) === '') {
+     throw new Error('workRuntime requires a confirmed Work identity');
+   }
+-  throw new Error('parallel Work runtime is not implemented yet');
++  const composeProject = `wrr-${workSlug(work)}`;
++  return {
++    scope: 'work',
++    work,
++    project: PROJECT,
++    composeProject,
++    image: 'work-runtime-dev:node20',        // shared toolchain image
++    cacheVolume: `${PROJECT}-pkg-cache`,     // shared package/download cache
++    dbVolume: `${composeProject}-db-data`,   // Work-scoped mutable state
++    hostPort: 8100 + (cksum(work) % 900),    // Work-derived, no default collision
++    network: `${composeProject}-net`,
++    container: `${composeProject}-app-1`,
++  };
+ }
+ 
+-module.exports = { PROJECT, defaultRuntime, workRuntime };
++module.exports = { PROJECT, defaultRuntime, workRuntime, workSlug, cksum };
