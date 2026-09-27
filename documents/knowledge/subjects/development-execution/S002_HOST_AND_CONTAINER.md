@@ -63,6 +63,24 @@
 - Work固有のCompose project名は、並列または明示的に隔離したruntimeを同時実行する必要がある場合だけ使用する。
 - container、network、可変volume、log、temporary outputへ同じ識別体系を伝播する。
 
+### runtime materializationのlifecycle一貫性
+
+Work-scoped runtime resourceをenv var、config file、Compose project名、resource selector等でmaterializeする場合、同じresolved configurationを全counterpart operationへ伝播する。
+
+```text
+create/startした R(work)
+        ↓
+status / config / verify も R(work)
+        ↓
+stop も R(work)
+        ↓
+cleanup / remove も R(work)
+```
+
+- `R(work)` を作成したoperationが、scope設定を落として `R(default)` をstop/removeしてはならない。例えばstart時だけ `DB_VOLUME_NAME` のようなscope selectorを解決し、stop時に未指定のままdefault名へfallbackさせるのは禁止である。
+- creation commandとteardown commandが異なるidentityをresolveしていないか、可能ならrendered config / dry-run等でstart pathとstop path双方が同じresource identityを指すことを検証する。
+- resolutionロジックを各commandへ個別に複写せず、共有のresolver/config sourceから導出する。command surface側の規則は `S003_COMMAND_INTERFACE_AND_CI.md` を参照。
+
 ### resourceの作成と再利用
 
 - Work Identity、branch、worktreeが存在すること自体は、別のimage、container、network、volumeを作る理由にならない。
@@ -110,3 +128,4 @@ resourceがProject / Work / Runのどのscopeへ属するか、Work Identityを�
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
+- `../../records/2026-09-27-work-runtime-lifecycle-propagation/RECORD.md`

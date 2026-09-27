@@ -38,7 +38,8 @@ tests/
 │  ├─ docker-ci-project/
 │  ├─ performance-reporting/
 │  ├─ provider-compatibility/
-│  └─ work-runtime-resources/
+│  ├─ work-runtime-resources/
+│  └─ work-runtime-lifecycle/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -51,7 +52,8 @@ tests/
 │  ├─ docker-ci-parity/
 │  ├─ performance-contract-preservation/
 │  ├─ provider-compatibility-gate/
-│  └─ work-runtime-resource-scoping/
+│  ├─ work-runtime-resource-scoping/
+│  └─ work-runtime-lifecycle-propagation/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -301,6 +303,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Seventh-stage scenarios — completed/evaluated
 
 - `work-runtime-resource-scoping` (fixture `work-runtime-resources`): resourceごとのscope判断自体は成功したが、Work-specific設定が`work-down`へ伝播せずlifecycle command surfaceが非対称だった。follow-upでlifecycle identity propagationを強化・再検証する。
+
+### Eighth-stage scenarios — definition ready / run pending
+
+- `work-runtime-lifecycle-propagation` (fixture `work-runtime-lifecycle`): `work-runtime-resource-scoping`で観測された失敗の再検証。teardown/cleanup系commandがcreate時と同じWork-scoped resource setをresolveするか、default/shared resourceを誤対象にしないか、scoped cleanupが共有volumeを巻き込まないかを見る。
 
 ## Fixture immutability
 

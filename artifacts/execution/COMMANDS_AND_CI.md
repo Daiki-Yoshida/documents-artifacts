@@ -28,6 +28,8 @@ Do not silently change a formerly non-destructive command into a destructive one
 
 Separate stop/container removal/volume deletion/full purge semantics.
 
+A scoped command family (`<scope>-up`, `-status`, `-config`, `-verify`, `-down`, `-cleanup`) must share one consistent scope/identity resolution — the same scope name is not a sufficient contract if each command resolves the scope differently. For non-trivial identity derivation, prefer one project-owned resolver/script/config shared by all lifecycle commands over reimplementing the derivation separately per recipe or language; do not over-abstract trivial fixed values.
+
 ## Verification commands
 
 Define a standard final verification path.

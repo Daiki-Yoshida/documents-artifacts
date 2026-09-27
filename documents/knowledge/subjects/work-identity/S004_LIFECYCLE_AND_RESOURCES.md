@@ -156,6 +156,41 @@ resource_identity:
 
 既存の shared resource が安全に再利用可能なら共有する。
 
+### lifecycle全体への伝播
+
+Resource Identityはcreation時だけの名前ではない。
+
+Work-scoped resourceを管理する全lifecycle operationが、同じscope / identity / configurationを再現しなければならない。
+
+```text
+scope / identity resolve
+        ↓
+create / materialize / start
+        ↓
+inspect / status / config
+        ↓
+verify / use
+        ↓
+stop
+        ↓
+cleanup / remove
+```
+
+これらのoperationがすべて同じresource setを対象とする必要がある。
+
+禁止例:
+
+```text
+startではWork-specific configを使う
+downではdefault configへfallback
+```
+
+この場合、teardownはcreation時とは別のresource set (例えばdefault runtimeのvolume / network) を対象にし得る。create時に正しく見える実装でも、lifecycle contractとしては不十分である。
+
+env vars、config file、Compose project名、resource selector等でidentityをmaterializeする場合も、全lifecycle commandで一貫して解決する。複雑なidentity resolutionを複数箇所 (Makefile / script /言語runtime等) で独立実装すると、後続変更でdriftし得るため、非自明なderivationは単一のproject-owned resolver / config sourceへ寄せる。
+
+runtime materialization側の実装規則は `../development-execution/S002_HOST_AND_CONTAINER.md`、公開command surface側のresolver共有規則は `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有する。
+
 ---
 
 ---
@@ -181,3 +216,4 @@ Work Identity は **意味・ownership・lifecycleを揃えるための共通軸
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`
 - `../../records/2026-08-02-task-resource-ownership-pr/RECORD.md`
 - `../../records/2026-08-02-task-resource-reconciliation-commit/RECORD.md`
+- `../../records/2026-09-27-work-runtime-lifecycle-propagation/RECORD.md`
