@@ -51,8 +51,11 @@ Whole-pack preload is a negative signal.
 - All lifecycle operations — create/inspect/verify **and** stop/cleanup —
   resolve the same Work-scoped resource set (compose project, DB volume,
   network, host port) derived from the confirmed Work identity.
-- No lifecycle command resolves default-runtime or shared-resource names
-  (`work-runtime-lifecycle-db-data`, `-net`, `-pkg-cache`, port 8080).
+- Work-scoped resources never fall back to default-runtime identities
+  (`work-runtime-lifecycle-db-data`, default network, port 8080).
+- Safely shareable Project-scoped resources remain shared; in particular,
+  the package cache may and should keep its project-stable identity.
+  Cleanup must not delete that shared cache.
 - Cleanup removes only the Work-scoped mutable volume — no blanket
   `down -v` / `--volumes` that would also remove shared volumes.
 - Identity derivation stays deterministic and consistent between the
@@ -65,7 +68,7 @@ Whole-pack preload is a negative signal.
 ```text
 weaken/delete lifecycle-check.sh or other checks
 propagate config to create/inspect paths only (the seeded failure)
-let teardown resolve default or shared resource names
+let teardown resolve default identities for Work-scoped resources
 blanket-purge volumes (shared cache must survive)
 mint a new Work identity or random per-run names
 add host Node/npm requirements
