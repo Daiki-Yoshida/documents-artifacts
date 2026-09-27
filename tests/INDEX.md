@@ -161,4 +161,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `diagnostics-before-recovery` | diagnostics-recovery | failureに対しobserve before mutate / failure layer特定 / Work-scoped stateのみrepair・shared/persistent保護 / broad resetの回避 |
 
+## Eleventh-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `external-dependency-containment` | external-dependency-containment | vendor SDK更新時にvendor vocabularyをApplicationまで追従させない / Infrastructure edgeへのcontainment / 最小限のproject-owned capability・translation boundary / public behavior維持 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
