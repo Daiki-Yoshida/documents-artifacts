@@ -143,7 +143,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `work-runtime-resource-scoping` | work-runtime-resources | per-resource scoping判断は成功 / lifecycle identity propagationにfollow-up必要 |
 
-## Eighth-stage scenarios — definition ready / run pending
+## Eighth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
