@@ -1,0 +1,11 @@
+scenario: provider-compatibility-gate
+run_id: 2026-09-27-devin
+fixture: provider-compatibility
+prepared_at_utc: 2026-09-27T00:07:21Z
+captured_at_utc: 2026-09-27T00:08:19Z
+source_repo_head_at_prepare: 5277507c2c8948296433ddd9395aaf225f732697
+source_repo_head_at_capture: 5277507c2c8948296433ddd9395aaf225f732697
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/provider-compatibility-gate/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 6bf88480a78e2fada6882a1744907a9ce5a62e16
+head_sha_at_capture: 6bf88480a78e2fada6882a1744907a9ce5a62e16
