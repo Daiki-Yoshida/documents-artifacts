@@ -1,0 +1,11 @@
+=== recent commits ===
+5305384 test: install Artifact v2
+5aea5e6 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.runtime/persistent/dev-db.keep
+.runtime/shared/package-cache.keep
+.runtime/work/feat-export/port-9100.ready
