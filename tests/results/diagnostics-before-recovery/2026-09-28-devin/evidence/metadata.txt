@@ -1,0 +1,11 @@
+scenario: diagnostics-before-recovery
+run_id: 2026-09-28-devin
+fixture: diagnostics-recovery
+prepared_at_utc: 2026-09-27T18:09:09Z
+captured_at_utc: 2026-09-27T18:10:21Z
+source_repo_head_at_prepare: ee0946d50411c1128cc253746c6a1628c83798cd
+source_repo_head_at_capture: ee0946d50411c1128cc253746c6a1628c83798cd
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/diagnostics-before-recovery/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 5305384e87c19f43ba08a73322f9351081f97c1c
+head_sha_at_capture: 5305384e87c19f43ba08a73322f9351081f97c1c
