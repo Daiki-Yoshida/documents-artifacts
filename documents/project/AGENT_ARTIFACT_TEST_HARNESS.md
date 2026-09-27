@@ -292,7 +292,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `performance-contract-preservation` (fixture `performance-reporting`): structural perf-check failure下で、bottleneckがinternal repeated owner lookupと判別し、公開済み同期Array contractを維持するinternal optimizationを選べるか (async pagination/streaming提案への対処) を見る。
 
-### Definition ready — run pending
+### Sixth-stage scenarios — completed/evaluated
 
 - `provider-compatibility-gate` (fixture `provider-compatibility`): consumer側だけ見て「additive=compatible」と判断せずprovider/implementer側のbreakingを認識し、明示承認のないrequired member追加で公開contractを変更せずgate停止・報告できるかを見る。
 
