@@ -26,6 +26,7 @@ This directory is a **managed derived snapshot**. Do not edit the installed arti
 | Project / repository structure | `project/WORKSPACE.md` |
 | Work identity / lifecycle | `project/WORK_IDENTITY.md`; add `project/WORK_LIFECYCLE.md` when needed |
 | Worktree operation | `project/WORKTREES.md`; add safety guidance for destructive actions |
+| Repository integration / merge / rebase | `safety/INTEGRATION_AND_CONFIRMATION.md` → `operation/VERIFICATION_AND_DONE.md` |
 | Docker / build / test / CI environment | `execution/INDEX.md` |
 | Delete / cleanup / reset / recovery | `safety/INDEX.md` |
 

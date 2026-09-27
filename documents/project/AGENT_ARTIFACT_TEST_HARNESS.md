@@ -311,9 +311,9 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `work-runtime-lifecycle-propagation` (fixture `work-runtime-lifecycle`): `work-runtime-resource-scoping`で観測された失敗の再検証。teardown/cleanup系commandがcreate時と同じWork-scoped resource setをresolveするか、default/shared resourceを誤対象にしないか、scoped cleanupが共有volumeを巻き込まないかを見る。
 
-### Ninth-stage scenarios — definition ready / routing prerequisite
+### Ninth-stage scenarios — definition ready / run pending
 
-- `integration-head-revalidation` (fixture `integration-revalidation`): definition ready。feature branchのgreenとconflict-free mergeをdone evidenceにせずintegrated HEADで再verifyするbehaviorを狙う。root Artifact routerにintegration task routeが未投影であることをreview時に発見したため、routing correctionを先に行ってからblind runする。`PREPARE_HOOK`によるdeterministic branch topologyの最初の利用例。
+- `integration-head-revalidation` (fixture `integration-revalidation`): feature branchのgreenとconflict-free mergeをdone evidenceにせずintegrated HEADで再verifyするbehaviorを狙う。root Artifact routerのintegration task route欠落はIssue #84で修正済み。失敗の調査・current contractの維持・feature側configのadaptationまで到達するかを確認する。`PREPARE_HOOK`によるdeterministic branch topologyの最初の利用例。
 
 ## Fixture immutability
 
