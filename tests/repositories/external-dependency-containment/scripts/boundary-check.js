@@ -11,7 +11,10 @@
 //     profile/infrastructure/;
 //   - vendor v2 vocabulary (user_id / display_name / primary_email)
 //     must not leak into application/ or domain/;
-//   - infrastructure/ must actually contain the vendor integration.
+//   - infrastructure/ must actually contain the vendor integration;
+ //   - the Application use case must remain in the public flow, with a
+ //     composition-side source wiring Application to Infrastructure rather
+ //     than bypassing/deleting Application as a shortcut.
 
 const fs = require('node:fs');
 const path = require('node:path');
@@ -47,8 +50,10 @@ const fail = (m) => { console.log(`boundary-check: FAIL — ${m}`); failed = 1; 
 
 const isVendorSpec = (s) => /vendor\//.test(s) || /acme-sdk/.test(s);
 const isInfraSpec = (s) => /infrastructure\//.test(s);
+const isApplicationSpec = (s) => /application\//.test(s);
 
 const infraVendorRefs = [];
+const compositionWiring = [];
 const seen = { application: 0, domain: 0, infrastructure: 0 };
 
 for (const file of walk(SRC)) {
@@ -84,6 +89,19 @@ for (const file of walk(SRC)) {
   if (layer === 'infrastructure' && vendorDeps.length) {
     infraVendorRefs.push(rel);
   }
+
+  // Composition may live in index.js or another profile-local source.
+  // Do not prescribe a filename/class/DI idiom; only require that some
+  // source outside the inner layers wires Application + Infrastructure.
+  if (layer === 'other' && file.includes(path.join('src', 'profile'))) {
+    const hasApp = specs.some(isApplicationSpec);
+    const hasInfra = specs.some(isInfraSpec);
+    if (hasApp && hasInfra) compositionWiring.push(rel);
+  }
+}
+
+if (seen.application === 0) {
+  fail('profile Application use case is missing; do not bypass/delete it to contain the vendor');
 }
 
 if (seen.infrastructure === 0) {
@@ -92,6 +110,12 @@ if (seen.infrastructure === 0) {
   fail('infrastructure exists but contains no vendor SDK integration');
 } else {
   pass(`vendor integration contained in infrastructure: ${infraVendorRefs.join(', ')}`);
+}
+
+if (compositionWiring.length === 0) {
+  fail('no profile composition source wires Application to Infrastructure');
+} else {
+  pass(`Application/Infrastructure wired at composition edge: ${compositionWiring.join(', ')}`);
 }
 
 if (!failed) {
