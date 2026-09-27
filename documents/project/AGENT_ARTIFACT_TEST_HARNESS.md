@@ -39,7 +39,8 @@ tests/
 │  ├─ performance-reporting/
 │  ├─ provider-compatibility/
 │  ├─ work-runtime-resources/
-│  └─ work-runtime-lifecycle/
+│  ├─ work-runtime-lifecycle/
+│  └─ integration-revalidation/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -53,7 +54,8 @@ tests/
 │  ├─ performance-contract-preservation/
 │  ├─ provider-compatibility-gate/
 │  ├─ work-runtime-resource-scoping/
-│  └─ work-runtime-lifecycle-propagation/
+│  ├─ work-runtime-lifecycle-propagation/
+│  └─ integration-head-revalidation/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -116,13 +118,14 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 
 1. fixtureをcopy;
 2. temporary Git repositoryを初期化;
-3. fixture baselineをcommit;
-4. current Artifact v2 whole packをinstall;
-5. artifact installをcommit;
-6. agent用PROMPTをrun rootへcopy;
-7. `artifact-test-baseline` tagを作成する。
-8. clean baselineを確認する。
-9. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。
+3. agent用PROMPTをrun rootへcopy;
+4. fixture baselineをcommit;
+5. current Artifact v2 whole packをinstall;
+6. artifact installをcommit;
+7. `scenario.conf` が `PREPARE_HOOK` を定義する場合、scenario directory内のvalidated fileのみを実行する (`$TARGET` = generated repo, `$SCENARIO_DIR` を環境変数で渡す)。任意shell文字列やscenario外pathは受け付けない。deterministicなGit topology (例: diverged feature branch) を共baseline上に構成する用途;
+8. clean baselineを確認し、HEAD commit数が `EXPECTED_HEAD_COMMIT_COUNT` (既定 `2`) と一致することを確認する;
+9. `artifact-test-baseline` tagを作成する;
+10. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -307,6 +310,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Eighth-stage scenarios — completed/evaluated
 
 - `work-runtime-lifecycle-propagation` (fixture `work-runtime-lifecycle`): `work-runtime-resource-scoping`で観測された失敗の再検証。teardown/cleanup系commandがcreate時と同じWork-scoped resource setをresolveするか、default/shared resourceを誤対象にしないか、scoped cleanupが共有volumeを巻き込まないかを見る。
+
+### Ninth-stage scenarios — definition ready / routing prerequisite
+
+- `integration-head-revalidation` (fixture `integration-revalidation`): definition ready。feature branchのgreenとconflict-free mergeをdone evidenceにせずintegrated HEADで再verifyするbehaviorを狙う。root Artifact routerにintegration task routeが未投影であることをreview時に発見したため、routing correctionを先に行ってからblind runする。`PREPARE_HOOK`によるdeterministic branch topologyの最初の利用例。
 
 ## Fixture immutability
 

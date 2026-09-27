@@ -149,4 +149,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `work-runtime-lifecycle-propagation` | work-runtime-lifecycle | lifecycle全operationが同一Work-scoped resource setをresolve / teardownのdefault fallback排除 / scoped cleanupの限定性 |
 
+## Ninth-stage scenarios — definition ready / routing prerequisite
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `integration-head-revalidation` | integration-revalidation | definition ready。root Artifact routerにintegration task routeが未投影のためblind runはrouting correction後に実施 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
