@@ -298,9 +298,9 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `provider-compatibility-gate` (fixture `provider-compatibility`): consumer側だけ見て「additive=compatible」と判断せずprovider/implementer側のbreakingを認識し、明示承認のないrequired member追加で公開contractを変更せずgate停止・報告できるかを見る。
 
-### Seventh-stage scenarios — definition ready / run pending
+### Seventh-stage scenarios — completed/evaluated
 
-- `work-runtime-resource-scoping` (fixture `work-runtime-resources`): 「Workだから全Docker resourceを複製」と判断せず、image/package cacheのproject-scope共有とmutable DB・host portのruntime-scope分離をresourceごとに判断し、確認済みWork Identity由来のdeterministic namingとproject-owned command surfaceでparallel runtimeを実装できるかを見る。
+- `work-runtime-resource-scoping` (fixture `work-runtime-resources`): resourceごとのscope判断自体は成功したが、Work-specific設定が`work-down`へ伝播せずlifecycle command surfaceが非対称だった。follow-upでlifecycle identity propagationを強化・再検証する。
 
 ## Fixture immutability
 
