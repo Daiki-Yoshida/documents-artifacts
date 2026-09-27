@@ -232,6 +232,14 @@ docker_container_environment:
 cleanup_delete_reset_recovery:
   read:
     - "safety/INDEX.md"
+
+repository_integration:
+  read:
+    - "safety/INTEGRATION_AND_CONFIRMATION.md"
+    - "operation/VERIFICATION_AND_DONE.md"
+  add_when:
+    - "operation/VERSION_CONTROL_AND_REPORTING.md when commit/push/reporting authority matters"
+    - "project/WORKSPACE.md when repository ownership/topology matters"
 ```
 
 ## Context budget targets
