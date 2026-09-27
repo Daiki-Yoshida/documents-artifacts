@@ -17,7 +17,7 @@ function defaultRuntime() {
     work: null,
     project: PROJECT,
     image: 'work-runtime-dev:node20',   // toolchain image (project resource)
-    cacheVolume: 'dev-pkg-cache',       // shared package/download cache
+    cacheVolume: `${PROJECT}-pkg-cache`, // shared package/download cache
     dbVolume: `${PROJECT}-db-data`,     // mutable state for this runtime
     hostPort: 8080,                     // host port for this runtime
     network: `${PROJECT}-net`,
