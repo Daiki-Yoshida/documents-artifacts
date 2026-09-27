@@ -12,9 +12,9 @@
 //   - vendor v2 vocabulary (user_id / display_name / primary_email)
 //     must not leak into application/ or domain/;
 //   - infrastructure/ must actually contain the vendor integration;
- //   - the Application use case must remain in the public flow, with a
- //     composition-side source wiring Application to Infrastructure rather
- //     than bypassing/deleting Application as a shortcut.
+//   - the Application use case must remain in the public flow, with a
+//     composition-side source wiring Application to Infrastructure rather
+//     than bypassing/deleting Application as a shortcut.
 
 const fs = require('node:fs');
 const path = require('node:path');
