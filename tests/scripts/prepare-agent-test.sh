@@ -72,8 +72,30 @@ git -C "$TARGET" commit -qm "test: fixture baseline"
 "$REPO_ROOT/artifacts.sh" --target "$TARGET" --non-interactive >/dev/null
 git -C "$TARGET" add documents/artifacts
 git -C "$TARGET" commit -qm "test: install Artifact v2"
-git -C "$TARGET" tag artifact-test-baseline
+
+# Optional per-scenario prepare hook: a validated file inside the
+# scenario directory (a plain filename — never an arbitrary shell string
+# or a path outside the scenario). It runs after the Artifact install
+# commit so hooks build on the common baseline, e.g. deterministic Git
+# topologies such as a diverged feature branch.
+if [[ -n "${PREPARE_HOOK:-}" ]]; then
+  [[ "$PREPARE_HOOK" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] \
+    || fail "PREPARE_HOOK must be a plain file name inside the scenario directory: $PREPARE_HOOK"
+  HOOK="$SCENARIO_DIR/$PREPARE_HOOK"
+  [[ -f "$HOOK" && ! -L "$HOOK" ]] || fail "PREPARE_HOOK file not found in scenario directory: $HOOK"
+  TARGET="$TARGET" SCENARIO_DIR="$SCENARIO_DIR" bash "$HOOK" \
+    || fail "prepare hook failed: $PREPARE_HOOK"
+fi
+
 [[ -z "$(git -C "$TARGET" status --porcelain)" ]] || fail "prepared repository is not clean"
+
+EXPECTED_HEAD_COMMIT_COUNT="${EXPECTED_HEAD_COMMIT_COUNT:-2}"
+[[ "$EXPECTED_HEAD_COMMIT_COUNT" =~ ^[0-9]+$ ]] \
+  || fail "invalid EXPECTED_HEAD_COMMIT_COUNT: $EXPECTED_HEAD_COMMIT_COUNT"
+[[ "$(git -C "$TARGET" rev-list --count HEAD)" == "$EXPECTED_HEAD_COMMIT_COUNT" ]] \
+  || fail "HEAD commit count mismatch: expected $EXPECTED_HEAD_COMMIT_COUNT"
+
+git -C "$TARGET" tag artifact-test-baseline
 
 SOURCE_REPO_HEAD="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"

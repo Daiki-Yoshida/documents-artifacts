@@ -38,12 +38,19 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ -f "$prompt" ]] || fail "missing PROMPT.md: $scenario"
   [[ -f "$expectations" ]] || fail "missing EXPECTATIONS.md: $scenario"
 
-  unset FIXTURE
+  unset FIXTURE PREPARE_HOOK EXPECTED_HEAD_COMMIT_COUNT
   # shellcheck disable=SC1090
   source "$conf"
   [[ -n "${FIXTURE:-}" ]] || fail "FIXTURE missing: $scenario"
   fixture="$REPO_ROOT/tests/repositories/$FIXTURE"
   [[ -d "$fixture" ]] || fail "fixture missing for $scenario: $FIXTURE"
+
+  if [[ -n "${PREPARE_HOOK:-}" ]]; then
+    [[ "$PREPARE_HOOK" =~ ^[a-zA-Z0-9][a-zA-Z0-9._-]*$ ]] \
+      || fail "PREPARE_HOOK is not a plain file name: $scenario"
+    [[ -f "${scenario_dir}${PREPARE_HOOK}" && ! -L "${scenario_dir}${PREPARE_HOOK}" ]] \
+      || fail "PREPARE_HOOK file missing for $scenario: $PREPARE_HOOK"
+  fi
 
   if find "$fixture" -name .git -print -quit | grep -q .; then
     fail "fixture contains .git: $FIXTURE"
@@ -73,8 +80,14 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ "$installed_count" == "$source_artifact_count" ]]     || fail "artifact count mismatch for $scenario: $installed_count"
   cmp -s "$REPO_ROOT/artifacts/INDEX.md" "$target/documents/artifacts/INDEX.md"     || fail "installed artifact root differs: $scenario"
 
+  if [[ -n "${PREPARE_HOOK:-}" ]]; then
+    [[ ! -e "$target/$PREPARE_HOOK" ]] \
+      || fail "prepare hook source leaked into target repo: $scenario"
+  fi
+
   [[ -z "$(git -C "$target" status --porcelain)" ]] || fail "prepared repo is dirty: $scenario"
-  [[ "$(git -C "$target" rev-list --count HEAD)" == "2" ]]     || fail "prepared repo should contain fixture + artifact commits: $scenario"
+  [[ "$(git -C "$target" rev-list --count HEAD)" == "${EXPECTED_HEAD_COMMIT_COUNT:-2}" ]] \
+    || fail "prepared repo HEAD commit count mismatch: $scenario"
   git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
     || fail "prepared baseline tag missing: $scenario"
 
