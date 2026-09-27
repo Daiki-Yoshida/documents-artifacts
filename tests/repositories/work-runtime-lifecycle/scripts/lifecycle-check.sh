@@ -20,10 +20,11 @@ exp_db="$exp_project-db-data"
 exp_net="$exp_project-net"
 exp_port=$((8100 + $(printf '%s' "$WORK" | cksum | awk '{print $1}') % 900))
 
-# Default/shared project resources that Work ops must never resolve.
+# Default identities for resources that must be Work-scoped. Work
+# operations must not fall back to these. The package cache is deliberately
+# Project-scoped and shared, so its project-stable name is NOT forbidden.
 def_db='work-runtime-lifecycle-db-data'
 def_net='work-runtime-lifecycle-net'
-shared_cache='work-runtime-lifecycle-pkg-cache'
 
 failed=0
 pass() { printf 'lifecycle-check: PASS — %s\n' "$1"; }
@@ -78,9 +79,11 @@ EOF
     pass "$target resolves the Work-scoped configuration"
   fi
 
-  # No lifecycle op may target default or shared project resources.
-  if printf '%s\n' "$out" | grep -qE "$def_db|$def_net|$shared_cache"; then
-    fail "$target resolves a default/shared project resource name"
+  # Work-scoped mutable/runtime resources must not fall back to default
+  # identities. Project-scoped shared resources (e.g. package cache) are
+  # intentionally allowed.
+  if printf '%s\n' "$out" | grep -qE "$def_db|$def_net"; then
+    fail "$target resolves a default identity for a Work-scoped resource"
   fi
 
   # No blanket volume purge in any lifecycle op.
