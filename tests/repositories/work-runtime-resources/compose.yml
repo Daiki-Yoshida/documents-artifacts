@@ -15,5 +15,9 @@ services:
       - db-data:/data
 volumes:
   pkg-cache:
-    name: dev-pkg-cache
+    name: work-runtime-resources-pkg-cache
   db-data:
+    name: work-runtime-resources-db-data
+networks:
+  default:
+    name: work-runtime-resources-net
