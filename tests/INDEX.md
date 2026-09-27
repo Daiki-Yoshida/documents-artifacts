@@ -155,4 +155,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `integration-head-revalidation` | integration-revalidation | feature branch green / clean mergeをdone扱いせずintegrated HEADを再verifyし、semantic mismatchをcurrent contractへadaptしてPASS |
 
+## Tenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `diagnostics-before-recovery` | diagnostics-recovery | failureに対しobserve before mutate / failure layer特定 / Work-scoped stateのみrepair・shared/persistent保護 / broad resetの回避 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
