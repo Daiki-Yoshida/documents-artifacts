@@ -1,0 +1,7 @@
+diff --git a/services/export.conf b/services/export.conf
+new file mode 100644
+index 0000000..043894f
+--- /dev/null
++++ b/services/export.conf
+@@ -0,0 +1 @@
++protocol=2

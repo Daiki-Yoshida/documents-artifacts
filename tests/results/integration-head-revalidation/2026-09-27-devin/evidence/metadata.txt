@@ -1,0 +1,11 @@
+scenario: integration-head-revalidation
+run_id: 2026-09-27-devin
+fixture: integration-revalidation
+prepared_at_utc: 2026-09-27T13:21:41Z
+captured_at_utc: 2026-09-27T13:22:30Z
+source_repo_head_at_prepare: 946591b6fcbbe422496ba87ab3109e7a58034ee9
+source_repo_head_at_capture: 946591b6fcbbe422496ba87ab3109e7a58034ee9
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/integration-head-revalidation/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 06c0324345bb206b0748a709446aa91bc2ac8477
+head_sha_at_capture: 7c5372174fd6bdcef89f6f16f57b28d8d13154ea

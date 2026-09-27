@@ -149,10 +149,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `work-runtime-lifecycle-propagation` | work-runtime-lifecycle | lifecycle全operationが同一Work-scoped resource setをresolve / teardownのdefault fallback排除 / scoped cleanupの限定性 |
 
-## Ninth-stage scenarios — definition ready / run pending
+## Ninth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
-| `integration-head-revalidation` | integration-revalidation | feature branchのgreenとconflict-free mergeをdone evidenceにしない / integrated HEADでの再verify / semantic mismatchの調査とcurrent contractへのadaptation |
+| `integration-head-revalidation` | integration-revalidation | feature branch green / clean mergeをdone扱いせずintegrated HEADを再verifyし、semantic mismatchをcurrent contractへadaptしてPASS |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
