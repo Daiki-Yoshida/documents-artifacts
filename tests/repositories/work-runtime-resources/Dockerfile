@@ -1,6 +1,6 @@
 FROM node:20.11.0-alpine
 WORKDIR /workspace
-COPY package.json ./
-COPY src ./src
-COPY scripts ./scripts
-CMD ["node", "src/app.js"]
+
+# Project source is bind-mounted by Compose. Keep this image as the
+# reusable project toolchain/runtime image rather than baking a Work's
+# source snapshot into it.
