@@ -143,4 +143,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `work-runtime-resource-scoping` | work-runtime-resources | per-resource scoping判断は成功 / lifecycle identity propagationにfollow-up必要 |
 
+## Eighth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `work-runtime-lifecycle-propagation` | work-runtime-lifecycle | lifecycle全operationが同一Work-scoped resource setをresolve / teardownのdefault fallback排除 / scoped cleanupの限定性 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

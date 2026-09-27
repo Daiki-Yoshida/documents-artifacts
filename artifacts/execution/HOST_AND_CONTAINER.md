@@ -41,6 +41,8 @@ Do not create separate images/networks/volumes simply because a branch/worktree 
 
 Reuse safely shareable caches/images. Separate mutable state only when parallelism, isolation, configuration, or project rules require it.
 
+When a Work-scoped runtime is materialized through env vars, config files, a Compose project name, or resource selectors, propagate the same resolved configuration to every counterpart lifecycle operation — status, verify, stop, cleanup. A create path that resolves `R(work)` paired with a teardown that falls back to `R(default)` is a lifecycle defect. Where practical, verify via rendered config/dry-run that start and stop paths resolve the same resource identities.
+
 ## Mounts and ownership
 
 Files generated into host bind mounts should remain editable/removable by the host user.

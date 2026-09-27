@@ -56,6 +56,16 @@ projectは、日常操作を見つけやすい公開command interfaceを持ち�
 - 部分検証は実装中や診断用であり、最終gateの代替ではない。
 - 失敗時はnon-zeroで終了し、診断可能な出力を残す。
 
+### scoped command familyのresolution一貫性
+
+`<scope>-up` / `<scope>-status` / `<scope>-config` / `<scope>-verify` / `<scope>-down` / `<scope>-cleanup` のようなcommand familyは、同じtarget/scope resolverを使う。
+
+command名が同じscopeを示していても、内部のscope/identity resolutionが異なれば契約として不十分である。create系commandがWork-specific configを解決し、stop/cleanup系commandがそれを落としてdefault名へfallbackする実装は、別のresource setを対象にし得る。
+
+非自明なidentity derivationは、Makefile / JS / shell等で別々に再実装してdriftさせるより、1つのproject-owned resolver / script / configへ寄せ、全lifecycle commandがそれを共有する。ただし固定値や単純な結合まで過剰に抽象化する必要はない。
+
+通常stopとdestructive purgeは引き続き分離し、cleanup/purge系commandも同じscoped resolutionを使って対象を限定する。
+
 ---
 
 ## Work Identity固有commandとの接続
@@ -86,3 +96,4 @@ Work Identity operationをpublic commandとして公開する場合も、その�
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
+- `../../records/2026-09-27-work-runtime-lifecycle-propagation/RECORD.md`

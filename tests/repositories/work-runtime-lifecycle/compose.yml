@@ -1,0 +1,27 @@
+services:
+  app:
+    image: work-runtime-dev:node20
+    build: .
+    working_dir: /workspace
+    command: node src/app.js
+    environment:
+      APP_PORT: "3000"
+      NPM_CONFIG_CACHE: /cache
+    ports:
+      - "${APP_HOST_PORT:-8080}:3000"
+    volumes:
+      - .:/workspace
+      - pkg-cache:/cache
+      - db-data:/data
+volumes:
+  pkg-cache:
+    # Shared package/download cache — project-scoped, same name for every
+    # runtime.
+    name: work-runtime-lifecycle-pkg-cache
+  db-data:
+    # Mutable state — per-runtime. Default keeps the project name; a Work
+    # runtime passes its own derived name.
+    name: "${DB_VOLUME_NAME:-work-runtime-lifecycle-db-data}"
+networks:
+  default:
+    name: "${RUNTIME_NETWORK_NAME:-work-runtime-lifecycle-net}"

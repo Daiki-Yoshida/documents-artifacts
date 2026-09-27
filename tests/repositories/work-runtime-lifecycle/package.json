@@ -1,0 +1,12 @@
+{
+  "name": "work-runtime-lifecycle",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "node scripts/test.js",
+    "resource-check": "node scripts/resource-check.js",
+    "verify": "npm test && npm run resource-check"
+  }
+}

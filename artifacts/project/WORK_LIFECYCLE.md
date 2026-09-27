@@ -48,6 +48,17 @@ project + optional component + Work Identity + resource role
 
 to containers, mutable volumes, networks, ports, test databases, logs, or generated outputs as appropriate. Do not use random per-run identity when the resource belongs to the Work.
 
+A Work-scoped resource is not identified only at creation time. The same resolved scope/identity/configuration must target that resource through:
+
+```text
+create/start
+→ inspect/verify
+→ stop
+→ cleanup
+```
+
+A teardown that resolves a different identity — e.g. drops the scoped configuration and falls back to defaults — can act on the wrong resource set, even when the create path looked correct.
+
 ## Completion state for work-scoped resources
 
 Every actually-created Work-scoped resource must end as one of:
