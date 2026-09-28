@@ -1,0 +1,15 @@
+diff --git a/src/order/application/place-order.js b/src/order/application/place-order.js
+index 07e929f..1b7cf8d 100644
+--- a/src/order/application/place-order.js
++++ b/src/order/application/place-order.js
+@@ -10,6 +10,10 @@ function createPlaceOrder({ orderStore, paymentGateway }) {
+     }
+     const auth = await paymentGateway.authorize(orderId);
+     if (!auth.ok) {
++      // Compensation: restore the order to its pre-placement state via the
++      // owner's public surface — a failed placeOrder leaves no partial
++      // confirmed state behind.
++      orderStore.setStatus(orderId, 'draft');
+       return { ok: false, code: 'payment_declined' };
+     }
+     return { ok: true };
