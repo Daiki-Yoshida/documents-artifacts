@@ -193,7 +193,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `state-ownership-consistency` | state-ownership-consistency | OrderStore/PaymentGatewayの独立ownership維持 / Application coordinatorがexplicit compensation / success・両failure invariant PASS / public contract維持 |
 
-## Sixteenth-stage scenarios — definition ready / run pending
+## Sixteenth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
