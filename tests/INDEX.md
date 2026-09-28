@@ -187,4 +187,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `documentation-maintenance-reconciliation` | documentation-maintenance-reconciliation | completed Work Documentsの分類 (durable confirmed / rejected / scratch / verification log) / owner documentへ統合・temporary drop / closeout / archive suggestion拒否・Gitがhistory |
 
+## Fifteenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `state-ownership-consistency` | state-ownership-consistency | 2 state ownerを跨ぐ1 business outcomeのpartial success / explicit consistency strategy / ownership boundary維持 / 両方向failureを処理 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
