@@ -1,0 +1,13 @@
+diff --git a/src/format-label.js b/src/format-label.js
+index ca2a367..d6bd4ec 100644
+--- a/src/format-label.js
++++ b/src/format-label.js
+@@ -4,7 +4,7 @@
+ // with '#'.
+ function formatLabel(input) {
+   const trimmed = String(input).trim();
+-  return `#${trimmed.toUpperCase()}`;
++  return `#${trimmed}`;
+ }
+ 
+ module.exports = { formatLabel };
