@@ -1,0 +1,11 @@
+diff --git a/documents/coordination.conf b/documents/coordination.conf
+index 630d04c..3a1c340 100644
+--- a/documents/coordination.conf
++++ b/documents/coordination.conf
+@@ -1,4 +1,4 @@
+ # Project coordination state: protocol level each participating
+ # component has been coordinated to.
+-api=1
+-web=1
++api=2
++web=2

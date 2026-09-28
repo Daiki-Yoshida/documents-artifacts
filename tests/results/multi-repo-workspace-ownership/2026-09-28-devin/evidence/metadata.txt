@@ -1,0 +1,11 @@
+scenario: multi-repo-workspace-ownership
+run_id: 2026-09-28-devin
+fixture: multi-repo-workspace
+prepared_at_utc: 2026-09-28T13:31:44Z
+captured_at_utc: 2026-09-28T13:33:04Z
+source_repo_head_at_prepare: 3ec714a927bdcee141ff6839cf7c1937061338c6
+source_repo_head_at_capture: 3ec714a927bdcee141ff6839cf7c1937061338c6
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: ef719043796b1df36006375c9f8a2d53f73599b4
+head_sha_at_capture: 894c22ff0ede9512489aec85cae9646f9f02bbaa

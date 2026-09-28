@@ -1,0 +1,11 @@
+=== recent commits ===
+894c22f chore: record components at workspace protocol 2
+ef71904 test: install Artifact v2
+b4bbcd5 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+components/api/
+components/web/

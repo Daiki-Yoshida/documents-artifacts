@@ -1,0 +1,9 @@
+=== recent commits ===
+0314675 chore: adopt workspace protocol 2
+6e0a1b2 test: component baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+none

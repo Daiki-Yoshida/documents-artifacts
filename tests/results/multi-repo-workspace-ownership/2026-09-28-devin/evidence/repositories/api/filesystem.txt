@@ -1,0 +1,4 @@
+d       4096 .
+f          2 ./protocol.conf
+f         61 ./README.md
+f        156 ./verify.sh
