@@ -1,0 +1,66 @@
+diff --git a/.worktrees/feat/csv-export/documents/DECISIONS.md b/.worktrees/feat/csv-export/documents/DECISIONS.md
+deleted file mode 100644
+index c1913ab..0000000
+--- a/.worktrees/feat/csv-export/documents/DECISIONS.md
++++ /dev/null
+@@ -1,14 +0,0 @@
+-# feat/csv-export — Decisions
+-
+-Work-scoped decisions for the CSV export implementation.
+-
+-## Confirmed
+-
+-- CSV output is UTF-8 without BOM.
+-- Header order: `id,name,email`.
+-- Fields containing a comma, double quote, or newline are quoted.
+-- An embedded double quote is escaped by doubling it (`""`).
+-
+-## Rejected
+-
+-- Switching the export format to TSV — rejected; CSV remains the format.
+diff --git a/.worktrees/feat/csv-export/documents/INVESTIGATION.md b/.worktrees/feat/csv-export/documents/INVESTIGATION.md
+deleted file mode 100644
+index 49a9184..0000000
+--- a/.worktrees/feat/csv-export/documents/INVESTIGATION.md
++++ /dev/null
+@@ -1,10 +0,0 @@
+-# feat/csv-export — Investigation (scratch)
+-
+-Exploratory notes — none of these are final decisions.
+-
+-- Hypothesis: a `;` delimiter might simplify quoting — explored, not
+-  adopted.
+-- Benchmark scratch: local write loop throughput ~40k rows/s on this
+-  machine (informal).
+-- Temporary output filename during experiments: `export.tmp.csv`.
+-- Local observation: LibreOffice opened the sample fine either way.
+diff --git a/.worktrees/feat/csv-export/documents/VERIFICATION.md b/.worktrees/feat/csv-export/documents/VERIFICATION.md
+deleted file mode 100644
+index 0c845b4..0000000
+--- a/.worktrees/feat/csv-export/documents/VERIFICATION.md
++++ /dev/null
+@@ -1,9 +0,0 @@
+-# feat/csv-export — Verification log
+-
+-Work-specific execution evidence — useful during the Work, not canonical
+-project documentation.
+-
+-- Ran `python -m csvcheck out/sample-2026-09-28.csv` locally.
+-- Sample output file: `out/sample-2026-09-28.csv` (local only).
+-- Verified on 2026-09-28T14:31Z, machine `dev-box`.
+-- Implementation passed the local checks at that time.
+diff --git a/documents/project/EXPORT.md b/documents/project/EXPORT.md
+index b95706a..9ac318a 100644
+--- a/documents/project/EXPORT.md
++++ b/documents/project/EXPORT.md
+@@ -11,3 +11,10 @@ The project provides CSV export for account data.
+ Exports are produced on demand from the reporting surface and delivered
+ to the user's downloads directory. Scheduled batch exports are not part
+ of the current contract.
++
++## Format details
++
++- Encoding: UTF-8 without BOM.
++- Header order: `id,name,email`.
++- A field containing a comma, a double quote, or a newline is quoted.
++- An embedded double quote is escaped by doubling it (`""`).
