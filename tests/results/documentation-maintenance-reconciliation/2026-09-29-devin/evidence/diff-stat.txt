@@ -1,0 +1,5 @@
+ .worktrees/feat/csv-export/documents/DECISIONS.md     | 14 --------------
+ .worktrees/feat/csv-export/documents/INVESTIGATION.md | 10 ----------
+ .worktrees/feat/csv-export/documents/VERIFICATION.md  |  9 ---------
+ documents/project/EXPORT.md                           |  7 +++++++
+ 4 files changed, 7 insertions(+), 33 deletions(-)

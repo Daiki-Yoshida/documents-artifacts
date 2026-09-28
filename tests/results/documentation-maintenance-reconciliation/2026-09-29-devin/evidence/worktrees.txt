@@ -1,0 +1,26 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/documentation-maintenance-reconciliation/repo
+HEAD f27587cdf0522dfbfb9c6c008cd516a7c1f8cf1c
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/documentation-maintenance-reconciliation
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/documentation-maintenance-reconciliation/repo
+  registration_head: f27587cdf0522dfbfb9c6c008cd516a7c1f8cf1c
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/documentation-maintenance-reconciliation/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: f27587cdf0522dfbfb9c6c008cd516a7c1f8cf1c
+  branch: main
+  status: dirty
+  status_detail:
+    D  .worktrees/feat/csv-export/documents/DECISIONS.md
+    D  .worktrees/feat/csv-export/documents/INVESTIGATION.md
+    D  .worktrees/feat/csv-export/documents/VERIFICATION.md
+     M documents/project/EXPORT.md
+  sparse_checkout: disabled

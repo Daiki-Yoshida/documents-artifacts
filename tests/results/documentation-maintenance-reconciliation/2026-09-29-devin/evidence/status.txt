@@ -1,0 +1,8 @@
+=== git status --short ===
+D  .worktrees/feat/csv-export/documents/DECISIONS.md
+D  .worktrees/feat/csv-export/documents/INVESTIGATION.md
+D  .worktrees/feat/csv-export/documents/VERIFICATION.md
+ M documents/project/EXPORT.md
+
+=== ignored paths present (names only) ===
+none

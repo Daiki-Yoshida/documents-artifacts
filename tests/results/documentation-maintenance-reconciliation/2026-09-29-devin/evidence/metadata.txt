@@ -1,0 +1,11 @@
+scenario: documentation-maintenance-reconciliation
+run_id: 2026-09-29-devin
+fixture: documentation-maintenance-reconciliation
+prepared_at_utc: 2026-09-28T18:09:02Z
+captured_at_utc: 2026-09-28T18:09:34Z
+source_repo_head_at_prepare: 06922519865f05b98c8fcb45ea25e3712e9d6296
+source_repo_head_at_capture: 06922519865f05b98c8fcb45ea25e3712e9d6296
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/documentation-maintenance-reconciliation/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: f27587cdf0522dfbfb9c6c008cd516a7c1f8cf1c
+head_sha_at_capture: f27587cdf0522dfbfb9c6c008cd516a7c1f8cf1c
