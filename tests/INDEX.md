@@ -181,7 +181,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `requested-outcome-verification` | requested-outcome-verification | unit contract greenとrequested outcomeを分離 / focused composition fix / enabled・disabled CLI outcomeを実測 / final project gate PASS |
 
-## Fourteenth-stage scenarios — definition ready / run pending
+## Fourteenth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
