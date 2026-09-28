@@ -1,0 +1,9 @@
+{
+  "name": "vcs-authority-and-reporting",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test"
+  }
+}
