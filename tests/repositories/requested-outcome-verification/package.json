@@ -1,0 +1,9 @@
+{
+  "name": "requested-outcome-verification",
+  "private": true,
+  "scripts": {
+    "test": "node --test",
+    "outcome-check": "node scripts/outcome-check.js",
+    "verify": "npm test && npm run outcome-check"
+  }
+}
