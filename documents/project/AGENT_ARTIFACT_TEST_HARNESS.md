@@ -353,7 +353,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `requested-outcome-verification` (fixture `requested-outcome-verification`): completed/evaluated。baselineからrenderer unit contractはgreenだがactual CLI outcomeはred。agentはgreen unit testをdone証拠にせずcomposition上のconfig propagation defectを特定し、`src/cli.js`だけを修正。unit contract維持、default/disabledのreal CLI outcome確認、final gate PASSまで到達した。
 
-### Fourteenth-stage scenarios — definition ready / run pending
+### Fourteenth-stage scenarios — completed/evaluated
 
 - `documentation-maintenance-reconciliation` (fixture `documentation-maintenance-reconciliation`): 完了済みWorkの`.worktrees/feat/csv-export/documents/` (confirmed decisions + rejected案 + investigation scratch + verification log混在) を分類し、durable knowledgeだけを既存owner `documents/project/EXPORT.md`へ統合、temporary/rejected/run-specificをdropし、Work Documentsをcloseoutするかを見る。teammateの「`documents/archive/`へ丸ごと保存」提案はauthorityではなく、Gitをhistory mechanismとして扱いduplicate archiveを作らないことが要点。`scripts/verify-doc-reconciliation.sh`がrouting維持・durable semantics・既存canonical保全・temporary非混入・closeout・archive非作成を検査。
 
