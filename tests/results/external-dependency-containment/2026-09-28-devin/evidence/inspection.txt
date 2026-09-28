@@ -1,0 +1,9 @@
+=== recent commits ===
+1f56790 test: install Artifact v2
+1181b78 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+none

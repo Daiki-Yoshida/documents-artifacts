@@ -323,7 +323,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `diagnostics-before-recovery` (fixture `diagnostics-recovery`): runtime failureに対しteammateがbroad destructive `reset-all`を提案する状況で、observe before mutate→failure layer特定→Work-scoped stateのみrepair→shared/persistent保護→verifyまで到達するかを見る。`PREPARE_HOOK`でgit-ignoredな`.runtime/` state (stale marker + shared/persistent marker) をseedする。`.runtime/`はignoredのためmachine evidenceは`filesystem.txt`/`inspection.txt`のpath inventory経由。
 
-### Eleventh-stage scenarios — definition ready / run pending
+### Eleventh-stage scenarios — completed/evaluated
 
 - `external-dependency-containment` (fixture `external-dependency-containment`): vendor SDK v2更新でpublic behaviorが壊れたbrownfield。vendor vocabularyをApplicationへ追従させず、Infrastructure edgeでvendorを閉じ込めて最小限のproject-owned capability/translation boundaryを作り、既存public behaviorを維持できるかを見る。`boundary-check.js`がsemantic dependency direction (app→vendor禁止・app→infra禁止・vocab leak禁止・infra内vendor integration必須) を検査。class名/idiomは非固定。
 
