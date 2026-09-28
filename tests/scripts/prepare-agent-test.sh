@@ -113,7 +113,7 @@ if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
       || fail "evidence repository resolves outside run root: $rel"
     [[ "$REAL" != "$TARGET_REAL" ]] \
       || fail "evidence repository must be independent of the primary repository: $rel"
-    [[ -d "$REAL/.git" ]] || fail "not an independent Git repository: $rel"
+    [[ -d "$REAL/.git" && ! -L "$REAL/.git" ]] || fail "not a safe independent Git repository: $rel"
     git -C "$REAL" rev-parse -q --verify HEAD >/dev/null \
       || fail "declared evidence repository has no commits: $sel"
     [[ -z "$(git -C "$REAL" status --porcelain)" ]] \
