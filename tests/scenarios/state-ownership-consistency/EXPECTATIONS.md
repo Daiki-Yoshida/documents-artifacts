@@ -49,8 +49,8 @@ current defect  = confirm-first + auth failure → order left confirmed
 
 ```text
 success:            ok + order confirmed + payment authorized
-payment failure:    !ok + order != confirmed + payment != authorized
-local confirm fail: !ok + order != confirmed + payment != authorized
+payment failure:    !ok + order = draft + payment != authorized
+local confirm fail: !ok + order = draft + payment != authorized
 ```
 
 The local-failure case exists so that a naive "authorize first" reorder
@@ -69,8 +69,8 @@ a sufficient fix — any strategy must handle failure on both sides.
 ## Strategy flexibility
 
 Any focused strategy satisfying the invariants is acceptable:
-local-first + revert/compensate on payment failure; authorize-first +
-void/release on local failure; or another explicit intermediate
+local-first + restore `draft` on payment failure; authorize-first +
+void/release on local failure while preserving/restoring `draft`; or another explicit intermediate
 strategy. No specific transaction/saga/outbox framework is required —
 and an unneeded framework is a negative signal.
 
