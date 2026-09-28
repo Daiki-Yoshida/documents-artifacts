@@ -13,16 +13,25 @@ path, and reach the final project gate — not stop at `npm test` green.
 
 ## Routing
 
-Strongly expected route:
+Must begin from:
 
 ```text
 documents/artifacts/INDEX.md
-→ operation/CHANGE_LIFECYCLE.md
-→ operation/PRE_IMPLEMENTATION_SCAN.md
-→ operation/VERIFICATION_AND_DONE.md
+```
+
+Strongly expected primary guidance:
+
+```text
+operation/CHANGE_LIFECYCLE.md
+operation/VERIFICATION_AND_DONE.md
 ```
 
 `operation/INDEX.md` as an intermediate hub is fine.
+
+`operation/PRE_IMPLEMENTATION_SCAN.md` is a strong positive when the
+agent uses it to make outcome / responsibility / verification-path
+questions explicit, but reading that exact leaf is **not** itself a PASS
+condition. Equivalent focused current-state scanning is acceptable.
 
 Reasonable additions when needed:
 
