@@ -67,6 +67,8 @@ bash tests/scripts/capture-agent-test.sh --scenario contract-boundary --run-id 2
 
 `evidence/worktrees.txt` は `git worktree list --porcelain` のregistrationと、run directory内へ解決されるworktreeに限った read-only inspect (HEAD / branch / clean-dirty / sparse-checkout状態とpatterns) を記録する。境界外のregistered worktreeは `inspected: no` + `skip_reason` で記録し、外部host pathを再帰inspectしない。旧bundleはworktree evidenceを持たないため、その旨はevaluation側でlimitationとして扱う。
 
+`scenario.conf` が `EVIDENCE_REPOSITORIES="api=repo/components/api ..."` (selector=run-root-relative-path) を宣言する場合、`evidence/repositories/<selector>/` へ各独立Component Repositoryのevidence set (metadata/status/changed-files/diff-stat/changes.patch/filesystem/inspection) と `INDEX.txt` を追加する。prepare時にgeneric側でcomponent baseline tagを作成し`RUN_METADATA.txt`へselector/path/baseline SHAを記録する。captureはcomponent repoのreal index/worktreeを変更せず、component non-ignored untrackedにも同一のsecret fail-closed保護を適用する。
+
 ### Inspect
 
 ```bash
@@ -166,5 +168,11 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 | Scenario | Fixture | Main observation |
 |---|---|---|
 | `external-dependency-containment` | external-dependency-containment | vendor SDK更新時にvendor vocabularyをApplicationまで追従させない / Infrastructure edgeへのcontainment / 最小限のproject-owned capability・translation boundary / public behavior維持 |
+
+## Twelfth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `multi-repo-workspace-ownership` | multi-repo-workspace | Project Repository + 独立Component Repository / stable selectorによるrepository resolve / ownershipを保った全repo更新とcoordination / generic multi-repo evidence (`EVIDENCE_REPOSITORIES`) の初適用 |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

@@ -42,6 +42,7 @@ EXPECTATIONS="$SCENARIO_DIR/EXPECTATIONS.md"
 [[ -f "$PROMPT" ]] || fail "scenario prompt missing: $PROMPT"
 [[ -f "$EXPECTATIONS" ]] || fail "scenario expectations missing: $EXPECTATIONS"
 
+unset FIXTURE PREPARE_HOOK EXPECTED_HEAD_COMMIT_COUNT EVIDENCE_REPOSITORIES || true
 # shellcheck disable=SC1090
 source "$CONF"
 [[ -n "${FIXTURE:-}" ]] || fail "scenario.conf must define FIXTURE"
@@ -87,6 +88,43 @@ if [[ -n "${PREPARE_HOOK:-}" ]]; then
     || fail "prepare hook failed: $PREPARE_HOOK"
 fi
 
+# Optional declared Component Repositories: EVIDENCE_REPOSITORIES carries
+# space-separated "selector=run-root-relative-path" pairs. Each selector
+# must resolve to an independent, clean Git repository inside the run
+# root — no absolute paths, no traversal, no symlink escapes, no
+# arbitrary discovery commands.
+EVIDENCE_REPOS=()
+if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
+  RUN_ROOT_REAL="$(cd "$RUN_ROOT" && pwd -P)"
+  TARGET_REAL="$(cd "$TARGET" && pwd -P)"
+  declare -A SEEN_SEL=() SEEN_REAL=()
+  for pair in $EVIDENCE_REPOSITORIES; do
+    [[ "$pair" == *=* ]] || fail "invalid EVIDENCE_REPOSITORIES entry: $pair (expected selector=relpath)"
+    sel="${pair%%=*}"; rel="${pair#*=}"
+    [[ "$sel" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || fail "invalid evidence repository selector: $sel"
+    [[ -n "$rel" && "$rel" != /* && "$rel" != *..* ]] \
+      || fail "evidence repository path must be non-empty, relative, traversal-free: $rel"
+    [[ "$rel" =~ ^[a-zA-Z0-9_./-]+$ ]] \
+      || fail "unsafe characters in evidence repository path: $rel"
+    [[ ! -L "$RUN_ROOT/$rel" ]] || fail "evidence repository path is a symlink: $rel"
+    [[ -d "$RUN_ROOT/$rel" ]] || fail "declared evidence repository does not exist: $rel"
+    REAL="$(cd "$RUN_ROOT/$rel" && pwd -P)"
+    [[ "$REAL" == "$RUN_ROOT_REAL/"* ]] \
+      || fail "evidence repository resolves outside run root: $rel"
+    [[ "$REAL" != "$TARGET_REAL" ]] \
+      || fail "evidence repository must be independent of the primary repository: $rel"
+    [[ -d "$REAL/.git" ]] || fail "not an independent Git repository: $rel"
+    git -C "$REAL" rev-parse -q --verify HEAD >/dev/null \
+      || fail "declared evidence repository has no commits: $sel"
+    [[ -z "$(git -C "$REAL" status --porcelain)" ]] \
+      || fail "declared evidence repository is dirty: $sel"
+    [[ -z "${SEEN_SEL[$sel]:-}" ]] || fail "duplicate evidence repository selector: $sel"
+    [[ -z "${SEEN_REAL[$REAL]:-}" ]] || fail "duplicate evidence repository path: $rel"
+    SEEN_SEL[$sel]=1; SEEN_REAL[$REAL]=1
+    EVIDENCE_REPOS+=("$sel|$rel|$REAL")
+  done
+fi
+
 [[ -z "$(git -C "$TARGET" status --porcelain)" ]] || fail "prepared repository is not clean"
 
 EXPECTED_HEAD_COMMIT_COUNT="${EXPECTED_HEAD_COMMIT_COUNT:-2}"
@@ -96,6 +134,12 @@ EXPECTED_HEAD_COMMIT_COUNT="${EXPECTED_HEAD_COMMIT_COUNT:-2}"
   || fail "HEAD commit count mismatch: expected $EXPECTED_HEAD_COMMIT_COUNT"
 
 git -C "$TARGET" tag artifact-test-baseline
+if ((${#EVIDENCE_REPOS[@]})); then
+  for entry in "${EVIDENCE_REPOS[@]}"; do
+    sel="${entry%%|*}"; rest="${entry#*|}"; REAL="${rest#*|}"
+    git -C "$REAL" tag artifact-test-baseline
+  done
+fi
 
 SOURCE_REPO_HEAD="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
@@ -105,6 +149,14 @@ BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
   printf 'source_repo_head: %s\n' "$SOURCE_REPO_HEAD"
   printf 'baseline_sha: %s\n' "$BASELINE_SHA"
   printf 'prepared_at_utc: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+  if ((${#EVIDENCE_REPOS[@]})); then
+    for entry in "${EVIDENCE_REPOS[@]}"; do
+      sel="${entry%%|*}"; rest="${entry#*|}"; rel="${rest%%|*}"; REAL="${rest#*|}"
+      printf 'evidence_repository: %s=%s\n' "$sel" "$rel"
+      printf 'evidence_repository_%s_baseline_sha: %s\n' "$sel" \
+        "$(git -C "$REAL" rev-parse artifact-test-baseline)"
+    done
+  fi
 } > "$RUN_ROOT/RUN_METADATA.txt"
 
 printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$RUN_ROOT/PROMPT.md"
