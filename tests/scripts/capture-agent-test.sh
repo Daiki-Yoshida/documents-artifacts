@@ -52,7 +52,7 @@ done
 
 CONF="$SCENARIOS_ROOT/$SCENARIO/scenario.conf"
 [[ -f "$CONF" ]] || fail "scenario config missing: $CONF"
-unset FIXTURE || true
+unset FIXTURE EVIDENCE_REPOSITORIES || true
 # shellcheck disable=SC1090
 source "$CONF"
 [[ -n "${FIXTURE:-}" ]] || fail "scenario.conf must define FIXTURE"
@@ -92,28 +92,94 @@ CAPTURE_SOURCE_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 # changes.patch intentionally includes non-ignored untracked file contents so
 # evaluator review can inspect newly-created files. Fail closed on obvious
 # secret-bearing paths/content before creating any persisted evidence.
-mapfile -d '' UNTRACKED_FILES < <(
-  env GIT_OPTIONAL_LOCKS=0 git -C "$TARGET" ls-files --others --exclude-standard -z
-)
-for rel in "${UNTRACKED_FILES[@]}"; do
-  base="${rel##*/}"
-  case "$base" in
-    .env.example|.env.sample|.env.template)
-      ;;
-    .env|.env.*|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|id_rsa|id_rsa.*|id_ed25519|id_ed25519.*|credentials|credentials.*|secrets|secrets.*|.netrc|.npmrc|.pypirc)
-      fail "refusing to persist content from secret-like untracked path: $rel"
-      ;;
-  esac
-
-  full="$TARGET/$rel"
-  if [[ -f "$full" && ! -L "$full" ]]; then
-    if LC_ALL=C grep -I -i -E -q \
-      '(BEGIN ([A-Z]+ )?PRIVATE KEY|AKIA[0-9A-Z]{16}|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|password)[[:space:]]*[:=][[:space:]]*[^[:space:]]{8,})' \
-      "$full"; then
-      fail "refusing to persist content from secret-like untracked file: $rel"
+scan_untracked_secrets() {
+  local repo="$1" rel base full
+  local -a files=()
+  mapfile -d '' files < <(
+    env GIT_OPTIONAL_LOCKS=0 git -C "$repo" ls-files --others --exclude-standard -z
+  )
+  for rel in "${files[@]}"; do
+    base="${rel##*/}"
+    case "$base" in
+      .env.example|.env.sample|.env.template)
+        ;;
+      .env|.env.*|*.pem|*.key|*.p12|*.pfx|*.jks|*.keystore|id_rsa|id_rsa.*|id_ed25519|id_ed25519.*|credentials|credentials.*|secrets|secrets.*|.netrc|.npmrc|.pypirc)
+        fail "refusing to persist content from secret-like untracked path: $repo/$rel"
+        ;;
+    esac
+    full="$repo/$rel"
+    if [[ -f "$full" && ! -L "$full" ]]; then
+      if LC_ALL=C grep -I -i -E -q \
+        '(BEGIN ([A-Z]+ )?PRIVATE KEY|AKIA[0-9A-Z]{16}|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|password)[[:space:]]*[:=][[:space:]]*[^[:space:]]{8,})' \
+        "$full"; then
+        fail "refusing to persist content from secret-like untracked file: $repo/$rel"
+      fi
     fi
-  fi
-done
+  done
+}
+
+# Resolve declared Component Repositories (scenario.conf
+# EVIDENCE_REPOSITORIES: selector=run-root-relative-path). Same safety
+# contract as prepare: no absolute paths, no traversal, no symlink
+# escapes, must be an independent Git repo inside the run root.
+EVIDENCE_REPOS=()
+if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
+  RUN_ROOT_REAL="$(cd "$RUN_ROOT" && pwd -P)"
+  TARGET_REAL="$(cd "$TARGET" && pwd -P)"
+  declare -A SEEN_SEL=() SEEN_REAL=()
+  for pair in $EVIDENCE_REPOSITORIES; do
+    [[ "$pair" == *=* ]] || fail "invalid EVIDENCE_REPOSITORIES entry: $pair"
+    sel="${pair%%=*}"; rel="${pair#*=}"
+    [[ "$sel" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || fail "invalid evidence repository selector: $sel"
+    [[ -n "$rel" && "$rel" != /* && "$rel" != *..* ]] \
+      || fail "evidence repository path must be non-empty, relative, traversal-free: $rel"
+    [[ "$rel" =~ ^[a-zA-Z0-9_./-]+$ ]] \
+      || fail "unsafe characters in evidence repository path: $rel"
+    [[ ! -L "$RUN_ROOT/$rel" ]] || fail "evidence repository path is a symlink: $rel"
+    [[ -d "$RUN_ROOT/$rel" ]] || fail "declared evidence repository missing at capture: $rel"
+    REAL="$(cd "$RUN_ROOT/$rel" && pwd -P)"
+    [[ "$REAL" == "$RUN_ROOT_REAL/"* ]] \
+      || fail "evidence repository resolves outside run root: $rel"
+    [[ "$REAL" != "$TARGET_REAL" ]] \
+      || fail "evidence repository must be independent of the primary repository: $rel"
+    [[ -d "$REAL/.git" && ! -L "$REAL/.git" ]] || fail "not a safe independent Git repository: $rel"
+    [[ -z "${SEEN_SEL[$sel]:-}" ]] || fail "duplicate evidence repository selector at capture: $sel"
+    [[ -z "${SEEN_REAL[$REAL]:-}" ]] || fail "duplicate evidence repository path at capture: $rel"
+    SEEN_SEL[$sel]=1; SEEN_REAL[$REAL]=1
+
+    git -C "$REAL" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
+      || fail "component baseline tag missing for $sel: $REAL"
+
+    prepared_rel="$(sed -n "s/^evidence_repository: ${sel}=//p" "$RUN_METADATA" | head -1)"
+    [[ "$prepared_rel" == "$rel" ]] \
+      || fail "component repository declaration changed since prepare for $sel: prepared='$prepared_rel' capture='$rel'"
+
+    prepared_cbase="$(metadata_value "evidence_repository_${sel}_baseline_sha")"
+    [[ "$prepared_cbase" =~ ^[0-9a-f]{40}$ ]] \
+      || fail "invalid prepare-time component baseline SHA for $sel"
+    actual_cbase="$(git -C "$REAL" rev-parse artifact-test-baseline)"
+    [[ "$prepared_cbase" == "$actual_cbase" ]] \
+      || fail "component baseline tag changed since prepare for $sel"
+
+    EVIDENCE_REPOS+=("$sel|$rel|$REAL")
+  done
+
+  prepared_repo_count="$(grep -c '^evidence_repository: ' "$RUN_METADATA" || true)"
+  [[ "$prepared_repo_count" == "${#EVIDENCE_REPOS[@]}" ]] \
+    || fail "component repository declaration count changed since prepare"
+else
+  prepared_repo_count="$(grep -c '^evidence_repository: ' "$RUN_METADATA" || true)"
+  [[ "$prepared_repo_count" == "0" ]] \
+    || fail "prepared run declares component repositories but current scenario configuration does not"
+fi
+
+scan_untracked_secrets "$TARGET"
+if ((${#EVIDENCE_REPOS[@]})); then
+  for entry in "${EVIDENCE_REPOS[@]}"; do
+    REAL="${entry##*|}"
+    scan_untracked_secrets "$REAL"
+  done
+fi
 
 OUT="$RESULTS_ROOT/$SCENARIO/$RUN_ID"
 [[ "$OUT" == "$RESULTS_ROOT/"* ]] || fail "refusing unsafe output path"
@@ -164,7 +230,7 @@ env GIT_INDEX_FILE="$TMP_INDEX" git -C "$TARGET" --no-pager diff --cached --bina
 
 # Existence/type evidence for every path including ignored runtime state.
 # Names and sizes only — never arbitrary file contents.
-(cd "$TARGET" && find . -path ./.git -prune -o -printf '%y %10s %p\n' | sort) > "$EV/filesystem.txt"
+(cd "$TARGET" && find . -type d -name .git -prune -o -printf '%y %10s %p\n' | sort) > "$EV/filesystem.txt"
 
 {
   printf '=== recent commits ===\n'
@@ -304,6 +370,76 @@ RUN_ROOT_REAL="$(cd "$RUN_ROOT" && pwd -P)"
   done < <(env GIT_OPTIONAL_LOCKS=0 git -C "$TARGET" worktree list --porcelain)
   print_worktree_block "$wt_record"
 } > "$EV/worktrees.txt"
+
+# Declared Component Repository evidence: each independent repo gets its
+# own evidence set under evidence/repositories/<selector>/ plus an
+# INDEX.txt overview. Same alternate-index technique as the primary repo
+# — component real indexes/worktrees are never mutated; .git internals
+# are never persisted.
+if ((${#EVIDENCE_REPOS[@]})); then
+  REV_DIR="$EV/repositories"
+  mkdir -p -- "$REV_DIR"
+  {
+    printf 'declared component repositories\n'
+    printf 'format: selector | run_root_relative_path | baseline_sha | head_sha | branch | status\n'
+  } > "$REV_DIR/INDEX.txt"
+
+  for entry in "${EVIDENCE_REPOS[@]}"; do
+    sel="${entry%%|*}"; rest="${entry#*|}"; rel="${rest%%|*}"; CREAL="${rest#*|}"
+    CDIR="$REV_DIR/$sel"
+    mkdir -p -- "$CDIR"
+
+    CBASE="$(git -C "$CREAL" rev-parse artifact-test-baseline)"
+    CHEAD="$(git -C "$CREAL" rev-parse HEAD)"
+    CBRANCH="$(env GIT_OPTIONAL_LOCKS=0 git -C "$CREAL" branch --show-current || true)"
+    [[ -n "$CBRANCH" ]] || CBRANCH="detached"
+    CSTATUS="$(env GIT_OPTIONAL_LOCKS=0 git -C "$CREAL" status --porcelain)"
+
+    {
+      printf 'selector: %s\n' "$sel"
+      printf 'run_root_relative_path: %s\n' "$rel"
+      printf 'resolved_path: %s\n' "$CREAL"
+      printf 'baseline_tag: artifact-test-baseline\n'
+      printf 'baseline_sha: %s\n' "$CBASE"
+      printf 'head_sha_at_capture: %s\n' "$CHEAD"
+      printf 'branch_at_capture: %s\n' "$CBRANCH"
+      printf 'captured_at_utc: %s\n' "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+    } > "$CDIR/metadata.txt"
+
+    {
+      printf '=== git status --short ===\n'
+      printf '%s\n' "$CSTATUS"
+      printf '\n=== ignored paths present (names only) ===\n'
+      cign="$(env GIT_OPTIONAL_LOCKS=0 git -C "$CREAL" status --porcelain --ignored | grep '^!!' || true)"
+      if [[ -n "$cign" ]]; then printf '%s\n' "$cign"; else printf 'none\n'; fi
+    } > "$CDIR/status.txt"
+
+    env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" read-tree artifact-test-baseline
+    env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" add -A
+    env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" --no-pager diff --cached --binary artifact-test-baseline \
+      > "$CDIR/changes.patch"
+    env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" --no-pager diff --cached --name-status artifact-test-baseline \
+      > "$CDIR/changed-files.txt"
+    env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" --no-pager diff --cached --stat artifact-test-baseline \
+      > "$CDIR/diff-stat.txt"
+
+    (cd "$CREAL" && find . -type d -name .git -prune -o -printf '%y %10s %p\n' | sort) > "$CDIR/filesystem.txt"
+
+    {
+      printf '=== recent commits ===\n'
+      git -C "$CREAL" --no-pager log --oneline -10
+      printf '\n=== tags ===\n'
+      git -C "$CREAL" tag -l
+      printf '\n=== ignored/untracked paths (gitignore-excluded, names only) ===\n'
+      cign_files="$(env GIT_OPTIONAL_LOCKS=0 git -C "$CREAL" ls-files --others --ignored --exclude-standard)"
+      if [[ -n "$cign_files" ]]; then printf '%s\n' "$cign_files"; else printf 'none\n'; fi
+    } > "$CDIR/inspection.txt"
+
+    if [[ -z "$CSTATUS" ]]; then CSTATE="clean"; else CSTATE="dirty"; fi
+    printf '%s | %s | %s | %s | %s | %s\n' "$sel" "$rel" "$CBASE" "$CHEAD" "$CBRANCH" "$CSTATE" \
+      >> "$REV_DIR/INDEX.txt"
+  done
+fi
 
 printf 'Captured evidence: %s\n' "$EV"
 printf 'Agent-authored report goes to: %s\n' "$OUT/REPORT.md"

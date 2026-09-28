@@ -42,7 +42,8 @@ tests/
 │  ├─ work-runtime-lifecycle/
 │  ├─ integration-revalidation/
 │  ├─ diagnostics-recovery/
-│  └─ external-dependency-containment/
+│  ├─ external-dependency-containment/
+│  └─ multi-repo-workspace/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -59,7 +60,8 @@ tests/
 │  ├─ work-runtime-lifecycle-propagation/
 │  ├─ integration-head-revalidation/
 │  ├─ diagnostics-before-recovery/
-│  └─ external-dependency-containment/
+│  ├─ external-dependency-containment/
+│  └─ multi-repo-workspace-ownership/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -127,9 +129,10 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 5. current Artifact v2 whole packをinstall;
 6. artifact installをcommit;
 7. `scenario.conf` が `PREPARE_HOOK` を定義する場合、scenario directory内のvalidated fileのみを実行する (`$TARGET` = generated repo, `$SCENARIO_DIR` を環境変数で渡す)。任意shell文字列やscenario外pathは受け付けない。deterministicなGit topology (例: diverged feature branch) を共baseline上に構成する用途;
-8. clean baselineを確認し、HEAD commit数が `EXPECTED_HEAD_COMMIT_COUNT` (既定 `2`) と一致することを確認する;
-9. `artifact-test-baseline` tagを作成する;
-10. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。
+8. `scenario.conf` が `EVIDENCE_REPOSITORIES` を定義する場合、space-separatedの `selector=run-root-relative-path` 宣言ごとに対象を検証する: selectorは `^[a-z0-9]+(-[a-z0-9]+)*$`、pathは非空・relative・`..`なし・shell metacharなし・symlink禁止で、resolved real pathがrun root内にあること。さらに存在・independent Git repository (own `.git`)・HEAD存在・cleanを要求する。任意shell commandによるdiscoveryは行わない — scenarioが明示宣言したrepoだけを見る;
+9. clean baselineを確認し、HEAD commit数が `EXPECTED_HEAD_COMMIT_COUNT` (既定 `2`) と一致することを確認する;
+10. `artifact-test-baseline` tagをprimary generated repositoryへ作成する。`EVIDENCE_REPOSITORIES`がある場合はgeneric prepare側で各Component Repositoryの現在HEADへも同tagを作成する (hook側にtag生成責務を持たせない);
+11. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。declared Component Repositoryごとに `evidence_repository: <sel>=<rel>` と `evidence_repository_<sel>_baseline_sha: <sha>` も記録する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -253,7 +256,17 @@ evidence/
 ├─ managed-artifacts.patch   documents/artifacts/ に限定したpatch (無変更なら空)
 ├─ filesystem.txt            type/size/pathの存在証跡 (.git除外、content不採取)
 ├─ inspection.txt            recent commits / tags / ignored path listing
-└─ worktrees.txt             git worktree registration + safe範囲内のper-worktree Git state
+├─ worktrees.txt             git worktree registration + safe範囲内のper-worktree Git state
+└─ repositories/             EVIDENCE_REPOSITORIES宣言がある場合のみ
+   ├─ INDEX.txt              selector | run_root_relative_path | baseline_sha | head_sha | branch | status
+   └─ <selector>/
+      ├─ metadata.txt        selector / path / baseline SHA / capture時HEAD / branch / timestamp
+      ├─ status.txt          component repoの git status --short + ignored paths (names only)
+      ├─ changed-files.txt   component baseline対比のname-status (untracked新規fileを含む)
+      ├─ diff-stat.txt       同上のstat
+      ├─ changes.patch       component baseline対比の完全なpatch (--binary; untracked内容を含む)
+      ├─ filesystem.txt      component repoのtype/size/path存在証跡 (.git除外)
+      └─ inspection.txt      component repoのrecent commits / tags / ignored path listing
 ```
 
 設計上の要点:
@@ -266,6 +279,7 @@ evidence/
 - `worktrees.txt` は `git worktree list --porcelain` のregistrationをraw保存し、加えて各worktreeの `registration_head` / `registration_ref` (branch ref・`detached`・`bare`) / `locked`・`prunable` attrsを記録する。safe boundary内のworktreeについてのみ `head`・`branch`・`status` (clean/dirty + status_detail)・`sparse_checkout` (enabled/disabled)・`sparse_patterns` を `git -C <worktree>` のread-onlyコマンド (`GIT_OPTIONAL_LOCKS=0`) で採取する。
 - safe inspection boundaryは**prepared run directoryのresolved real path内**のみ。primary generated repositoryと、そのrun directory内へ解決されるlinked worktreeだけをinspectする。境界外・解決不能・非絶対pathのregistered worktreeは `inspected: no` + `skip_reason` を記録して詳細inspectしない。`.git/worktrees/**` の内部実装は直接読まず、sparse patternは `git sparse-checkout list` (Git ≥ 2.26) で取得し、非対応では内部config fileをfallbackとして読まない。
 - captureはprimary・linked worktreeどちらのindex/status/sparse config/worktree registrationも変更しない。
+- `EVIDENCE_REPOSITORIES` で宣言された独立Component Repositoryは `evidence/repositories/<selector>/` へprimaryと同じalternate-index方式で採取する — component repoのreal index/worktreeも変更せず、`.git` internalsは採取しない。primary evidenceへcomponent sourceは混入しない (ownership separation)。component repoのnon-ignored untrackedにもprimaryと同一のsecret-like path/content fail-closed保護を適用し、該当時はどのevidenceも永続化しない。
 - evidenceはcapture後immutableとして扱う。EXPECTATIONSへ合わせて書き換えない。
 
 linked worktree evidenceが存在しない旧bundle (`worktree-materialization/2026-09-26-devin`) は当時のlimitationとしてそのまま残す。新しいevidence項目をhistorical runへ後付けしない。
@@ -326,6 +340,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Eleventh-stage scenarios — completed/evaluated
 
 - `external-dependency-containment` (fixture `external-dependency-containment`): vendor SDK v2更新でpublic behaviorが壊れたbrownfield。vendor vocabularyをApplicationへ追従させず、Infrastructure edgeでvendorを閉じ込めて最小限のproject-owned capability/translation boundaryを作り、既存public behaviorを維持できるかを見る。`boundary-check.js`がsemantic dependency direction (app→vendor禁止・app→infra禁止・vocab leak禁止・infra内vendor integration必須) を検査。class名/idiomは非固定。
+
+### Twelfth-stage scenarios — definition ready / run pending
+
+- `multi-repo-workspace-ownership` (fixture `multi-repo-workspace`): Workspace/Project Repository + 独立Component Repository (`api`/`web`) 構成で、project-local stable selector (`workspace/repositories.conf`) でrepositoryをresolveし、component protocol更新を各Component Repository内で行いつつproject coordinationをProject Repository側で更新し、ownershipを壊さず`make verify`をPASSさせられるかを見る。`PREPARE_HOOK`が独立Git repoを`components/`配下へ生成し、`EVIDENCE_REPOSITORIES`でgeneric multi-repo evidence (baseline tag・per-selector evidence・secret fail-closed) を検証する初のmulti-repo scenario。
 
 ## Fixture immutability
 

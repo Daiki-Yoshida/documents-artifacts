@@ -1,0 +1,4 @@
+# Component Repositories are independent Git repositories — their
+# source and history are never tracked here as ordinary files.
+/components/api/
+/components/web/
