@@ -1,0 +1,4 @@
+declared component repositories
+format: selector | run_root_relative_path | baseline_sha | head_sha | branch | status
+api | repo/components/api | 3b5c281f222ce316f509654da132523fac44e06b | cbdb07af8690e467ab97717f271d6f43816f3b4b | main | clean
+web | repo/components/web | 6e0a1b2eb3be82e140bccc595a52b405de0b23e9 | 0314675f554c8d3769d79c302fabc2aa5e6ebdf6 | main | clean

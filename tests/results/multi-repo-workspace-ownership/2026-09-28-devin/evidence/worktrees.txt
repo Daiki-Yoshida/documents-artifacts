@@ -1,0 +1,21 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership/repo
+HEAD 894c22ff0ede9512489aec85cae9646f9f02bbaa
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership/repo
+  registration_head: 894c22ff0ede9512489aec85cae9646f9f02bbaa
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 894c22ff0ede9512489aec85cae9646f9f02bbaa
+  branch: main
+  status: clean
+  sparse_checkout: disabled

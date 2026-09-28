@@ -1,0 +1,8 @@
+selector: web
+run_root_relative_path: repo/components/web
+resolved_path: /tmp/documents-artifacts-agent-tests-1000/multi-repo-workspace-ownership/repo/components/web
+baseline_tag: artifact-test-baseline
+baseline_sha: 6e0a1b2eb3be82e140bccc595a52b405de0b23e9
+head_sha_at_capture: 0314675f554c8d3769d79c302fabc2aa5e6ebdf6
+branch_at_capture: main
+captured_at_utc: 2026-09-28T13:33:04Z
