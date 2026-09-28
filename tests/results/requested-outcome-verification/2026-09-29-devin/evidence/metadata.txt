@@ -1,0 +1,11 @@
+scenario: requested-outcome-verification
+run_id: 2026-09-29-devin
+fixture: requested-outcome-verification
+prepared_at_utc: 2026-09-28T17:10:52Z
+captured_at_utc: 2026-09-28T17:11:45Z
+source_repo_head_at_prepare: 201b4df0726fc58a97bc9f3bdfc10c9609a1d3b9
+source_repo_head_at_capture: 201b4df0726fc58a97bc9f3bdfc10c9609a1d3b9
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/requested-outcome-verification/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 1f1e4705188fb8224ac8000918a96c45a74f9b33
+head_sha_at_capture: 1f1e4705188fb8224ac8000918a96c45a74f9b33

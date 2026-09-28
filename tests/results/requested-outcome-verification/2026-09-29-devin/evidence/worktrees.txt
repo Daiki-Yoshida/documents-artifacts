@@ -1,0 +1,23 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/requested-outcome-verification/repo
+HEAD 1f1e4705188fb8224ac8000918a96c45a74f9b33
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/requested-outcome-verification
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/requested-outcome-verification/repo
+  registration_head: 1f1e4705188fb8224ac8000918a96c45a74f9b33
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/requested-outcome-verification/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 1f1e4705188fb8224ac8000918a96c45a74f9b33
+  branch: main
+  status: dirty
+  status_detail:
+     M src/cli.js
+  sparse_checkout: disabled

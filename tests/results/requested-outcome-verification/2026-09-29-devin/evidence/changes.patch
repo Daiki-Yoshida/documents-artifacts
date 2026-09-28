@@ -1,0 +1,15 @@
+diff --git a/src/cli.js b/src/cli.js
+index a40603a..e5e05b1 100644
+--- a/src/cli.js
++++ b/src/cli.js
+@@ -29,8 +29,8 @@ function main() {
+   }
+   const report = JSON.parse(fs.readFileSync(path.resolve(reportPath), 'utf8'));
+   const config = loadConfig();
+-  void config;
+-  process.stdout.write(renderReport(report) + '\n');
++  const includeOwner = config['include_owner'] === 'true';
++  process.stdout.write(renderReport(report, { includeOwner }) + '\n');
+ }
+ 
+ main();
