@@ -347,9 +347,9 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `multi-repo-workspace-ownership` (fixture `multi-repo-workspace`): completed/evaluated。`workspace/repositories.conf` のstable selectorからapi/webを解決し、Project Repositoryはcoordination、各Component Repositoryは自分のprotocol/historyを所有したまま3 repoすべてを更新。`make verify`をPASSし、primary/api/webのmachine evidenceもownershipどおり分離された。
 
-### Thirteenth-stage scenarios — definition ready / run pending
+### Thirteenth-stage scenarios — completed/evaluated
 
-- `requested-outcome-verification` (fixture `requested-outcome-verification`): renderer unit contractはbaselineからgreenだが、CLI composition pathがruntime config (`include_owner`) を伝播しておらずactual outcomeがbroken。「unit greenだから問題ない」というteammate証言のもと、requested observable outcomeを直接確認→focused fix→unit維持→actual CLI outcome verify→final gateまで到達するかを見る。`scripts/outcome-check.js`はreal CLIを実行してdefault/disabled config両方を検査し、always-on hardcodeを防ぐ。
+- `requested-outcome-verification` (fixture `requested-outcome-verification`): completed/evaluated。baselineからrenderer unit contractはgreenだがactual CLI outcomeはred。agentはgreen unit testをdone証拠にせずcomposition上のconfig propagation defectを特定し、`src/cli.js`だけを修正。unit contract維持、default/disabledのreal CLI outcome確認、final gate PASSまで到達した。
 
 ## Fixture immutability
 
