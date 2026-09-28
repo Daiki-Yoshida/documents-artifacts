@@ -1,0 +1,25 @@
+diff --git a/.github/workflows/ci.yml b/.github/workflows/ci.yml
+index a103625..7ffe87a 100644
+--- a/.github/workflows/ci.yml
++++ b/.github/workflows/ci.yml
+@@ -10,7 +10,4 @@ jobs:
+     runs-on: ubuntu-latest
+     steps:
+       - uses: actions/checkout@v4
+-      - uses: actions/setup-node@v4
+-        with:
+-          node-version: '20'
+       - run: make test
+diff --git a/Makefile b/Makefile
+index 4d987b1..cb0314f 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,7 +1,7 @@
+ .PHONY: test build deploy-dry-run verify
+ 
+ test:
+-	npm test
++	docker compose run --rm app npm test
+ 
+ build:
+ 	bash scripts/legacy-build.sh
