@@ -1,0 +1,10 @@
+=== recent commits ===
+4642ae9 fix: preserve label case in formatLabel
+a7549a1 test: install Artifact v2
+ed3fcda test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+none

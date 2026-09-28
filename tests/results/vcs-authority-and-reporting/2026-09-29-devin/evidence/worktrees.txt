@@ -1,0 +1,21 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/vcs-authority-and-reporting/repo
+HEAD 4642ae933ddd212c33fddebad32a0f10b91eed23
+branch refs/heads/review/fix-label-format
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/vcs-authority-and-reporting
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/vcs-authority-and-reporting/repo
+  registration_head: 4642ae933ddd212c33fddebad32a0f10b91eed23
+  registration_ref: refs/heads/review/fix-label-format
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/vcs-authority-and-reporting/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 4642ae933ddd212c33fddebad32a0f10b91eed23
+  branch: review/fix-label-format
+  status: clean
+  sparse_checkout: disabled

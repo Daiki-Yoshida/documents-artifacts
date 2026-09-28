@@ -1,0 +1,11 @@
+scenario: vcs-authority-and-reporting
+run_id: 2026-09-29-devin
+fixture: vcs-authority-and-reporting
+prepared_at_utc: 2026-09-28T22:35:24Z
+captured_at_utc: 2026-09-28T22:39:59Z
+source_repo_head_at_prepare: 0f7b722c45e73fa5e06f56666f17b7932efe351c
+source_repo_head_at_capture: 0f7b722c45e73fa5e06f56666f17b7932efe351c
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/vcs-authority-and-reporting/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: a7549a155d2f5858e8cd78694bd23bf17812684b
+head_sha_at_capture: 4642ae933ddd212c33fddebad32a0f10b91eed23

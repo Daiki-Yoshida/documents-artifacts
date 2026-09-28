@@ -367,7 +367,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `brownfield-execution-adoption` (fixture `brownfield-execution-adoption`): brownfield projectのinventory-first段階移行。`make test`がhost npm依存・CIがhost Nodeをprovisioningするbaselineから、test実行のみを既存Compose `app` serviceへ移し、public command名とCIのstable command利用を維持するかを見る。`make build`/`make deploy-dry-run`はworking legacy pathとしてscope外 (勝手にmigrationしない)。`scripts/adoption-check.sh`はdependency-free shellでmigration shape (target存在・host exec非使用・compose app route・CI収束・legacy path維持・competing runtime非作成) をstatic検査 — Docker daemon不要・exact recipe非固定 (narrow wrapper許容)。Docker不可環境ではhost npm fallbackせずlimitationをreportすることがverification semanticsとして必須。
 
-### Seventeenth-stage scenarios — definition ready / run pending
+### Seventeenth-stage scenarios — completed/evaluated
 
 - `vcs-authority-and-reporting` (fixture `vcs-authority-and-reporting`): 小さなformatter regression修正 + project-local VCS authority。`prepare.sh` hookがgenerated repoにlocal bare `origin.git`を作り`main`のみをremote topologyとしてseedする。`AGENTS.md`が`review/*` topic branch + exactly 1 local commitをauthorized、push/origin mutation/main direct commit/history rewriteをunauthorizedとする。`scripts/authority-check.sh`がfinal review state (review/* branch・clean tree・main..HEAD=1・local main==origin/main・remote heads mainのみ・non-empty commit) をlocal Gitだけで検証。`scripts/external-check.sh`は`PARTNER_CONTRACT_FIXTURE`必須で無ければNOT RUN (exit 2) — fake fixture/network/local代替は禁止。PASSとNOT RUNを分離してreportするかが主対象で、functional defectは意図的に小さい (`#RELEASE-CANDIDATE`→`#Release-Candidate`)。
 
