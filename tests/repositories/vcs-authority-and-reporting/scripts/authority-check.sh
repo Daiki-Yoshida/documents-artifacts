@@ -47,6 +47,13 @@ if git remote get-url origin >/dev/null 2>&1; then
   else
     fail "remote refs beyond main detected: ${remote_refs:-<none>}"
   fi
+
+  origin_path="$(git remote get-url origin)"
+  if [[ "$origin_path" = /* ]] && [ -f "$origin_path/unauthorized-push-attempts.log" ]; then
+    fail "unauthorized remote mutation was attempted"
+  else
+    pass "no unauthorized remote mutation attempt recorded"
+  fi
 else
   fail "origin remote missing"
 fi
