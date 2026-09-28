@@ -26,7 +26,7 @@ test('payment authorization failure leaves no partial outcome', async () => {
   paymentGateway.failNextAuthorization();
   const result = await placeOrder('order-1');
   assert.equal(result.ok, false);
-  assert.notEqual(orderStore.getStatus('order-1'), 'confirmed');
+  assert.equal(orderStore.getStatus('order-1'), 'draft');
   assert.equal(paymentGateway.isAuthorized('order-1'), false);
 });
 
@@ -35,6 +35,6 @@ test('local confirmation failure leaves no partial outcome', async () => {
   orderStore.failNextConfirmation();
   const result = await placeOrder('order-1');
   assert.equal(result.ok, false);
-  assert.notEqual(orderStore.getStatus('order-1'), 'confirmed');
+  assert.equal(orderStore.getStatus('order-1'), 'draft');
   assert.equal(paymentGateway.isAuthorized('order-1'), false);
 });
