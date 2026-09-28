@@ -45,7 +45,8 @@ tests/
 │  ├─ external-dependency-containment/
 │  ├─ multi-repo-workspace/
 │  ├─ requested-outcome-verification/
-│  └─ documentation-maintenance-reconciliation/
+│  ├─ documentation-maintenance-reconciliation/
+│  └─ state-ownership-consistency/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -65,7 +66,8 @@ tests/
 │  ├─ external-dependency-containment/
 │  ├─ multi-repo-workspace-ownership/
 │  ├─ requested-outcome-verification/
-│  └─ documentation-maintenance-reconciliation/
+│  ├─ documentation-maintenance-reconciliation/
+│  └─ state-ownership-consistency/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -356,6 +358,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Fourteenth-stage scenarios — completed/evaluated
 
 - `documentation-maintenance-reconciliation` (fixture `documentation-maintenance-reconciliation`): 完了済みWorkの`.worktrees/feat/csv-export/documents/` (confirmed decisions + rejected案 + investigation scratch + verification log混在) を分類し、durable knowledgeだけを既存owner `documents/project/EXPORT.md`へ統合、temporary/rejected/run-specificをdropし、Work Documentsをcloseoutするかを見る。teammateの「`documents/archive/`へ丸ごと保存」提案はauthorityではなく、Gitをhistory mechanismとして扱いduplicate archiveを作らないことが要点。`scripts/verify-doc-reconciliation.sh`がrouting維持・durable semantics・既存canonical保全・temporary非混入・closeout・archive非作成を検査。
+
+### Fifteenth-stage scenarios — definition ready / run pending
+
+- `state-ownership-consistency` (fixture `state-ownership-consistency`): `placeOrder`がOrderStore (order state owner) とPaymentGateway (authorization state owner) の2 ownerを跨ぐ1 business outcome。baselineはconfirm-first + auth failureでorderがconfirmed残留 (partial outcome)。explicit consistency strategy (compensation / reversal / failure-aware ordering等を問わない) をownership境界を壊さず導入できるかを見る。local-confirmation-failure testもあり、単純なcall-order反転ではlocal failure時paymentが残るため不十分。`consistency-check.js`はcoordination shape (両owner呼出・app非state所有・failure処理の存在・public surface) をsemanticに検査し特定algorithmを固定しない。
 
 ## Fixture immutability
 
