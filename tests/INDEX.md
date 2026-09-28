@@ -199,7 +199,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `brownfield-execution-adoption` | brownfield-execution-adoption | brownfield projectの段階移行 — test実行のみ既存Compose runtimeへ / public `make test`維持 / CIを同じstable commandへ収束 / build・deployのlegacy pathはscope外として維持 |
 
-## Seventeenth-stage scenarios — definition ready / run pending
+## Seventeenth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
