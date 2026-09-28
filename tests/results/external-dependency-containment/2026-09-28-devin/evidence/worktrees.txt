@@ -1,0 +1,26 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/external-dependency-containment/repo
+HEAD 1f56790767229c7a864b661a49a919b527cb4543
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/external-dependency-containment
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/external-dependency-containment/repo
+  registration_head: 1f56790767229c7a864b661a49a919b527cb4543
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/external-dependency-containment/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 1f56790767229c7a864b661a49a919b527cb4543
+  branch: main
+  status: dirty
+  status_detail:
+     M src/profile/application/load-profile.js
+     M src/profile/index.js
+     D src/profile/infrastructure/.gitkeep
+    ?? src/profile/infrastructure/acme-profile-source.js
+  sparse_checkout: disabled

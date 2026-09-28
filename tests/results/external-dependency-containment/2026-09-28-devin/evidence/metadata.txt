@@ -1,0 +1,11 @@
+scenario: external-dependency-containment
+run_id: 2026-09-28-devin
+fixture: external-dependency-containment
+prepared_at_utc: 2026-09-28T01:56:51Z
+captured_at_utc: 2026-09-28T01:57:59Z
+source_repo_head_at_prepare: 909af0e9a27d75f7a7b79b4e9e04b245596c4ede
+source_repo_head_at_capture: 909af0e9a27d75f7a7b79b4e9e04b245596c4ede
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/external-dependency-containment/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 1f56790767229c7a864b661a49a919b527cb4543
+head_sha_at_capture: 1f56790767229c7a864b661a49a919b527cb4543

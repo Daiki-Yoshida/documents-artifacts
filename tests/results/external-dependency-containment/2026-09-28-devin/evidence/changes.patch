@@ -1,0 +1,76 @@
+diff --git a/src/profile/application/load-profile.js b/src/profile/application/load-profile.js
+index 6845679..7bbe32b 100644
+--- a/src/profile/application/load-profile.js
++++ b/src/profile/application/load-profile.js
+@@ -1,16 +1,14 @@
+ 'use strict';
+ 
+ // Application use-case: load a profile for the public API.
++// Depends only on the project-owned capability `fetchProfile(userId)`,
++// supplied by the composition edge — never on the vendor SDK or on
++// infrastructure directly.
+ 
+-const acme = require('../../vendor/acme-sdk');
+-
+-async function loadProfile(userId) {
+-  const raw = await acme.fetchUser(userId);
+-  return {
+-    id: raw.userId,
+-    displayName: raw.name,
+-    email: raw.email,
++function createLoadProfile(fetchProfile) {
++  return async function loadProfile(userId) {
++    return fetchProfile(userId);
+   };
+ }
+ 
+-module.exports = { loadProfile };
++module.exports = { createLoadProfile };
+diff --git a/src/profile/index.js b/src/profile/index.js
+index f1217a7..850c53c 100644
+--- a/src/profile/index.js
++++ b/src/profile/index.js
+@@ -1,10 +1,13 @@
+ 'use strict';
+ 
+-// Stable public entry point for profile access.
++// Stable public entry point for profile access — composition root:
++// wires the application use-case to the concrete infrastructure
++// integration.
+ // Public behavior contract:
+ //   await loadProfile('user-1')
+ //   → { id, displayName, email }
+ 
+-const { loadProfile } = require('./application/load-profile');
++const { createLoadProfile } = require('./application/load-profile');
++const { fetchProfile } = require('./infrastructure/acme-profile-source');
+ 
+-module.exports = { loadProfile };
++module.exports = { loadProfile: createLoadProfile(fetchProfile) };
+diff --git a/src/profile/infrastructure/.gitkeep b/src/profile/infrastructure/.gitkeep
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/src/profile/infrastructure/acme-profile-source.js b/src/profile/infrastructure/acme-profile-source.js
+new file mode 100644
+index 0000000..5bf8a25
+--- /dev/null
++++ b/src/profile/infrastructure/acme-profile-source.js
+@@ -0,0 +1,18 @@
++'use strict';
++
++// Infrastructure edge: the only project-owned module that talks to the
++// Acme SDK. Translates the vendor v2 representation into the project's
++// profile shape — vendor vocabulary does not cross this boundary.
++
++const acme = require('../../vendor/acme-sdk');
++
++async function fetchProfile(userId) {
++  const raw = await acme.fetchUser(userId);
++  return {
++    id: raw.user_id,
++    displayName: raw.profile.display_name,
++    email: raw.contacts.primary_email,
++  };
++}
++
++module.exports = { fetchProfile };
