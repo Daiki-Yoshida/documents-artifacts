@@ -341,9 +341,9 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `external-dependency-containment` (fixture `external-dependency-containment`): vendor SDK v2更新でpublic behaviorが壊れたbrownfield。vendor vocabularyをApplicationへ追従させず、Infrastructure edgeでvendorを閉じ込めて最小限のproject-owned capability/translation boundaryを作り、既存public behaviorを維持できるかを見る。`boundary-check.js`がsemantic dependency direction (app→vendor禁止・app→infra禁止・vocab leak禁止・infra内vendor integration必須) を検査。class名/idiomは非固定。
 
-### Twelfth-stage scenarios — definition ready / run pending
+### Twelfth-stage scenarios — completed/evaluated
 
-- `multi-repo-workspace-ownership` (fixture `multi-repo-workspace`): Workspace/Project Repository + 独立Component Repository (`api`/`web`) 構成で、project-local stable selector (`workspace/repositories.conf`) でrepositoryをresolveし、component protocol更新を各Component Repository内で行いつつproject coordinationをProject Repository側で更新し、ownershipを壊さず`make verify`をPASSさせられるかを見る。`PREPARE_HOOK`が独立Git repoを`components/`配下へ生成し、`EVIDENCE_REPOSITORIES`でgeneric multi-repo evidence (baseline tag・per-selector evidence・secret fail-closed) を検証する初のmulti-repo scenario。
+- `multi-repo-workspace-ownership` (fixture `multi-repo-workspace`): completed/evaluated。`workspace/repositories.conf` のstable selectorからapi/webを解決し、Project Repositoryはcoordination、各Component Repositoryは自分のprotocol/historyを所有したまま3 repoすべてを更新。`make verify`をPASSし、primary/api/webのmachine evidenceもownershipどおり分離された。
 
 ## Fixture immutability
 
