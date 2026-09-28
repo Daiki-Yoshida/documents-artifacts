@@ -175,4 +175,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `multi-repo-workspace-ownership` | multi-repo-workspace | stable selectorでapi/webを解決 / Project・api・web各repoのownershipを保持して全参加repo更新 / coordinated verify PASS / per-repo machine evidence分離 |
 
+## Thirteenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `requested-outcome-verification` | requested-outcome-verification | unit contractはgreen・actual CLI outcomeはred / narrow test greenをdone扱いせずactual outcomeをverify / focused composition fix / final gateまで到達 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
