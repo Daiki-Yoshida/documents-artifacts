@@ -30,10 +30,22 @@ has_host_exec() {
   [ $? -eq 42 ]
 }
 
-# True when $1 routes through the existing Compose `app` service.
+# True when an actual command segment routes through the existing Compose
+# `app` service. Text that merely mentions/echoes a Compose command is not
+# execution routing.
 routes_to_app() {
-  printf '%s\n' "$1" | grep -Eq 'docker([ -]compose| +compose)' \
-    && printf '%s\n' "$1" | grep -qw 'app'
+  printf '%s\n' "$1" \
+    | sed 's/&&/\n/g; s/||/\n/g; s/;/\n/g; s/|/\n/g' \
+    | awk '
+        {
+          sub(/^[[:space:]]*@?[+-]?/, "", $0)
+          if ($0 ~ /^docker[[:space:]]+compose([[:space:]]|$)/ ||
+              $0 ~ /^docker-compose([[:space:]]|$)/) {
+            if ($0 ~ /(^|[[:space:]])app([[:space:]]|$)/) found=1
+          }
+        }
+        END { exit(found ? 0 : 1) }
+      '
 }
 
 ci=.github/workflows/ci.yml
