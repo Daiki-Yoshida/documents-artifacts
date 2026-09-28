@@ -8,7 +8,7 @@ function createOrderStore() {
 
   return {
     getStatus(orderId) {
-      return statusById.get(orderId) ?? 'pending';
+      return statusById.get(orderId) ?? 'draft';
     },
 
     setStatus(orderId, status) {
