@@ -23,7 +23,8 @@ if [ ! -f "$EXPORT" ]; then
 fi
 
 # 2. Durable confirmed knowledge integrated into the owner document
-if grep -qiE 'utf-?8' "$EXPORT" && grep -qi 'bom' "$EXPORT"; then
+if grep -qiE 'utf-?8' "$EXPORT" \
+   && grep -qiE '(without|no)[[:space:]-]*bom' "$EXPORT"; then
   pass "EXPORT documents UTF-8 without BOM"
 else
   fail "EXPORT lacks confirmed encoding semantics (UTF-8 without BOM)"
