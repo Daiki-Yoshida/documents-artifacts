@@ -130,6 +130,31 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "evidence persisted despite secret refusal: $scenario"
     rm -f "$run_root/$first_rel/.env"
 
+    # component baseline tags are prepare-time evidence anchors; capture must
+    # reject a moved tag even when the repository path itself is unchanged.
+    first_sel="${first_pair%%=*}"
+    first_comp="$run_root/$first_rel"
+    prepared_component_base="$(sed -n "s/^evidence_repository_${first_sel}_baseline_sha: //p" "$meta")"
+    tamper_commit="$(git -C "$first_comp" commit-tree HEAD^{tree} -p HEAD -m 'harness baseline tamper probe')"
+    git -C "$first_comp" tag -f artifact-test-baseline "$tamper_commit" >/dev/null
+    if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+        "$CAPTURE" --scenario "$scenario" --run-id baseline-tamper >/dev/null 2>&1; then
+      fail "capture accepted moved component baseline tag: $scenario/$first_sel"
+    fi
+    [[ ! -e "$TEST_RESULTS_ROOT/$scenario/baseline-tamper/evidence" ]] \
+      || fail "baseline-tamper refusal left persisted evidence: $scenario"
+    git -C "$first_comp" tag -f artifact-test-baseline "$prepared_component_base" >/dev/null
+
+    # Stabilize and snapshot component index/status before successful capture.
+    declare -A component_index_before=() component_status_before=()
+    for pair in $EVIDENCE_REPOSITORIES; do
+      sel="${pair%%=*}"; rel="${pair#*=}"; comp="$run_root/$rel"
+      git -C "$comp" status --porcelain >/dev/null
+      git_dir="$(git -C "$comp" rev-parse --absolute-git-dir)"
+      component_index_before[$sel]="$(sha1sum "$git_dir/index" | cut -d' ' -f1)"
+      component_status_before[$sel]="$(env GIT_OPTIONAL_LOCKS=0 git -C "$comp" status --porcelain)"
+    done
+
     ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
       "$CAPTURE" --scenario "$scenario" --run-id harness-selftest >/dev/null \
       || fail "capture failed for multi-repo scenario: $scenario"
@@ -149,7 +174,15 @@ for scenario_dir in "${scenario_dirs[@]}"; do
         || fail "component untracked change not captured: $sel"
       grep -q "^$sel | $rel " "$ev/repositories/INDEX.txt" \
         || fail "component INDEX row missing: $sel"
-      git -C "$run_root/$rel" diff --cached --quiet \
+      comp="$run_root/$rel"
+      git_dir="$(git -C "$comp" rev-parse --absolute-git-dir)"
+      index_after="$(sha1sum "$git_dir/index" | cut -d' ' -f1)"
+      status_after="$(env GIT_OPTIONAL_LOCKS=0 git -C "$comp" status --porcelain)"
+      [[ "${component_index_before[$sel]}" == "$index_after" ]] \
+        || fail "capture mutated component real index: $sel"
+      [[ "${component_status_before[$sel]}" == "$status_after" ]] \
+        || fail "capture mutated component status: $sel"
+      git -C "$comp" diff --cached --quiet \
         || fail "capture staged changes into component real index: $sel"
       for other in $EVIDENCE_REPOSITORIES; do
         osel="${other%%=*}"
@@ -170,6 +203,9 @@ for scenario_dir in "${scenario_dirs[@]}"; do
         fail "component source leaked into primary evidence: $scenario"
       fi
     done
+    if grep -Eq '(^|/)\.git(/|$)' "$ev/filesystem.txt"; then
+      fail "nested component .git internals leaked into primary filesystem evidence: $scenario"
+    fi
   fi
 
   ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$INSPECT" --scenario "$scenario" >/dev/null
