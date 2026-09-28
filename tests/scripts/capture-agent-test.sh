@@ -126,6 +126,7 @@ EVIDENCE_REPOS=()
 if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
   RUN_ROOT_REAL="$(cd "$RUN_ROOT" && pwd -P)"
   TARGET_REAL="$(cd "$TARGET" && pwd -P)"
+  declare -A SEEN_SEL=() SEEN_REAL=()
   for pair in $EVIDENCE_REPOSITORIES; do
     [[ "$pair" == *=* ]] || fail "invalid EVIDENCE_REPOSITORIES entry: $pair"
     sel="${pair%%=*}"; rel="${pair#*=}"
@@ -141,11 +142,35 @@ if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
       || fail "evidence repository resolves outside run root: $rel"
     [[ "$REAL" != "$TARGET_REAL" ]] \
       || fail "evidence repository must be independent of the primary repository: $rel"
-    [[ -d "$REAL/.git" ]] || fail "not an independent Git repository: $rel"
+    [[ -d "$REAL/.git" && ! -L "$REAL/.git" ]] || fail "not a safe independent Git repository: $rel"
+    [[ -z "${SEEN_SEL[$sel]:-}" ]] || fail "duplicate evidence repository selector at capture: $sel"
+    [[ -z "${SEEN_REAL[$REAL]:-}" ]] || fail "duplicate evidence repository path at capture: $rel"
+    SEEN_SEL[$sel]=1; SEEN_REAL[$REAL]=1
+
     git -C "$REAL" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
       || fail "component baseline tag missing for $sel: $REAL"
+
+    prepared_rel="$(sed -n "s/^evidence_repository: ${sel}=//p" "$RUN_METADATA" | head -1)"
+    [[ "$prepared_rel" == "$rel" ]] \
+      || fail "component repository declaration changed since prepare for $sel: prepared='$prepared_rel' capture='$rel'"
+
+    prepared_cbase="$(metadata_value "evidence_repository_${sel}_baseline_sha")"
+    [[ "$prepared_cbase" =~ ^[0-9a-f]{40}$ ]] \
+      || fail "invalid prepare-time component baseline SHA for $sel"
+    actual_cbase="$(git -C "$REAL" rev-parse artifact-test-baseline)"
+    [[ "$prepared_cbase" == "$actual_cbase" ]] \
+      || fail "component baseline tag changed since prepare for $sel"
+
     EVIDENCE_REPOS+=("$sel|$rel|$REAL")
   done
+
+  prepared_repo_count="$(grep -c '^evidence_repository: ' "$RUN_METADATA" || true)"
+  [[ "$prepared_repo_count" == "${#EVIDENCE_REPOS[@]}" ]] \
+    || fail "component repository declaration count changed since prepare"
+else
+  prepared_repo_count="$(grep -c '^evidence_repository: ' "$RUN_METADATA" || true)"
+  [[ "$prepared_repo_count" == "0" ]] \
+    || fail "prepared run declares component repositories but current scenario configuration does not"
 fi
 
 scan_untracked_secrets "$TARGET"
@@ -205,7 +230,7 @@ env GIT_INDEX_FILE="$TMP_INDEX" git -C "$TARGET" --no-pager diff --cached --bina
 
 # Existence/type evidence for every path including ignored runtime state.
 # Names and sizes only — never arbitrary file contents.
-(cd "$TARGET" && find . -path ./.git -prune -o -printf '%y %10s %p\n' | sort) > "$EV/filesystem.txt"
+(cd "$TARGET" && find . -type d -name .git -prune -o -printf '%y %10s %p\n' | sort) > "$EV/filesystem.txt"
 
 {
   printf '=== recent commits ===\n'
@@ -398,7 +423,7 @@ if ((${#EVIDENCE_REPOS[@]})); then
     env GIT_INDEX_FILE="$TMP_INDEX" git -C "$CREAL" --no-pager diff --cached --stat artifact-test-baseline \
       > "$CDIR/diff-stat.txt"
 
-    (cd "$CREAL" && find . -path ./.git -prune -o -printf '%y %10s %p\n' | sort) > "$CDIR/filesystem.txt"
+    (cd "$CREAL" && find . -type d -name .git -prune -o -printf '%y %10s %p\n' | sort) > "$CDIR/filesystem.txt"
 
     {
       printf '=== recent commits ===\n'
