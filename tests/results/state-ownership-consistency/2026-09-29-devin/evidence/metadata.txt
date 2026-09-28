@@ -1,0 +1,11 @@
+scenario: state-ownership-consistency
+run_id: 2026-09-29-devin
+fixture: state-ownership-consistency
+prepared_at_utc: 2026-09-28T19:56:19Z
+captured_at_utc: 2026-09-28T19:57:20Z
+source_repo_head_at_prepare: b87726ae0d1a5340ab729ed47c1de363cb73ef09
+source_repo_head_at_capture: b87726ae0d1a5340ab729ed47c1de363cb73ef09
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/state-ownership-consistency/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 7b8320f886fd969e245a5cd9bb89a7e704a7ae43
+head_sha_at_capture: 7b8320f886fd969e245a5cd9bb89a7e704a7ae43
