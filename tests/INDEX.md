@@ -181,4 +181,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `requested-outcome-verification` | requested-outcome-verification | unit contract greenとrequested outcomeを分離 / focused composition fix / enabled・disabled CLI outcomeを実測 / final project gate PASS |
 
+## Fourteenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `documentation-maintenance-reconciliation` | documentation-maintenance-reconciliation | completed Work Documentsの分類 (durable confirmed / rejected / scratch / verification log) / owner documentへ統合・temporary drop / closeout / archive suggestion拒否・Gitがhistory |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
