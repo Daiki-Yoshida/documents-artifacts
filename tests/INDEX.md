@@ -169,10 +169,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `external-dependency-containment` | external-dependency-containment | vendor SDK更新時にvendor vocabularyをApplicationまで追従させない / Infrastructure edgeへのcontainment / 最小限のproject-owned capability・translation boundary / public behavior維持 |
 
-## Twelfth-stage scenarios — definition ready / run pending
+## Twelfth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
-| `multi-repo-workspace-ownership` | multi-repo-workspace | Project Repository + 独立Component Repository / stable selectorによるrepository resolve / ownershipを保った全repo更新とcoordination / generic multi-repo evidence (`EVIDENCE_REPOSITORIES`) の初適用 |
+| `multi-repo-workspace-ownership` | multi-repo-workspace | stable selectorでapi/webを解決 / Project・api・web各repoのownershipを保持して全参加repo更新 / coordinated verify PASS / per-repo machine evidence分離 |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
