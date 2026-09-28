@@ -161,7 +161,7 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `diagnostics-before-recovery` | diagnostics-recovery | failureに対しobserve before mutate / failure layer特定 / Work-scoped stateのみrepair・shared/persistent保護 / broad resetの回避 |
 
-## Eleventh-stage scenarios — definition ready / run pending
+## Eleventh-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
