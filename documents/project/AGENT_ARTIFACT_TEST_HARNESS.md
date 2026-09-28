@@ -363,6 +363,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `state-ownership-consistency` (fixture `state-ownership-consistency`): `placeOrder`がOrderStore (order state owner) とPaymentGateway (authorization state owner) の2 ownerを跨ぐ1 business outcome。baselineはconfirm-first + auth failureでorderがconfirmed残留 (partial outcome)。explicit consistency strategy (compensation / reversal / failure-aware ordering等を問わない) をownership境界を壊さず導入できるかを見る。local-confirmation-failure testもあり、単純なcall-order反転ではlocal failure時paymentが残るため不十分。`consistency-check.js`はcoordination shape (両owner呼出・app非state所有・failure処理の存在・public surface) をsemanticに検査し特定algorithmを固定しない。
 
+### Sixteenth-stage scenarios — definition ready / run pending
+
+- `brownfield-execution-adoption` (fixture `brownfield-execution-adoption`): brownfield projectのinventory-first段階移行。`make test`がhost npm依存・CIがhost Nodeをprovisioningするbaselineから、test実行のみを既存Compose `app` serviceへ移し、public command名とCIのstable command利用を維持するかを見る。`make build`/`make deploy-dry-run`はworking legacy pathとしてscope外 (勝手にmigrationしない)。`scripts/adoption-check.sh`はdependency-free shellでmigration shape (target存在・host exec非使用・compose app route・CI収束・legacy path維持・competing runtime非作成) をstatic検査 — Docker daemon不要・exact recipe非固定 (narrow wrapper許容)。Docker不可環境ではhost npm fallbackせずlimitationをreportすることがverification semanticsとして必須。
+
 ## Fixture immutability
 
 test runは `tests/repositories/` を直接変更しない。generated runはsource repository外のtemporary rootへ置く。

@@ -193,4 +193,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `state-ownership-consistency` | state-ownership-consistency | 2 state ownerを跨ぐ1 business outcomeのpartial success / explicit consistency strategy / ownership boundary維持 / 両方向failureを処理 |
 
+## Sixteenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `brownfield-execution-adoption` | brownfield-execution-adoption | brownfield projectの段階移行 — test実行のみ既存Compose runtimeへ / public `make test`維持 / CIを同じstable commandへ収束 / build・deployのlegacy pathはscope外として維持 |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
