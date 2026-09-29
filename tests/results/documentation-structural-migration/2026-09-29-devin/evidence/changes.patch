@@ -1,0 +1,41 @@
+diff --git a/README.md b/README.md
+index a87dcc4..c981f39 100644
+--- a/README.md
++++ b/README.md
+@@ -8,7 +8,7 @@ Small docs-only project.
+   convention, e.g. `incident-response.md`)
+ 
+ Release work follows the
+-[Release procedure](documents/project/RELEASE.md).
++[Release procedure](documents/runbooks/release-process.md).
+ 
+ ## Verification
+ 
+diff --git a/documents/INDEX.md b/documents/INDEX.md
+index ec6a6f2..a2a6cb0 100644
+--- a/documents/INDEX.md
++++ b/documents/INDEX.md
+@@ -2,7 +2,7 @@
+ 
+ Canonical routing hub for project documentation.
+ 
+-- [project/RELEASE.md](project/RELEASE.md) — release procedure owner
++- [runbooks/release-process.md](runbooks/release-process.md) — release procedure owner
+ - [project/ONCALL.md](project/ONCALL.md) — on-call facts
+ - [project/ARCHITECTURE.md](project/ARCHITECTURE.md) — architecture notes
+ - [runbooks/incident-response.md](runbooks/incident-response.md) — incident runbook
+diff --git a/documents/project/ONCALL.md b/documents/project/ONCALL.md
+index 986f531..bac698b 100644
+--- a/documents/project/ONCALL.md
++++ b/documents/project/ONCALL.md
+@@ -1,5 +1,5 @@
+ # On-call
+ 
+ During a release incident, follow the
+-[release procedure](RELEASE.md) and the
++[release procedure](../runbooks/release-process.md) and the
+ [incident runbook](../runbooks/incident-response.md).
+diff --git a/documents/project/RELEASE.md b/documents/runbooks/release-process.md
+similarity index 100%
+rename from documents/project/RELEASE.md
+rename to documents/runbooks/release-process.md

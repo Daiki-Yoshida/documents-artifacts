@@ -1,0 +1,8 @@
+=== git status --short ===
+ M README.md
+ M documents/INDEX.md
+ M documents/project/ONCALL.md
+R  documents/project/RELEASE.md -> documents/runbooks/release-process.md
+
+=== ignored paths present (names only) ===
+none
