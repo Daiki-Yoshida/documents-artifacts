@@ -29,14 +29,15 @@ const files = walk(SRC).map((p) => ({
 }));
 const checkoutFiles = files.filter((f) => f.rel.startsWith('checkout/'));
 
-// 1. The checkout-scoped semantic identifier is gone from src.
+// 1. The monetary concept must no longer carry first-consumer semantics.
+const featureScopedMoney = /\b(?:Checkout|Cart|Order)(?:Money|Amount|MonetaryAmount)\b|(?:checkout|cart|order)[-_](?:money|amount|monetary[-_]?amount)/i;
 const polluted = files.filter(
-  (f) => /CheckoutMoney|checkout-money/.test(f.content)
-      || /CheckoutMoney|checkout-money/.test(f.rel));
+  (f) => featureScopedMoney.test(f.content)
+      || featureScopedMoney.test(path.basename(f.rel)));
 if (polluted.length === 0) {
-  pass('checkout-scoped money identifier removed');
+  pass('money concept uses consumer-neutral semantics');
 } else {
-  fail(`checkout-scoped money identifier still present: ${polluted.map((f) => f.rel).join(', ')}`);
+  fail(`consumer-scoped monetary identifier still present: ${polluted.map((f) => f.rel).join(', ')}`);
 }
 
 // Monetary concept signals: cents amount + arithmetic + rendering +
