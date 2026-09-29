@@ -371,7 +371,7 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `vcs-authority-and-reporting` (fixture `vcs-authority-and-reporting`): 小さなformatter regression修正 + project-local VCS authority。`prepare.sh` hookがgenerated repoにlocal bare `origin.git`を作り`main`のみをremote topologyとしてseedする。`AGENTS.md`が`review/*` topic branch + exactly 1 local commitをauthorized、push/origin mutation/main direct commit/history rewriteをunauthorizedとする。`scripts/authority-check.sh`がfinal review state (review/* branch・clean tree・main..HEAD=1・local main==origin/main・remote heads mainのみ・non-empty commit) をlocal Gitだけで検証。`scripts/external-check.sh`は`PARTNER_CONTRACT_FIXTURE`必須で無ければNOT RUN (exit 2) — fake fixture/network/local代替は禁止。PASSとNOT RUNを分離してreportするかが主対象で、functional defectは意図的に小さい (`#RELEASE-CANDIDATE`→`#Release-Candidate`)。
 
-### Eighteenth-stage scenarios — definition ready / run pending
+### Eighteenth-stage scenarios — completed/evaluated
 
 - `responsibility-and-concept-altitude` (fixture `responsibility-and-concept-altitude`): checkout内の純粋なcurrency amount conceptが`CheckoutMoney`というcheckout-specific名を持つsemantic pollution scenario。semantic altitude (monetaryへneutral)・physical placement (唯一consumer=checkoutなのでcheckout-local維持)・hardening/sharing (第二consumer不在なのでshared/common/core/global抽出なし・factory/registry/plugin等の先回り無し) を独立判断として扱えるかを見る。money concept (amount/invariant/arithmetic/rendering) とpricing composition (subtotal/discount/tax、application所有) のresponsibility分離を維持し、`quoteCart` public contractとmoney conceptの非exportも保つ。`concept-check.js`はidentifier除去・checkout内残存・policy非吸収・shared非作成・public surface・composition ownership・machinery非追加をsemanticに検査し、neutral名やfilename syntaxは固定しない。
 

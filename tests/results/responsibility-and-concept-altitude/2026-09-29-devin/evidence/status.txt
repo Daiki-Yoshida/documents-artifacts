@@ -1,0 +1,6 @@
+=== git status --short ===
+ M src/checkout/application/quote-cart.js
+RM src/checkout/domain/checkout-money.js -> src/checkout/domain/money.js
+
+=== ignored paths present (names only) ===
+none

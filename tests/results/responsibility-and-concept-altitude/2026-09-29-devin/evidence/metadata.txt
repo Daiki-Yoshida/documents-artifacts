@@ -1,0 +1,11 @@
+scenario: responsibility-and-concept-altitude
+run_id: 2026-09-29-devin
+fixture: responsibility-and-concept-altitude
+prepared_at_utc: 2026-09-29T05:15:41Z
+captured_at_utc: 2026-09-29T05:16:37Z
+source_repo_head_at_prepare: cb4bd5782ecf134cc3b7b9e3ec5dc7673214bb92
+source_repo_head_at_capture: cb4bd5782ecf134cc3b7b9e3ec5dc7673214bb92
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/responsibility-and-concept-altitude/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: fd16e1e08b35ae8638cbd0fe89e433ddc52502be
+head_sha_at_capture: fd16e1e08b35ae8638cbd0fe89e433ddc52502be
