@@ -1,0 +1,5 @@
+ README.md                                                     | 2 +-
+ documents/INDEX.md                                            | 2 +-
+ documents/project/ONCALL.md                                   | 2 +-
+ documents/{project/RELEASE.md => runbooks/release-process.md} | 0
+ 4 files changed, 3 insertions(+), 3 deletions(-)

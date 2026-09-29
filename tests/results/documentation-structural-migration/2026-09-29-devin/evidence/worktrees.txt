@@ -1,0 +1,26 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/documentation-structural-migration/repo
+HEAD 0493e1b9e1cf19fb1e9b7193d577c14af9964432
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/documentation-structural-migration
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/documentation-structural-migration/repo
+  registration_head: 0493e1b9e1cf19fb1e9b7193d577c14af9964432
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/documentation-structural-migration/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 0493e1b9e1cf19fb1e9b7193d577c14af9964432
+  branch: main
+  status: dirty
+  status_detail:
+     M README.md
+     M documents/INDEX.md
+     M documents/project/ONCALL.md
+    R  documents/project/RELEASE.md -> documents/runbooks/release-process.md
+  sparse_checkout: disabled

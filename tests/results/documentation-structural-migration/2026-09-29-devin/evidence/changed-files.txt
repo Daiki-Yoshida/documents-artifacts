@@ -1,0 +1,4 @@
+M	README.md
+M	documents/INDEX.md
+M	documents/project/ONCALL.md
+R100	documents/project/RELEASE.md	documents/runbooks/release-process.md
