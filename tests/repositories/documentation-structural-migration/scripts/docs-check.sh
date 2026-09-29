@@ -27,6 +27,23 @@ expect_eq() {
 OLD="documents/project/RELEASE.md"
 NEW="documents/runbooks/release-process.md"
 
+# Assert that a referring document changed only by replacing one known
+# link target. This keeps the migration structural instead of allowing
+# opportunistic prose/routing rewrites.
+expect_link_only_change() {
+  local path="$1" new_target="$2" old_target="$3" label="$4"
+  local normalized
+  normalized="$(mktemp)"
+  sed "s|$new_target|$old_target|g" "$path" > "$normalized"
+  if cmp -s "$normalized" -; then
+    pass "$label"
+  else
+    fail "$label changed beyond the required link target"
+  fi
+  rm -f "$normalized"
+}
+
+
 # --- Canonical move ---------------------------------------------------
 if [ ! -e "$OLD" ]; then
   pass "old release owner path absent ($OLD)"
@@ -75,6 +92,52 @@ if [ -f documents/project/ONCALL.md ] \
 else
   fail "ONCALL not correctly repaired"
 fi
+
+# The three referring documents may change only at the migrated link target.
+expect_link_only_change README.md \
+  'documents/runbooks/release-process.md' 'documents/project/RELEASE.md' \
+  'README changed only at release link target' <<'EOF'
+# Documentation Structural Migration Project
+
+Small docs-only project.
+
+- Canonical routing hub: `documents/INDEX.md`
+- Durable project facts: `documents/project/`
+- Operational procedures: `documents/runbooks/` (the established runbook
+  convention, e.g. `incident-response.md`)
+
+Release work follows the
+[Release procedure](documents/project/RELEASE.md).
+
+## Verification
+
+```bash
+make verify    # documentation structure gate
+```
+EOF
+
+expect_link_only_change documents/INDEX.md \
+  'runbooks/release-process.md' 'project/RELEASE.md' \
+  'INDEX changed only at release route target' <<'EOF'
+# Documentation Index
+
+Canonical routing hub for project documentation.
+
+- [project/RELEASE.md](project/RELEASE.md) — release procedure owner
+- [project/ONCALL.md](project/ONCALL.md) — on-call facts
+- [project/ARCHITECTURE.md](project/ARCHITECTURE.md) — architecture notes
+- [runbooks/incident-response.md](runbooks/incident-response.md) — incident runbook
+EOF
+
+expect_link_only_change documents/project/ONCALL.md \
+  '../runbooks/release-process.md' 'RELEASE.md' \
+  'ONCALL changed only at release link target' <<'EOF'
+# On-call
+
+During a release incident, follow the
+[release procedure](RELEASE.md) and the
+[incident runbook](../runbooks/incident-response.md).
+EOF
 
 # INDEX keeps routing to the other canonical docs (no rebuild).
 if grep -qF 'project/ONCALL.md' documents/INDEX.md 2>/dev/null \
