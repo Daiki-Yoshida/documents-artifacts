@@ -205,10 +205,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `vcs-authority-and-reporting` | vcs-authority-and-reporting | project-local VCS authority — local `review/*` task commitはauthorized・push/main commit/remote mutationはunauthorized / external checkはmaintainer input不足でNOT RUNとしてPASSと分離してreport |
 
-## Eighteenth-stage scenarios — definition ready / run pending
+## Eighteenth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
-| `responsibility-and-concept-altitude` | responsibility-and-concept-altitude | semantic altitude (checkout-specific→monetary) / physical placement (唯一consumerなのでcheckout-local) / hardening・sharing (shared抽出の根拠なし) を別判断として扱う / pricing policyをmoney conceptへ吸収しない |
+| `responsibility-and-concept-altitude` | responsibility-and-concept-altitude | consumer-neutral `Money`へsemantic altitudeを上げつつcheckout-local配置維持 / shared hardeningなし / pricing policy分離 / public contract維持 |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
