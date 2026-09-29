@@ -1,0 +1,3 @@
+ src/checkout/application/quote-cart.js              |  8 ++++----
+ src/checkout/domain/{checkout-money.js => money.js} | 10 +++++-----
+ 2 files changed, 9 insertions(+), 9 deletions(-)

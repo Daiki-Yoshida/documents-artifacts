@@ -1,0 +1,60 @@
+diff --git a/src/checkout/application/quote-cart.js b/src/checkout/application/quote-cart.js
+index f6d705f..af97cf6 100644
+--- a/src/checkout/application/quote-cart.js
++++ b/src/checkout/application/quote-cart.js
+@@ -1,12 +1,12 @@
+ 'use strict';
+ 
+-const { CheckoutMoney } = require('../domain/checkout-money');
++const { Money } = require('../domain/money');
+ 
+ // Pricing composition: subtotal - discount + tax.
+ function quoteCart({ subtotalCents, discountCents, taxCents }) {
+-  const subtotal = new CheckoutMoney(subtotalCents);
+-  const discount = new CheckoutMoney(discountCents);
+-  const tax = new CheckoutMoney(taxCents);
++  const subtotal = new Money(subtotalCents);
++  const discount = new Money(discountCents);
++  const tax = new Money(taxCents);
+ 
+   const total = subtotal.subtract(discount).add(tax);
+   return { totalCents: total.cents, display: total.toDisplay() };
+diff --git a/src/checkout/domain/checkout-money.js b/src/checkout/domain/money.js
+similarity index 69%
+rename from src/checkout/domain/checkout-money.js
+rename to src/checkout/domain/money.js
+index 755780e..25a5216 100644
+--- a/src/checkout/domain/checkout-money.js
++++ b/src/checkout/domain/money.js
+@@ -1,9 +1,9 @@
+ 'use strict';
+ 
+-// CheckoutMoney — the money-like value used by checkout totals.
++// Money — a consumer-neutral money value.
+ // Responsibility: a currency amount, its invariant, arithmetic, and
+ // rendering. Pricing policy lives in the application layer.
+-class CheckoutMoney {
++class Money {
+   constructor(cents) {
+     if (!Number.isInteger(cents)) {
+       throw new TypeError('amount must be integer cents');
+@@ -19,11 +19,11 @@ class CheckoutMoney {
+   }
+ 
+   add(other) {
+-    return new CheckoutMoney(this._cents + other.cents);
++    return new Money(this._cents + other.cents);
+   }
+ 
+   subtract(other) {
+-    return new CheckoutMoney(this._cents - other.cents);
++    return new Money(this._cents - other.cents);
+   }
+ 
+   toDisplay() {
+@@ -31,4 +31,4 @@ class CheckoutMoney {
+   }
+ }
+ 
+-module.exports = { CheckoutMoney };
++module.exports = { Money };
