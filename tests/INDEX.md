@@ -211,4 +211,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `responsibility-and-concept-altitude` | responsibility-and-concept-altitude | consumer-neutral `Money`へsemantic altitudeを上げつつcheckout-local配置維持 / shared hardeningなし / pricing policy分離 / public contract維持 |
 
+## Nineteenth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `documentation-structural-migration` | documentation-structural-migration | canonical docのauthorized move/rename — incoming refs発見・INDEX/link修復・byte-for-byte本文維持・旧path消滅 / DOC_L2 moveはDOC_L3 model rebuildの権限ではない |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
