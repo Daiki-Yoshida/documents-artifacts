@@ -56,7 +56,9 @@ documents/project/ONCALL.md → links ../runbooks/release-process.md
 - no redirect/stub left at the old path;
 - no archive/history copy, no second documentation root;
 - changed docs paths are limited to the one move plus the three known
-  incoming-link repairs.
+  incoming-link repairs;
+- README / INDEX / ONCALL preserve all baseline content except the
+  migrated link target itself.
 
 ## Must — verification
 
@@ -79,8 +81,8 @@ documents/project/ONCALL.md → links ../runbooks/release-process.md
 ## Acceptable variation
 
 - How the incoming references are discovered (grep/scan order) is free.
-- Link-text wording around the repaired links may vary slightly; the
-  link targets must be exact.
+- Link labels and surrounding prose should remain unchanged; only the
+  migrated link target needs to change in README / INDEX / ONCALL.
 
 ## Machine-evidence note
 
