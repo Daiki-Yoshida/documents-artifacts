@@ -1,0 +1,11 @@
+{
+  "name": "responsibility-and-concept-altitude",
+  "version": "1.0.0",
+  "private": true,
+  "license": "UNLICENSED",
+  "scripts": {
+    "test": "node --test",
+    "concept-check": "node scripts/concept-check.js",
+    "verify": "npm test && npm run concept-check"
+  }
+}
