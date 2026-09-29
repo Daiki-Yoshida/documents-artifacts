@@ -375,6 +375,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `responsibility-and-concept-altitude` (fixture `responsibility-and-concept-altitude`): checkout内の純粋なcurrency amount conceptが`CheckoutMoney`というcheckout-specific名を持つsemantic pollution scenario。semantic altitude (monetaryへneutral)・physical placement (唯一consumer=checkoutなのでcheckout-local維持)・hardening/sharing (第二consumer不在なのでshared/common/core/global抽出なし・factory/registry/plugin等の先回り無し) を独立判断として扱えるかを見る。money concept (amount/invariant/arithmetic/rendering) とpricing composition (subtotal/discount/tax、application所有) のresponsibility分離を維持し、`quoteCart` public contractとmoney conceptの非exportも保つ。`concept-check.js`はidentifier除去・checkout内残存・policy非吸収・shared非作成・public surface・composition ownership・machinery非追加をsemanticに検査し、neutral名やfilename syntaxは固定しない。
 
+### Nineteenth-stage scenarios — definition ready / run pending
+
+- `documentation-structural-migration` (fixture `documentation-structural-migration`): canonical docのauthorized DOC_L2 move/rename。唯一のrelease procedure owner `documents/project/RELEASE.md`を既存`documents/runbooks/release-process.md`へ移し、incoming refs (README/INDEX/ONCALL — task一覧なし・agentがsearchで発見) を修復する。本文はbyte-for-byte維持 (checker埋め込みexpected内容と`cmp`照合)、旧path/redirect/stub/archive/second rootは禁止、`ARCHITECTURE.md`と`incident-response.md`はbyte-exact不変、documents treeはexpected file setと完全一致。`docs-check.sh`はdependency-free shellで全て検査し、1つのauthorized moveがDOC_L3 model rebuildの権限でないことを検証する。
+
 ## Fixture immutability
 
 test runは `tests/repositories/` を直接変更しない。generated runはsource repository外のtemporary rootへ置く。
