@@ -181,4 +181,197 @@ grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
 
 # Legitimate project-owned example tokens and valid indirect routing
 # stay accepted: the shipped pack exercises both.
+
+# --- Remote delivery (Issue #146) -----------------------------------------
+# Run the exact README bootstrap command against local Git fixtures, so
+# no regression depends solely on GitHub availability.
+command -v git >/dev/null || fail "git is required for remote-delivery tests"
+
+README_BOOTSTRAP="$TMP_ROOT/readme-bootstrap.sh"
+awk '/<!-- remote-delivery-snippet -->/{f=1;next} /<!-- \/remote-delivery-snippet -->/{f=0} f' \
+    "$REPO_ROOT/README.md" \
+  | awk '/^```bash$/{c=1;next} /^```$/{if(c)exit} c' \
+  > "$README_BOOTSTRAP"
+[[ -s "$README_BOOTSTRAP" ]] || fail "README remote-delivery snippet not found"
+bash -n "$README_BOOTSTRAP" || fail "README bootstrap snippet has a syntax error"
+
+BOOT_TMP="$TMP_ROOT/boot-tmp"
+mkdir -p "$BOOT_TMP"
+
+# Test-local git shim: redirects the snippet's fixed official source URL
+# to a fixture remote named by TEST_GIT_REDIRECT. It only rewrites argv;
+# no user/global Git configuration is touched.
+REAL_GIT="$(command -v git)"
+SHIM_BIN="$TMP_ROOT/shim-bin"
+mkdir -p "$SHIM_BIN"
+cat > "$SHIM_BIN/git" <<EOF
+#!/usr/bin/env bash
+set -euo pipefail
+args=()
+for a in "\$@"; do
+  if [[ "\$a" == "https://github.com/Daiki-Yoshida/documents-artifacts.git" ]]; then
+    args+=("\${TEST_GIT_REDIRECT:?TEST_GIT_REDIRECT must name the fixture remote}")
+  else
+    args+=("\$a")
+  fi
+done
+exec "$REAL_GIT" "\${args[@]}"
+EOF
+chmod +x "$SHIM_BIN/git"
+
+assert_tmp_clean() {
+  [[ -z "$(ls -A "$BOOT_TMP")" ]] || fail "bootstrap temp not cleaned: $*"
+}
+
+run_bootstrap() {
+  # $1 = target dir, $2 = fixture remote URL (empty = no shim, real GitHub)
+  local tdir="$1" redir="${2:-}"
+  if [[ -n "$redir" ]]; then
+    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" TEST_GIT_REDIRECT="$redir" \
+        PATH="$SHIM_BIN:$PATH" bash "$README_BOOTSTRAP" )
+  else
+    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" GIT_TERMINAL_PROMPT=0 bash "$README_BOOTSTRAP" )
+  fi
+}
+
+# Fixture "remote": a standalone Git repo holding artifacts.sh + the real pack.
+GIT_REMOTE="$TMP_ROOT/git-remote"
+mkdir -p "$GIT_REMOTE"
+cp "$SCRIPT" "$GIT_REMOTE/artifacts.sh"
+chmod +x "$GIT_REMOTE/artifacts.sh"
+cp -r "$REPO_ROOT/artifacts" "$GIT_REMOTE/artifacts"
+git -C "$GIT_REMOTE" -c init.defaultBranch=main init -q
+git -C "$GIT_REMOTE" add -A
+git -C "$GIT_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qm 'pack v1'
+
+# First install into a fresh target whose path contains spaces; the
+# target defaults to the current directory. The target is a Git repo
+# with committed project-owned files so existing commit history and
+# owner state can be verified.
+RTARGET="$TMP_ROOT/remote target with spaces"
+mkdir -p "$RTARGET/documents/project"
+printf 'project agents\n' > "$RTARGET/AGENTS.md"
+printf 'project readme\n' > "$RTARGET/README.md"
+printf 'project index\n' > "$RTARGET/documents/INDEX.md"
+printf 'owner doc\n'      > "$RTARGET/documents/project/OWNERS.md"
+git -C "$RTARGET" -c init.defaultBranch=main init -q
+git -C "$RTARGET" add -A
+git -C "$RTARGET" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qm 'owner baseline'
+OWNER_HEAD="$(git -C "$RTARGET" rev-parse HEAD)"
+
+assert_owner_head() {
+  [[ "$(git -C "$RTARGET" rev-parse HEAD)" == "$OWNER_HEAD" ]] \
+      || fail "target commit history changed: $*"
+}
+
+run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
+    || fail "remote-delivery first install failed"
+assert_file "$RTARGET/documents/artifacts/INDEX.md"
+assert_file "$RTARGET/documents/artifacts/implementation/TESTING.md"
+assert_tmp_clean "after first install"
+
+# Only artifacts/ contents may reach the target: no source .git under
+# the managed root (the target's own repository .git is legitimate),
+# no artifacts.sh copy, no source-only docs.
+assert_absent "$RTARGET/artifacts.sh"
+assert_absent "$RTARGET/artifacts"
+assert_absent "$RTARGET/documents/knowledge"
+if find "$RTARGET/documents" -name '.git' -print -quit | grep -q .; then
+  fail "source .git reached target documents"
+fi
+[[ -z "$(find "$RTARGET/documents" -name '.artifacts.*' -print -quit)" ]] \
+    || fail "stage residue left in target documents"
+assert_owner_head "after first install"
+
+# Update: the remote moves forward; a stale managed file is removed and
+# project-owned files stay untouched.
+printf 'stale\n' > "$RTARGET/documents/artifacts/STALE.md"
+printf 'testing-v2\n' > "$GIT_REMOTE/artifacts/implementation/TESTING.md"
+git -C "$GIT_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qam 'pack v2'
+
+run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
+    || fail "remote-delivery update failed"
+[[ "$(cat "$RTARGET/documents/artifacts/implementation/TESTING.md")" == "testing-v2" ]] \
+    || fail "remote update did not apply new pack content"
+assert_absent "$RTARGET/documents/artifacts/STALE.md"
+assert_tmp_clean "after update"
+assert_owner_head "after update"
+
+[[ "$(cat "$RTARGET/AGENTS.md")" == "project agents" ]] || fail "AGENTS.md changed"
+[[ "$(cat "$RTARGET/README.md")" == "project readme" ]] || fail "target README.md changed"
+[[ "$(cat "$RTARGET/documents/INDEX.md")" == "project index" ]] || fail "documents/INDEX.md changed"
+[[ "$(cat "$RTARGET/documents/project/OWNERS.md")" == "owner doc" ]] || fail "owner doc changed"
+
+# Failed fetch leaves the installed pack, owner files, and target Git
+# state unchanged — compare content hashes, not just names/sizes.
+tree_hashes() {
+  ( cd -- "$1" && find . -type f -print0 | LC_ALL=C sort -z \
+      | xargs -0 sha256sum )
+}
+BEFORE_PACK="$(tree_hashes "$RTARGET/documents/artifacts")"
+BEFORE_OWNER="$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
+    "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")"
+BEFORE_STATUS="$(git -C "$RTARGET" status --porcelain -uall)"
+if run_bootstrap "$RTARGET" "file://$TMP_ROOT/missing-remote" >/dev/null 2>&1; then
+  fail "unreachable remote unexpectedly succeeded"
+fi
+[[ "$BEFORE_PACK" == "$(tree_hashes "$RTARGET/documents/artifacts")" ]] \
+    || fail "failed fetch changed installed pack contents"
+[[ "$BEFORE_OWNER" == "$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
+    "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")" ]] \
+    || fail "failed fetch changed owner files"
+[[ "$BEFORE_STATUS" == "$(git -C "$RTARGET" status --porcelain -uall)" ]] \
+    || fail "failed fetch changed target Git state"
+assert_owner_head "after failed fetch"
+assert_tmp_clean "after failed fetch"
+
+# A fetchable source whose pack fails validation also leaves the target
+# unchanged (validation finishes before managed replacement).
+BAD_REMOTE="$TMP_ROOT/git-bad-remote"
+mkdir -p "$BAD_REMOTE/artifacts"
+cp "$SCRIPT" "$BAD_REMOTE/artifacts.sh"
+printf '# bad\n' > "$BAD_REMOTE/artifacts/INDEX.md"
+ln -s INDEX.md "$BAD_REMOTE/artifacts/link.md"
+git -C "$BAD_REMOTE" -c init.defaultBranch=main init -q
+git -C "$BAD_REMOTE" add -A
+git -C "$BAD_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qm 'invalid pack'
+if run_bootstrap "$RTARGET" "file://$BAD_REMOTE" >/dev/null 2>&1; then
+  fail "invalid source pack unexpectedly succeeded"
+fi
+[[ "$BEFORE_PACK" == "$(tree_hashes "$RTARGET/documents/artifacts")" ]] \
+    || fail "invalid source changed installed pack contents"
+[[ "$BEFORE_OWNER" == "$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
+    "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")" ]] \
+    || fail "invalid source changed owner files"
+[[ "$BEFORE_STATUS" == "$(git -C "$RTARGET" status --porcelain -uall)" ]] \
+    || fail "invalid source changed target Git state"
+assert_owner_head "after invalid source"
+assert_tmp_clean "after invalid source"
+
+# Live probe: the documented default command performs an actual
+# GitHub-main acquisition into a disposable target. Distinguish blocked
+# egress from a passing run — never silently pass.
+LIVE_TARGET="$TMP_ROOT/live-target"
+mkdir -p "$LIVE_TARGET"
+if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" GIT_TERMINAL_PROMPT=0 bash "$3"' \
+    _ "$LIVE_TARGET" "$BOOT_TMP" "$README_BOOTSTRAP" >/dev/null 2>&1; then
+  assert_file "$LIVE_TARGET/documents/artifacts/INDEX.md"
+  assert_tmp_clean "after live acquisition"
+  printf 'NOTE: live GitHub main acquisition verified\n'
+elif timeout 30 git ls-remote \
+    https://github.com/Daiki-Yoshida/documents-artifacts.git HEAD \
+    >/dev/null 2>&1; then
+  fail "live acquisition failed while the GitHub repo is reachable"
+else
+  printf 'SKIP: live GitHub probe blocked (egress unavailable); fixture coverage passed\n'
+fi
+
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'

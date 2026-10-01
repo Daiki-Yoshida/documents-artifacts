@@ -129,6 +129,49 @@ syncはmanaged rootを**完全置換**する。旧artifact、stale file、target
 
 removeは `documents/artifacts/` 全体を明示的に削除する。project-ownedな他の `documents/` 内容は対象にしない。
 
+### GitHub からの直接 install/update (source checkout 常置なし)
+
+このrepositoryをcloneして維持しなくても、GitHub `main` branchから直接install/updateできる。内部では一時directoryへの shallow clone で配布物を取得し、取得した snapshot の `artifacts.sh` を実行して、成功/失敗に関わらず一時checkoutを削除する。transportにGitを使うだけで、新しいruntime・package manager・ref選択・background updater・target側の自動commitは導入しない。
+
+対象projectのrootで実行する (初回installとupdateは同一command):
+
+<!-- remote-delivery-snippet -->
+```bash
+(
+  set -euo pipefail
+  target="${ARTIFACT_TARGET:-$PWD}"
+  tmp="$(mktemp -d)"
+  trap 'rm -rf -- "$tmp"' EXIT
+  GIT_TERMINAL_PROMPT=0 git clone -q --depth 1 --branch main \
+    https://github.com/Daiki-Yoshida/documents-artifacts.git \
+    "$tmp/documents-artifacts"
+  bash "$tmp/documents-artifacts/artifacts.sh" \
+    --target "$target" --non-interactive
+)
+```
+<!-- /remote-delivery-snippet -->
+
+- **完全置換**: syncは `<target>/documents/artifacts/` を旧内容から完全に置き換える。stale fileやmanaged copyへの直接編集は残らない。
+- **前提**: `git` と `mktemp` (coreutils)、github.comへのoutbound network。公開repositoryのためcredential/tokenは不要。既存のGit credential helper/SSH設定があればそのまま使われ、auth設定の変更やtokenの入力要求・記録は行わない (`GIT_TERMINAL_PROMPT=0` は対話的credential promptを抑制するだけで、auth設定自体は変更しない)。
+- targetはcommand実行時の `$PWD` を既定とし、取得処理を始める前に `target=` として明示的にcaptureされる。別pathへinstallする場合は、subshell blockの先頭に代入行を追加する ( `( ... )` の外側への `VAR=x` 前置はBashでは無効構文なので使わない):
+
+  ```bash
+  (
+    ARTIFACT_TARGET=/path/to/project
+    set -euo pipefail
+    ...
+  )
+  ```
+
+  `--non-interactive` を外せばconfirm prompt付きで実行できる。
+- downloadはtargetへの変更を開始する前に完了する。fetchまたはsource validationの失敗時はinstalled packは変更されず、一時checkoutも削除される。
+- sync後はtarget repositoryをGitでreviewし、project側でcommitする (自動commitはしない — 導入先の既存commitはそのまま残る)。
+- `AGENTS.md`、`README.md`、project `documents/INDEX.md` などのproject-owned entry hookには触れない。targetには `artifacts/` の内容のみが `documents/artifacts/` へ届き、source repositoryの `.git` や他の内容は届かない。
+- source repository URLは上記の公式repositoryに固定される。取得refは常に `main` — commit/tag/ref選択・mirror/source差し替えinterfaceはこのversionでは提供しない (test/offline検証はtest-local Git shimで行う)。
+- stage/promote/backup動作はlocal `artifacts.sh` と同一で、実証済みの範囲を超えたcrash-atomicityは主張しない。raw URLから `artifacts.sh` 単体を直接実行する方法は推奨しない — sibling `artifacts/` directoryが必須のため。
+
+local checkoutがある場合の従来の `./artifacts.sh --target ...` 利用とremovalは変わらない。
+
 ### Project-owned entry hooks
 
 installerがmanagedにするのは `documents/artifacts/` のみ。agentをpackへ導くproject側の入口 (`AGENTS.md`、`README.md`、project `documents/INDEX.md` など) はadopting project自身が所有し、pack updateはそれらを書き換えない。
