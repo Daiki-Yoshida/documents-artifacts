@@ -129,6 +129,31 @@ syncはmanaged rootを**完全置換**する。旧artifact、stale file、target
 
 removeは `documents/artifacts/` 全体を明示的に削除する。project-ownedな他の `documents/` 内容は対象にしない。
 
+### Project-owned entry hooks
+
+installerがmanagedにするのは `documents/artifacts/` のみ。agentをpackへ導くproject側の入口 (`AGENTS.md`、`README.md`、project `documents/INDEX.md` など) はadopting project自身が所有し、pack updateはそれらを書き換えない。
+
+最小例 — projectの `documents/INDEX.md` に、既存のowner routeと並べてgeneric linkを1本置く:
+
+```markdown
+| Question | Owner |
+|---|---|
+| ...      | ...   |
+
+Reusable guidance for common engineering work is installed under
+`artifacts/`; start at `artifacts/INDEX.md` when a task needs it.
+```
+
+hookはroot `artifacts/INDEX.md` へのgeneric linkに留める。task固有のleaf pathやleaf要約をentry surfaceへ書かず、選択的読みはagent側のroutingに任せる。
+
+根拠・運用:
+
+```text
+documents/knowledge/subjects/documentation/S003_WORKFLOW.md  # canonical
+artifacts/documentation/PRINCIPLES_AND_ROUTING.md            # installed guidance
+artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md
+```
+
 旧 `--modules` interfaceはArtifact v2で廃止した。部分installではなく、**whole-pack delivery + selective reading**を使う。
 
 ## Update Flow

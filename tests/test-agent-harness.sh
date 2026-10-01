@@ -105,6 +105,38 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "fixture README does not state the committed-HEAD workflow"
   fi
 
+  # issue #138: the project-entry-discovery pilot's agent-visible entry
+  # surfaces carry only generic links — AGENTS/README route to
+  # documents/INDEX.md, the project index links the artifacts root, and
+  # neither entry surfaces nor the prompt leak leaf paths or the pack root
+  if [[ "$scenario" == "project-entry-discovery" ]]; then
+    grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
+      || fail "pilot AGENTS.md does not route to documents/INDEX.md"
+    grep -Fq 'documents/INDEX.md' "$target/README.md" \
+      || fail "pilot README lacks the project documentation pointer"
+    grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
+      || fail "pilot documents/INDEX.md lacks the generic artifacts link"
+    for surface in AGENTS.md README.md documents/INDEX.md; do
+      if grep -Eq 'artifacts/(design|implementation|operation|documentation|project|execution|safety)/' \
+          "$target/$surface"; then
+        fail "entry surface leaks an artifact leaf path: $scenario/$surface"
+      fi
+    done
+    if grep -qi 'artifact' "$run_root/PROMPT.md"; then
+      fail "pilot prompt leaks an artifact path or name"
+    fi
+    grep -Fq 'retried at most twice' "$run_root/PROMPT.md" \
+      || fail "pilot prompt lost the retry policy task"
+    base_fixture="$REPO_ROOT/tests/repositories/documented-project"
+    for f in AGENTS.md README.md documents/project/HTTP_CLIENT.md documents/project/OPERATIONS.md; do
+      cmp -s "$base_fixture/$f" "$fixture/$f" \
+        || fail "pilot fixture diverges from documented-project at $f"
+    done
+    grep -Fq 'HTTP client policy (timeouts, retries, headers) | `project/HTTP_CLIENT.md`' \
+      "$fixture/documents/INDEX.md" \
+      || fail "pilot index lost the HTTP policy owner route"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"

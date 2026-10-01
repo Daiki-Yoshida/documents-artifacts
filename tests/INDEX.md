@@ -235,4 +235,10 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `documentation-structural-migration` | documentation-structural-migration | canonical docのauthorized move/rename — incoming refs発見・INDEX/link修復・byte-for-byte本文維持・旧path消滅 / DOC_L2 moveはDOC_L3 model rebuildの権限ではない |
 
+## Discovery pilots — defined, awaiting evaluation
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `project-entry-discovery` | documented-project-entry | promptにartifact pathを与えずproject-owned hook (AGENTS→documents/INDEX→artifacts/INDEX) のみでentry discoveryを観測 / output評価はdocumentation-routingと同一 / self-reported readsのみではdiscoveryはUNVERIFIED扱い (Issue #138) |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
