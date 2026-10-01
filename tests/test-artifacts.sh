@@ -19,6 +19,9 @@ assert_absent() {
 
 bash -n "$SCRIPT" || fail "artifacts.sh syntax check failed"
 
+ROUTE_CHECK="$REPO_ROOT/tests/scripts/check-artifact-routes.sh"
+bash -n "$ROUTE_CHECK" || fail "check-artifact-routes.sh syntax check failed"
+
 TMP_ROOT="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_ROOT"' EXIT
 
@@ -89,4 +92,32 @@ if "$SOURCE/artifacts.sh" --list >/dev/null 2>&1; then
   fail "symlinked source pack unexpectedly succeeded"
 fi
 
+# Advertised runtime routes: every inline-backtick .md path that is not
+# a declared project-owned example must resolve inside the pack, and
+# every pack file must be transitively reachable from INDEX.md.
+# Mechanical validity only — not evidence of meaningful routing or reads.
+"$ROUTE_CHECK" "$REPO_ROOT/artifacts" >/dev/null \
+    || fail "shipped pack route check failed"
+
+PACK_BROKEN="$TMP_ROOT/pack-broken"
+cp -r "$REPO_ROOT/artifacts" "$PACK_BROKEN"
+sed -i 's|implementation/TESTING\.md|implmentation/TESTING.md|' \
+    "$PACK_BROKEN/INDEX.md"
+"$ROUTE_CHECK" "$PACK_BROKEN" >"$TMP_ROOT/broken.log" 2>&1 \
+    && fail "route check accepted a broken inline route"
+grep -Fq 'BROKEN: INDEX.md -> implmentation/TESTING.md' "$TMP_ROOT/broken.log" \
+    || fail "broken route not reported with source and target"
+
+# An inner-router entry removal must orphan its leaf even though the
+# root INDEX and router file still exist and link fine.
+PACK_ORPHAN="$TMP_ROOT/pack-orphan"
+cp -r "$REPO_ROOT/artifacts" "$PACK_ORPHAN"
+sed -i '/SCOPE_AND_AUTHORITY\.md/d' "$PACK_ORPHAN/operation/INDEX.md"
+"$ROUTE_CHECK" "$PACK_ORPHAN" >"$TMP_ROOT/orphan.log" 2>&1 \
+    && fail "route check accepted an orphaned leaf"
+grep -Fq 'UNREACHABLE: operation/SCOPE_AND_AUTHORITY.md' "$TMP_ROOT/orphan.log" \
+    || fail "orphaned leaf not reported as unreachable"
+
+# Legitimate project-owned example tokens and valid indirect routing
+# stay accepted: the shipped pack exercises both.
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
