@@ -118,6 +118,45 @@ sed -i '/SCOPE_AND_AUTHORITY\.md/d' "$PACK_ORPHAN/operation/INDEX.md"
 grep -Fq 'UNREACHABLE: operation/SCOPE_AND_AUTHORITY.md' "$TMP_ROOT/orphan.log" \
     || fail "orphaned leaf not reported as unreachable"
 
+# Issue #143 review regressions — classification boundaries on a
+# minimal synthetic pack (fences, prose, bare-vs-prefixed examples,
+# cycles):
+MINI="$TMP_ROOT/pack-mini"
+mkdir -p "$MINI"
+cat > "$MINI/INDEX.md" <<'EOF'
+# mini pack root
+Route: `a.md` — see also prose token `input/output` (not a route).
+Project example with fragment: `AGENTS.md#review` is not a route.
+```text
+Fenced example containing `NOT_A_ROUTE.md` — never a route.
+```
+EOF
+printf 'a -> `b.md`\n' > "$MINI/a.md"
+printf 'b -> `a.md`\n' > "$MINI/b.md"
+"$ROUTE_CHECK" "$MINI" >"$TMP_ROOT/mini.log" 2>&1 \
+    || { cat "$TMP_ROOT/mini.log"; fail "valid mini pack rejected"; }
+grep -Fq '3 reachable' "$TMP_ROOT/mini.log" \
+    || fail "mini pack cycle/indirect reachability miscounted"
+
+# directory-prefixed entry names are advertised routes, not examples:
+# nonexistent `implementation/README.md` fails BROKEN ...
+MINI_BROKEN="$TMP_ROOT/pack-mini-broken"
+cp -r "$MINI" "$MINI_BROKEN"
+mkdir -p "$MINI_BROKEN/implementation"
+printf 'ref: `implementation/README.md`\n' >> "$MINI_BROKEN/INDEX.md"
+"$ROUTE_CHECK" "$MINI_BROKEN" >"$TMP_ROOT/mini-broken.log" 2>&1 \
+    && fail "route check hid a missing directory-prefixed README"
+grep -Fq 'BROKEN: INDEX.md -> implementation/README.md' \
+    "$TMP_ROOT/mini-broken.log" \
+    || fail "dir-prefixed README not reported as advertised route"
+
+# ... and a real one becomes a reachable edge (never UNREACHABLE)
+printf '# impl readme\n' > "$MINI_BROKEN/implementation/README.md"
+"$ROUTE_CHECK" "$MINI_BROKEN" >"$TMP_ROOT/mini-real.log" 2>&1 \
+    || { cat "$TMP_ROOT/mini-real.log"; fail "real dir-prefixed README rejected"; }
+grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
+    || fail "real dir-prefixed README not counted reachable"
+
 # Legitimate project-owned example tokens and valid indirect routing
 # stay accepted: the shipped pack exercises both.
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
