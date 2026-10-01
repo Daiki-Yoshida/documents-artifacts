@@ -980,24 +980,35 @@ if command -v python3 >/dev/null 2>&1; then
   # Issue #142 review regressions — boundary/identity defects
   mv "$obs_root/repo/watched-a.moved" "$obs_root/repo/watched-a.txt"
 
-  # an intermediate directory symlink — including an alias into .git —
-  # must fail closed before any watch/output/READY is created
+  # each rejection case gets fresh absent control/output paths and
+  # asserts the boundary diagnostic — otherwise a stale path from a
+  # preceding live run could make the case fail on the collision check
+  # instead of the intended validation
   mkdir -p "$obs_root/repo/realdir"
   printf 'x\n' > "$obs_root/repo/realdir/inner.txt"
   ln -s realdir "$obs_root/repo/dirlink"
   if $OBS --run-root "$obs_root" --allow dirlink/inner.txt \
-      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
-      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
-      >/dev/null 2>&1; then
+      --output "$obs_root/rej-dirlink.jsonl" \
+      --ready-file "$obs_root/rej-dirlink.ready" \
+      --stop-file "$obs_root/rej-dirlink.stop" \
+      >"$obs_root/rej-dirlink.log" 2>&1; then
     fail "observer accepted an intermediate directory symlink"
   fi
+  grep -Fq 'not a real directory' "$obs_root/rej-dirlink.log" \
+    || fail "intermediate symlink rejected without boundary diagnostic"
+  [[ ! -e "$obs_root/rej-dirlink.jsonl" && ! -e "$obs_root/rej-dirlink.ready" ]] \
+    || fail "refused dir-symlink run left state behind"
+
   ln -s .git "$obs_root/repo/gitalias"
   if $OBS --run-root "$obs_root" --allow gitalias/HEAD \
-      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
-      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
-      >/dev/null 2>&1; then
+      --output "$obs_root/rej-gitalias.jsonl" \
+      --ready-file "$obs_root/rej-gitalias.ready" \
+      --stop-file "$obs_root/rej-gitalias.stop" \
+      >"$obs_root/rej-gitalias.log" 2>&1; then
     fail "observer accepted a .git alias through a symlinked directory"
   fi
+  grep -Fq 'not a real directory' "$obs_root/rej-gitalias.log" \
+    || fail ".git alias rejected without boundary diagnostic"
 
   # a symlinked run root or repo must not satisfy the prepared boundary
   obs_sib="$TEST_RUNS_ROOT/observe-sibling"
@@ -1005,28 +1016,40 @@ if command -v python3 >/dev/null 2>&1; then
   printf 'x\n' > "$obs_sib/repo/f.txt"
   ln -s "$obs_sib" "$TEST_RUNS_ROOT/observe-link"
   if $OBS --run-root "$TEST_RUNS_ROOT/observe-link" --allow f.txt \
-      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
-      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
-      >/dev/null 2>&1; then
+      --output "$obs_root/rej-runroot.jsonl" \
+      --ready-file "$obs_root/rej-runroot.ready" \
+      --stop-file "$obs_root/rej-runroot.stop" \
+      >"$obs_root/rej-runroot.log" 2>&1; then
     fail "observer accepted a symlinked run root"
   fi
+  grep -Fq 'run boundary component is not a real directory' "$obs_root/rej-runroot.log" \
+    || fail "symlinked run root rejected without boundary diagnostic"
+  [[ ! -e "$obs_root/rej-runroot.jsonl" && ! -e "$obs_root/rej-runroot.ready" ]] \
+    || fail "refused symlinked-root run left state behind"
+
   obs_linkroot="$TEST_RUNS_ROOT/observe-linkroot"
   mkdir -p "$obs_linkroot"
   ln -s "$obs_sib/repo" "$obs_linkroot/repo"
   if $OBS --run-root "$obs_linkroot" --allow f.txt \
-      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
-      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
-      >/dev/null 2>&1; then
+      --output "$obs_root/rej-repolink.jsonl" \
+      --ready-file "$obs_root/rej-repolink.ready" \
+      --stop-file "$obs_root/rej-repolink.stop" \
+      >"$obs_root/rej-repolink.log" 2>&1; then
     fail "observer accepted a symlinked repo directory"
   fi
+  grep -Fq 'run boundary component is not a real directory' "$obs_root/rej-repolink.log" \
+    || fail "symlinked repo rejected without boundary diagnostic"
 
   # duplicate inode identity under different spellings is rejected
   if $OBS --run-root "$obs_root" --allow watched-a.txt --allow ./watched-a.txt \
-      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
-      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
-      >/dev/null 2>&1; then
+      --output "$obs_root/rej-dup.jsonl" \
+      --ready-file "$obs_root/rej-dup.ready" \
+      --stop-file "$obs_root/rej-dup.stop" \
+      >"$obs_root/rej-dup.log" 2>&1; then
     fail "observer accepted duplicate inode/label identities"
   fi
+  grep -Fq 'duplicate allowlist path' "$obs_root/rej-dup.log" \
+    || fail "duplicate identity rejected without diagnostic"
 
   # renaming a watched file's parent directory marks the record
   # incomplete — no file-watch event fires, so end-of-window path
