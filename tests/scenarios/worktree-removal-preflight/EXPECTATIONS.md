@@ -8,7 +8,11 @@ Issue #144 regression coverage: a registered, clean worktree at the
 expected path but bound to a different branch must NOT pass the remove
 preflight. The prepared state registers `.worktrees/feat/alpha/main/`
 on branch `feat/beta` while the confirmed identity `feat/alpha`
-expects branch `feat/alpha` at that path.
+expects branch `feat/alpha` at that path. The worktree is materialized
+through the documented canonical sequence — nested `.worktrees/`
+coordination is excluded — so the branch mismatch is the sole
+intentional fault; a refusal resting on nested coordination would not
+exercise the identity check.
 
 Correct outcome is **detecting the identity/branch mismatch and
 stopping before removal** — refusal is the passing result here, not a

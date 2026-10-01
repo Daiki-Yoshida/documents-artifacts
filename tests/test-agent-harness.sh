@@ -201,7 +201,9 @@ for scenario_dir in "${scenario_dirs[@]}"; do
 
   # issue #144: the removal-preflight scenario materializes a clean
   # registered worktree at the requested path but bound to a different
-  # branch — the prepared state must carry that mismatch
+  # branch — the prepared state must carry that mismatch as the SOLE
+  # fault: nested coordination state must be correctly excluded so a
+  # refusal cannot rest on a second invalid condition
   if [[ "$scenario" == "worktree-removal-preflight" ]]; then
     wt="$target/.worktrees/feat/alpha/main"
     [[ -d "$wt" ]] || fail "removal-preflight worktree missing at prepared path"
@@ -209,6 +211,10 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "removal-preflight worktree not on the mismatch branch"
     [[ -z "$(git -C "$wt" status --porcelain)" ]] \
       || fail "removal-preflight worktree not clean at baseline"
+    [[ ! -e "$wt/.worktrees/PROJECT_COORDINATION.md" ]] \
+      || fail "nested coordination state materialized inside the worktree"
+    git -C "$wt" sparse-checkout list | grep -Fq '!/.worktrees/' \
+      || fail "worktree-local sparse exclusion not active"
     git -C "$target" worktree list --porcelain \
       | grep -Fq "worktree $wt" \
       || fail "mismatched worktree not registered in prepared repo"
