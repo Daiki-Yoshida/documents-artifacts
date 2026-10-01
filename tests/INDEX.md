@@ -79,7 +79,7 @@ temporary runが消える前にmachine evidenceを採取する。
 bash tests/scripts/capture-agent-test.sh --scenario contract-boundary --run-id 2026-09-25-devin
 ```
 
-`tests/results/<scenario>/<run-id>/evidence/` へbundleを書き、agent-authored `REPORT.md` を同じ `<run-id>/` 配下へ記録する。run rootに `RUN_PROVENANCE.txt` (少なくとも1 pair・`model`必須・value≤500文字) / `verification/` / `OBSERVED_READS.txt` が存在すれば、検証・file全体へのcontent-filter (comment含む)のうえ `<run-id>/provenance.txt`・`<run-id>/verification/`・`<run-id>/observed-reads.txt` としてverbatim copyする。captureは全destinationをwrite前にpreflightし、既存pathやdangling symlinkを拒否する。存在・非存在はevidence `metadata.txt` の `provenance` / `verification_output` / `observed_reads` fieldへ記録される。これらのrecordは `evidence/` 内部へ入れず、authorshipをmachine evidenceと分離する。
+`tests/results/<scenario>/<run-id>/evidence/` へbundleを書き、agent-authored `REPORT.md` を同じ `<run-id>/` 配下へ記録する。run rootに `RUN_PROVENANCE.txt` (少なくとも1 pair・`model`必須・value≤500文字) / `verification/` / `OBSERVED_READS.txt` が存在すれば、検証・file全体へのcontent-filter (comment含む)のうえ `<run-id>/provenance.txt`・`<run-id>/verification/`・`<run-id>/observed-reads.txt` としてverbatim copyする。captureは全destinationをwrite前にpreflightし、既存pathやdangling symlinkを拒否する。試行途中で失敗した場合はその試行が作成したpathのみrollbackされ (single-writer cleanup)、既存recordは保持されretryが可能。存在・非存在はevidence `metadata.txt` の `provenance` / `verification_output` / `observed_reads` fieldへ記録される。これらのrecordは `evidence/` 内部へ入れず、authorshipをmachine evidenceと分離する。
 
 `changes.patch` はnon-ignored untracked fileも含める。ただしsecret-like path/contentを検出した場合は、evidenceを作成する前にfail closedする。ignored runtime stateは内容をarchiveせず、path/type/sizeの存在証跡だけを残す。
 

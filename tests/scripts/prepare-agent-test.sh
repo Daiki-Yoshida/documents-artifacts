@@ -178,7 +178,7 @@ cat > "$RUN_ROOT/RUN_PROVENANCE.txt" <<'EOF'
 # in RUN_METADATA.txt and evidence/metadata.txt — do not duplicate them here.
 #
 # Exact agent model identifier (required if any key is given).
-# model: luna-medium
+# model: gpt-6-luna
 # Model snapshot / version — only if actually known; otherwise omit the line.
 # model_version: 2026-09-30
 # Reasoning effort setting — kept separate from the model identifier.
@@ -193,7 +193,7 @@ cat > "$RUN_ROOT/RUN_PROVENANCE.txt" <<'EOF'
 # This run's index within the run set.
 # repetition: 1
 # Batch identifier grouping repeated runs.
-# run_set: luna-medium-baseline
+# run_set: gpt-6-luna-baseline
 # How the artifact read list was produced:
 # self-reported | operator-log | tool-export | none
 # read_evidence: self-reported

@@ -288,8 +288,33 @@ for dest in "$OUT/provenance.txt" "$OUT/verification" "$OUT/observed-reads.txt";
 done
 mkdir -p -- "$EV"
 
+# Bounded failure handling: until the bundle is fully published, any exit
+# removes only the paths this capture attempt itself created. Preflight
+# above guarantees none of them existed beforehand, and pre-existing
+# records such as REPORT.md are never touched. This is single-writer
+# cleanup after a failed attempt — not concurrent atomicity — and it keeps
+# a retry possible instead of leaving a valid-looking partial bundle.
+CAPTURE_CREATED=("$EV")
+if ((PROVIDED_PROVENANCE)); then CAPTURE_CREATED+=("$OUT/provenance.txt"); fi
+if ((PROVIDED_VERIFICATION)); then CAPTURE_CREATED+=("$OUT/verification"); fi
+if ((PROVIDED_READS)); then CAPTURE_CREATED+=("$OUT/observed-reads.txt"); fi
+TMP_INDEX=""
+PUBLISHED=0
+capture_cleanup() {
+  if [[ -n "$TMP_INDEX" ]]; then rm -f -- "$TMP_INDEX"; fi
+  if ((!PUBLISHED)); then
+    local created
+    for created in "${CAPTURE_CREATED[@]}"; do
+      if [[ -e "$created" || -L "$created" ]]; then
+        rm -rf -- "$created"
+      fi
+    done
+    rmdir -- "$OUT" 2>/dev/null || true
+  fi
+}
+trap capture_cleanup EXIT
+
 TMP_INDEX="$(mktemp)"
-trap 'rm -f -- "$TMP_INDEX"' EXIT
 
 {
   printf 'scenario: %s\n' "$SCENARIO"
@@ -559,6 +584,7 @@ if ((PROVIDED_READS)); then
   cp -- "$READS_SRC" "$OUT/observed-reads.txt"
 fi
 
+PUBLISHED=1
 printf 'Captured evidence: %s\n' "$EV"
 if ((PROVIDED_PROVENANCE)); then
   printf 'Run provenance: %s\n' "$OUT/provenance.txt"

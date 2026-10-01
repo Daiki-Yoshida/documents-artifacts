@@ -466,22 +466,22 @@ grep -Fqx 'observed_reads: not-provided' "$evn/evidence/metadata.txt" \
 
 # template ergonomics: uncommenting the example `model` line must yield the
 # exact value — explanations live on their own comment lines
-sed -i 's/^# model: luna-medium$/model: luna-medium/' "$prov_root/RUN_PROVENANCE.txt"
-grep -Fqx 'model: luna-medium' "$prov_root/RUN_PROVENANCE.txt" \
+sed -i 's/^# model: gpt-6-luna$/model: gpt-6-luna/' "$prov_root/RUN_PROVENANCE.txt"
+grep -Fqx 'model: gpt-6-luna' "$prov_root/RUN_PROVENANCE.txt" \
   || fail "template model example is not a clean key: value line"
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
   "$CAPTURE" --scenario "$cap_scenario" --run-id prov-template >/dev/null
 evt="$TEST_RESULTS_ROOT/$cap_scenario/prov-template"
 grep -Fqx 'provenance: present' "$evt/evidence/metadata.txt" \
   || fail "uncommented template provenance not marked present"
-grep -Fqx 'model: luna-medium' "$evt/provenance.txt" \
+grep -Fqx 'model: gpt-6-luna' "$evt/provenance.txt" \
   || fail "persisted provenance lost the exact model value"
 
 # filled provenance + verification output + observed reads persist verbatim
 # at the run-id level, outside evidence/
 cat > "$prov_root/RUN_PROVENANCE.txt" <<'EOF'
 # operator comment
-model: luna-medium
+model: gpt-6-luna
 model_version: test-snapshot
 reasoning_effort: medium
 agent_runtime: harness selftest
@@ -545,7 +545,7 @@ fi
   || fail "model-less provenance left persisted output"
 
 # secret-like verification output fails closed like any other content
-printf 'model: luna-medium\n' > "$prov_root/RUN_PROVENANCE.txt"
+printf 'model: gpt-6-luna\n' > "$prov_root/RUN_PROVENANCE.txt"
 printf 'api_key = AKIAIOSFODNN7EXAMPLE\n' > "$prov_root/verification/leak.txt"
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
     "$CAPTURE" --scenario "$cap_scenario" --run-id prov-secret >/dev/null 2>&1; then
@@ -559,7 +559,7 @@ rm -f "$prov_root/verification/leak.txt"
 
 # the content filter applies to the complete provenance input: secret-like
 # text in a value and in a comment line are both refused before persistence
-printf 'model: luna-medium\nknown_limitations: token=FAKE_REVIEW_ONLY_12345678\n' \
+printf 'model: gpt-6-luna\nknown_limitations: token=FAKE_REVIEW_ONLY_12345678\n' \
   > "$prov_root/RUN_PROVENANCE.txt"
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
     "$CAPTURE" --scenario "$cap_scenario" --run-id prov-filter-value >/dev/null 2>&1; then
@@ -568,7 +568,7 @@ fi
 [[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-filter-value" ]] \
   || fail "rejected provenance value left persisted output"
 
-printf '# note: token=FAKE_REVIEW_ONLY_12345678\nmodel: luna-medium\n' \
+printf '# note: token=FAKE_REVIEW_ONLY_12345678\nmodel: gpt-6-luna\n' \
   > "$prov_root/RUN_PROVENANCE.txt"
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
     "$CAPTURE" --scenario "$cap_scenario" --run-id prov-filter-comment >/dev/null 2>&1; then
@@ -599,7 +599,7 @@ fi
   || fail "over-limit provenance left persisted output"
 
 # malformed input reports file and line number, never the line content
-printf 'model: luna-medium\nMALFORMED_MARKER_LINE\n' > "$prov_root/RUN_PROVENANCE.txt"
+printf 'model: gpt-6-luna\nMALFORMED_MARKER_LINE\n' > "$prov_root/RUN_PROVENANCE.txt"
 if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
     "$CAPTURE" --scenario "$cap_scenario" --run-id prov-diag \
     >"$prov_root/diag.out" 2>&1; then
@@ -616,7 +616,7 @@ rm -f "$prov_root/diag.out"
 
 # destination collisions — including dangling symlinks — are refused before
 # any output is written; existing records such as REPORT.md stay untouched
-printf 'model: luna-medium\n' > "$prov_root/RUN_PROVENANCE.txt"
+printf 'model: gpt-6-luna\n' > "$prov_root/RUN_PROVENANCE.txt"
 dest_dir="$TEST_RESULTS_ROOT/$cap_scenario/prov-dest"
 mkdir -p "$dest_dir"
 printf 'stale provenance\n' > "$dest_dir/provenance.txt"
@@ -652,6 +652,45 @@ if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_R
 fi
 [[ ! -e "$vdir/evidence" ]] \
   || fail "refused capture still created an evidence bundle"
+
+# a failed optional-record copy rolls back only the paths this attempt
+# created: no partial bundle is published, pre-existing records survive,
+# and a normal retry then succeeds
+fakebin="$prov_root/fakebin"
+mkdir -p "$fakebin"
+printf '#!/usr/bin/env bash\nexit 71\n' > "$fakebin/cp"
+chmod +x "$fakebin/cp"
+cpf_dir="$TEST_RESULTS_ROOT/$cap_scenario/prov-cpfail"
+mkdir -p "$cpf_dir"
+printf 'agent report\n' > "$cpf_dir/REPORT.md"
+printf 'model: gpt-6-luna\nreasoning_effort: medium\n' > "$prov_root/RUN_PROVENANCE.txt"
+if PATH="$fakebin:$PATH" ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-cpfail >/dev/null 2>&1; then
+  fail "capture succeeded with injected cp failure"
+fi
+[[ ! -e "$cpf_dir/evidence" ]] \
+  || fail "failed copy left a partial evidence bundle"
+[[ ! -e "$cpf_dir/provenance.txt" ]] \
+  || fail "failed copy left a partial provenance record"
+[[ ! -e "$cpf_dir/verification" ]] \
+  || fail "failed copy left a partial verification record"
+[[ ! -e "$cpf_dir/observed-reads.txt" ]] \
+  || fail "failed copy left a partial observed-reads record"
+[[ "$(cat "$cpf_dir/REPORT.md")" == "agent report" ]] \
+  || fail "rollback clobbered pre-existing REPORT.md"
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-cpfail >/dev/null
+[[ -f "$cpf_dir/evidence/metadata.txt" ]] \
+  || fail "retry after rolled-back capture did not produce evidence"
+cmp -s "$prov_root/RUN_PROVENANCE.txt" "$cpf_dir/provenance.txt" \
+  || fail "retry after rolled-back capture did not persist provenance"
+[[ -f "$cpf_dir/verification/node-test.txt" ]] \
+  || fail "retry after rolled-back capture did not persist verification output"
+[[ -f "$cpf_dir/observed-reads.txt" ]] \
+  || fail "retry after rolled-back capture did not persist observed reads"
+grep -Fqx 'provenance: present' "$cpf_dir/evidence/metadata.txt" \
+  || fail "retry metadata does not mark provenance present"
 
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
 
