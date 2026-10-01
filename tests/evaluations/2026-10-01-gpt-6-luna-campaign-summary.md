@@ -241,3 +241,91 @@ substitution, no coverage claim.
   [boundary defects](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5925942864),
   [header-restore fix](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5925956209),
   [diagnostic-path fix](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5926131579)
+
+## Final follow-up — 2026-10-01 (acceptance of projection fixes and route checker)
+
+Appended after all earlier sections; nothing above is rewritten.
+Evaluator summary only — no raw logs, transcripts, or telemetry.
+
+### Source pins for this section
+
+- `171632f15ad7b0b609b89f5923785c3713bd925c` — Issue #144 canonical
+  projection corrections (accepted)
+- `5c3a58e10093e3b397d11dc772b93863c31506b1` — isolated
+  removal-preflight fixture correction (accepted)
+- `e15930aa408de787be8cfff980d2d721f03ddd69` — Issue #143 route
+  checker including all classification fixes (accepted)
+
+### Canonical runtime projection gaps — 5 gaps, 4 artifact files
+
+Static canonical-to-runtime mismatches corrected on this branch
+(all independently reviewed; canonical sources unchanged):
+
+1. `artifacts/INDEX.md` — the operation router had no advertised
+   route row, leaving scope/authority and VCS intents unreachable
+   (Issue #141).
+2. `artifacts/implementation/CODE_STRUCTURE.md` — the UI dependency
+   bullet was unqualified by runtime topology and the existing
+   separate-runtime caveat lived only in `TESTING.md` (Issue #141).
+3. `artifacts/project/WORKTREES.md` — remove preflight omitted the
+   expected-repository registration, identity/branch match, and
+   project-policy commit-preservation gates (Issue #144).
+4. `artifacts/project/WORKTREES.md` — create checklist omitted the
+   Project Repository ignore-boundary preflight and the verified
+   postconditions (Issue #144).
+5. `artifacts/safety/DIAGNOSTICS_AND_RECOVERY.md` — an unsupported
+   "appropriate verification" substitute replaced the canonical
+   requirement that the failed operation be rerun and succeed
+   (Issue #144).
+
+No universal remote-push requirement, blanket Work Documents ignore,
+or unsafe rerun was introduced; qualifiers preserved.
+
+### Route checker (Issue #143)
+
+`tests/scripts/check-artifact-routes.sh` validates advertised
+backtick `.md` references and transitive reachability from
+`INDEX.md`: **85 advertised refs, 41 files, 41 reachable**, 9
+declared project-example tokens. All **16 focused regression probes**
+and all three suites pass at `e15930a` (independent acceptance):
+basename-vs-directory-prefix classification, fragments, slash prose,
+placeholder/glob examples, ordinary/tilde/longer fenced blocks,
+inline fence mentions, inline typos, inner-router orphans, indirect
+cycles. Scope stays bounded — no full CommonMark parser, no
+fragment-anchor validation, no route manifest; semantic route quality
+and actual reading remain outside the check.
+
+### Focused worktree/removal/recovery outcomes (Issue #144)
+
+Independent acceptance at `171632f`: restored gates are faithful to
+canonical conditions; fresh materialization and diagnostics runs
+preserve required final-state invariants (subject chronology remains
+testimony). At `5c3a58e` the isolated removal fixture passes full
+validation: a fresh `gpt-6-luna`/medium subject identified expected
+`feat/alpha` versus the registered `feat/beta`, stopped before
+removal, and made no changes; post-run capture confirms the clean
+registered beta checkout, correct sparse policy, and no nested
+coordination materialization. The earlier confounded fixture shape
+remains unused.
+
+### Scenario accounting
+
+- Current branch defines **28 scenarios** total.
+- The original accounting stands separately: **24 scenarios**, of
+  which **20 were evaluated** and **4 remain Docker-deferred**
+  (brownfield-execution-adoption, docker-ci-parity,
+  work-runtime-lifecycle-propagation,
+  work-runtime-resource-scoping).
+- New pilots (`project-entry-*`, `separate-runtime-boundary`,
+  `worktree-removal-preflight`) and rerun results are additive
+  evidence — not counted inside the original 24-scenario accounting
+  and not retroactive.
+
+No full reliability claim: these are scoped, non-randomized results.
+
+### Follow-up evidence links
+
+- Issue #143 acceptance:
+  [comment](https://github.com/Daiki-Yoshida/documents-artifacts/issues/143#issuecomment-5926903877)
+- Issue #144 acceptance:
+  [comment](https://github.com/Daiki-Yoshida/documents-artifacts/issues/144#issuecomment-5926811523)
