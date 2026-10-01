@@ -91,6 +91,20 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
     || fail "prepared baseline tag missing: $scenario"
 
+  # issue #136: the integration scenario's agent-visible surfaces must
+  # state the commit authority a blind run needs to finish on `main` —
+  # checked on PROMPT.md and the project README only, never EXPECTATIONS
+  if [[ "$scenario" == "integration-head-revalidation" ]]; then
+    grep -Fq 'authorization covers the commits needed' "$run_root/PROMPT.md" \
+      || fail "integration task does not state in-scope commit authority"
+    grep -Fq 'does not authorize pushing to any remote' "$run_root/PROMPT.md" \
+      || fail "integration task does not bound the authorization scope"
+    grep -Fq 'passing on the final committed integrated HEAD' "$run_root/PROMPT.md" \
+      || fail "integration task does not require a verified committed result"
+    grep -Fq 'committed on `main` and `make verify` passes' "$target/README.md" \
+      || fail "fixture README does not state the committed-HEAD workflow"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"

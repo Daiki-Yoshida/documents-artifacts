@@ -11,6 +11,9 @@ repository currently declares in `config/protocol-version.txt`.
 - `make verify` is the final project verification gate.
 - Every `services/*.conf` declares a `protocol=` that must match the
   current `config/protocol-version.txt`.
+- An authorized integration is finished only when its result is
+  committed on `main` and `make verify` passes on that committed HEAD.
+  Integration work here never includes pushing to a remote.
 
 ## Verification
 
