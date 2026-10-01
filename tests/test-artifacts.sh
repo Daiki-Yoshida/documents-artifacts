@@ -181,4 +181,142 @@ grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
 
 # Legitimate project-owned example tokens and valid indirect routing
 # stay accepted: the shipped pack exercises both.
+
+# --- Remote delivery (Issue #146) -----------------------------------------
+# Run the exact README bootstrap command against local Git fixtures, so
+# no regression depends solely on GitHub availability.
+command -v git >/dev/null || fail "git is required for remote-delivery tests"
+
+README_BOOTSTRAP="$TMP_ROOT/readme-bootstrap.sh"
+awk '/<!-- remote-delivery-snippet -->/{f=1;next} /<!-- \/remote-delivery-snippet -->/{f=0} f' \
+    "$REPO_ROOT/README.md" \
+  | awk '/^```bash$/{c=1;next} /^```$/{if(c)exit} c' \
+  > "$README_BOOTSTRAP"
+[[ -s "$README_BOOTSTRAP" ]] || fail "README remote-delivery snippet not found"
+bash -n "$README_BOOTSTRAP" || fail "README bootstrap snippet has a syntax error"
+
+BOOT_TMP="$TMP_ROOT/boot-tmp"
+mkdir -p "$BOOT_TMP"
+
+assert_tmp_clean() {
+  [[ -z "$(ls -A "$BOOT_TMP")" ]] || fail "bootstrap temp not cleaned: $*"
+}
+
+run_bootstrap() {
+  # $1 = target dir; $2 = source repo override (empty = documented default)
+  local tdir="$1" url="${2:-}"
+  if [[ -n "$url" ]]; then
+    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" ARTIFACT_SOURCE_REPO="$url" bash "$README_BOOTSTRAP" )
+  else
+    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" GIT_TERMINAL_PROMPT=0 \
+        env -u ARTIFACT_SOURCE_REPO bash "$README_BOOTSTRAP" )
+  fi
+}
+
+# Fixture "remote": a standalone Git repo holding artifacts.sh + the real pack.
+GIT_REMOTE="$TMP_ROOT/git-remote"
+mkdir -p "$GIT_REMOTE"
+cp "$SCRIPT" "$GIT_REMOTE/artifacts.sh"
+chmod +x "$GIT_REMOTE/artifacts.sh"
+cp -r "$REPO_ROOT/artifacts" "$GIT_REMOTE/artifacts"
+git -C "$GIT_REMOTE" -c init.defaultBranch=main init -q
+git -C "$GIT_REMOTE" add -A
+git -C "$GIT_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qm 'pack v1'
+
+# First install into a fresh target whose path contains spaces; the
+# target defaults to the current directory. Project-owned files exist.
+RTARGET="$TMP_ROOT/remote target with spaces"
+mkdir -p "$RTARGET/documents/project"
+printf 'project agents\n' > "$RTARGET/AGENTS.md"
+printf 'project readme\n' > "$RTARGET/README.md"
+printf 'project index\n' > "$RTARGET/documents/INDEX.md"
+printf 'owner doc\n'      > "$RTARGET/documents/project/OWNERS.md"
+
+run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
+    || fail "remote-delivery first install failed"
+assert_file "$RTARGET/documents/artifacts/INDEX.md"
+assert_file "$RTARGET/documents/artifacts/implementation/TESTING.md"
+assert_tmp_clean "after first install"
+
+# Only artifacts/ contents may reach the target: no source .git, no
+# artifacts.sh copy, no source-only docs.
+assert_absent "$RTARGET/artifacts.sh"
+assert_absent "$RTARGET/artifacts"
+assert_absent "$RTARGET/documents/knowledge"
+if find "$RTARGET" -name '.git' -print -quit | grep -q .; then
+  fail "source .git reached target"
+fi
+[[ -z "$(find "$RTARGET/documents" -name '.artifacts.*' -print -quit)" ]] \
+    || fail "stage residue left in target documents"
+
+# Update: the remote moves forward; a stale managed file is removed and
+# project-owned files stay untouched.
+printf 'stale\n' > "$RTARGET/documents/artifacts/STALE.md"
+printf 'testing-v2\n' > "$GIT_REMOTE/artifacts/implementation/TESTING.md"
+git -C "$GIT_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qam 'pack v2'
+
+run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
+    || fail "remote-delivery update failed"
+[[ "$(cat "$RTARGET/documents/artifacts/implementation/TESTING.md")" == "testing-v2" ]] \
+    || fail "remote update did not apply new pack content"
+assert_absent "$RTARGET/documents/artifacts/STALE.md"
+assert_tmp_clean "after update"
+
+[[ "$(cat "$RTARGET/AGENTS.md")" == "project agents" ]] || fail "AGENTS.md changed"
+[[ "$(cat "$RTARGET/README.md")" == "project readme" ]] || fail "target README.md changed"
+[[ "$(cat "$RTARGET/documents/INDEX.md")" == "project index" ]] || fail "documents/INDEX.md changed"
+[[ "$(cat "$RTARGET/documents/project/OWNERS.md")" == "owner doc" ]] || fail "owner doc changed"
+
+# Failed fetch leaves the installed pack unchanged and cleans the temp dir.
+pack_state() { find "$1/documents/artifacts" -type f -printf '%P %s\n' | LC_ALL=C sort; }
+BEFORE="$(pack_state "$RTARGET")"
+if run_bootstrap "$RTARGET" "file://$TMP_ROOT/missing-remote" >/dev/null 2>&1; then
+  fail "unreachable remote unexpectedly succeeded"
+fi
+[[ "$BEFORE" == "$(pack_state "$RTARGET")" ]] \
+    || fail "failed fetch changed the installed pack"
+assert_tmp_clean "after failed fetch"
+
+# A fetchable source whose pack fails validation also leaves the target
+# unchanged (validation finishes before managed replacement).
+BAD_REMOTE="$TMP_ROOT/git-bad-remote"
+mkdir -p "$BAD_REMOTE/artifacts"
+cp "$SCRIPT" "$BAD_REMOTE/artifacts.sh"
+printf '# bad\n' > "$BAD_REMOTE/artifacts/INDEX.md"
+ln -s INDEX.md "$BAD_REMOTE/artifacts/link.md"
+git -C "$BAD_REMOTE" -c init.defaultBranch=main init -q
+git -C "$BAD_REMOTE" add -A
+git -C "$BAD_REMOTE" \
+    -c user.email=test@example.com -c user.name=test \
+    commit -qm 'invalid pack'
+if run_bootstrap "$RTARGET" "file://$BAD_REMOTE" >/dev/null 2>&1; then
+  fail "invalid source pack unexpectedly succeeded"
+fi
+[[ "$BEFORE" == "$(pack_state "$RTARGET")" ]] \
+    || fail "invalid source changed the installed pack"
+assert_tmp_clean "after invalid source"
+
+# Live probe: the documented default command performs an actual
+# GitHub-main acquisition into a disposable target. Distinguish blocked
+# egress from a passing run — never silently pass.
+LIVE_TARGET="$TMP_ROOT/live-target"
+mkdir -p "$LIVE_TARGET"
+if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" GIT_TERMINAL_PROMPT=0 \
+    env -u ARTIFACT_SOURCE_REPO bash "$3"' \
+    _ "$LIVE_TARGET" "$BOOT_TMP" "$README_BOOTSTRAP" >/dev/null 2>&1; then
+  assert_file "$LIVE_TARGET/documents/artifacts/INDEX.md"
+  assert_tmp_clean "after live acquisition"
+  printf 'NOTE: live GitHub main acquisition verified\n'
+elif timeout 30 git ls-remote \
+    https://github.com/Daiki-Yoshida/documents-artifacts.git HEAD \
+    >/dev/null 2>&1; then
+  fail "live acquisition failed while the GitHub repo is reachable"
+else
+  printf 'SKIP: live GitHub probe blocked (egress unavailable); fixture coverage passed\n'
+fi
+
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
