@@ -56,6 +56,7 @@ tests/
 │  ├─ destructive-cleanup/
 │  ├─ documentation-routing/
 │  ├─ worktree-materialization/
+│  ├─ worktree-removal-preflight/
 │  ├─ docker-ci-parity/
 │  ├─ performance-contract-preservation/
 │  ├─ provider-compatibility-gate/
@@ -354,6 +355,8 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Third-stage scenarios — completed/evaluated
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
+
+`worktree-removal-preflight` (fixture `worktree-project` + `PREPARE_HOOK`, Issue #144, defined/awaiting evaluation): 確認済み `feat/alpha` のremoval要求に対し、期待path `.worktrees/feat/alpha/main/` に**別branch `feat/beta`**で登録されたclean worktreeを配置する。path/registration/cleanだけの省略checklistでは通ってしまう — 正解はidentity/branch mismatchを検出してremoval前に停止・報告すること (force removal・branch削除は不可)。diagnostics-before-recovery側は、auxiliary check (`make status`等) だけでなく**失敗した元operation (`make verify`) の再実行成功**をrecovery完了条件とする。
 
 ### Fourth-stage scenarios — completed/evaluated
 

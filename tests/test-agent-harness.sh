@@ -199,6 +199,35 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "same-runtime CLI consumer missing from fixture"
   fi
 
+  # issue #144: the removal-preflight scenario materializes a clean
+  # registered worktree at the requested path but bound to a different
+  # branch — the prepared state must carry that mismatch
+  if [[ "$scenario" == "worktree-removal-preflight" ]]; then
+    wt="$target/.worktrees/feat/alpha/main"
+    [[ -d "$wt" ]] || fail "removal-preflight worktree missing at prepared path"
+    [[ "$(git -C "$wt" branch --show-current)" == "feat/beta" ]] \
+      || fail "removal-preflight worktree not on the mismatch branch"
+    [[ -z "$(git -C "$wt" status --porcelain)" ]] \
+      || fail "removal-preflight worktree not clean at baseline"
+    git -C "$target" worktree list --porcelain \
+      | grep -Fq "worktree $wt" \
+      || fail "mismatched worktree not registered in prepared repo"
+    if grep -Eq 'WORKTREES|WORK_IDENTITY|DIAGNOSTICS' "$run_root/PROMPT.md"; then
+      fail "removal-preflight prompt leaks an expected artifact leaf"
+    fi
+  fi
+
+  # issue #144: the recovery fixture must still distinguish an auxiliary
+  # status probe from the original failed operation — status reports
+  # state at baseline while `make verify` (the failed operation) fails
+  if [[ "$scenario" == "diagnostics-before-recovery" ]]; then
+    make -C "$target" status WORK=feat/export >/dev/null \
+      || fail "diagnostics fixture status probe failed at baseline"
+    if make -C "$target" verify WORK=feat/export >/dev/null 2>&1; then
+      fail "diagnostics fixture verify unexpectedly green at baseline"
+    fi
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"
@@ -347,6 +376,41 @@ grep -Fq 'TESTING.md' "$cs" \
   || fail "CODE_STRUCTURE lacks the Runtime seams pointer"
 grep -Fq 'Runtime seams' "$REPO_ROOT/artifacts/implementation/TESTING.md" \
   || fail "TESTING.md lost the Runtime seams section"
+
+# --- worktree/recovery projection checks (Issue #144) ---
+
+wt_doc="$REPO_ROOT/artifacts/project/WORKTREES.md"
+# remove preflight: expected-repository registration, identity/branch
+# match, clean state, and project-policy commit preservation
+grep -Fq 'registered worktree of the expected repository' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost repository registration"
+grep -Fq 'identity/branch matches' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost identity/branch match"
+grep -Fq 'commits are preserved according to project policy' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost project-policy preservation"
+# preservation must stay project-policy scoped — never a universal
+# remote-push requirement
+if grep -qiE 'push.*preserv|preserv.*push|remote.*requir' "$wt_doc"; then
+  fail "WORKTREES preservation drifted toward a remote-push requirement"
+fi
+# create preflight: the Project Repository ignore-boundary gate
+grep -Fq 'ignore boundary covers the sibling worktree path' "$wt_doc" \
+  || fail "WORKTREES create preflight lost the ignore-boundary gate"
+# create postconditions: registered path/branch identity plus Work
+# Documents tracking — never blanket-ignored
+grep -Fq 'Work Documents remain materialized/tracked' "$wt_doc" \
+  || fail "WORKTREES postconditions lost Work Documents tracking"
+grep -Fq 'does not appear as ordinary untracked project content' "$wt_doc" \
+  || fail "WORKTREES postconditions lost the untracked-content check"
+
+rec_doc="$REPO_ROOT/artifacts/safety/DIAGNOSTICS_AND_RECOVERY.md"
+# recovery completion requires a successful rerun of the failed
+# operation — no auxiliary-verification substitute
+grep -Fq 'failed operation is rerun and succeeds' "$rec_doc" \
+  || fail "recovery gate lost the successful-rerun requirement"
+if grep -Fq 'appropriate verification' "$rec_doc"; then
+  fail "recovery gate still permits a verification substitute"
+fi
 
 # --- evidence capture contract (focused single-scenario check) ---
 
