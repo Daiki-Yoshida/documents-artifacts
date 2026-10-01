@@ -958,6 +958,77 @@ if command -v python3 >/dev/null 2>&1; then
     || fail "invalidated watch was not recorded as incomplete"
   grep -Fq 'watch-invalidated:watched-a.txt' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
     || fail "invalidation reason missing from record"
+
+  # Issue #142 review regressions — boundary/identity defects
+  mv "$obs_root/repo/watched-a.moved" "$obs_root/repo/watched-a.txt"
+
+  # an intermediate directory symlink — including an alias into .git —
+  # must fail closed before any watch/output/READY is created
+  mkdir -p "$obs_root/repo/realdir"
+  printf 'x\n' > "$obs_root/repo/realdir/inner.txt"
+  ln -s realdir "$obs_root/repo/dirlink"
+  if $OBS --run-root "$obs_root" --allow dirlink/inner.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted an intermediate directory symlink"
+  fi
+  ln -s .git "$obs_root/repo/gitalias"
+  if $OBS --run-root "$obs_root" --allow gitalias/HEAD \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a .git alias through a symlinked directory"
+  fi
+
+  # a symlinked run root or repo must not satisfy the prepared boundary
+  obs_sib="$TEST_RUNS_ROOT/observe-sibling"
+  mkdir -p "$obs_sib/repo/.git"
+  printf 'x\n' > "$obs_sib/repo/f.txt"
+  ln -s "$obs_sib" "$TEST_RUNS_ROOT/observe-link"
+  if $OBS --run-root "$TEST_RUNS_ROOT/observe-link" --allow f.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a symlinked run root"
+  fi
+  obs_linkroot="$TEST_RUNS_ROOT/observe-linkroot"
+  mkdir -p "$obs_linkroot"
+  ln -s "$obs_sib/repo" "$obs_linkroot/repo"
+  if $OBS --run-root "$obs_linkroot" --allow f.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a symlinked repo directory"
+  fi
+
+  # duplicate inode identity under different spellings is rejected
+  if $OBS --run-root "$obs_root" --allow watched-a.txt --allow ./watched-a.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted duplicate inode/label identities"
+  fi
+
+  # renaming a watched file's parent directory marks the record
+  # incomplete — no file-watch event fires, so end-of-window path
+  # revalidation must catch the lost binding
+  rm -f "$obs_root/FILE_OPEN_EVENTS.jsonl" "$obs_root/READY" "$obs_root/STOP"
+  $OBS --run-root "$obs_root" --allow docs/watched-b.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready (parent-rename run)"
+  mv "$obs_root/repo/docs" "$obs_root/repo/docs-renamed"
+  sleep 0.4
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on parent rename"
+  grep -Fq '"incomplete":true' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "parent-directory rename was not recorded as incomplete"
+  grep -Fq 'path-binding-lost:docs/watched-b.txt' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "lost path binding reason missing from record"
+  mv "$obs_root/repo/docs-renamed" "$obs_root/repo/docs"
 else
   printf 'note: python3 unavailable — file-open observer checks skipped\n' >&2
 fi

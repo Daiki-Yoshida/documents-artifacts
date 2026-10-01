@@ -86,8 +86,20 @@ def mask_names(mask):
     return names or [f"0x{mask:x}"]
 
 
+def check_secret_name(name, rel):
+    for pat in SECRET_NAME_PATTERNS:
+        if fnmatch.fnmatch(name, pat):
+            fail(f"allowlist path matches a credential-like name: {rel!r}")
+
+
 def validate_allow(repo_real, rel):
-    """Return the normalized repo-relative label, or fail closed."""
+    """Return (normalized label, (dev, ino)) or fail closed.
+
+    Every path component is validated without following symlinks: a
+    symlinked intermediate directory — including an alias into .git — is
+    rejected, and the resolved identity is re-checked for forbidden
+    components.
+    """
     if not rel or rel.startswith("/") or rel.startswith("~"):
         fail(f"allowlist path must be a plain relative path: {rel!r}")
     norm = os.path.normpath(rel)
@@ -96,10 +108,19 @@ def validate_allow(repo_real, rel):
     parts = norm.split(os.sep)
     if ".git" in parts:
         fail(f"allowlist path enters .git internals: {rel!r}")
-    base = parts[-1]
-    for pat in SECRET_NAME_PATTERNS:
-        if fnmatch.fnmatch(base, pat):
-            fail(f"allowlist path matches a credential-like name: {rel!r}")
+    check_secret_name(parts[-1], rel)
+    # intermediate components must be real directories — lstat each so a
+    # directory symlink cannot smuggle in .git internals or an escape
+    cur = repo_real
+    for comp in parts[:-1]:
+        cur = os.path.join(cur, comp)
+        try:
+            st = os.lstat(cur)
+        except OSError:
+            fail(f"allowlist path component does not exist: {rel!r}")
+        if not stat.S_ISDIR(st.st_mode) or stat.S_ISLNK(st.st_mode):
+            fail(f"allowlist path component is not a real directory: "
+                 f"{rel!r}")
     candidate = os.path.join(repo_real, norm)
     try:
         st = os.lstat(candidate)
@@ -113,7 +134,12 @@ def validate_allow(repo_real, rel):
     real = os.path.realpath(candidate)
     if not real.startswith(repo_real + os.sep):
         fail(f"allowlist path resolves outside the prepared repo: {rel!r}")
-    return norm
+    # forbidden-component checks apply to the resolved identity as well
+    real_rel = os.path.relpath(real, repo_real)
+    if ".git" in real_rel.split(os.sep):
+        fail(f"allowlist path resolves into .git internals: {rel!r}")
+    check_secret_name(os.path.basename(real), rel)
+    return norm, (st.st_dev, st.st_ino)
 
 
 def main():
@@ -128,21 +154,37 @@ def main():
     if sys.platform != "linux":
         fail("unsupported platform: Linux inotify required")
 
-    run_root = os.path.realpath(args.run_root)
+    run_root = args.run_root
     repo = os.path.join(run_root, "repo")
-    repo_real = os.path.realpath(repo)
+    # the prepared-run boundary itself must be real directories — a
+    # symlinked run root or repo could alias a sibling directory with a
+    # planted .git, defeating the boundary check
+    for comp in (run_root, repo):
+        try:
+            st = os.lstat(comp)
+        except OSError:
+            fail(f"run boundary component does not exist: {comp}")
+        if not stat.S_ISDIR(st.st_mode) or stat.S_ISLNK(st.st_mode):
+            fail(f"run boundary component is not a real directory: {comp}")
     if not os.path.isdir(os.path.join(repo, ".git")):
         fail("not a prepared run boundary (missing repo/.git): "
              f"{args.run_root}")
+    repo_real = os.path.realpath(repo)
 
     labels = []
+    label_ids = {}
     seen = set()
+    seen_ids = set()
     for rel in args.allow:
-        norm = validate_allow(repo_real, rel)
+        norm, ident = validate_allow(repo_real, rel)
         if norm in seen:
             fail(f"duplicate allowlist path: {rel!r}")
+        if ident in seen_ids:
+            fail(f"allowlist paths share one inode identity: {rel!r}")
         seen.add(norm)
+        seen_ids.add(ident)
         labels.append(norm)
+        label_ids[norm] = ident
 
     for p in (args.output, args.ready_file, args.stop_file):
         if os.path.lexists(p):
@@ -172,6 +214,9 @@ def main():
             if wd < 0:
                 fail(f"inotify_add_watch failed for {label}: "
                      f"errno {ctypes.get_errno()}")
+            if wd in wd_to_label:
+                fail("two allowed paths resolve to one watch identity: "
+                     f"{label} aliases {wd_to_label[wd]}")
             wd_to_label[wd] = label
     except BaseException:
         os.close(fd)
@@ -253,6 +298,20 @@ def main():
             r, _, _ = select.select([fd], [], [], 0)
             if r:
                 reasons.append("drain-truncated")
+
+        # end-of-window path revalidation: a renamed parent directory
+        # leaves the registered pathname stale without any file-watch
+        # event — compare each label's current inode identity (never its
+        # contents) so a lost path binding marks the record incomplete
+        for label in labels:
+            try:
+                st = os.lstat(os.path.join(repo_real, label))
+            except OSError:
+                reasons.append(f"path-binding-lost:{label}")
+                continue
+            if (not stat.S_ISREG(st.st_mode)
+                    or (st.st_dev, st.st_ino) != label_ids[label]):
+                reasons.append(f"path-binding-lost:{label}")
 
         emit({"type": "stop", "drained": True,
               "incomplete": bool(reasons),

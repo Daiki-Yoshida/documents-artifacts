@@ -280,10 +280,12 @@ python3 tests/scripts/observe-file-opens.py \
 touch "$RUN_ROOT/OBSERVE_STOP"   # または SIGTERM
 ```
 
-- allowlistは `repo/` 内のregular fileのみ。`..`/絶対path・symlink・hardlink (nlink>1)・`.git`内部・credential-like名・境界外解決をfail closedで拒否し、unwatchしたfileへはeventを出さない。
+- allowlistは `repo/` 内のregular fileのみ。`..`/絶対path・symlink (中間directory componentのsymlinkを含む)・hardlink (nlink>1)・`.git`内部・credential-like名・境界外解決をfail closedで拒否し、unwatchしたfileへはeventを出さない。resolved identityにも `.git`/credential-like名のcheckを適用する。
+- `--run-root`とその `repo` はsymlinkではない実directoryが必須 (別directoryへのaliasで境界checkを回避させない)。2つのallow entryが同一inode identityへ解決される場合は、片方を別labelとして誤報告しないようfail closedで拒否する。
 - READY handshakeは全watch登録後のみ。観測window内でwatched fileの**内容は一切読まない** (metadataのみ)。
 - 記録はrepo相対label・seq・mask名・collection時のwall/monotonic時刻のみ。file内容・process identityは記録しない (inotifyはPIDを返さない)。
 - 明示stop/end handshakeとfinal drain。queue overflow・watch invalidation (rename/delete/unmount)・drain打ち切りは `incomplete: true` + `reasons` で記録し、黙って成功扱いしない。abort/強制終了はfooter欠落で判別可能。
+- 観測終了時に全labelのpath bindingをinode identityで再検証する (内容は読まない)。watched fileの**parent directoryがrenameされた**場合、file-watch eventは発火しないが、登録path名は無効になる — この場合は `path-binding-lost:<label>` をreasonに付して `incomplete: true` とし、relocation後のliteral-path完全性は主張しない。
 
 限界 (overclaim禁止): OPEN eventはread/理解の証明ではない。eventはcoalesceし得る (回数≠unique open数)。timestampはobserverのcollection時刻。既にopen済みFD・auto-loadされたcontext・cache由来の参照はeventにならないことがある。同一filesystem上のsubjectのみ観測可能。「openが無い」は完了した観測window内でのみ意味を持つ。一般tracing・process monitor・security設定変更ではない。
 
