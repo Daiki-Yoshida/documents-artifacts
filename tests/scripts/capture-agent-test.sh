@@ -200,21 +200,33 @@ PROVIDED_PROVENANCE=0
 if [[ -e "$PROV_SRC" || -L "$PROV_SRC" ]]; then
   [[ -f "$PROV_SRC" && ! -L "$PROV_SRC" ]] \
     || fail "run provenance must be a regular file: $PROV_SRC"
+  # The same content filter as untracked evidence applies to the complete
+  # provenance input, including comment lines, before anything is persisted.
+  if file_has_secret_content "$PROV_SRC"; then
+    fail "refusing to persist secret-like run provenance file: $PROV_SRC"
+  fi
   prov_pairs=0
+  prov_lineno=0
   declare -A prov_seen=()
   prov_line=""
   prov_key=""
+  prov_value=""
   while IFS= read -r prov_line || [[ -n "$prov_line" ]]; do
+    ((prov_lineno += 1))
     [[ "$prov_line" =~ ^[[:space:]]*$ || "$prov_line" == \#* ]] && continue
-    [[ "$prov_line" =~ ^([a-z][a-z0-9_]*):[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]] \
-      || fail "malformed run provenance line: $prov_line"
+    # Report position only — never echo the offending line, which may carry
+    # operator data that must not reach logs.
+    if ! [[ "$prov_line" =~ ^([a-z][a-z0-9_]*):[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]]; then
+      fail "malformed run provenance at $PROV_SRC line $prov_lineno"
+    fi
     prov_key="${BASH_REMATCH[1]}"
+    prov_value="${BASH_REMATCH[2]}"
     [[ "$prov_key" =~ ^($PROV_KEY_PATTERN)$ ]] \
       || fail "unknown run provenance key: $prov_key"
     [[ -z "${prov_seen[$prov_key]:-}" ]] \
       || fail "duplicate run provenance key: $prov_key"
     prov_seen[$prov_key]=1
-    ((${#BASH_REMATCH[2]} <= 500)) \
+    ((${#prov_value} <= 500)) \
       || fail "run provenance value too long: $prov_key"
     ((prov_pairs += 1))
   done < "$PROV_SRC"
@@ -264,7 +276,16 @@ if ((PROVIDED_READS)); then READS_STATE="present"; else READS_STATE="not-provide
 OUT="$RESULTS_ROOT/$SCENARIO/$RUN_ID"
 [[ "$OUT" == "$RESULTS_ROOT/"* ]] || fail "refusing unsafe output path"
 EV="$OUT/evidence"
-[[ ! -e "$EV" ]] || fail "evidence already captured for this run id: $EV"
+# Preflight every destination this capture may publish — including dangling
+# symlinks, which -e alone would miss — before creating anything. A refused
+# capture must leave no partial bundle behind and must never clobber an
+# existing record such as REPORT.md.
+[[ ! -e "$EV" && ! -L "$EV" ]] \
+  || fail "evidence already captured for this run id: $EV"
+for dest in "$OUT/provenance.txt" "$OUT/verification" "$OUT/observed-reads.txt"; do
+  [[ ! -e "$dest" && ! -L "$dest" ]] \
+    || fail "run-level record destination already exists: $dest"
+done
 mkdir -p -- "$EV"
 
 TMP_INDEX="$(mktemp)"
@@ -525,22 +546,16 @@ if ((${#EVIDENCE_REPOS[@]})); then
 fi
 
 # Persist validated run-level records verbatim, as siblings of evidence/ —
-# authorship stays separable from the machine-generated bundle. Existing
-# records are never overwritten, same refusal rule as evidence/ itself.
+# authorship stays separable from the machine-generated bundle. Every
+# destination was preflighted above, so no existing record is overwritten.
 if ((PROVIDED_PROVENANCE)); then
-  [[ ! -e "$OUT/provenance.txt" ]] \
-    || fail "provenance already recorded: $OUT/provenance.txt"
   cp -- "$PROV_SRC" "$OUT/provenance.txt"
 fi
 if ((PROVIDED_VERIFICATION)); then
-  [[ ! -e "$OUT/verification" ]] \
-    || fail "verification output already recorded: $OUT/verification"
   mkdir -p -- "$OUT/verification"
   cp -a -- "$VER_SRC/." "$OUT/verification/"
 fi
 if ((PROVIDED_READS)); then
-  [[ ! -e "$OUT/observed-reads.txt" ]] \
-    || fail "observed reads already recorded: $OUT/observed-reads.txt"
   cp -- "$READS_SRC" "$OUT/observed-reads.txt"
 fi
 

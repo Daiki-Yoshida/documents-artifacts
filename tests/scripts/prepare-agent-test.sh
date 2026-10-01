@@ -171,19 +171,33 @@ cat > "$RUN_ROOT/RUN_PROVENANCE.txt" <<'EOF'
 # Uncomment only the lines the operator actually knows; never guess or
 # reconstruct values afterwards. capture-agent-test.sh rejects unknown
 # keys, duplicate keys, empty values, and a provided file without `model`.
+# Each commented example below is a complete "key: value" pair by itself —
+# explanations sit on their own comment lines so an uncommented example is
+# already a clean value.
 # Source SHA, fixture, and baseline SHA are already recorded mechanically
 # in RUN_METADATA.txt and evidence/metadata.txt — do not duplicate them here.
 #
-# model: luna-medium                  # exact agent model (required if any key is given)
-# model_version: 2026-09-30           # model snapshot / version if known
-# reasoning_effort: medium            # low / medium / high / provider-specific value
-# agent_runtime: dot cloud shell      # runner identity, e.g. "devin cli 3000.11.3"
+# Exact agent model identifier (required if any key is given).
+# model: luna-medium
+# Model snapshot / version — only if actually known; otherwise omit the line.
+# model_version: 2026-09-30
+# Reasoning effort setting — kept separate from the model identifier.
+# reasoning_effort: medium
+# Runner identity, e.g. "devin cli 3000.11.3".
+# agent_runtime: dot cloud shell
+# Run start/finish in ISO-8601 UTC.
 # run_started_at_utc: 2026-10-01T12:00:00Z
 # run_finished_at_utc: 2026-10-01T12:25:00Z
-# entry_condition: prompt-directed-index  # how the agent reached the artifact entry
-# repetition: 1                       # this run's index within run_set
-# run_set: luna-medium-baseline       # batch identifier grouping repeated runs
-# read_evidence: self-reported        # self-reported | operator-log | tool-export | none
+# How the agent reached the artifact entry, e.g. prompt-directed-index.
+# entry_condition: prompt-directed-index
+# This run's index within the run set.
+# repetition: 1
+# Batch identifier grouping repeated runs.
+# run_set: luna-medium-baseline
+# How the artifact read list was produced:
+# self-reported | operator-log | tool-export | none
+# read_evidence: self-reported
+# Run-specific evidence limitations.
 # known_limitations: read list is self-reported; no tool telemetry
 EOF
 
