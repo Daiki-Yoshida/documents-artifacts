@@ -262,7 +262,30 @@ bash tests/scripts/capture-agent-test.sh --scenario <scenario> --run-id <run-id>
 - 既定出力先は `tests/results/<scenario>/<run-id>/evidence/`。self-test等の一時出力には `ARTIFACT_TEST_RESULTS_ROOT` を使う。
 - prepared runと `artifact-test-baseline` tagが不在ならfailする。
 - `REPORT.md` はagentが別途書く。capture scriptはevidenceだけを生成する。
-- run rootの任意recordを検証して `<run-id>/` 直下へverbatim copyする: `RUN_PROVENANCE.txt` → `provenance.txt` (key: value形式・allowlist key・重複key不可・value≤500文字・1 pair以上あれば `model` 必須・comment/blank行は無視・template-onlyはnot-provided。malformed行はfile+行番号のみ報告し内容はechoしない)、`verification/` → `verification/` (flat regular fileのみ)、`OBSERVED_READS.txt` → `observed-reads.txt` (非空のみ)。いずれも既存のcontent filterをfile全体 (comment含む) へ適用し、secret-like contentでfail closedする。evidence/と全run-level recordのdestinationを一切のwrite前にpreflightし、既存path・dangling symlinkも拒否する — 拒否されたcaptureはpartial bundleを残さず、REPORT.md等の既存recordを変更しない。evidence生成・record copy等でcapture試行が失敗した場合、その試行が作成したpathのみをEXIT時にrollbackし、既存recordは保持する (single-writer cleanupであり、concurrent atomicityは保証しない)。失敗後は同じrun-idでretry可能。存在フラグ (`provenance` / `verification_output` / `observed_reads` = `present`|`not-provided`) をevidence `metadata.txt` へ記録する。
+- run rootの任意recordを検証して `<run-id>/` 直下へverbatim copyする: `RUN_PROVENANCE.txt` → `provenance.txt` (key: value形式・allowlist key・重複key不可・value≤500文字・1 pair以上あれば `model` 必須・comment/blank行は無視・template-onlyはnot-provided。malformed行はfile+行番号のみ報告し内容はechoしない)、`verification/` → `verification/` (flat regular fileのみ)、`OBSERVED_READS.txt` → `observed-reads.txt` (非空のみ)、`FILE_OPEN_EVENTS.jsonl` → `file-open-events.jsonl` (observer header marker `"type":"observe-file-opens"` が必須・非空のみ)。いずれも既存のcontent filterをfile全体 (comment含む) へ適用し、secret-like contentでfail closedする。evidence/と全run-level recordのdestinationを一切のwrite前にpreflightし、既存path・dangling symlinkも拒否する — 拒否されたcaptureはpartial bundleを残さず、REPORT.md等の既存recordを変更しない。evidence生成・record copy等でcapture試行が失敗した場合、その試行が作成したpathのみをEXIT時にrollbackし、既存recordは保持する (single-writer cleanupであり、concurrent atomicityは保証しない)。失敗後は同じrun-idでretry可能。存在フラグ (`provenance` / `verification_output` / `observed_reads` / `file_open_events` = `present`|`not-provided`) をevidence `metadata.txt` へ記録する。
+
+### Optional file-open observer (Issue #142)
+
+`tests/scripts/observe-file-opens.py` は、self-reported read listをcorroborateするためのLinux専用・stdlibのみ (ctypes + inotify) のscoped observer。subjectのpromptやruntime guidanceは変更しない。
+
+```bash
+# prepared runのsubject起動前に、operatorがrun rootで開始
+python3 tests/scripts/observe-file-opens.py \
+  --run-root "$RUN_ROOT" \
+  --allow documents/artifacts/INDEX.md --allow <repo-relative-path> ... \
+  --output "$RUN_ROOT/FILE_OPEN_EVENTS.jsonl" \
+  --ready-file "$RUN_ROOT/OBSERVE_READY" \
+  --stop-file  "$RUN_ROOT/OBSERVE_STOP"
+# READY fileが出てからsubjectを起動。subject終了後・evaluator確認前に:
+touch "$RUN_ROOT/OBSERVE_STOP"   # または SIGTERM
+```
+
+- allowlistは `repo/` 内のregular fileのみ。`..`/絶対path・symlink・hardlink (nlink>1)・`.git`内部・credential-like名・境界外解決をfail closedで拒否し、unwatchしたfileへはeventを出さない。
+- READY handshakeは全watch登録後のみ。観測window内でwatched fileの**内容は一切読まない** (metadataのみ)。
+- 記録はrepo相対label・seq・mask名・collection時のwall/monotonic時刻のみ。file内容・process identityは記録しない (inotifyはPIDを返さない)。
+- 明示stop/end handshakeとfinal drain。queue overflow・watch invalidation (rename/delete/unmount)・drain打ち切りは `incomplete: true` + `reasons` で記録し、黙って成功扱いしない。abort/強制終了はfooter欠落で判別可能。
+
+限界 (overclaim禁止): OPEN eventはread/理解の証明ではない。eventはcoalesceし得る (回数≠unique open数)。timestampはobserverのcollection時刻。既にopen済みFD・auto-loadされたcontext・cache由来の参照はeventにならないことがある。同一filesystem上のsubjectのみ観測可能。「openが無い」は完了した観測window内でのみ意味を持つ。一般tracing・process monitor・security設定変更ではない。
 
 生成するbundle:
 

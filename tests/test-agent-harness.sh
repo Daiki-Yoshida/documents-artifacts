@@ -826,6 +826,142 @@ cmp -s "$prov_root/RUN_PROVENANCE.txt" "$cpf_dir/provenance.txt" \
 grep -Fqx 'provenance: present' "$cpf_dir/evidence/metadata.txt" \
   || fail "retry metadata does not mark provenance present"
 
+# --- optional file-open observer (Issue #142) ---
+
+# capture integration: a record carrying the observer header marker is
+# persisted verbatim at the run-id level under its distinct name, flagged
+# in metadata; anything without the marker fails closed before persisting
+cat > "$prov_root/FILE_OPEN_EVENTS.jsonl" <<'EOF'
+{"type":"observe-file-opens","version":1,"labels":["documents/artifacts/INDEX.md"],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}
+{"type":"ready","watches":1,"wall":"2026-10-01T00:00:00.000100Z","mono":1.1}
+{"type":"event","seq":1,"label":"documents/artifacts/INDEX.md","mask":["IN_OPEN"],"wall":"2026-10-01T00:00:00.000200Z","mono":1.2}
+{"type":"stop","drained":true,"incomplete":false,"reasons":[],"wall":"2026-10-01T00:00:00.000300Z","mono":1.3}
+EOF
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-events >/dev/null
+evj="$TEST_RESULTS_ROOT/$cap_scenario/prov-events"
+cmp -s "$prov_root/FILE_OPEN_EVENTS.jsonl" "$evj/file-open-events.jsonl" \
+  || fail "file-open events record not persisted verbatim"
+grep -Fqx 'file_open_events: present' "$evj/evidence/metadata.txt" \
+  || fail "provided file-open events not marked present"
+grep -Fqx 'observed_reads: present' "$evj/evidence/metadata.txt" \
+  || fail "file-open events must not replace the observed-reads record"
+
+printf 'not an observer record\n' > "$prov_root/FILE_OPEN_EVENTS.jsonl"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-events-bad >/dev/null 2>&1; then
+  fail "capture persisted a file without the observer header marker"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-events-bad" ]] \
+  || fail "rejected file-open record left persisted output"
+
+odest="$TEST_RESULTS_ROOT/$cap_scenario/prov-odest"
+mkdir -p "$odest"
+printf 'stale events\n' > "$odest/file-open-events.jsonl"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-odest >/dev/null 2>&1; then
+  fail "capture overwrote an existing file-open events destination"
+fi
+[[ "$(cat "$odest/file-open-events.jsonl")" == "stale events" ]] \
+  || fail "existing file-open events destination was clobbered"
+rm -f "$prov_root/FILE_OPEN_EVENTS.jsonl"
+
+# observer self-tests need python3 (stdlib only); skip with notice if absent
+if command -v python3 >/dev/null 2>&1; then
+  OBS="python3 $REPO_ROOT/tests/scripts/observe-file-opens.py"
+  obs_root="$TEST_RUNS_ROOT/observe-sandbox"
+  mkdir -p "$obs_root/repo/.git" "$obs_root/repo/docs"
+  printf 'alpha\n' > "$obs_root/repo/watched-a.txt"
+  printf 'beta\n' > "$obs_root/repo/docs/watched-b.txt"
+  printf 'gamma\n' > "$obs_root/repo/unwatched.txt"
+
+  # fail-closed rejections — nothing is created on refused input
+  for bad in '../outside' '/etc/passwd' '.git/config' 'missing.txt' 'docs' 'creds.key' 'secrets'; do
+    if $OBS --run-root "$obs_root" --allow "$bad" \
+        --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+        --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+        >/dev/null 2>&1; then
+      fail "observer accepted unsafe allowlist path: $bad"
+    fi
+  done
+  [[ ! -e "$obs_root/FILE_OPEN_EVENTS.jsonl" && ! -e "$obs_root/READY" ]] \
+    || fail "refused observer run left state behind"
+
+  ln -s watched-a.txt "$obs_root/repo/link.txt"
+  if $OBS --run-root "$obs_root" --allow link.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a symlink"
+  fi
+  printf 'hl\n' > "$obs_root/repo/hard-src.txt"
+  ln "$obs_root/repo/hard-src.txt" "$obs_root/repo/hard-link.txt"
+  if $OBS --run-root "$obs_root" --allow hard-link.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a hardlinked file"
+  fi
+  if $OBS --run-root "$TEST_RUNS_ROOT" --allow watched-a.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a run root outside the prepared boundary"
+  fi
+
+  # bounded live smoke: ready handshake, open-without-read and
+  # open+read produce the same IN_OPEN record; stat and unselected
+  # opens produce none; explicit stop drains and closes the window
+  $OBS --run-root "$obs_root" --allow watched-a.txt --allow docs/watched-b.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready"
+  : < "$obs_root/repo/watched-a.txt"
+  head -c 1 "$obs_root/repo/docs/watched-b.txt" >/dev/null
+  : < "$obs_root/repo/unwatched.txt"
+  stat "$obs_root/repo/watched-a.txt" >/dev/null
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on a clean stop"
+
+  events_file="$obs_root/FILE_OPEN_EVENTS.jsonl"
+  grep -Fq '"type":"observe-file-opens"' "$events_file" \
+    || fail "observer record missing header"
+  grep -Fq '"type":"ready","watches":2' "$events_file" \
+    || fail "observer ready record missing/undercounted"
+  [[ "$(grep -c '"type":"event"' "$events_file")" == "2" ]] \
+    || fail "observer recorded the wrong number of events"
+  grep -Fq '"label":"watched-a.txt"' "$events_file" \
+    || fail "observer missed the open-without-read event"
+  grep -Fq '"label":"docs/watched-b.txt"' "$events_file" \
+    || fail "observer missed the open+read event"
+  if grep -Fq 'unwatched.txt' "$events_file"; then
+    fail "observer recorded an event for an unselected file"
+  fi
+  grep -Fq '"drained":true,"incomplete":false' "$events_file" \
+    || fail "observer stop record missing or marked incomplete"
+
+  # invalidation: renaming a watched file marks the record incomplete
+  rm -f "$obs_root/FILE_OPEN_EVENTS.jsonl" "$obs_root/READY" "$obs_root/STOP"
+  $OBS --run-root "$obs_root" --allow watched-a.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready (invalidation run)"
+  mv "$obs_root/repo/watched-a.txt" "$obs_root/repo/watched-a.moved"
+  sleep 0.4
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on invalidated watch"
+  grep -Fq '"incomplete":true' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "invalidated watch was not recorded as incomplete"
+  grep -Fq 'watch-invalidated:watched-a.txt' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "invalidation reason missing from record"
+else
+  printf 'note: python3 unavailable — file-open observer checks skipped\n' >&2
+fi
+
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
 
 printf 'PASS: execution-agent harness fixtures and scenarios\n'

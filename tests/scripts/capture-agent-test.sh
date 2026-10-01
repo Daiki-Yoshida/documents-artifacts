@@ -269,9 +269,28 @@ if [[ -e "$READS_SRC" || -L "$READS_SRC" ]]; then
   fi
 fi
 
+# Optional scoped file-open observation record (observe-file-opens.py):
+# open events only — never read/telemetry evidence. Persisted under a
+# distinct name so it cannot be confused with operator OBSERVED_READS.
+OPEN_SRC="$RUN_ROOT/FILE_OPEN_EVENTS.jsonl"
+PROVIDED_OPEN=0
+if [[ -e "$OPEN_SRC" || -L "$OPEN_SRC" ]]; then
+  [[ -f "$OPEN_SRC" && ! -L "$OPEN_SRC" ]] \
+    || fail "file-open events record must be a regular file: $OPEN_SRC"
+  if [[ -s "$OPEN_SRC" ]]; then
+    head -n 1 -- "$OPEN_SRC" | grep -q '"type":"observe-file-opens"' \
+      || fail "file-open events record lacks the observer header marker: $OPEN_SRC"
+    if file_has_secret_content "$OPEN_SRC"; then
+      fail "refusing to persist secret-like file-open events file: $OPEN_SRC"
+    fi
+    PROVIDED_OPEN=1
+  fi
+fi
+
 if ((PROVIDED_PROVENANCE)); then PROV_STATE="present"; else PROV_STATE="not-provided"; fi
 if ((PROVIDED_VERIFICATION)); then VER_STATE="present"; else VER_STATE="not-provided"; fi
 if ((PROVIDED_READS)); then READS_STATE="present"; else READS_STATE="not-provided"; fi
+if ((PROVIDED_OPEN)); then OPEN_STATE="present"; else OPEN_STATE="not-provided"; fi
 
 OUT="$RESULTS_ROOT/$SCENARIO/$RUN_ID"
 [[ "$OUT" == "$RESULTS_ROOT/"* ]] || fail "refusing unsafe output path"
@@ -282,7 +301,7 @@ EV="$OUT/evidence"
 # existing record such as REPORT.md.
 [[ ! -e "$EV" && ! -L "$EV" ]] \
   || fail "evidence already captured for this run id: $EV"
-for dest in "$OUT/provenance.txt" "$OUT/verification" "$OUT/observed-reads.txt"; do
+for dest in "$OUT/provenance.txt" "$OUT/verification" "$OUT/observed-reads.txt" "$OUT/file-open-events.jsonl"; do
   [[ ! -e "$dest" && ! -L "$dest" ]] \
     || fail "run-level record destination already exists: $dest"
 done
@@ -298,6 +317,7 @@ CAPTURE_CREATED=("$EV")
 if ((PROVIDED_PROVENANCE)); then CAPTURE_CREATED+=("$OUT/provenance.txt"); fi
 if ((PROVIDED_VERIFICATION)); then CAPTURE_CREATED+=("$OUT/verification"); fi
 if ((PROVIDED_READS)); then CAPTURE_CREATED+=("$OUT/observed-reads.txt"); fi
+if ((PROVIDED_OPEN)); then CAPTURE_CREATED+=("$OUT/file-open-events.jsonl"); fi
 TMP_INDEX=""
 PUBLISHED=0
 capture_cleanup() {
@@ -331,6 +351,7 @@ TMP_INDEX="$(mktemp)"
   printf 'provenance: %s\n' "$PROV_STATE"
   printf 'verification_output: %s\n' "$VER_STATE"
   printf 'observed_reads: %s\n' "$READS_STATE"
+  printf 'file_open_events: %s\n' "$OPEN_STATE"
 } > "$EV/metadata.txt"
 
 {
@@ -583,6 +604,9 @@ fi
 if ((PROVIDED_READS)); then
   cp -- "$READS_SRC" "$OUT/observed-reads.txt"
 fi
+if ((PROVIDED_OPEN)); then
+  cp -- "$OPEN_SRC" "$OUT/file-open-events.jsonl"
+fi
 
 PUBLISHED=1
 printf 'Captured evidence: %s\n' "$EV"
@@ -594,5 +618,8 @@ if ((PROVIDED_VERIFICATION)); then
 fi
 if ((PROVIDED_READS)); then
   printf 'Observed reads: %s\n' "$OUT/observed-reads.txt"
+fi
+if ((PROVIDED_OPEN)); then
+  printf 'File-open events: %s\n' "$OUT/file-open-events.jsonl"
 fi
 printf 'Agent-authored report goes to: %s\n' "$OUT/REPORT.md"
