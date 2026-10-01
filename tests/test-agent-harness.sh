@@ -178,6 +178,27 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "required-entry index lost the HTTP policy owner route"
   fi
 
+  # issue #141: the separate-runtime scenario's visible surfaces define
+  # two deployables and the wire contract; the prompt names no expected
+  # artifact leaves; the dependency-free boundary guard is green at
+  # baseline
+  if [[ "$scenario" == "separate-runtime-boundary" ]]; then
+    grep -Fq 'separate runtime' "$target/README.md" \
+      || fail "boundary fixture README lacks separate-runtime definition"
+    grep -Fq 'wire contract' "$target/README.md" \
+      || fail "boundary fixture README lacks the wire contract"
+    grep -Fq 'placed_at' "$run_root/PROMPT.md" \
+      || fail "boundary prompt lost the task"
+    if grep -Eq 'CODE_STRUCTURE|TESTING\.md|DEPENDENCIES\.md|DOMAIN_AND_DATA' \
+        "$run_root/PROMPT.md"; then
+      fail "boundary prompt leaks an expected artifact leaf"
+    fi
+    sh "$target/scripts/check-boundary.sh" >/dev/null \
+      || fail "boundary guard not green on the prepared baseline"
+    grep -Fq 'listOrders' "$target/backend/cli/print-orders.js" \
+      || fail "same-runtime CLI consumer missing from fixture"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"
@@ -300,6 +321,32 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ ! -e "$run_root" ]] || fail "reset did not remove run: $scenario"
 done
 
+
+# --- artifact routing projection checks (Issue #141) ---
+
+src_index="$REPO_ROOT/artifacts/INDEX.md"
+# scope/authority, approach-only/brownfield and commit/push intents must
+# reach the operation router — one advertised row, not forced into every
+# code-change route
+grep -iE 'authority|approach-only|commit' "$src_index" \
+  | grep -Fq '`operation/INDEX.md`' \
+  || fail "root INDEX has no route row to operation/INDEX.md"
+# the integration route (PR85) and the normal-change route stay as-is
+grep -Fq '`safety/INTEGRATION_AND_CONFIRMATION.md` → `operation/VERIFICATION_AND_DONE.md`' \
+  "$src_index" || fail "root INDEX lost the integration route"
+grep -Fq '`operation/CHANGE_LIFECYCLE.md` → `implementation/INDEX.md`' \
+  "$src_index" || fail "root INDEX lost the normal-change route"
+
+cs="$REPO_ROOT/artifacts/implementation/CODE_STRUCTURE.md"
+# same-runtime rule preserved; separate-runtime qualifier + pointer added
+grep -Fq 'depends on Application' "$cs" \
+  || fail "CODE_STRUCTURE lost the same-runtime UI dependency rule"
+grep -Eqi 'same.{0,20}(runtime|deployable)' "$cs" \
+  || fail "UI bullet not qualified by runtime topology"
+grep -Fq 'TESTING.md' "$cs" \
+  || fail "CODE_STRUCTURE lacks the Runtime seams pointer"
+grep -Fq 'Runtime seams' "$REPO_ROOT/artifacts/implementation/TESTING.md" \
+  || fail "TESTING.md lost the Runtime seams section"
 
 # --- evidence capture contract (focused single-scenario check) ---
 
