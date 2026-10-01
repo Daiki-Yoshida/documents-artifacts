@@ -24,20 +24,25 @@ bash tests/test-agent-harness.sh
 repositories/  = initial project fixtures
 scenarios/     = agent task + evaluator-only expectations
 scripts/       = run materialization / reset / inspection / evidence capture
-results/       = raw report + machine evidence (後から期待値に合わせて改変しない)
+results/       = raw report + machine evidence + run-level records (後から期待値に合わせて改変しない)
 evaluations/   = evaluatorによるEXPECTATIONS照合・Artifact改善判断
 runtime repo  = /tmp配下へgenerated; source repo外でblind evaluation
 ```
 
 raw resultとevaluationは別directoryへ分離し、同じfileへ混ぜない。
 
-`results/` 内はagent-authored reportとmachine-generated evidenceを分離する。
+`results/` 内はauthorshipごとに分離する。`REPORT.md` はagent-authored、`evidence/` はmachine-generated、`provenance.txt` はoperator-authored、`verification/` と `observed-reads.txt` はrun中に生産されたraw recordである。
 
 ```text
 results/<scenario>/<run-id>/
-├─ REPORT.md    = agent-authored raw testimony
-└─ evidence/    = capture-agent-test.shが採取したmachine-generated run evidence
+├─ REPORT.md            = agent-authored raw testimony
+├─ evidence/            = capture-agent-test.shが採取したmachine-generated run evidence
+├─ provenance.txt       = operator-authored run context (任意)
+├─ verification/        = run中に実行されたverification commandのraw output (任意)
+└─ observed-reads.txt   = operator/toolが記録した実read観測 (任意)
 ```
+
+`provenance.txt` はexact model・model version・reasoning effort・agent runtime・run時刻・entry condition・repetition・run set・read evidence source・known limitationsを記録し、model名やrun時期をrun-id命名規約から推測する必要をなくす。scenario・source SHA・fixture・baseline SHAはRUN_METADATAとevidence metadataが機械記録するためprovenanceへ重複して書かない。任意recordが無いrunはevidence metadataへ `not-provided` と記録され、後から補完しない。REPORT.mdのartifact read listは常にself-reported扱いとし、`observed-reads.txt` がある場合のみobserved evidenceとして区別する。これらのrecordを持たない旧runはその旨をlimitationとして扱い、後付けで存在を装わない。
 
 旧runのflat file (`results/<scenario>/YYYY-MM-DD-<agent>.md`) はlegacy recordとして残す。存在しなかったmachine evidenceを後付け生成しない。
 
@@ -49,7 +54,20 @@ bash tests/scripts/prepare-agent-test.sh --scenario contract-boundary
 
 ### Execute
 
-prepare scriptが表示したtemporary `repo/` をexecution agentのworking directoryにして、同じrun rootの `PROMPT.md` の本文だけをtaskとして渡す。prepare時点のsource HEAD / generated baselineは `RUN_METADATA.txt` に固定し、後続captureがその値をmachine evidenceへ引き継ぐ。
+prepare scriptが表示したtemporary `repo/` をexecution agentのworking directoryにして、同じrun rootの `PROMPT.md` の本文だけをtaskとして渡す。prepare時点のsource HEAD / generated baselineは `RUN_METADATA.txt` に固定し、後続captureがその値をmachine evidenceへ引き継ぐ。prepareはrun rootへ `RUN_PROVENANCE.txt` templateも出力する — これはagent inputではなく、run operatorがcapture前に記入する。
+
+run rootには任意で次のrun-level recordを置ける (いずれもgenerated `repo/` の外であり、agent task inputではない):
+
+```text
+RUN_PROVENANCE.txt    = operator-authored context。allowlist keyのみ:
+                        model (provided時は必須) / model_version /
+                        reasoning_effort / agent_runtime /
+                        run_started_at_utc / run_finished_at_utc /
+                        entry_condition / repetition / run_set /
+                        read_evidence / known_limitations
+verification/         = run中に実行したverification commandのraw output (flat regular fileのみ)
+OBSERVED_READS.txt    = operator/toolが観測した実read record
+```
 
 **`tests/scenarios/<scenario>/EXPECTATIONS.md` は事前にagentへ見せない。**
 
@@ -61,7 +79,7 @@ temporary runが消える前にmachine evidenceを採取する。
 bash tests/scripts/capture-agent-test.sh --scenario contract-boundary --run-id 2026-09-25-devin
 ```
 
-`tests/results/<scenario>/<run-id>/evidence/` へbundleを書き、agent-authored `REPORT.md` を同じ `<run-id>/` 配下へ記録する。
+`tests/results/<scenario>/<run-id>/evidence/` へbundleを書き、agent-authored `REPORT.md` を同じ `<run-id>/` 配下へ記録する。run rootに `RUN_PROVENANCE.txt` (少なくとも1 pair・`model`必須) / `verification/` / `OBSERVED_READS.txt` が存在すれば、検証・secret-scanのうえ `<run-id>/provenance.txt`・`<run-id>/verification/`・`<run-id>/observed-reads.txt` としてverbatim copyする。存在・非存在はevidence `metadata.txt` の `provenance` / `verification_output` / `observed_reads` fieldへ記録される。これらのrecordは `evidence/` 内部へ入れず、authorshipをmachine evidenceと分離する。
 
 `changes.patch` はnon-ignored untracked fileも含める。ただしsecret-like path/contentを検出した場合は、evidenceを作成する前にfail closedする。ignored runtime stateは内容をarchiveせず、path/type/sizeの存在証跡だけを残す。
 

@@ -73,7 +73,10 @@ tests/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
 │     └─ <run-id>/
 │        ├─ REPORT.md             (agent-authored raw report)
-│        └─ evidence/             (machine-generated run evidence)
+│        ├─ evidence/             (machine-generated run evidence)
+│        ├─ provenance.txt        (operator-authored run context; 任意)
+│        ├─ verification/         (run-produced raw verification output; 任意)
+│        └─ observed-reads.txt    (operator/tool-recorded reads; 任意)
 └─ evaluations/
    └─ <scenario>/
 ```
@@ -102,13 +105,18 @@ EXPECTATIONS.md
 
 runの証跡はscenario本体とは別のdirectoryへ役割分離する。
 
-- `tests/results/<scenario>/`: execution agentの**raw run report** + machine-generated evidence。後から期待値に合わせて改変しない。evaluationと同じfileへ混ぜない。
+- `tests/results/<scenario>/`: execution agentの**raw run report** + machine-generated evidence + operator/run-level records。後から期待値に合わせて改変しない。evaluationと同じfileへ混ぜない。
 - `tests/evaluations/<scenario>/`: evaluatorによるEXPECTATIONS照合・Artifact改善判断。raw resultの写しではなく評価結果を置く。
 
-`tests/results/` は2種類の証跡を分離して保持する。
+`tests/results/` は証跡をauthorshipごとに分離して保持する。
 
 - `tests/results/<scenario>/<run-id>/REPORT.md`: agent-authored raw testimony。
 - `tests/results/<scenario>/<run-id>/evidence/`: `capture-agent-test.sh` がgenerated repoから機械的に採取するimmutable run evidence。evaluatorはagent testimonyとmachine evidenceを区別できる。
+- `tests/results/<scenario>/<run-id>/provenance.txt`: operator-authored run context (任意)。exact model / reasoning effort / agent runtime / run時刻 / entry condition / repetition / run set / known limitationsを記録し、model名やrun時期をrun-id命名規約から推測する必要をなくす。captureがrun rootの `RUN_PROVENANCE.txt` を検証してverbatim copyする。scenario・source SHA・fixture・baseline SHAはRUN_METADATA/evidence metadataが機械記録済みのため重複記録しない。
+- `tests/results/<scenario>/<run-id>/verification/`: run中に実行されたverification commandのraw output (任意)。agentのnarrative reportとは別物として保存し、claimと実outputの照合を可能にする。
+- `tests/results/<scenario>/<run-id>/observed-reads.txt`: operator/toolが記録した実read観測 (任意)。REPORT.mdのread listはself-reportedであり、このfileがある場合のみobserved evidenceとして区別する。
+
+これらのrun-level recordは `evidence/` の外に置き、machine-generated bundleとauthorshipを混ぜない。capture時に存在しないrecordはevidence metadataへ `not-provided` と記録され、後から補完しない。旧runはこれらを持たず、その旨はlimitationとして扱う。
 
 旧runのflat file (`tests/results/<scenario>/YYYY-MM-DD-<agent>.md`) は当時machine evidenceが存在しなかったlegacy recordとしてそのまま残す。存在しなかったevidenceを後付けで生成しない。
 
@@ -120,6 +128,9 @@ default:
 ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 ├─ PROMPT.md
 ├─ RUN_METADATA.txt
+├─ RUN_PROVENANCE.txt        (operatorがcapture前に記入するtemplate; agent inputではない)
+├─ verification/             (任意: run中のverification raw outputを置く場所)
+├─ OBSERVED_READS.txt        (任意: operator/toolが記録する実read観測)
 └─ repo/
    ├─ .git/
    ├─ documents/artifacts/
@@ -138,7 +149,8 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 8. `scenario.conf` が `EVIDENCE_REPOSITORIES` を定義する場合、space-separatedの `selector=run-root-relative-path` 宣言ごとに対象を検証する: selectorは `^[a-z0-9]+(-[a-z0-9]+)*$`、pathは非空・relative・`..`なし・shell metacharなし・symlink禁止で、resolved real pathがrun root内にあること。さらに存在・independent Git repository (own `.git`)・HEAD存在・cleanを要求する。任意shell commandによるdiscoveryは行わない — scenarioが明示宣言したrepoだけを見る;
 9. clean baselineを確認し、HEAD commit数が `EXPECTED_HEAD_COMMIT_COUNT` (既定 `2`) と一致することを確認する;
 10. `artifact-test-baseline` tagをprimary generated repositoryへ作成する。`EVIDENCE_REPOSITORIES`がある場合はgeneric prepare側で各Component Repositoryの現在HEADへも同tagを作成する (hook側にtag生成責務を持たせない);
-11. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。declared Component Repositoryごとに `evidence_repository: <sel>=<rel>` と `evidence_repository_<sel>_baseline_sha: <sha>` も記録する。
+11. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。declared Component Repositoryごとに `evidence_repository: <sel>=<rel>` と `evidence_repository_<sel>_baseline_sha: <sha>` も記録する;
+12. run rootへ `RUN_PROVENANCE.txt` のcommented templateを出力する。agentへは見せず、run operatorがcapture前に `key: value` pairを記入する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -164,7 +176,7 @@ execution agentには原則:
 
 させる。
 
-この自己報告は完全なtelemetryではないが、routing behaviorの初期観測として利用する。
+この自己報告は完全なtelemetryではないが、routing behaviorの初期観測として利用する。REPORT.mdのread listはself-reported testimonyであり、run rootの `OBSERVED_READS.txt` が永続化されたrunのみobserved read evidenceを持つ。`RUN_PROVENANCE.txt`・`verification/`・`OBSERVED_READS.txt` はoperator/run側のrecordであり、agent task inputにしない。
 
 ## Evaluation dimensions
 
@@ -176,6 +188,7 @@ requested behavior / design outcomeを満たしたか。
 - taskに関係するleafへ到達したか。
 - Artifact pack全体を「念のため」読むような動作をしていないか。
 - conditional concernだけを必要時に追加したか。
+- read観測の由来を区別したか (REPORT.mdのself-reported listと、存在する場合の`observed-reads.txt`の実観測を混同しない)。
 
 ### Semantic adoption
 Artifactの規範が実際の判断へ反映されたか。
@@ -249,6 +262,7 @@ bash tests/scripts/capture-agent-test.sh --scenario <scenario> --run-id <run-id>
 - 既定出力先は `tests/results/<scenario>/<run-id>/evidence/`。self-test等の一時出力には `ARTIFACT_TEST_RESULTS_ROOT` を使う。
 - prepared runと `artifact-test-baseline` tagが不在ならfailする。
 - `REPORT.md` はagentが別途書く。capture scriptはevidenceだけを生成する。
+- run rootの任意recordを検証して `<run-id>/` 直下へverbatim copyする: `RUN_PROVENANCE.txt` → `provenance.txt` (key: value形式・allowlist key・重複key不可・1 pair以上あれば `model` 必須・comment/blank行は無視・template-onlyはnot-provided)、`verification/` → `verification/` (flat regular fileのみ)、`OBSERVED_READS.txt` → `observed-reads.txt` (非空のみ)。いずれもsecret-like contentでfail closedし、既存recordは上書きしない。存在フラグ (`provenance` / `verification_output` / `observed_reads` = `present`|`not-provided`) をevidence `metadata.txt` へ記録する。
 
 生成するbundle:
 

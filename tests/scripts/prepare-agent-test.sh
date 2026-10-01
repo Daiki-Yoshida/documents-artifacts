@@ -159,6 +159,35 @@ BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
   fi
 } > "$RUN_ROOT/RUN_METADATA.txt"
 
+# Operator-authored run provenance template. It lives at the run root,
+# outside the generated repository, and is never agent task input. The run
+# operator uncomments the keys it actually knows before capture;
+# capture-agent-test.sh validates keys against a fixed allowlist and
+# persists the file verbatim as tests/results/<scenario>/<run-id>/provenance.txt.
+cat > "$RUN_ROOT/RUN_PROVENANCE.txt" <<'EOF'
+# Run provenance — operator-authored context for this blind execution run.
+# Not agent input: the execution agent is never shown this file.
+#
+# Uncomment only the lines the operator actually knows; never guess or
+# reconstruct values afterwards. capture-agent-test.sh rejects unknown
+# keys, duplicate keys, empty values, and a provided file without `model`.
+# Source SHA, fixture, and baseline SHA are already recorded mechanically
+# in RUN_METADATA.txt and evidence/metadata.txt — do not duplicate them here.
+#
+# model: luna-medium                  # exact agent model (required if any key is given)
+# model_version: 2026-09-30           # model snapshot / version if known
+# reasoning_effort: medium            # low / medium / high / provider-specific value
+# agent_runtime: dot cloud shell      # runner identity, e.g. "devin cli 3000.11.3"
+# run_started_at_utc: 2026-10-01T12:00:00Z
+# run_finished_at_utc: 2026-10-01T12:25:00Z
+# entry_condition: prompt-directed-index  # how the agent reached the artifact entry
+# repetition: 1                       # this run's index within run_set
+# run_set: luna-medium-baseline       # batch identifier grouping repeated runs
+# read_evidence: self-reported        # self-reported | operator-log | tool-export | none
+# known_limitations: read list is self-reported; no tool telemetry
+EOF
+
 printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$RUN_ROOT/PROMPT.md"
 printf 'Run metadata: %s\n' "$RUN_ROOT/RUN_METADATA.txt"
+printf 'Run provenance template (operator fills before capture): %s\n' "$RUN_ROOT/RUN_PROVENANCE.txt"
 printf 'Evaluator expectations (do not give to agent): %s\n' "$EXPECTATIONS"

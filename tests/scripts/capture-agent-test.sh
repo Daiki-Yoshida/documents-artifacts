@@ -92,6 +92,13 @@ CAPTURE_SOURCE_SHA="$(git -C "$REPO_ROOT" rev-parse HEAD)"
 # changes.patch intentionally includes non-ignored untracked file contents so
 # evaluator review can inspect newly-created files. Fail closed on obvious
 # secret-bearing paths/content before creating any persisted evidence.
+file_has_secret_content() {
+  local f="$1"
+  [[ -f "$f" && ! -L "$f" ]] || return 1
+  LC_ALL=C grep -I -i -E -q \
+    '(BEGIN ([A-Z]+ )?PRIVATE KEY|AKIA[0-9A-Z]{16}|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|password)[[:space:]]*[:=][[:space:]]*[^[:space:]]{8,})' \
+    "$f"
+}
 scan_untracked_secrets() {
   local repo="$1" rel base full
   local -a files=()
@@ -108,12 +115,8 @@ scan_untracked_secrets() {
         ;;
     esac
     full="$repo/$rel"
-    if [[ -f "$full" && ! -L "$full" ]]; then
-      if LC_ALL=C grep -I -i -E -q \
-        '(BEGIN ([A-Z]+ )?PRIVATE KEY|AKIA[0-9A-Z]{16}|github_pat_[A-Za-z0-9_]{20,}|gh[pousr]_[A-Za-z0-9]{20,}|(api[_-]?key|secret|token|password)[[:space:]]*[:=][[:space:]]*[^[:space:]]{8,})' \
-        "$full"; then
-        fail "refusing to persist content from secret-like untracked file: $repo/$rel"
-      fi
+    if file_has_secret_content "$full"; then
+      fail "refusing to persist content from secret-like untracked file: $repo/$rel"
     fi
   done
 }
@@ -181,6 +184,83 @@ if ((${#EVIDENCE_REPOS[@]})); then
   done
 fi
 
+# Optional run-level records supplied at the run root, outside the generated
+# repository. They are operator/run context, never agent task input. All of
+# them are validated here — before any persisted output is created — and then
+# copied verbatim next to evidence/ (never inside it) so authorship stays
+# distinguishable: evidence/ = machine-generated capture,
+# provenance.txt = operator-authored run context,
+# verification/ = raw command output produced during the run,
+# observed-reads.txt = operator/tool-recorded artifact reads.
+# Inputs absent at capture are recorded as not-provided and are never
+# reconstructed afterwards; older runs simply lack these records.
+PROV_SRC="$RUN_ROOT/RUN_PROVENANCE.txt"
+PROV_KEY_PATTERN='model|model_version|reasoning_effort|agent_runtime|run_started_at_utc|run_finished_at_utc|entry_condition|repetition|run_set|read_evidence|known_limitations'
+PROVIDED_PROVENANCE=0
+if [[ -e "$PROV_SRC" || -L "$PROV_SRC" ]]; then
+  [[ -f "$PROV_SRC" && ! -L "$PROV_SRC" ]] \
+    || fail "run provenance must be a regular file: $PROV_SRC"
+  prov_pairs=0
+  declare -A prov_seen=()
+  prov_line=""
+  prov_key=""
+  while IFS= read -r prov_line || [[ -n "$prov_line" ]]; do
+    [[ "$prov_line" =~ ^[[:space:]]*$ || "$prov_line" == \#* ]] && continue
+    [[ "$prov_line" =~ ^([a-z][a-z0-9_]*):[[:space:]]*(.*[^[:space:]])[[:space:]]*$ ]] \
+      || fail "malformed run provenance line: $prov_line"
+    prov_key="${BASH_REMATCH[1]}"
+    [[ "$prov_key" =~ ^($PROV_KEY_PATTERN)$ ]] \
+      || fail "unknown run provenance key: $prov_key"
+    [[ -z "${prov_seen[$prov_key]:-}" ]] \
+      || fail "duplicate run provenance key: $prov_key"
+    prov_seen[$prov_key]=1
+    ((${#BASH_REMATCH[2]} <= 500)) \
+      || fail "run provenance value too long: $prov_key"
+    ((prov_pairs += 1))
+  done < "$PROV_SRC"
+  if ((prov_pairs > 0)); then
+    [[ -n "${prov_seen[model]:-}" ]] \
+      || fail "run provenance provided without 'model'"
+    PROVIDED_PROVENANCE=1
+  fi
+fi
+
+VER_SRC="$RUN_ROOT/verification"
+PROVIDED_VERIFICATION=0
+ver_file_count=0
+if [[ -e "$VER_SRC" || -L "$VER_SRC" ]]; then
+  [[ -d "$VER_SRC" && ! -L "$VER_SRC" ]] \
+    || fail "verification output must be a real directory: $VER_SRC"
+  while IFS= read -r -d '' ver_file; do
+    [[ -f "$ver_file" && ! -L "$ver_file" ]] \
+      || fail "verification output accepts flat regular files only: $ver_file"
+    if file_has_secret_content "$ver_file"; then
+      fail "refusing to persist secret-like verification output: $ver_file"
+    fi
+    ((ver_file_count += 1))
+  done < <(find "$VER_SRC" -mindepth 1 -maxdepth 1 -print0)
+  if ((ver_file_count > 0)); then
+    PROVIDED_VERIFICATION=1
+  fi
+fi
+
+READS_SRC="$RUN_ROOT/OBSERVED_READS.txt"
+PROVIDED_READS=0
+if [[ -e "$READS_SRC" || -L "$READS_SRC" ]]; then
+  [[ -f "$READS_SRC" && ! -L "$READS_SRC" ]] \
+    || fail "observed reads record must be a regular file: $READS_SRC"
+  if [[ -s "$READS_SRC" ]]; then
+    if file_has_secret_content "$READS_SRC"; then
+      fail "refusing to persist secret-like observed reads file: $READS_SRC"
+    fi
+    PROVIDED_READS=1
+  fi
+fi
+
+if ((PROVIDED_PROVENANCE)); then PROV_STATE="present"; else PROV_STATE="not-provided"; fi
+if ((PROVIDED_VERIFICATION)); then VER_STATE="present"; else VER_STATE="not-provided"; fi
+if ((PROVIDED_READS)); then READS_STATE="present"; else READS_STATE="not-provided"; fi
+
 OUT="$RESULTS_ROOT/$SCENARIO/$RUN_ID"
 [[ "$OUT" == "$RESULTS_ROOT/"* ]] || fail "refusing unsafe output path"
 EV="$OUT/evidence"
@@ -202,6 +282,9 @@ trap 'rm -f -- "$TMP_INDEX"' EXIT
   printf 'baseline_tag: artifact-test-baseline\n'
   printf 'baseline_sha: %s\n' "$BASE_SHA"
   printf 'head_sha_at_capture: %s\n' "$HEAD_SHA"
+  printf 'provenance: %s\n' "$PROV_STATE"
+  printf 'verification_output: %s\n' "$VER_STATE"
+  printf 'observed_reads: %s\n' "$READS_STATE"
 } > "$EV/metadata.txt"
 
 {
@@ -441,5 +524,34 @@ if ((${#EVIDENCE_REPOS[@]})); then
   done
 fi
 
+# Persist validated run-level records verbatim, as siblings of evidence/ —
+# authorship stays separable from the machine-generated bundle. Existing
+# records are never overwritten, same refusal rule as evidence/ itself.
+if ((PROVIDED_PROVENANCE)); then
+  [[ ! -e "$OUT/provenance.txt" ]] \
+    || fail "provenance already recorded: $OUT/provenance.txt"
+  cp -- "$PROV_SRC" "$OUT/provenance.txt"
+fi
+if ((PROVIDED_VERIFICATION)); then
+  [[ ! -e "$OUT/verification" ]] \
+    || fail "verification output already recorded: $OUT/verification"
+  mkdir -p -- "$OUT/verification"
+  cp -a -- "$VER_SRC/." "$OUT/verification/"
+fi
+if ((PROVIDED_READS)); then
+  [[ ! -e "$OUT/observed-reads.txt" ]] \
+    || fail "observed reads already recorded: $OUT/observed-reads.txt"
+  cp -- "$READS_SRC" "$OUT/observed-reads.txt"
+fi
+
 printf 'Captured evidence: %s\n' "$EV"
+if ((PROVIDED_PROVENANCE)); then
+  printf 'Run provenance: %s\n' "$OUT/provenance.txt"
+fi
+if ((PROVIDED_VERIFICATION)); then
+  printf 'Verification output: %s\n' "$OUT/verification"
+fi
+if ((PROVIDED_READS)); then
+  printf 'Observed reads: %s\n' "$OUT/observed-reads.txt"
+fi
 printf 'Agent-authored report goes to: %s\n' "$OUT/REPORT.md"

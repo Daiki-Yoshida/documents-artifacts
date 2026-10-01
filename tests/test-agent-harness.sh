@@ -438,4 +438,110 @@ fi
   || fail "failed secret capture left persisted evidence"
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
 
+# --- run-level provenance / verification output / observed reads ---
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$PREPARE" --scenario "$cap_scenario" --force >/dev/null
+prov_root="$TEST_RUNS_ROOT/$cap_scenario"
+
+# the provenance template is emitted at the run root only — it must never
+# leak into the generated repository where the agent works
+[[ -f "$prov_root/RUN_PROVENANCE.txt" ]] \
+  || fail "run provenance template missing at run root"
+[[ ! -e "$prov_root/repo/RUN_PROVENANCE.txt" ]] \
+  || fail "run provenance template leaked into generated repo"
+
+# a template-only file (comments and blanks, no key pairs) is not provided
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-none >/dev/null
+evn="$TEST_RESULTS_ROOT/$cap_scenario/prov-none"
+grep -Fqx 'provenance: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "template-only provenance not marked not-provided"
+grep -Fqx 'verification_output: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "missing verification output not marked not-provided"
+grep -Fqx 'observed_reads: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "missing observed reads not marked not-provided"
+[[ ! -e "$evn/provenance.txt" ]] || fail "template-only provenance persisted"
+[[ ! -e "$evn/verification" ]] || fail "phantom verification output persisted"
+[[ ! -e "$evn/observed-reads.txt" ]] || fail "phantom observed reads persisted"
+
+# filled provenance + verification output + observed reads persist verbatim
+# at the run-id level, outside evidence/
+cat > "$prov_root/RUN_PROVENANCE.txt" <<'EOF'
+# operator comment
+model: luna-medium
+model_version: test-snapshot
+reasoning_effort: medium
+agent_runtime: harness selftest
+run_started_at_utc: 2026-10-01T12:00:00Z
+run_finished_at_utc: 2026-10-01T12:20:00Z
+entry_condition: prompt-directed-index
+repetition: 1
+run_set: harness-selftest
+read_evidence: self-reported
+known_limitations: no tool telemetry
+EOF
+mkdir -p "$prov_root/verification"
+printf 'running 3 tests\n3/3 passed\n' > "$prov_root/verification/node-test.txt"
+printf 'documents/artifacts/INDEX.md\ndocuments/artifacts/implementation/INDEX.md\n' \
+  > "$prov_root/OBSERVED_READS.txt"
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-full >/dev/null
+evf="$TEST_RESULTS_ROOT/$cap_scenario/prov-full"
+cmp -s "$prov_root/RUN_PROVENANCE.txt" "$evf/provenance.txt" \
+  || fail "provenance.txt differs from run-root source"
+grep -Fqx 'provenance: present' "$evf/evidence/metadata.txt" \
+  || fail "provided provenance not marked present"
+grep -Fqx 'verification_output: present' "$evf/evidence/metadata.txt" \
+  || fail "provided verification output not marked present"
+grep -Fqx 'observed_reads: present' "$evf/evidence/metadata.txt" \
+  || fail "provided observed reads not marked present"
+cmp -s "$prov_root/verification/node-test.txt" "$evf/verification/node-test.txt" \
+  || fail "verification output not persisted verbatim"
+cmp -s "$prov_root/OBSERVED_READS.txt" "$evf/observed-reads.txt" \
+  || fail "observed reads not persisted verbatim"
+# run-level records stay outside the machine-generated evidence bundle
+for leaked in provenance.txt verification observed-reads.txt; do
+  [[ ! -e "$evf/evidence/$leaked" ]] \
+    || fail "run-level record leaked into evidence bundle: $leaked"
+done
+
+# malformed / unauthorized provenance fails closed before persisting anything
+printf 'unknown_key: x\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-bad-key >/dev/null 2>&1; then
+  fail "capture accepted unknown provenance key"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-bad-key" ]] \
+  || fail "rejected provenance left persisted output"
+
+printf 'model: a\nmodel: b\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-dup >/dev/null 2>&1; then
+  fail "capture accepted duplicate provenance key"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-dup" ]] \
+  || fail "rejected duplicate provenance left persisted output"
+
+printf 'repetition: 1\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-nomodel >/dev/null 2>&1; then
+  fail "capture accepted provenance without model"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-nomodel" ]] \
+  || fail "model-less provenance left persisted output"
+
+# secret-like verification output fails closed like any other content
+printf 'model: luna-medium\n' > "$prov_root/RUN_PROVENANCE.txt"
+printf 'api_key = AKIAIOSFODNN7EXAMPLE\n' > "$prov_root/verification/leak.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-secret >/dev/null 2>&1; then
+  fail "capture persisted secret-like verification output"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-secret" ]] \
+  || fail "failed secret capture left persisted output"
+rm -f "$prov_root/verification/leak.txt"
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
+
 printf 'PASS: execution-agent harness fixtures and scenarios\n'
