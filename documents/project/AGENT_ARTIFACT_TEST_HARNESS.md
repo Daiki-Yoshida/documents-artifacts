@@ -285,7 +285,8 @@ touch "$RUN_ROOT/OBSERVE_STOP"   # または SIGTERM
 - READY handshakeは全watch登録後のみ。観測window内でwatched fileの**内容は一切読まない** (metadataのみ)。
 - 記録はrepo相対label・seq・mask名・collection時のwall/monotonic時刻のみ。file内容・process identityは記録しない (inotifyはPIDを返さない)。
 - 明示stop/end handshakeとfinal drain。queue overflow・watch invalidation (rename/delete/unmount)・drain打ち切りは `incomplete: true` + `reasons` で記録し、黙って成功扱いしない。abort/強制終了はfooter欠落で判別可能。
-- 観測終了時に全labelのpath bindingをinode identityで再検証する (内容は読まない)。watched fileの**parent directoryがrenameされた**場合、file-watch eventは発火しないが、登録path名は無効になる — この場合は `path-binding-lost:<label>` をreasonに付して `incomplete: true` とし、relocation後のliteral-path完全性は主張しない。
+- 観測終了時に全labelのpath bindingをinode identityで再検証する (内容は読まない)。watched fileの**parent directoryがrenameされた**場合、file-watch eventは発火しないが、登録path名は無効になる — この場合は `path-binding-lost:<label>` をreasonに付して `incomplete: true` とし、relocation後のliteral-path完全性は主張しない。ただしend-onlyのmetadata再検証は、観測window中にfileが一旦移動し同一inodeのまま同じpathへ戻る transient (move-out-and-back) を検出できない — 終了時にpath・inodeが一致すればbindingはintactに見える。この限界を埋めるための一般filesystem monitoringは行わない。
+- captureのheader marker check (`"type":"observe-file-opens"`) は入力の形式検証に過ぎず、観測windowの完全性の証明ではない。完全性はevaluatorがrecord末尾の `stop` footer (`drained`・`incomplete`・`reasons`) を必ず確認すること。
 
 限界 (overclaim禁止): OPEN eventはread/理解の証明ではない。eventはcoalesceし得る (回数≠unique open数)。timestampはobserverのcollection時刻。既にopen済みFD・auto-loadされたcontext・cache由来の参照はeventにならないことがある。同一filesystem上のsubjectのみ観測可能。「openが無い」は完了した観測window内でのみ意味を持つ。一般tracing・process monitor・security設定変更ではない。
 

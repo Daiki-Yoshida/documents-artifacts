@@ -855,6 +855,13 @@ fi
 [[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-events-bad" ]] \
   || fail "rejected file-open record left persisted output"
 
+# restore a valid observer header before asserting destination-collision
+# refusal — with the rejected record still in place, capture would exit on
+# the header check before ever reaching destination validation
+cat > "$prov_root/FILE_OPEN_EVENTS.jsonl" <<'EOF'
+{"type":"observe-file-opens","version":1,"labels":["documents/artifacts/INDEX.md"],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}
+{"type":"stop","drained":true,"incomplete":false,"reasons":[],"wall":"2026-10-01T00:00:00.000300Z","mono":1.3}
+EOF
 odest="$TEST_RESULTS_ROOT/$cap_scenario/prov-odest"
 mkdir -p "$odest"
 printf 'stale events\n' > "$odest/file-open-events.jsonl"
@@ -864,6 +871,17 @@ if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_R
 fi
 [[ "$(cat "$odest/file-open-events.jsonl")" == "stale events" ]] \
   || fail "existing file-open events destination was clobbered"
+
+# the header marker is format validation only — a marker-valid record
+# without a stop footer still persists; completeness is the evaluator's
+# judgment from the footer's drained/incomplete/reasons fields
+printf '{"type":"observe-file-opens","version":1,"labels":[],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}\n' \
+  > "$prov_root/FILE_OPEN_EVENTS.jsonl"
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-footerless >/dev/null
+cmp -s "$prov_root/FILE_OPEN_EVENTS.jsonl" \
+  "$TEST_RESULTS_ROOT/$cap_scenario/prov-footerless/file-open-events.jsonl" \
+  || fail "footer-less marker-valid record not persisted verbatim"
 rm -f "$prov_root/FILE_OPEN_EVENTS.jsonl"
 
 # observer self-tests need python3 (stdlib only); skip with notice if absent
