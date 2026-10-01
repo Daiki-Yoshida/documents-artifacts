@@ -137,6 +137,47 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "pilot index lost the HTTP policy owner route"
   fi
 
+  # issue #140: the required-entry variant keeps the same surfaces and
+  # prompt shape, but its project index makes the root consult mandatory —
+  # and the conditional pilot must stay conditional
+  if [[ "$scenario" == "project-entry-required" ]]; then
+    grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
+      || fail "required-entry AGENTS.md does not route to documents/INDEX.md"
+    grep -Fq 'documents/INDEX.md' "$target/README.md" \
+      || fail "required-entry README lacks the project documentation pointer"
+    grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
+      || fail "required-entry documents/INDEX.md lacks the artifacts link"
+    grep -Fq 'Before project engineering or documentation changes' \
+      "$target/documents/INDEX.md" \
+      || fail "required-entry index lacks the consult-first policy"
+    if grep -Fq 'when a task needs it' "$target/documents/INDEX.md"; then
+      fail "required-entry index still carries the conditional phrasing"
+    fi
+    for surface in AGENTS.md README.md documents/INDEX.md; do
+      if grep -Eq 'artifacts/(design|implementation|operation|documentation|project|execution|safety)/' \
+          "$target/$surface"; then
+        fail "entry surface leaks an artifact leaf path: $scenario/$surface"
+      fi
+    done
+    if grep -qi 'artifact' "$run_root/PROMPT.md"; then
+      fail "required-entry prompt leaks an artifact path or name"
+    fi
+    cmp -s "$REPO_ROOT/tests/scenarios/project-entry-discovery/PROMPT.md" \
+      "$run_root/PROMPT.md" \
+      || fail "required-entry prompt diverges from the conditional pilot prompt"
+    base_fixture="$REPO_ROOT/tests/repositories/documented-project"
+    for f in AGENTS.md README.md documents/project/HTTP_CLIENT.md documents/project/OPERATIONS.md; do
+      cmp -s "$base_fixture/$f" "$fixture/$f" \
+        || fail "required-entry fixture diverges from documented-project at $f"
+    done
+    grep -Fq 'when a task needs it' \
+      "$REPO_ROOT/tests/repositories/documented-project-entry/documents/INDEX.md" \
+      || fail "conditional pilot fixture lost its conditional phrasing"
+    grep -Fq 'HTTP client policy (timeouts, retries, headers) | `project/HTTP_CLIENT.md`' \
+      "$fixture/documents/INDEX.md" \
+      || fail "required-entry index lost the HTTP policy owner route"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"

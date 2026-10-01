@@ -240,5 +240,6 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 | Scenario | Fixture | Main observation |
 |---|---|---|
 | `project-entry-discovery` | documented-project-entry | promptにartifact pathを与えずproject-owned hook (AGENTS→documents/INDEX→artifacts/INDEX) のみでentry discoveryを観測 / output評価はdocumentation-routingと同一 / self-reported readsのみではdiscoveryはUNVERIFIED扱い (Issue #138) |
+| `project-entry-required` | documented-project-required-entry | 同一task・同一promptのまま、project INDEXが変更前のroot参照を**required**とするvariant。conditional linkとの比較用 / outcome・reported route・observed routeは別々に採点 / telemetryなしのread主張はUNVERIFIED (Issue #140) |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
