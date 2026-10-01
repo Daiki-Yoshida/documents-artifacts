@@ -11,9 +11,13 @@
 #     `FILE.md`            (same-directory reference)
 #   Only tokens ending in `.md` (fragment stripped first) are route
 #   candidates — prose like `input/output` is never a route.
-#   Fenced code blocks are excluded: ``` examples are documentation,
-#   not advertised routes.
+#   Fenced code blocks are excluded: ``` and ~~~ examples are
+#   documentation, not advertised routes. Fence lines must be anchored
+#   (<=3 leading spaces + marker run), and a closer must reuse the same
+#   marker kind with length >= the opener's — inline backtick prose and
+#   shorter inner markers never toggle state.
 #   Project-owned / external example tokens are NOT runtime edges:
+#     - tokens containing `<`, `>` or `*`   (placeholders, globs)
 #     - `documents/...` / `docs-jp/...`     (project documentation space)
 #     - bare `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` / `README.md`
 #       (project entry-point filenames — the exemption applies ONLY to
@@ -40,6 +44,7 @@ fail() { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 
 is_external_example() {
     local t="$1"
+    [[ "$t" == *[\<\>\*]* ]] && return 0
     [[ "$t" == documents/* || "$t" == docs-jp/* ]] && return 0
     # entry-point names exempt only as bare tokens — a directory-prefixed
     # `implementation/README.md` is an advertised runtime path
@@ -96,8 +101,33 @@ for f in "${!ISFILE[@]}"; do
         fi
         refs=$((refs + 1))
         EDGES["$f"]="${EDGES[$f]:-} $res_rel"
-    done < <(awk '/```/{f=!f; next} !f' "$file" \
-        | grep -oE '`[^`]+`' || true)
+    done < <(awk '
+        # Strip fenced code blocks: a fence is an anchored marker run
+        # (<=3 leading spaces + >=3 backticks or tildes). A closer must
+        # repeat the same marker at the opener length or longer with
+        # nothing but trailing whitespace. A backtick info string may
+        # not contain a backtick; tilde info strings are unrestricted.
+        # Non-anchored ``` prose and shorter inner markers never toggle.
+        BEGIN { inf = 0 }
+        inf {
+            if (match($0, /^[ ]{0,3}(`{3,}|~{3,})[ \t]*$/)) {
+                r = substr($0, RSTART, RLENGTH)
+                gsub(/^[ \t]+|[ \t]+$/, "", r)
+                if (substr(r, 1, 1) == fc && length(r) >= fn) inf = 0
+            }
+            next
+        }
+        {
+            if (match($0, /^[ ]{0,3}(`{3,}|~{3,})/)) {
+                r = substr($0, RSTART, RLENGTH)
+                sub(/^[ \t]+/, "", r)
+                c = substr(r, 1, 1); n = length(r)
+                rest = substr($0, RSTART + RLENGTH)
+                if (c == "`" && index(rest, "`")) { print; next }
+                inf = 1; fc = c; fn = n; next
+            }
+            print
+        }' "$file" | grep -oE '`[^`]+`' || true)
 done
 
 [[ "$broken" -eq 0 ]] || fail "$broken broken advertised route(s)"

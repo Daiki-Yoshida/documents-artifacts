@@ -127,9 +127,17 @@ cat > "$MINI/INDEX.md" <<'EOF'
 # mini pack root
 Route: `a.md` — see also prose token `input/output` (not a route).
 Project example with fragment: `AGENTS.md#review` is not a route.
+Placeholder and glob examples: `<dir>/LEAF.md`, `files/*.md`.
 ```text
 Fenced example containing `NOT_A_ROUTE.md` — never a route.
 ```
+~~~text
+Tilde fence containing `TILDE_HIDDEN.md` — never a route.
+~~~
+````
+Longer fence containing ``` shorter markers ``` and
+`LONGER_HIDDEN.md` — never a route.
+````
 EOF
 printf 'a -> `b.md`\n' > "$MINI/a.md"
 printf 'b -> `a.md`\n' > "$MINI/b.md"
@@ -137,6 +145,20 @@ printf 'b -> `a.md`\n' > "$MINI/b.md"
     || { cat "$TMP_ROOT/mini.log"; fail "valid mini pack rejected"; }
 grep -Fq '3 reachable' "$TMP_ROOT/mini.log" \
     || fail "mini pack cycle/indirect reachability miscounted"
+
+# an inline (unanchored) fence-marker mention must NOT suppress the
+# broken route that follows it
+MINI_NEG="$TMP_ROOT/pack-mini-neg"
+mkdir -p "$MINI_NEG"
+cat > "$MINI_NEG/INDEX.md" <<'EOF'
+# neg pack
+Prose mentions the ``` marker inline — that is not a fence.
+Route: `MISSING.md` must be reported.
+EOF
+"$ROUTE_CHECK" "$MINI_NEG" >"$TMP_ROOT/mini-neg.log" 2>&1 \
+    && fail "inline fence mention hid a broken advertised route"
+grep -Fq 'BROKEN: INDEX.md -> MISSING.md' "$TMP_ROOT/mini-neg.log" \
+    || fail "broken route after inline fence prose not reported"
 
 # directory-prefixed entry names are advertised routes, not examples:
 # nonexistent `implementation/README.md` fails BROKEN ...
