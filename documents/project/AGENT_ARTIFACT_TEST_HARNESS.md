@@ -56,6 +56,7 @@ tests/
 │  ├─ destructive-cleanup/
 │  ├─ documentation-routing/
 │  ├─ worktree-materialization/
+│  ├─ worktree-removal-preflight/
 │  ├─ docker-ci-parity/
 │  ├─ performance-contract-preservation/
 │  ├─ provider-compatibility-gate/
@@ -73,7 +74,10 @@ tests/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
 │     └─ <run-id>/
 │        ├─ REPORT.md             (agent-authored raw report)
-│        └─ evidence/             (machine-generated run evidence)
+│        ├─ evidence/             (machine-generated run evidence)
+│        ├─ provenance.txt        (operator-authored run context; 任意)
+│        ├─ verification/         (run-produced raw verification output; 任意)
+│        └─ observed-reads.txt    (operator/tool-recorded reads; 任意)
 └─ evaluations/
    └─ <scenario>/
 ```
@@ -102,13 +106,18 @@ EXPECTATIONS.md
 
 runの証跡はscenario本体とは別のdirectoryへ役割分離する。
 
-- `tests/results/<scenario>/`: execution agentの**raw run report** + machine-generated evidence。後から期待値に合わせて改変しない。evaluationと同じfileへ混ぜない。
+- `tests/results/<scenario>/`: execution agentの**raw run report** + machine-generated evidence + operator/run-level records。後から期待値に合わせて改変しない。evaluationと同じfileへ混ぜない。
 - `tests/evaluations/<scenario>/`: evaluatorによるEXPECTATIONS照合・Artifact改善判断。raw resultの写しではなく評価結果を置く。
 
-`tests/results/` は2種類の証跡を分離して保持する。
+`tests/results/` は証跡をauthorshipごとに分離して保持する。
 
 - `tests/results/<scenario>/<run-id>/REPORT.md`: agent-authored raw testimony。
 - `tests/results/<scenario>/<run-id>/evidence/`: `capture-agent-test.sh` がgenerated repoから機械的に採取するimmutable run evidence。evaluatorはagent testimonyとmachine evidenceを区別できる。
+- `tests/results/<scenario>/<run-id>/provenance.txt`: operator-authored run context (任意)。exact model / reasoning effort / agent runtime / run時刻 / entry condition / repetition / run set / known limitationsを記録し、model名やrun時期をrun-id命名規約から推測する必要をなくす。captureがrun rootの `RUN_PROVENANCE.txt` を検証してverbatim copyする。scenario・source SHA・fixture・baseline SHAはRUN_METADATA/evidence metadataが機械記録済みのため重複記録しない。
+- `tests/results/<scenario>/<run-id>/verification/`: run中に実行されたverification commandのraw output (任意)。agentのnarrative reportとは別物として保存し、claimと実outputの照合を可能にする。
+- `tests/results/<scenario>/<run-id>/observed-reads.txt`: operator/toolが記録した実read観測 (任意)。REPORT.mdのread listはself-reportedであり、このfileがある場合のみobserved evidenceとして区別する。
+
+これらのrun-level recordは `evidence/` の外に置き、machine-generated bundleとauthorshipを混ぜない。capture時に存在しないrecordはevidence metadataへ `not-provided` と記録され、後から補完しない。旧runはこれらを持たず、その旨はlimitationとして扱う。
 
 旧runのflat file (`tests/results/<scenario>/YYYY-MM-DD-<agent>.md`) は当時machine evidenceが存在しなかったlegacy recordとしてそのまま残す。存在しなかったevidenceを後付けで生成しない。
 
@@ -120,6 +129,9 @@ default:
 ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 ├─ PROMPT.md
 ├─ RUN_METADATA.txt
+├─ RUN_PROVENANCE.txt        (operatorがcapture前に記入するtemplate; agent inputではない)
+├─ verification/             (任意: run中のverification raw outputを置く場所)
+├─ OBSERVED_READS.txt        (任意: operator/toolが記録する実read観測)
 └─ repo/
    ├─ .git/
    ├─ documents/artifacts/
@@ -138,7 +150,8 @@ ${TMPDIR:-/tmp}/documents-artifacts-agent-tests-<uid>/<scenario>/
 8. `scenario.conf` が `EVIDENCE_REPOSITORIES` を定義する場合、space-separatedの `selector=run-root-relative-path` 宣言ごとに対象を検証する: selectorは `^[a-z0-9]+(-[a-z0-9]+)*$`、pathは非空・relative・`..`なし・shell metacharなし・symlink禁止で、resolved real pathがrun root内にあること。さらに存在・independent Git repository (own `.git`)・HEAD存在・cleanを要求する。任意shell commandによるdiscoveryは行わない — scenarioが明示宣言したrepoだけを見る;
 9. clean baselineを確認し、HEAD commit数が `EXPECTED_HEAD_COMMIT_COUNT` (既定 `2`) と一致することを確認する;
 10. `artifact-test-baseline` tagをprimary generated repositoryへ作成する。`EVIDENCE_REPOSITORIES`がある場合はgeneric prepare側で各Component Repositoryの現在HEADへも同tagを作成する (hook側にtag生成責務を持たせない);
-11. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。declared Component Repositoryごとに `evidence_repository: <sel>=<rel>` と `evidence_repository_<sel>_baseline_sha: <sha>` も記録する。
+11. source repository HEAD / generated baseline SHA / scenario / fixture / prepare timestampを `RUN_METADATA.txt` へ固定する。declared Component Repositoryごとに `evidence_repository: <sel>=<rel>` と `evidence_repository_<sel>_baseline_sha: <sha>` も記録する;
+12. run rootへ `RUN_PROVENANCE.txt` のcommented templateを出力する。agentへは見せず、run operatorがcapture前に `key: value` pairを記入する。
 
 evaluation fileはtarget repositoryへ入れない。さらにgenerated runをsource repositoryの外へ置き、agentが親directoryを辿っただけで `EXPECTATIONS.md` を発見できる配置を避ける。
 
@@ -164,7 +177,7 @@ execution agentには原則:
 
 させる。
 
-この自己報告は完全なtelemetryではないが、routing behaviorの初期観測として利用する。
+この自己報告は完全なtelemetryではないが、routing behaviorの初期観測として利用する。REPORT.mdのread listはself-reported testimonyであり、run rootの `OBSERVED_READS.txt` が永続化されたrunのみobserved read evidenceを持つ。`RUN_PROVENANCE.txt`・`verification/`・`OBSERVED_READS.txt` はoperator/run側のrecordであり、agent task inputにしない。
 
 ## Evaluation dimensions
 
@@ -176,6 +189,7 @@ requested behavior / design outcomeを満たしたか。
 - taskに関係するleafへ到達したか。
 - Artifact pack全体を「念のため」読むような動作をしていないか。
 - conditional concernだけを必要時に追加したか。
+- read観測の由来を区別したか (REPORT.mdのself-reported listと、存在する場合の`observed-reads.txt`の実観測を混同しない)。
 
 ### Semantic adoption
 Artifactの規範が実際の判断へ反映されたか。
@@ -249,6 +263,33 @@ bash tests/scripts/capture-agent-test.sh --scenario <scenario> --run-id <run-id>
 - 既定出力先は `tests/results/<scenario>/<run-id>/evidence/`。self-test等の一時出力には `ARTIFACT_TEST_RESULTS_ROOT` を使う。
 - prepared runと `artifact-test-baseline` tagが不在ならfailする。
 - `REPORT.md` はagentが別途書く。capture scriptはevidenceだけを生成する。
+- run rootの任意recordを検証して `<run-id>/` 直下へverbatim copyする: `RUN_PROVENANCE.txt` → `provenance.txt` (key: value形式・allowlist key・重複key不可・value≤500文字・1 pair以上あれば `model` 必須・comment/blank行は無視・template-onlyはnot-provided。malformed行はfile+行番号のみ報告し内容はechoしない)、`verification/` → `verification/` (flat regular fileのみ)、`OBSERVED_READS.txt` → `observed-reads.txt` (非空のみ)、`FILE_OPEN_EVENTS.jsonl` → `file-open-events.jsonl` (observer header marker `"type":"observe-file-opens"` が必須・非空のみ)。いずれも既存のcontent filterをfile全体 (comment含む) へ適用し、secret-like contentでfail closedする。evidence/と全run-level recordのdestinationを一切のwrite前にpreflightし、既存path・dangling symlinkも拒否する — 拒否されたcaptureはpartial bundleを残さず、REPORT.md等の既存recordを変更しない。evidence生成・record copy等でcapture試行が失敗した場合、その試行が作成したpathのみをEXIT時にrollbackし、既存recordは保持する (single-writer cleanupであり、concurrent atomicityは保証しない)。失敗後は同じrun-idでretry可能。存在フラグ (`provenance` / `verification_output` / `observed_reads` / `file_open_events` = `present`|`not-provided`) をevidence `metadata.txt` へ記録する。
+
+### Optional file-open observer (Issue #142)
+
+`tests/scripts/observe-file-opens.py` は、self-reported read listをcorroborateするためのLinux専用・stdlibのみ (ctypes + inotify) のscoped observer。subjectのpromptやruntime guidanceは変更しない。
+
+```bash
+# prepared runのsubject起動前に、operatorがrun rootで開始
+python3 tests/scripts/observe-file-opens.py \
+  --run-root "$RUN_ROOT" \
+  --allow documents/artifacts/INDEX.md --allow <repo-relative-path> ... \
+  --output "$RUN_ROOT/FILE_OPEN_EVENTS.jsonl" \
+  --ready-file "$RUN_ROOT/OBSERVE_READY" \
+  --stop-file  "$RUN_ROOT/OBSERVE_STOP"
+# READY fileが出てからsubjectを起動。subject終了後・evaluator確認前に:
+touch "$RUN_ROOT/OBSERVE_STOP"   # または SIGTERM
+```
+
+- allowlistは `repo/` 内のregular fileのみ。`..`/絶対path・symlink (中間directory componentのsymlinkを含む)・hardlink (nlink>1)・`.git`内部・credential-like名・境界外解決をfail closedで拒否し、unwatchしたfileへはeventを出さない。resolved identityにも `.git`/credential-like名のcheckを適用する。
+- `--run-root`とその `repo` はsymlinkではない実directoryが必須 (別directoryへのaliasで境界checkを回避させない)。2つのallow entryが同一inode identityへ解決される場合は、片方を別labelとして誤報告しないようfail closedで拒否する。
+- READY handshakeは全watch登録後のみ。観測window内でwatched fileの**内容は一切読まない** (metadataのみ)。
+- 記録はrepo相対label・seq・mask名・collection時のwall/monotonic時刻のみ。file内容・process identityは記録しない (inotifyはPIDを返さない)。
+- 明示stop/end handshakeとfinal drain。queue overflow・watch invalidation (rename/delete/unmount)・drain打ち切りは `incomplete: true` + `reasons` で記録し、黙って成功扱いしない。abort/強制終了はfooter欠落で判別可能。
+- 観測終了時に全labelのpath bindingをinode identityで再検証する (内容は読まない)。watched fileの**parent directoryがrenameされた**場合、file-watch eventは発火しないが、登録path名は無効になる — この場合は `path-binding-lost:<label>` をreasonに付して `incomplete: true` とし、relocation後のliteral-path完全性は主張しない。ただしend-onlyのmetadata再検証は、観測window中にfileが一旦移動し同一inodeのまま同じpathへ戻る transient (move-out-and-back) を検出できない — 終了時にpath・inodeが一致すればbindingはintactに見える。この限界を埋めるための一般filesystem monitoringは行わない。
+- captureのheader marker check (`"type":"observe-file-opens"`) は入力の形式検証に過ぎず、観測windowの完全性の証明ではない。完全性はevaluatorがrecord末尾の `stop` footer (`drained`・`incomplete`・`reasons`) を必ず確認すること。
+
+限界 (overclaim禁止): OPEN eventはread/理解の証明ではない。eventはcoalesceし得る (回数≠unique open数)。timestampはobserverのcollection時刻。既にopen済みFD・auto-loadされたcontext・cache由来の参照はeventにならないことがある。同一filesystem上のsubjectのみ観測可能。「openが無い」は完了した観測window内でのみ意味を持つ。一般tracing・process monitor・security設定変更ではない。
 
 生成するbundle:
 
@@ -314,6 +355,8 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Third-stage scenarios — completed/evaluated
 
 - `worktree-materialization` (fixture `worktree-project`): 確認済みWork Identityからのdeterministic linked worktree materializationと、project-level `.worktrees/**` の再帰materialization不発生を見る。
+
+`worktree-removal-preflight` (fixture `worktree-project` + `PREPARE_HOOK`, Issue #144, defined/awaiting evaluation): 確認済み `feat/alpha` のremoval要求に対し、期待path `.worktrees/feat/alpha/main/` に**別branch `feat/beta`**で登録されたclean worktreeを配置する。path/registration/cleanだけの省略checklistでは通ってしまう — 正解はidentity/branch mismatchを検出してremoval前に停止・報告すること (force removal・branch削除は不可)。diagnostics-before-recovery側は、auxiliary check (`make status`等) だけでなく**失敗した元operation (`make verify`) の再実行成功**をrecovery完了条件とする。
 
 ### Fourth-stage scenarios — completed/evaluated
 

@@ -91,6 +91,149 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
     || fail "prepared baseline tag missing: $scenario"
 
+  # issue #136: the integration scenario's agent-visible surfaces must
+  # state the commit authority a blind run needs to finish on `main` —
+  # checked on PROMPT.md and the project README only, never EXPECTATIONS
+  if [[ "$scenario" == "integration-head-revalidation" ]]; then
+    grep -Fq 'authorization covers the commits needed' "$run_root/PROMPT.md" \
+      || fail "integration task does not state in-scope commit authority"
+    grep -Fq 'does not authorize pushing to any remote' "$run_root/PROMPT.md" \
+      || fail "integration task does not bound the authorization scope"
+    grep -Fq 'passing on the final committed integrated HEAD' "$run_root/PROMPT.md" \
+      || fail "integration task does not require a verified committed result"
+    grep -Fq 'committed on `main` and `make verify` passes' "$target/README.md" \
+      || fail "fixture README does not state the committed-HEAD workflow"
+  fi
+
+  # issue #138: the project-entry-discovery pilot's agent-visible entry
+  # surfaces carry only generic links — AGENTS/README route to
+  # documents/INDEX.md, the project index links the artifacts root, and
+  # neither entry surfaces nor the prompt leak leaf paths or the pack root
+  if [[ "$scenario" == "project-entry-discovery" ]]; then
+    grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
+      || fail "pilot AGENTS.md does not route to documents/INDEX.md"
+    grep -Fq 'documents/INDEX.md' "$target/README.md" \
+      || fail "pilot README lacks the project documentation pointer"
+    grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
+      || fail "pilot documents/INDEX.md lacks the generic artifacts link"
+    for surface in AGENTS.md README.md documents/INDEX.md; do
+      if grep -Eq 'artifacts/(design|implementation|operation|documentation|project|execution|safety)/' \
+          "$target/$surface"; then
+        fail "entry surface leaks an artifact leaf path: $scenario/$surface"
+      fi
+    done
+    if grep -qi 'artifact' "$run_root/PROMPT.md"; then
+      fail "pilot prompt leaks an artifact path or name"
+    fi
+    grep -Fq 'retried at most twice' "$run_root/PROMPT.md" \
+      || fail "pilot prompt lost the retry policy task"
+    base_fixture="$REPO_ROOT/tests/repositories/documented-project"
+    for f in AGENTS.md README.md documents/project/HTTP_CLIENT.md documents/project/OPERATIONS.md; do
+      cmp -s "$base_fixture/$f" "$fixture/$f" \
+        || fail "pilot fixture diverges from documented-project at $f"
+    done
+    grep -Fq 'HTTP client policy (timeouts, retries, headers) | `project/HTTP_CLIENT.md`' \
+      "$fixture/documents/INDEX.md" \
+      || fail "pilot index lost the HTTP policy owner route"
+  fi
+
+  # issue #140: the required-entry variant keeps the same surfaces and
+  # prompt shape, but its project index makes the root consult mandatory —
+  # and the conditional pilot must stay conditional
+  if [[ "$scenario" == "project-entry-required" ]]; then
+    grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
+      || fail "required-entry AGENTS.md does not route to documents/INDEX.md"
+    grep -Fq 'documents/INDEX.md' "$target/README.md" \
+      || fail "required-entry README lacks the project documentation pointer"
+    grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
+      || fail "required-entry documents/INDEX.md lacks the artifacts link"
+    grep -Fq 'Before project engineering or documentation changes' \
+      "$target/documents/INDEX.md" \
+      || fail "required-entry index lacks the consult-first policy"
+    if grep -Fq 'when a task needs it' "$target/documents/INDEX.md"; then
+      fail "required-entry index still carries the conditional phrasing"
+    fi
+    for surface in AGENTS.md README.md documents/INDEX.md; do
+      if grep -Eq 'artifacts/(design|implementation|operation|documentation|project|execution|safety)/' \
+          "$target/$surface"; then
+        fail "entry surface leaks an artifact leaf path: $scenario/$surface"
+      fi
+    done
+    if grep -qi 'artifact' "$run_root/PROMPT.md"; then
+      fail "required-entry prompt leaks an artifact path or name"
+    fi
+    cmp -s "$REPO_ROOT/tests/scenarios/project-entry-discovery/PROMPT.md" \
+      "$run_root/PROMPT.md" \
+      || fail "required-entry prompt diverges from the conditional pilot prompt"
+    base_fixture="$REPO_ROOT/tests/repositories/documented-project"
+    for f in AGENTS.md README.md documents/project/HTTP_CLIENT.md documents/project/OPERATIONS.md; do
+      cmp -s "$base_fixture/$f" "$fixture/$f" \
+        || fail "required-entry fixture diverges from documented-project at $f"
+    done
+    grep -Fq 'when a task needs it' \
+      "$REPO_ROOT/tests/repositories/documented-project-entry/documents/INDEX.md" \
+      || fail "conditional pilot fixture lost its conditional phrasing"
+    grep -Fq 'HTTP client policy (timeouts, retries, headers) | `project/HTTP_CLIENT.md`' \
+      "$fixture/documents/INDEX.md" \
+      || fail "required-entry index lost the HTTP policy owner route"
+  fi
+
+  # issue #141: the separate-runtime scenario's visible surfaces define
+  # two deployables and the wire contract; the prompt names no expected
+  # artifact leaves; the dependency-free boundary guard is green at
+  # baseline
+  if [[ "$scenario" == "separate-runtime-boundary" ]]; then
+    grep -Fq 'separate runtime' "$target/README.md" \
+      || fail "boundary fixture README lacks separate-runtime definition"
+    grep -Fq 'wire contract' "$target/README.md" \
+      || fail "boundary fixture README lacks the wire contract"
+    grep -Fq 'placed_at' "$run_root/PROMPT.md" \
+      || fail "boundary prompt lost the task"
+    if grep -Eq 'CODE_STRUCTURE|TESTING\.md|DEPENDENCIES\.md|DOMAIN_AND_DATA' \
+        "$run_root/PROMPT.md"; then
+      fail "boundary prompt leaks an expected artifact leaf"
+    fi
+    sh "$target/scripts/check-boundary.sh" >/dev/null \
+      || fail "boundary guard not green on the prepared baseline"
+    grep -Fq 'listOrders' "$target/backend/cli/print-orders.js" \
+      || fail "same-runtime CLI consumer missing from fixture"
+  fi
+
+  # issue #144: the removal-preflight scenario materializes a clean
+  # registered worktree at the requested path but bound to a different
+  # branch — the prepared state must carry that mismatch as the SOLE
+  # fault: nested coordination state must be correctly excluded so a
+  # refusal cannot rest on a second invalid condition
+  if [[ "$scenario" == "worktree-removal-preflight" ]]; then
+    wt="$target/.worktrees/feat/alpha/main"
+    [[ -d "$wt" ]] || fail "removal-preflight worktree missing at prepared path"
+    [[ "$(git -C "$wt" branch --show-current)" == "feat/beta" ]] \
+      || fail "removal-preflight worktree not on the mismatch branch"
+    [[ -z "$(git -C "$wt" status --porcelain)" ]] \
+      || fail "removal-preflight worktree not clean at baseline"
+    [[ ! -e "$wt/.worktrees/PROJECT_COORDINATION.md" ]] \
+      || fail "nested coordination state materialized inside the worktree"
+    git -C "$wt" sparse-checkout list | grep -Fq '!/.worktrees/' \
+      || fail "worktree-local sparse exclusion not active"
+    git -C "$target" worktree list --porcelain \
+      | grep -Fq "worktree $wt" \
+      || fail "mismatched worktree not registered in prepared repo"
+    if grep -Eq 'WORKTREES|WORK_IDENTITY|DIAGNOSTICS' "$run_root/PROMPT.md"; then
+      fail "removal-preflight prompt leaks an expected artifact leaf"
+    fi
+  fi
+
+  # issue #144: the recovery fixture must still distinguish an auxiliary
+  # status probe from the original failed operation — status reports
+  # state at baseline while `make verify` (the failed operation) fails
+  if [[ "$scenario" == "diagnostics-before-recovery" ]]; then
+    make -C "$target" status WORK=feat/export >/dev/null \
+      || fail "diagnostics fixture status probe failed at baseline"
+    if make -C "$target" verify WORK=feat/export >/dev/null 2>&1; then
+      fail "diagnostics fixture verify unexpectedly green at baseline"
+    fi
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"
@@ -213,6 +356,67 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   [[ ! -e "$run_root" ]] || fail "reset did not remove run: $scenario"
 done
 
+
+# --- artifact routing projection checks (Issue #141) ---
+
+src_index="$REPO_ROOT/artifacts/INDEX.md"
+# scope/authority, approach-only/brownfield and commit/push intents must
+# reach the operation router — one advertised row, not forced into every
+# code-change route
+grep -iE 'authority|approach-only|commit' "$src_index" \
+  | grep -Fq '`operation/INDEX.md`' \
+  || fail "root INDEX has no route row to operation/INDEX.md"
+# the integration route (PR85) and the normal-change route stay as-is
+grep -Fq '`safety/INTEGRATION_AND_CONFIRMATION.md` → `operation/VERIFICATION_AND_DONE.md`' \
+  "$src_index" || fail "root INDEX lost the integration route"
+grep -Fq '`operation/CHANGE_LIFECYCLE.md` → `implementation/INDEX.md`' \
+  "$src_index" || fail "root INDEX lost the normal-change route"
+
+cs="$REPO_ROOT/artifacts/implementation/CODE_STRUCTURE.md"
+# same-runtime rule preserved; separate-runtime qualifier + pointer added
+grep -Fq 'depends on Application' "$cs" \
+  || fail "CODE_STRUCTURE lost the same-runtime UI dependency rule"
+grep -Eqi 'same.{0,20}(runtime|deployable)' "$cs" \
+  || fail "UI bullet not qualified by runtime topology"
+grep -Fq 'TESTING.md' "$cs" \
+  || fail "CODE_STRUCTURE lacks the Runtime seams pointer"
+grep -Fq 'Runtime seams' "$REPO_ROOT/artifacts/implementation/TESTING.md" \
+  || fail "TESTING.md lost the Runtime seams section"
+
+# --- worktree/recovery projection checks (Issue #144) ---
+
+wt_doc="$REPO_ROOT/artifacts/project/WORKTREES.md"
+# remove preflight: expected-repository registration, identity/branch
+# match, clean state, and project-policy commit preservation
+grep -Fq 'registered worktree of the expected repository' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost repository registration"
+grep -Fq 'identity/branch matches' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost identity/branch match"
+grep -Fq 'commits are preserved according to project policy' "$wt_doc" \
+  || fail "WORKTREES remove preflight lost project-policy preservation"
+# preservation must stay project-policy scoped — never a universal
+# remote-push requirement
+if grep -qiE 'push.*preserv|preserv.*push|remote.*requir' "$wt_doc"; then
+  fail "WORKTREES preservation drifted toward a remote-push requirement"
+fi
+# create preflight: the Project Repository ignore-boundary gate
+grep -Fq 'ignore boundary covers the sibling worktree path' "$wt_doc" \
+  || fail "WORKTREES create preflight lost the ignore-boundary gate"
+# create postconditions: registered path/branch identity plus Work
+# Documents tracking — never blanket-ignored
+grep -Fq 'Work Documents remain materialized/tracked' "$wt_doc" \
+  || fail "WORKTREES postconditions lost Work Documents tracking"
+grep -Fq 'does not appear as ordinary untracked project content' "$wt_doc" \
+  || fail "WORKTREES postconditions lost the untracked-content check"
+
+rec_doc="$REPO_ROOT/artifacts/safety/DIAGNOSTICS_AND_RECOVERY.md"
+# recovery completion requires a successful rerun of the failed
+# operation — no auxiliary-verification substitute
+grep -Fq 'failed operation is rerun and succeeds' "$rec_doc" \
+  || fail "recovery gate lost the successful-rerun requirement"
+if grep -Fq 'appropriate verification' "$rec_doc"; then
+  fail "recovery gate still permits a verification substitute"
+fi
 
 # --- evidence capture contract (focused single-scenario check) ---
 
@@ -436,6 +640,510 @@ if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_R
 fi
 [[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/secret-probe/evidence" ]] \
   || fail "failed secret capture left persisted evidence"
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
+
+# --- run-level provenance / verification output / observed reads ---
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$PREPARE" --scenario "$cap_scenario" --force >/dev/null
+prov_root="$TEST_RUNS_ROOT/$cap_scenario"
+
+# the provenance template is emitted at the run root only — it must never
+# leak into the generated repository where the agent works
+[[ -f "$prov_root/RUN_PROVENANCE.txt" ]] \
+  || fail "run provenance template missing at run root"
+[[ ! -e "$prov_root/repo/RUN_PROVENANCE.txt" ]] \
+  || fail "run provenance template leaked into generated repo"
+
+# a template-only file (comments and blanks, no key pairs) is not provided
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-none >/dev/null
+evn="$TEST_RESULTS_ROOT/$cap_scenario/prov-none"
+grep -Fqx 'provenance: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "template-only provenance not marked not-provided"
+grep -Fqx 'verification_output: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "missing verification output not marked not-provided"
+grep -Fqx 'observed_reads: not-provided' "$evn/evidence/metadata.txt" \
+  || fail "missing observed reads not marked not-provided"
+[[ ! -e "$evn/provenance.txt" ]] || fail "template-only provenance persisted"
+[[ ! -e "$evn/verification" ]] || fail "phantom verification output persisted"
+[[ ! -e "$evn/observed-reads.txt" ]] || fail "phantom observed reads persisted"
+
+# template ergonomics: uncommenting the example `model` line must yield the
+# exact value — explanations live on their own comment lines
+sed -i 's/^# model: gpt-6-luna$/model: gpt-6-luna/' "$prov_root/RUN_PROVENANCE.txt"
+grep -Fqx 'model: gpt-6-luna' "$prov_root/RUN_PROVENANCE.txt" \
+  || fail "template model example is not a clean key: value line"
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-template >/dev/null
+evt="$TEST_RESULTS_ROOT/$cap_scenario/prov-template"
+grep -Fqx 'provenance: present' "$evt/evidence/metadata.txt" \
+  || fail "uncommented template provenance not marked present"
+grep -Fqx 'model: gpt-6-luna' "$evt/provenance.txt" \
+  || fail "persisted provenance lost the exact model value"
+
+# filled provenance + verification output + observed reads persist verbatim
+# at the run-id level, outside evidence/
+cat > "$prov_root/RUN_PROVENANCE.txt" <<'EOF'
+# operator comment
+model: gpt-6-luna
+model_version: test-snapshot
+reasoning_effort: medium
+agent_runtime: harness selftest
+run_started_at_utc: 2026-10-01T12:00:00Z
+run_finished_at_utc: 2026-10-01T12:20:00Z
+entry_condition: prompt-directed-index
+repetition: 1
+run_set: harness-selftest
+read_evidence: self-reported
+known_limitations: no tool telemetry
+EOF
+mkdir -p "$prov_root/verification"
+printf 'running 3 tests\n3/3 passed\n' > "$prov_root/verification/node-test.txt"
+printf 'documents/artifacts/INDEX.md\ndocuments/artifacts/implementation/INDEX.md\n' \
+  > "$prov_root/OBSERVED_READS.txt"
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-full >/dev/null
+evf="$TEST_RESULTS_ROOT/$cap_scenario/prov-full"
+cmp -s "$prov_root/RUN_PROVENANCE.txt" "$evf/provenance.txt" \
+  || fail "provenance.txt differs from run-root source"
+grep -Fqx 'provenance: present' "$evf/evidence/metadata.txt" \
+  || fail "provided provenance not marked present"
+grep -Fqx 'verification_output: present' "$evf/evidence/metadata.txt" \
+  || fail "provided verification output not marked present"
+grep -Fqx 'observed_reads: present' "$evf/evidence/metadata.txt" \
+  || fail "provided observed reads not marked present"
+cmp -s "$prov_root/verification/node-test.txt" "$evf/verification/node-test.txt" \
+  || fail "verification output not persisted verbatim"
+cmp -s "$prov_root/OBSERVED_READS.txt" "$evf/observed-reads.txt" \
+  || fail "observed reads not persisted verbatim"
+# run-level records stay outside the machine-generated evidence bundle
+for leaked in provenance.txt verification observed-reads.txt; do
+  [[ ! -e "$evf/evidence/$leaked" ]] \
+    || fail "run-level record leaked into evidence bundle: $leaked"
+done
+
+# malformed / unauthorized provenance fails closed before persisting anything
+printf 'unknown_key: x\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-bad-key >/dev/null 2>&1; then
+  fail "capture accepted unknown provenance key"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-bad-key" ]] \
+  || fail "rejected provenance left persisted output"
+
+printf 'model: a\nmodel: b\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-dup >/dev/null 2>&1; then
+  fail "capture accepted duplicate provenance key"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-dup" ]] \
+  || fail "rejected duplicate provenance left persisted output"
+
+printf 'repetition: 1\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-nomodel >/dev/null 2>&1; then
+  fail "capture accepted provenance without model"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-nomodel" ]] \
+  || fail "model-less provenance left persisted output"
+
+# secret-like verification output fails closed like any other content
+printf 'model: gpt-6-luna\n' > "$prov_root/RUN_PROVENANCE.txt"
+printf 'api_key = AKIAIOSFODNN7EXAMPLE\n' > "$prov_root/verification/leak.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-secret >/dev/null 2>&1; then
+  fail "capture persisted secret-like verification output"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-secret" ]] \
+  || fail "failed secret capture left persisted output"
+rm -f "$prov_root/verification/leak.txt"
+
+# --- provenance capture regressions ---
+
+# the content filter applies to the complete provenance input: secret-like
+# text in a value and in a comment line are both refused before persistence
+printf 'model: gpt-6-luna\nknown_limitations: token=FAKE_REVIEW_ONLY_12345678\n' \
+  > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-filter-value >/dev/null 2>&1; then
+  fail "capture accepted secret-like provenance value"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-filter-value" ]] \
+  || fail "rejected provenance value left persisted output"
+
+printf '# note: token=FAKE_REVIEW_ONLY_12345678\nmodel: gpt-6-luna\n' \
+  > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-filter-comment >/dev/null 2>&1; then
+  fail "capture accepted secret-like provenance comment"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-filter-comment" ]] \
+  || fail "rejected provenance comment left persisted output"
+
+# value length boundary: 500 characters is accepted, 501 is refused —
+# the allowlist match must not clobber the saved parsed value
+val500="$(head -c 500 /dev/zero | tr '\0' 'x')"
+printf 'model: %s\n' "$val500" > "$prov_root/RUN_PROVENANCE.txt"
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-len-500 >/dev/null
+evl="$TEST_RESULTS_ROOT/$cap_scenario/prov-len-500"
+grep -Fqx 'provenance: present' "$evl/evidence/metadata.txt" \
+  || fail "500-character provenance value not marked present"
+cmp -s "$prov_root/RUN_PROVENANCE.txt" "$evl/provenance.txt" \
+  || fail "500-character provenance value not persisted verbatim"
+
+val501="$(head -c 501 /dev/zero | tr '\0' 'x')"
+printf 'model: %s\n' "$val501" > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-len-501 >/dev/null 2>&1; then
+  fail "capture accepted 501-character provenance value"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-len-501" ]] \
+  || fail "over-limit provenance left persisted output"
+
+# malformed input reports file and line number, never the line content
+printf 'model: gpt-6-luna\nMALFORMED_MARKER_LINE\n' > "$prov_root/RUN_PROVENANCE.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-diag \
+    >"$prov_root/diag.out" 2>&1; then
+  fail "capture accepted malformed provenance line"
+fi
+diag_out="$(cat "$prov_root/diag.out")"
+rm -f "$prov_root/diag.out"
+[[ "$diag_out" == *"line 2"* ]] \
+  || fail "malformed provenance diagnostic missing line number: $diag_out"
+[[ "$diag_out" != *MALFORMED_MARKER_LINE* ]] \
+  || fail "malformed provenance diagnostic echoed line content"
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-diag" ]] \
+  || fail "rejected malformed provenance left persisted output"
+
+# destination collisions — including dangling symlinks — are refused before
+# any output is written; existing records such as REPORT.md stay untouched
+printf 'model: gpt-6-luna\n' > "$prov_root/RUN_PROVENANCE.txt"
+dest_dir="$TEST_RESULTS_ROOT/$cap_scenario/prov-dest"
+mkdir -p "$dest_dir"
+printf 'stale provenance\n' > "$dest_dir/provenance.txt"
+printf 'agent report\n' > "$dest_dir/REPORT.md"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-dest >/dev/null 2>&1; then
+  fail "capture overwrote an existing provenance destination"
+fi
+[[ ! -e "$dest_dir/evidence" ]] \
+  || fail "refused capture still created an evidence bundle"
+[[ "$(cat "$dest_dir/REPORT.md")" == "agent report" ]] \
+  || fail "existing REPORT.md was clobbered"
+[[ "$(cat "$dest_dir/provenance.txt")" == "stale provenance" ]] \
+  || fail "existing provenance record was clobbered"
+
+sym_dir="$TEST_RESULTS_ROOT/$cap_scenario/prov-sym"
+mkdir -p "$sym_dir"
+ln -s "$sym_dir/nonexistent-target" "$sym_dir/observed-reads.txt"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-sym >/dev/null 2>&1; then
+  fail "capture accepted dangling symlink destination"
+fi
+[[ ! -e "$sym_dir/evidence" ]] \
+  || fail "refused symlink capture still created an evidence bundle"
+[[ -L "$sym_dir/observed-reads.txt" ]] \
+  || fail "dangling symlink destination was removed or replaced"
+
+vdir="$TEST_RESULTS_ROOT/$cap_scenario/prov-vdir"
+mkdir -p "$vdir/verification"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-vdir >/dev/null 2>&1; then
+  fail "capture overwrote an existing verification destination"
+fi
+[[ ! -e "$vdir/evidence" ]] \
+  || fail "refused capture still created an evidence bundle"
+
+# a failed optional-record copy rolls back only the paths this attempt
+# created: no partial bundle is published, pre-existing records survive,
+# and a normal retry then succeeds
+fakebin="$prov_root/fakebin"
+mkdir -p "$fakebin"
+printf '#!/usr/bin/env bash\nexit 71\n' > "$fakebin/cp"
+chmod +x "$fakebin/cp"
+cpf_dir="$TEST_RESULTS_ROOT/$cap_scenario/prov-cpfail"
+mkdir -p "$cpf_dir"
+printf 'agent report\n' > "$cpf_dir/REPORT.md"
+printf 'model: gpt-6-luna\nreasoning_effort: medium\n' > "$prov_root/RUN_PROVENANCE.txt"
+if PATH="$fakebin:$PATH" ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-cpfail >/dev/null 2>&1; then
+  fail "capture succeeded with injected cp failure"
+fi
+[[ ! -e "$cpf_dir/evidence" ]] \
+  || fail "failed copy left a partial evidence bundle"
+[[ ! -e "$cpf_dir/provenance.txt" ]] \
+  || fail "failed copy left a partial provenance record"
+[[ ! -e "$cpf_dir/verification" ]] \
+  || fail "failed copy left a partial verification record"
+[[ ! -e "$cpf_dir/observed-reads.txt" ]] \
+  || fail "failed copy left a partial observed-reads record"
+[[ "$(cat "$cpf_dir/REPORT.md")" == "agent report" ]] \
+  || fail "rollback clobbered pre-existing REPORT.md"
+
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-cpfail >/dev/null
+[[ -f "$cpf_dir/evidence/metadata.txt" ]] \
+  || fail "retry after rolled-back capture did not produce evidence"
+cmp -s "$prov_root/RUN_PROVENANCE.txt" "$cpf_dir/provenance.txt" \
+  || fail "retry after rolled-back capture did not persist provenance"
+[[ -f "$cpf_dir/verification/node-test.txt" ]] \
+  || fail "retry after rolled-back capture did not persist verification output"
+[[ -f "$cpf_dir/observed-reads.txt" ]] \
+  || fail "retry after rolled-back capture did not persist observed reads"
+grep -Fqx 'provenance: present' "$cpf_dir/evidence/metadata.txt" \
+  || fail "retry metadata does not mark provenance present"
+
+# --- optional file-open observer (Issue #142) ---
+
+# capture integration: a record carrying the observer header marker is
+# persisted verbatim at the run-id level under its distinct name, flagged
+# in metadata; anything without the marker fails closed before persisting
+cat > "$prov_root/FILE_OPEN_EVENTS.jsonl" <<'EOF'
+{"type":"observe-file-opens","version":1,"labels":["documents/artifacts/INDEX.md"],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}
+{"type":"ready","watches":1,"wall":"2026-10-01T00:00:00.000100Z","mono":1.1}
+{"type":"event","seq":1,"label":"documents/artifacts/INDEX.md","mask":["IN_OPEN"],"wall":"2026-10-01T00:00:00.000200Z","mono":1.2}
+{"type":"stop","drained":true,"incomplete":false,"reasons":[],"wall":"2026-10-01T00:00:00.000300Z","mono":1.3}
+EOF
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-events >/dev/null
+evj="$TEST_RESULTS_ROOT/$cap_scenario/prov-events"
+cmp -s "$prov_root/FILE_OPEN_EVENTS.jsonl" "$evj/file-open-events.jsonl" \
+  || fail "file-open events record not persisted verbatim"
+grep -Fqx 'file_open_events: present' "$evj/evidence/metadata.txt" \
+  || fail "provided file-open events not marked present"
+grep -Fqx 'observed_reads: present' "$evj/evidence/metadata.txt" \
+  || fail "file-open events must not replace the observed-reads record"
+
+printf 'not an observer record\n' > "$prov_root/FILE_OPEN_EVENTS.jsonl"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-events-bad >/dev/null 2>&1; then
+  fail "capture persisted a file without the observer header marker"
+fi
+[[ ! -e "$TEST_RESULTS_ROOT/$cap_scenario/prov-events-bad" ]] \
+  || fail "rejected file-open record left persisted output"
+
+# restore a valid observer header before asserting destination-collision
+# refusal — with the rejected record still in place, capture would exit on
+# the header check before ever reaching destination validation
+cat > "$prov_root/FILE_OPEN_EVENTS.jsonl" <<'EOF'
+{"type":"observe-file-opens","version":1,"labels":["documents/artifacts/INDEX.md"],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}
+{"type":"stop","drained":true,"incomplete":false,"reasons":[],"wall":"2026-10-01T00:00:00.000300Z","mono":1.3}
+EOF
+odest="$TEST_RESULTS_ROOT/$cap_scenario/prov-odest"
+mkdir -p "$odest"
+printf 'stale events\n' > "$odest/file-open-events.jsonl"
+if ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+    "$CAPTURE" --scenario "$cap_scenario" --run-id prov-odest >/dev/null 2>&1; then
+  fail "capture overwrote an existing file-open events destination"
+fi
+[[ "$(cat "$odest/file-open-events.jsonl")" == "stale events" ]] \
+  || fail "existing file-open events destination was clobbered"
+
+# the header marker is format validation only — a marker-valid record
+# without a stop footer still persists; completeness is the evaluator's
+# judgment from the footer's drained/incomplete/reasons fields
+printf '{"type":"observe-file-opens","version":1,"labels":[],"wall":"2026-10-01T00:00:00.000000Z","mono":1.0}\n' \
+  > "$prov_root/FILE_OPEN_EVENTS.jsonl"
+ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" ARTIFACT_TEST_RESULTS_ROOT="$TEST_RESULTS_ROOT" \
+  "$CAPTURE" --scenario "$cap_scenario" --run-id prov-footerless >/dev/null
+cmp -s "$prov_root/FILE_OPEN_EVENTS.jsonl" \
+  "$TEST_RESULTS_ROOT/$cap_scenario/prov-footerless/file-open-events.jsonl" \
+  || fail "footer-less marker-valid record not persisted verbatim"
+rm -f "$prov_root/FILE_OPEN_EVENTS.jsonl"
+
+# observer self-tests need python3 (stdlib only); skip with notice if absent
+if command -v python3 >/dev/null 2>&1; then
+  OBS="python3 $REPO_ROOT/tests/scripts/observe-file-opens.py"
+  obs_root="$TEST_RUNS_ROOT/observe-sandbox"
+  mkdir -p "$obs_root/repo/.git" "$obs_root/repo/docs"
+  printf 'alpha\n' > "$obs_root/repo/watched-a.txt"
+  printf 'beta\n' > "$obs_root/repo/docs/watched-b.txt"
+  printf 'gamma\n' > "$obs_root/repo/unwatched.txt"
+
+  # fail-closed rejections — nothing is created on refused input
+  for bad in '../outside' '/etc/passwd' '.git/config' 'missing.txt' 'docs' 'creds.key' 'secrets'; do
+    if $OBS --run-root "$obs_root" --allow "$bad" \
+        --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+        --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+        >/dev/null 2>&1; then
+      fail "observer accepted unsafe allowlist path: $bad"
+    fi
+  done
+  [[ ! -e "$obs_root/FILE_OPEN_EVENTS.jsonl" && ! -e "$obs_root/READY" ]] \
+    || fail "refused observer run left state behind"
+
+  ln -s watched-a.txt "$obs_root/repo/link.txt"
+  if $OBS --run-root "$obs_root" --allow link.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a symlink"
+  fi
+  printf 'hl\n' > "$obs_root/repo/hard-src.txt"
+  ln "$obs_root/repo/hard-src.txt" "$obs_root/repo/hard-link.txt"
+  if $OBS --run-root "$obs_root" --allow hard-link.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a hardlinked file"
+  fi
+  if $OBS --run-root "$TEST_RUNS_ROOT" --allow watched-a.txt \
+      --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+      --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" \
+      >/dev/null 2>&1; then
+    fail "observer accepted a run root outside the prepared boundary"
+  fi
+
+  # bounded live smoke: ready handshake, open-without-read and
+  # open+read produce the same IN_OPEN record; stat and unselected
+  # opens produce none; explicit stop drains and closes the window
+  $OBS --run-root "$obs_root" --allow watched-a.txt --allow docs/watched-b.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready"
+  : < "$obs_root/repo/watched-a.txt"
+  head -c 1 "$obs_root/repo/docs/watched-b.txt" >/dev/null
+  : < "$obs_root/repo/unwatched.txt"
+  stat "$obs_root/repo/watched-a.txt" >/dev/null
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on a clean stop"
+
+  events_file="$obs_root/FILE_OPEN_EVENTS.jsonl"
+  grep -Fq '"type":"observe-file-opens"' "$events_file" \
+    || fail "observer record missing header"
+  grep -Fq '"type":"ready","watches":2' "$events_file" \
+    || fail "observer ready record missing/undercounted"
+  [[ "$(grep -c '"type":"event"' "$events_file")" == "2" ]] \
+    || fail "observer recorded the wrong number of events"
+  grep -Fq '"label":"watched-a.txt"' "$events_file" \
+    || fail "observer missed the open-without-read event"
+  grep -Fq '"label":"docs/watched-b.txt"' "$events_file" \
+    || fail "observer missed the open+read event"
+  if grep -Fq 'unwatched.txt' "$events_file"; then
+    fail "observer recorded an event for an unselected file"
+  fi
+  grep -Fq '"drained":true,"incomplete":false' "$events_file" \
+    || fail "observer stop record missing or marked incomplete"
+
+  # invalidation: renaming a watched file marks the record incomplete
+  rm -f "$obs_root/FILE_OPEN_EVENTS.jsonl" "$obs_root/READY" "$obs_root/STOP"
+  $OBS --run-root "$obs_root" --allow watched-a.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready (invalidation run)"
+  mv "$obs_root/repo/watched-a.txt" "$obs_root/repo/watched-a.moved"
+  sleep 0.4
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on invalidated watch"
+  grep -Fq '"incomplete":true' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "invalidated watch was not recorded as incomplete"
+  grep -Fq 'watch-invalidated:watched-a.txt' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "invalidation reason missing from record"
+
+  # Issue #142 review regressions — boundary/identity defects
+  mv "$obs_root/repo/watched-a.moved" "$obs_root/repo/watched-a.txt"
+
+  # each rejection case gets fresh absent control/output paths and
+  # asserts the boundary diagnostic — otherwise a stale path from a
+  # preceding live run could make the case fail on the collision check
+  # instead of the intended validation
+  mkdir -p "$obs_root/repo/realdir"
+  printf 'x\n' > "$obs_root/repo/realdir/inner.txt"
+  ln -s realdir "$obs_root/repo/dirlink"
+  if $OBS --run-root "$obs_root" --allow dirlink/inner.txt \
+      --output "$obs_root/rej-dirlink.jsonl" \
+      --ready-file "$obs_root/rej-dirlink.ready" \
+      --stop-file "$obs_root/rej-dirlink.stop" \
+      >"$obs_root/rej-dirlink.log" 2>&1; then
+    fail "observer accepted an intermediate directory symlink"
+  fi
+  grep -Fq 'not a real directory' "$obs_root/rej-dirlink.log" \
+    || fail "intermediate symlink rejected without boundary diagnostic"
+  [[ ! -e "$obs_root/rej-dirlink.jsonl" && ! -e "$obs_root/rej-dirlink.ready" ]] \
+    || fail "refused dir-symlink run left state behind"
+
+  ln -s .git "$obs_root/repo/gitalias"
+  if $OBS --run-root "$obs_root" --allow gitalias/HEAD \
+      --output "$obs_root/rej-gitalias.jsonl" \
+      --ready-file "$obs_root/rej-gitalias.ready" \
+      --stop-file "$obs_root/rej-gitalias.stop" \
+      >"$obs_root/rej-gitalias.log" 2>&1; then
+    fail "observer accepted a .git alias through a symlinked directory"
+  fi
+  grep -Fq 'not a real directory' "$obs_root/rej-gitalias.log" \
+    || fail ".git alias rejected without boundary diagnostic"
+
+  # a symlinked run root or repo must not satisfy the prepared boundary
+  obs_sib="$TEST_RUNS_ROOT/observe-sibling"
+  mkdir -p "$obs_sib/repo/.git"
+  printf 'x\n' > "$obs_sib/repo/f.txt"
+  ln -s "$obs_sib" "$TEST_RUNS_ROOT/observe-link"
+  if $OBS --run-root "$TEST_RUNS_ROOT/observe-link" --allow f.txt \
+      --output "$obs_root/rej-runroot.jsonl" \
+      --ready-file "$obs_root/rej-runroot.ready" \
+      --stop-file "$obs_root/rej-runroot.stop" \
+      >"$obs_root/rej-runroot.log" 2>&1; then
+    fail "observer accepted a symlinked run root"
+  fi
+  grep -Fq 'run boundary component is not a real directory' "$obs_root/rej-runroot.log" \
+    || fail "symlinked run root rejected without boundary diagnostic"
+  [[ ! -e "$obs_root/rej-runroot.jsonl" && ! -e "$obs_root/rej-runroot.ready" ]] \
+    || fail "refused symlinked-root run left state behind"
+
+  obs_linkroot="$TEST_RUNS_ROOT/observe-linkroot"
+  mkdir -p "$obs_linkroot"
+  ln -s "$obs_sib/repo" "$obs_linkroot/repo"
+  if $OBS --run-root "$obs_linkroot" --allow f.txt \
+      --output "$obs_root/rej-repolink.jsonl" \
+      --ready-file "$obs_root/rej-repolink.ready" \
+      --stop-file "$obs_root/rej-repolink.stop" \
+      >"$obs_root/rej-repolink.log" 2>&1; then
+    fail "observer accepted a symlinked repo directory"
+  fi
+  grep -Fq 'run boundary component is not a real directory' "$obs_root/rej-repolink.log" \
+    || fail "symlinked repo rejected without boundary diagnostic"
+
+  # duplicate inode identity under different spellings is rejected
+  if $OBS --run-root "$obs_root" --allow watched-a.txt --allow ./watched-a.txt \
+      --output "$obs_root/rej-dup.jsonl" \
+      --ready-file "$obs_root/rej-dup.ready" \
+      --stop-file "$obs_root/rej-dup.stop" \
+      >"$obs_root/rej-dup.log" 2>&1; then
+    fail "observer accepted duplicate inode/label identities"
+  fi
+  grep -Fq 'duplicate allowlist path' "$obs_root/rej-dup.log" \
+    || fail "duplicate identity rejected without diagnostic"
+
+  # renaming a watched file's parent directory marks the record
+  # incomplete — no file-watch event fires, so end-of-window path
+  # revalidation must catch the lost binding
+  rm -f "$obs_root/FILE_OPEN_EVENTS.jsonl" "$obs_root/READY" "$obs_root/STOP"
+  $OBS --run-root "$obs_root" --allow docs/watched-b.txt \
+    --output "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    --ready-file "$obs_root/READY" --stop-file "$obs_root/STOP" &
+  obs_pid=$!
+  for _ in $(seq 1 50); do [[ -f "$obs_root/READY" ]] && break; sleep 0.1; done
+  [[ -f "$obs_root/READY" ]] || fail "observer never became ready (parent-rename run)"
+  mv "$obs_root/repo/docs" "$obs_root/repo/docs-renamed"
+  sleep 0.4
+  touch "$obs_root/STOP"
+  wait "$obs_pid" || fail "observer exited nonzero on parent rename"
+  grep -Fq '"incomplete":true' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "parent-directory rename was not recorded as incomplete"
+  grep -Fq 'path-binding-lost:docs/watched-b.txt' "$obs_root/FILE_OPEN_EVENTS.jsonl" \
+    || fail "lost path binding reason missing from record"
+  mv "$obs_root/repo/docs-renamed" "$obs_root/repo/docs"
+else
+  printf 'note: python3 unavailable — file-open observer checks skipped\n' >&2
+fi
+
 ARTIFACT_TEST_RUNS_ROOT="$TEST_RUNS_ROOT" "$RESET" --scenario "$cap_scenario" >/dev/null
 
 printf 'PASS: execution-agent harness fixtures and scenarios\n'

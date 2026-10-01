@@ -43,7 +43,9 @@ Small modules may stay flat. Directory count is not the goal.
 
 **UI**
 - presentation, view state, input/output formatting;
-- depends on Application;
+- in the same deployable/runtime, depends on Application; when UI is a
+  separate runtime (e.g. SPA + API), treat it as an independent bounded
+  context — see `TESTING.md` → Runtime seams;
 - does not push presentation types into Domain/Application.
 
 **Coordinate ≠ own.** A use case may coordinate several responsibilities without taking over their internal decisions.

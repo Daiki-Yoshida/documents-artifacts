@@ -129,6 +129,38 @@ syncはmanaged rootを**完全置換**する。旧artifact、stale file、target
 
 removeは `documents/artifacts/` 全体を明示的に削除する。project-ownedな他の `documents/` 内容は対象にしない。
 
+### Project-owned entry hooks
+
+installerがmanagedにするのは `documents/artifacts/` のみ。agentをpackへ導くproject側の入口 (`AGENTS.md`、`README.md`、project `documents/INDEX.md` など) はadopting project自身が所有し、pack updateはそれらを書き換えない。
+
+最小例 — projectの `documents/INDEX.md` に、既存のowner routeと並べてgeneric linkを1本置く:
+
+```markdown
+| Question | Owner |
+|---|---|
+| ...      | ...   |
+
+Reusable guidance for common engineering work is installed under
+`artifacts/`; start at `artifacts/INDEX.md` when a task needs it.
+```
+
+hookはroot `artifacts/INDEX.md` へのgeneric linkに留める。task固有のleaf pathやleaf要約をentry surfaceへ書かず、選択的読みはagent側のroutingに任せる。
+
+hookの強度はadopting projectの選択:
+
+- **conditional link** — 「taskが必要とするとき `artifacts/INDEX.md` を見よ」(参照は条件付き)。
+- **required entry** — 「projectのengineering/documentation変更の前に `artifacts/INDEX.md` を参照し、taskに関連するguidanceだけを適用せよ」(root参照を必須化。whole-pack preloadは要求しない)。
+
+どちらもproject-ownedなadoption判断であり、効果の優位は各projectの計測でのみ判断する (1回のrun結果から因果的な優位は主張しない)。`tests/` の `project-entry-discovery` / `project-entry-required` scenarioが両variantの観測条件を規定する。
+
+根拠・運用:
+
+```text
+documents/knowledge/subjects/documentation/S003_WORKFLOW.md  # canonical
+artifacts/documentation/PRINCIPLES_AND_ROUTING.md            # installed guidance
+artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md
+```
+
 旧 `--modules` interfaceはArtifact v2で廃止した。部分installではなく、**whole-pack delivery + selective reading**を使う。
 
 ## Update Flow

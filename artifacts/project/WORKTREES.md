@@ -71,6 +71,7 @@ Preflight at least:
 - target path is absent or the exact requested registered worktree;
 - no unrelated content occupies the path;
 - branch is not owned by another incompatible writable worktree;
+- Project Repository ignore boundary covers the sibling worktree path where required;
 - required materialization capability is supported.
 
 Create should be idempotent:
@@ -78,6 +79,16 @@ Create should be idempotent:
 - exact existing valid worktree → no-op success;
 - conflicting/invalid existing state → diagnose and fail;
 - do not steal a branch or destructively repair by default.
+
+Verify before returning success:
+
+- the registered Git worktree path equals the resolved path;
+- the checked-out branch equals the resolved Work branch;
+- the single-writable-checkout ownership invariant holds;
+- for a Project Repository checkout, Work Documents remain materialized/tracked and the sibling worktree path does not appear as ordinary untracked project content — never blanket-ignore Work Documents;
+- where the materialization contract applies, ordinary repository content is materialized, nested `.worktrees/` is absent, and worktree-local sparse state is active.
+
+Creation that fails these checks is not successful even if its commands exited 0.
 
 If creation partially fails, roll back only state created by that invocation when safe. Do not delete pre-existing worktrees or branches.
 
@@ -98,6 +109,13 @@ Status is non-mutating and should expose enough to diagnose identity and materia
 Use Git/filesystem as source of truth; do not create a duplicate registry.
 
 ## Remove contract
+
+Preflight at least:
+
+- the resolved path is a registered worktree of the expected repository;
+- resolved identity/branch matches the requested WORK/REPO expectation;
+- the worktree has no uncommitted changes;
+- commits are preserved according to project policy.
 
 Normal remove:
 

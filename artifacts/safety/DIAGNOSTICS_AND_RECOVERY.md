@@ -34,4 +34,4 @@ Show the selected repository/checkout and, when relevant, Work Identity, worktre
 - understand the failure before using force;
 - do not begin with global Docker prune or broad file deletion;
 - report the failing layer and evidence;
-- do not call recovery complete until the failed operation or appropriate verification succeeds.
+- do not call recovery complete until the failed operation is rerun and succeeds — if the rerun is blocked or not authorized, report recovery as unverified/incomplete instead of substituting an auxiliary check or repeating an unsafe effect.

@@ -159,6 +159,49 @@ BASELINE_SHA="$(git -C "$TARGET" rev-parse artifact-test-baseline)"
   fi
 } > "$RUN_ROOT/RUN_METADATA.txt"
 
+# Operator-authored run provenance template. It lives at the run root,
+# outside the generated repository, and is never agent task input. The run
+# operator uncomments the keys it actually knows before capture;
+# capture-agent-test.sh validates keys against a fixed allowlist and
+# persists the file verbatim as tests/results/<scenario>/<run-id>/provenance.txt.
+cat > "$RUN_ROOT/RUN_PROVENANCE.txt" <<'EOF'
+# Run provenance — operator-authored context for this blind execution run.
+# Not agent input: the execution agent is never shown this file.
+#
+# Uncomment only the lines the operator actually knows; never guess or
+# reconstruct values afterwards. capture-agent-test.sh rejects unknown
+# keys, duplicate keys, empty values, and a provided file without `model`.
+# Each commented example below is a complete "key: value" pair by itself —
+# explanations sit on their own comment lines so an uncommented example is
+# already a clean value.
+# Source SHA, fixture, and baseline SHA are already recorded mechanically
+# in RUN_METADATA.txt and evidence/metadata.txt — do not duplicate them here.
+#
+# Exact agent model identifier (required if any key is given).
+# model: gpt-6-luna
+# Model snapshot / version — only if actually known; otherwise omit the line.
+# model_version: 2026-09-30
+# Reasoning effort setting — kept separate from the model identifier.
+# reasoning_effort: medium
+# Runner identity, e.g. "devin cli 3000.11.3".
+# agent_runtime: dot cloud shell
+# Run start/finish in ISO-8601 UTC.
+# run_started_at_utc: 2026-10-01T12:00:00Z
+# run_finished_at_utc: 2026-10-01T12:25:00Z
+# How the agent reached the artifact entry, e.g. prompt-directed-index.
+# entry_condition: prompt-directed-index
+# This run's index within the run set.
+# repetition: 1
+# Batch identifier grouping repeated runs.
+# run_set: gpt-6-luna-baseline
+# How the artifact read list was produced:
+# self-reported | operator-log | tool-export | none
+# read_evidence: self-reported
+# Run-specific evidence limitations.
+# known_limitations: read list is self-reported; no tool telemetry
+EOF
+
 printf 'Prepared scenario: %s\nFixture: %s\nRepository: %s\nAgent prompt: %s\n' "$SCENARIO" "$FIXTURE" "$TARGET" "$RUN_ROOT/PROMPT.md"
 printf 'Run metadata: %s\n' "$RUN_ROOT/RUN_METADATA.txt"
+printf 'Run provenance template (operator fills before capture): %s\n' "$RUN_ROOT/RUN_PROVENANCE.txt"
 printf 'Evaluator expectations (do not give to agent): %s\n' "$EXPECTATIONS"

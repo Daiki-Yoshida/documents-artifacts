@@ -19,6 +19,9 @@ assert_absent() {
 
 bash -n "$SCRIPT" || fail "artifacts.sh syntax check failed"
 
+ROUTE_CHECK="$REPO_ROOT/tests/scripts/check-artifact-routes.sh"
+bash -n "$ROUTE_CHECK" || fail "check-artifact-routes.sh syntax check failed"
+
 TMP_ROOT="$(mktemp -d)"
 trap 'rm -rf -- "$TMP_ROOT"' EXIT
 
@@ -89,4 +92,93 @@ if "$SOURCE/artifacts.sh" --list >/dev/null 2>&1; then
   fail "symlinked source pack unexpectedly succeeded"
 fi
 
+# Advertised runtime routes: every inline-backtick .md path that is not
+# a declared project-owned example must resolve inside the pack, and
+# every pack file must be transitively reachable from INDEX.md.
+# Mechanical validity only — not evidence of meaningful routing or reads.
+"$ROUTE_CHECK" "$REPO_ROOT/artifacts" >/dev/null \
+    || fail "shipped pack route check failed"
+
+PACK_BROKEN="$TMP_ROOT/pack-broken"
+cp -r "$REPO_ROOT/artifacts" "$PACK_BROKEN"
+sed -i 's|implementation/TESTING\.md|implmentation/TESTING.md|' \
+    "$PACK_BROKEN/INDEX.md"
+"$ROUTE_CHECK" "$PACK_BROKEN" >"$TMP_ROOT/broken.log" 2>&1 \
+    && fail "route check accepted a broken inline route"
+grep -Fq 'BROKEN: INDEX.md -> implmentation/TESTING.md' "$TMP_ROOT/broken.log" \
+    || fail "broken route not reported with source and target"
+
+# An inner-router entry removal must orphan its leaf even though the
+# root INDEX and router file still exist and link fine.
+PACK_ORPHAN="$TMP_ROOT/pack-orphan"
+cp -r "$REPO_ROOT/artifacts" "$PACK_ORPHAN"
+sed -i '/SCOPE_AND_AUTHORITY\.md/d' "$PACK_ORPHAN/operation/INDEX.md"
+"$ROUTE_CHECK" "$PACK_ORPHAN" >"$TMP_ROOT/orphan.log" 2>&1 \
+    && fail "route check accepted an orphaned leaf"
+grep -Fq 'UNREACHABLE: operation/SCOPE_AND_AUTHORITY.md' "$TMP_ROOT/orphan.log" \
+    || fail "orphaned leaf not reported as unreachable"
+
+# Issue #143 review regressions — classification boundaries on a
+# minimal synthetic pack (fences, prose, bare-vs-prefixed examples,
+# cycles):
+MINI="$TMP_ROOT/pack-mini"
+mkdir -p "$MINI"
+cat > "$MINI/INDEX.md" <<'EOF'
+# mini pack root
+Route: `a.md` — see also prose token `input/output` (not a route).
+Project example with fragment: `AGENTS.md#review` is not a route.
+Placeholder and glob examples: `<dir>/LEAF.md`, `files/*.md`.
+```text
+Fenced example containing `NOT_A_ROUTE.md` — never a route.
+```
+~~~text
+Tilde fence containing `TILDE_HIDDEN.md` — never a route.
+~~~
+````
+Longer fence containing ``` shorter markers ``` and
+`LONGER_HIDDEN.md` — never a route.
+````
+EOF
+printf 'a -> `b.md`\n' > "$MINI/a.md"
+printf 'b -> `a.md`\n' > "$MINI/b.md"
+"$ROUTE_CHECK" "$MINI" >"$TMP_ROOT/mini.log" 2>&1 \
+    || { cat "$TMP_ROOT/mini.log"; fail "valid mini pack rejected"; }
+grep -Fq '3 reachable' "$TMP_ROOT/mini.log" \
+    || fail "mini pack cycle/indirect reachability miscounted"
+
+# an inline (unanchored) fence-marker mention must NOT suppress the
+# broken route that follows it
+MINI_NEG="$TMP_ROOT/pack-mini-neg"
+mkdir -p "$MINI_NEG"
+cat > "$MINI_NEG/INDEX.md" <<'EOF'
+# neg pack
+Prose mentions the ``` marker inline — that is not a fence.
+Route: `MISSING.md` must be reported.
+EOF
+"$ROUTE_CHECK" "$MINI_NEG" >"$TMP_ROOT/mini-neg.log" 2>&1 \
+    && fail "inline fence mention hid a broken advertised route"
+grep -Fq 'BROKEN: INDEX.md -> MISSING.md' "$TMP_ROOT/mini-neg.log" \
+    || fail "broken route after inline fence prose not reported"
+
+# directory-prefixed entry names are advertised routes, not examples:
+# nonexistent `implementation/README.md` fails BROKEN ...
+MINI_BROKEN="$TMP_ROOT/pack-mini-broken"
+cp -r "$MINI" "$MINI_BROKEN"
+mkdir -p "$MINI_BROKEN/implementation"
+printf 'ref: `implementation/README.md`\n' >> "$MINI_BROKEN/INDEX.md"
+"$ROUTE_CHECK" "$MINI_BROKEN" >"$TMP_ROOT/mini-broken.log" 2>&1 \
+    && fail "route check hid a missing directory-prefixed README"
+grep -Fq 'BROKEN: INDEX.md -> implementation/README.md' \
+    "$TMP_ROOT/mini-broken.log" \
+    || fail "dir-prefixed README not reported as advertised route"
+
+# ... and a real one becomes a reachable edge (never UNREACHABLE)
+printf '# impl readme\n' > "$MINI_BROKEN/implementation/README.md"
+"$ROUTE_CHECK" "$MINI_BROKEN" >"$TMP_ROOT/mini-real.log" 2>&1 \
+    || { cat "$TMP_ROOT/mini-real.log"; fail "real dir-prefixed README rejected"; }
+grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
+    || fail "real dir-prefixed README not counted reachable"
+
+# Legitimate project-owned example tokens and valid indirect routing
+# stay accepted: the shipped pack exercises both.
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
