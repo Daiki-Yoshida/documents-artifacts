@@ -118,3 +118,126 @@ routes.
 - Issues [#138](https://github.com/Daiki-Yoshida/documents-artifacts/issues/138),
   [#140](https://github.com/Daiki-Yoshida/documents-artifacts/issues/140),
   [#141](https://github.com/Daiki-Yoshida/documents-artifacts/issues/141)
+
+## Follow-up — 2026-10-01 (independent reviews; observed entry-hook pair)
+
+Appended after the original summary; all earlier sections are
+unchanged. The "Pending" item above is superseded as noted below.
+This section remains an evaluator summary — not an agent transcript
+and not independent read telemetry.
+
+### Source pins
+
+- `19fc5e78c6c128dc7431558b56eafa91222b5f48` — Issue #141 projection
+  fixes under independent review
+- `48ae5e9682310fb4ce01738955c61c8b9e98af44` — Issue #142 observer
+  boundary/identity fixes
+- `52e6a3d4713f4a2d6a842b4d5573a6db66a4a5c7` — prepare/capture source
+  pin for the observed pair below
+- `eea6a9c1ef831b4f4e3c9bfcf82c3f0d4e122236` — later test-only
+  regression fix; the observed pair is not retroactively relabeled
+  with it (observer blob identical at both commits:
+  `a4f1e91967194f8572e9c0ec1a5548d694525a31`)
+
+### Issue #141 — independent review result
+
+Independent cloud review at `19fc5e7` accepts both minimal
+canonical-grounded projection fixes; all three suites and
+protected-original checks pass. Two fresh `gpt-6-luna`/medium
+`separate-runtime-boundary` runs preserve the published API boundary
+and the same-runtime CLI, map/render the requested wire field, and
+pass the boundary guard plus evaluator behavioral probes. One run
+documents date-only semantics but passes through the internal value;
+upstream format is unspecified, so broader format coverage is
+conditional — not a proven original-task failure. The guard alone is
+green at baseline and is not sufficient outcome evidence. One fresh
+VCS task correctly creates its authorized local review commit,
+leaves main/remotes unchanged, and reports external verification
+NOT RUN. Reported reads (self-reported): the VCS run now includes
+`operation/INDEX.md` plus authority/reporting leaves; one runtime run
+reports `CODE_STRUCTURE.md`, the other does not. Actual read
+telemetry remains absent for these runs; no causal improvement claim.
+
+### Issue #142 — observer review and observed pair
+
+The optional observer was independently reviewed and fixed
+(`48ae5e9` boundary/identity defects; `52e6a3d` test-header restore;
+`eea6a9c` diagnostic-path regressions). At `eea6a9c` all three
+suites pass, including `test-knowledge-integrity.sh` with the pinned
+historical snapshot present — no comparison skip.
+
+One paired observation ran at pin `52e6a3d`: fresh native
+`gpt-6-luna`/medium, one run each on `project-entry-discovery`
+(conditional hook) and `project-entry-required` (required hook),
+identical blind task and artifact pack, no observer instructions and
+no runtime-guidance change. Identical 44-file watch scope: 41
+installed artifact documents plus `AGENTS.md`, `README.md`,
+`documents/INDEX.md`; owner documents and the run-level `PROMPT.md`
+were outside the scope. The observer was READY before each subject
+started and stopped after each finished, before inspection/capture;
+both sessions exited 0 with footers `drained: true`,
+`incomplete: false`, `reasons: []`.
+
+Outcome (assessed separately from observation): **both runs pass** —
+only `documents/project/HTTP_CLIENT.md` changed; GET retries ≤ 2 for
+502/503 with exponential backoff; POST never retried; 8-second
+timeout preserved; managed artifacts byte-identical; post-stop
+`git diff --check` clean. Reporting differs: the conditional run's
+final message includes its consulted-file list; **the required run's
+final omits the requested list — an earlier supplemental response
+contains it**; both records are preserved separately, the gap is not
+silently filled.
+
+Observed OPEN labels (first-observed registration-label order; OPEN
+is not reading, exposure to the model, or understanding):
+
+- Conditional — 6 labels, 3 of 41 artifact documents:
+  `AGENTS.md`, `README.md`, `documents/INDEX.md`,
+  `documentation/INDEX.md`, `documentation/WORKFLOW_AND_MAINTENANCE.md`,
+  `documentation/FORMAT_AND_GIT.md`.
+  **No `artifacts/INDEX.md` OPEN was observed** in the conditional
+  run's completed window.
+- Required — 8 labels, 5 of 41 artifact documents: the same six plus
+  `documentation/PRINCIPLES_AND_ROUTING.md` and
+  `artifacts/INDEX.md`. The artifact-root OPEN is **eventual, not
+  root-first** — two documentation-guidance files precede it. Whether
+  that root event preceded the owner-document edit is not known:
+  the OPEN-only scope cannot establish timing-relative ordering
+  against the edit.
+
+Testimony comparison: the watched portion of each self-reported path
+list exactly matches its observed OPEN-label set (two abbreviated
+filenames normalized for set comparison; raw finals unchanged).
+Owner-document and `PROMPT.md` consultation lie outside the watch
+scope and are not corroborated. Keep separate: policy-output pass;
+self-reported consultation; independently observed OPEN
+labels/order.
+
+### Limits for the follow-up
+
+OPEN does not prove bytes were read, exposed to the model, or
+understood. inotify has no PID attribution; harness or other-process
+opens are indistinguishable. Events coalesce — counts are not
+unique-open counts. Preloaded/cached content and already-open
+descriptors may produce no event. End-only identity checks cannot
+detect a move-out-and-back transient. An absent event means only no
+OPEN observed for that label within the completed window. One pair
+is descriptive evidence, not a causal or reliability claim.
+
+### Deferred scenarios (unchanged)
+
+brownfield-execution-adoption, docker-ci-parity,
+work-runtime-lifecycle-propagation,
+work-runtime-resource-scoping — still Docker-deferred; no host
+substitution, no coverage claim.
+
+### Follow-up evidence links
+
+- Issue #141 independent review:
+  [comment](https://github.com/Daiki-Yoshida/documents-artifacts/issues/141#issuecomment-5925723081)
+- Issue #142 observed pair + regression validation:
+  [comment](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5926251512)
+- Issue #142 earlier reviews:
+  [boundary defects](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5925942864),
+  [header-restore fix](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5925956209),
+  [diagnostic-path fix](https://github.com/Daiki-Yoshida/documents-artifacts/issues/142#issuecomment-5926131579)
