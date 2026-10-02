@@ -67,3 +67,22 @@ initial_reorganization:
 ```
 
 後続のownership整合ではnormative本文を更新しているため、この数値は現在本文の逐語一致を示さない。原文はrecords、旧umbrellaの意味はhistory / Git historyへ保持する。
+
+## Project Root / Execution Target routing
+
+Project RootをAI development session rootとして維持しつつ、public command interfaceから別checkout/worktreeへoperationをroutingする契約は `S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
+
+そこでは次を区別する。
+
+```text
+Agent Session Root
+  = Project Root
+
+Execution Target Directory
+  = public operationが作用するdirectory
+  = Make-based interfaceでは必要に応じ DIR=<path>
+```
+
+また、project-owned public operationが存在するroutine operationでraw tool commandへ迂回しないguard、`DIR` とWork Identity / authorizationの分離も同fileで扱う。
+
+source: `../../records/2026-10-03-project-root-execution-routing/`
