@@ -1,0 +1,5 @@
+=== git status --short ===
+ M config/pathfinding-limit.txt
+
+=== ignored paths present (names only) ===
+!! .project-runtime/

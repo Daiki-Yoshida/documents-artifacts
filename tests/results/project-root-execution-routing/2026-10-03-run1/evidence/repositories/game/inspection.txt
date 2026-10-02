@@ -1,0 +1,8 @@
+=== recent commits ===
+dd5c4da test: game component baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.project-runtime/dev-install.ok

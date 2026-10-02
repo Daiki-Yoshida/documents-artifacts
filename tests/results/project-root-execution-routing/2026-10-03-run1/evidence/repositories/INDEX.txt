@@ -1,0 +1,3 @@
+declared component repositories
+format: selector | run_root_relative_path | baseline_sha | head_sha | branch | status
+game | repo/components/game | dd5c4dacc11b7a7684ff09b52d935058493927b9 | dd5c4dacc11b7a7684ff09b52d935058493927b9 | main | dirty
