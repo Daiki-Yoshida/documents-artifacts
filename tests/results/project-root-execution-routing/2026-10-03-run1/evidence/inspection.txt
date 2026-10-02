@@ -1,0 +1,9 @@
+=== recent commits ===
+cb88668 test: install Artifact v2
+e5cf89f test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+components/game/

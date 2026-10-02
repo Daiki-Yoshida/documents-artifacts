@@ -1,0 +1,15 @@
+scenario: project-root-execution-routing
+run_id: 2026-10-03-run1
+fixture: project-root-execution-routing
+prepared_at_utc: 2026-10-02T19:44:57Z
+captured_at_utc: 2026-10-02T19:46:33Z
+source_repo_head_at_prepare: c9815897a76f00bdf5ac647a118c34fb488e0154
+source_repo_head_at_capture: c9815897a76f00bdf5ac647a118c34fb488e0154
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/project-root-execution-routing/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: cb88668c21cba34f723bece132a5f7c6069e0ca2
+head_sha_at_capture: cb88668c21cba34f723bece132a5f7c6069e0ca2
+provenance: not-provided
+verification_output: not-provided
+observed_reads: not-provided
+file_open_events: not-provided
