@@ -69,7 +69,8 @@ tests/
 │  ├─ multi-repo-workspace-ownership/
 │  ├─ requested-outcome-verification/
 │  ├─ documentation-maintenance-reconciliation/
-│  └─ state-ownership-consistency/
+│  ├─ state-ownership-consistency/
+│  └─ project-root-execution-routing/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
