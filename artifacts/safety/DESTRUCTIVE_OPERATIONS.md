@@ -15,6 +15,20 @@ Do not hide DB reset, volume deletion, forced worktree removal, remote teardown,
 
 Avoid global operations such as host-wide Docker prune in normal project lifecycle.
 
+## Directory selection is not authority
+
+An execution selector such as `DIR=<path>` identifies where a public operation acts; it does not authorize destructive effects.
+
+For delete/reset/purge/force operations:
+
+- do not infer deletion authority from `DIR` alone;
+- resolve and verify Project/Work/repository ownership and preconditions;
+- validate canonical/symlink-resolved scope when relevant;
+- treat Project-Root-external or absolute targets as unsupported by default unless explicitly allowed by project policy;
+- do not turn a routine execution-directory selector into a catch-all force-cleanup target.
+
+Apply the normal confirmation/authority rules regardless of how the directory was selected.
+
 ## Safety level
 
 ```yaml

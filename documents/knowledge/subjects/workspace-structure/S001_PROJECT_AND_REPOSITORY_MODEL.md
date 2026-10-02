@@ -130,6 +130,65 @@ Project RootはProject Repositoryの基準working tree rootである。
 - `documents/` 内部構造は `../documentation/` が所有する。
 - application内部moduleの配置はこのsubjectの責務ではない。
 
+## Project Repositoryの開発入口責務
+
+Project Repositoryはproject-level coordination stateのGit ownershipを持つだけでなく、**人・AIがproject全体の開発contextへ入る基準面**でもある。
+
+日本語で役割を説明するときは、`Project Repository` を **プロジェクト管理リポジトリ**、文脈上明確な場合は **管理リポジトリ** と表現できる。ただし「管理」は単なるadministrative repositoryを意味しない。Project Repositoryは少なくとも次をproject-levelに束ねる。
+
+- Project Documentation
+- agent entrypointやdocumentation routing
+- project policy
+- Makefile / public command wrapper / project-level scripts
+- repository/component間のcoordination
+- Work Identityが利用するproject-level coordination state
+
+「親repository / 子repository」という表現は、Git ownershipや依存方向を誤解させやすいため、Project Repository / Component Repositoryの役割名で区別する。
+
+### Project RootはAI development sessionのentry surface
+
+Projectに属するdevelopment workでは、AI development sessionは **Project Rootから開始する**。
+
+Project Rootは単なるpath resolutionの基準ではなく、次を取得するdevelopment entry surfaceである。
+
+- Project Documentation
+- `AGENTS.md` 等のagent-facing entrypoint
+- `documents/INDEX.md` 等のdocumentation router
+- managed artifactへのproject-owned entry hook
+- project-level architecture / policy
+- public command interface
+- repository ownership / stable selector
+- Work Identity / verification / integrationのproject-local rule
+
+Work Root、Component Repository checkout、repository-specific worktreeに実装対象が存在しても、それらをProject全体のAI session entry rootとして扱わない。
+
+典型的な解決順序は次になる。
+
+```text
+Project Root
+  ↓ project context / policy / documentation / routing
+Work Identity
+  ↓ participating repositories
+repository checkout / worktree
+  ↓ actual implementation / verification target
+```
+
+これは「すべてのsubprocessをProject Rootのworking directoryで実行する」という意味ではない。実際のcommand target / subprocess working directoryの選択は `../development-execution/` が所有し、Work Rootとrepository-specific worktreeの意味は `../work-identity/` が所有する。
+
+### Project Repository自身のworktree
+
+Project Repository自身が1つのWorkへ参加し、Project Root配下の `.worktrees/<work-type>/<work-name>/<repository>/` にProject Repositoryのlinked worktreeが存在する場合も、そのlinked worktreeは実装対象であってAI development sessionのentry rootではない。
+
+AIはProject Rootからproject contextを取得したうえで、対象worktreeへ操作をroutingする。
+
+### standalone Component Repository
+
+Component Repositoryであるrepositoryが、上位Projectから切り離された独立projectとして意図的に開発される場合、そのdevelopment contextではそのrepository自身がProject Repositoryになり得る。
+
+したがって規範は「Component RepositoryではAIを起動してはならない」ではなく、**そのWorkが属するProjectのProject RootからAI development sessionを開始する**ことである。
+
+上位Projectに属するWorkなのに、Component Repository checkoutだけをproject全体のrootとして扱ってproject-level assetsを無視することを避ける。
+
 ## Primary Checkoutの境界
 
 Primary Checkoutはstatic repository resolutionのための概念として扱う。
@@ -145,6 +204,8 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 その判断はWork Identity / project policyが所有する。
 
 ## Sources
+
+- `../../records/2026-10-03-project-root-execution-routing/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`

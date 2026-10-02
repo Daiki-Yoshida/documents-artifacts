@@ -70,6 +70,21 @@ Use the same conceptual shape for single- and multi-repository projects.
 
 Do not introduce a parallel `.work/<identity>/` root merely to duplicate this Work Root. External systems may own state outside the filesystem when appropriate.
 
+## Work Root is not the session root
+
+The Work Root is the physical area that groups Work Documents and participating repository worktrees. It is **not** the Project-level AI development session root.
+
+Keep this distinction:
+
+```text
+Agent Session Root = Project Root
+Work Root          = .worktrees/<work-type>/<work-name>/
+```
+
+Start from Project Root, resolve the Work and participating repositories there, then operate on the selected repository worktree.
+
+A repository-specific worktree may be the command target without becoming the Project context root. Generic command-target routing is covered by `../execution/COMMANDS_AND_CI.md`.
+
 ## Work Documents
 
 ```text

@@ -55,6 +55,32 @@ The live Git/filesystem state remains source of truth; do not create a duplicate
 
 Work-level branch/path mapping uses that stable repository identity and is covered by Work guidance.
 
+## Development entry root
+
+For development work that belongs to a Project, initialize the AI development session from the **Project Root**.
+
+The Project Root is not only a path-resolution anchor. It is the entry surface for project-owned documentation, agent instructions, routing, policy, public commands, repository ownership, and Work guidance.
+
+Do not treat these as the Project-level AI session root merely because implementation happens there:
+
+- a Work Root;
+- a Component Repository checkout;
+- a repository-specific Work worktree;
+- a linked worktree of the Project Repository itself.
+
+Resolve project context first, then route operations to the selected repository/worktree.
+
+```text
+Project Root
+  -> project context / policy / routing
+  -> Work / repository selection
+  -> implementation target
+```
+
+This does not require every subprocess to run with Project Root as its working directory. Execution-target routing belongs to `../execution/COMMANDS_AND_CI.md`.
+
+A repository that normally acts as a Component Repository may itself be the Project Repository when it is intentionally developed as a standalone Project. The rule is: start from the Project Root of the Project that owns the Work, not from a subtree merely because it owns the edited source.
+
 ## Primary checkout
 
 A Primary Checkout is a stable reference checkout for repository/root resolution and project-level helper operations.

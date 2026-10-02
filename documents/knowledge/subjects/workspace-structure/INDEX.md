@@ -72,3 +72,12 @@ work_identity_owns:
 
 旧定義は `S003_HISTORY.md` に保存している。
 
+## AI development entryとの接続
+
+Project Repository / Project RootをAI development sessionの入口として扱うstatic contractは `S001_PROJECT_AND_REPOSITORY_MODEL.md` が主所有する。
+
+Component RepositoryのGit ownershipとProject-level development context ownershipを分離する規則は `S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md` を参照する。
+
+実際のcommand target / `DIR` selectionは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md`、Work Rootとrepository-specific worktreeの動的意味は `../work-identity/` が主所有する。
+
+source: `../../records/2026-10-03-project-root-execution-routing/`

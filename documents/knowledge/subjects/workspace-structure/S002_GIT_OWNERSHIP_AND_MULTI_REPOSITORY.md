@@ -113,6 +113,25 @@ Component Repository
 
 `REPO` からWork branchやWork Root内pathをどう導出するかは `../work-identity/S006_WORKTREE_COMMANDS.md` が所有する。
 
+## Git ownershipとdevelopment context ownership
+
+Component Repositoryがproduct sourceと独立Git履歴を所有することと、そのcheckoutがProject全体のdevelopment entry surfaceであることは別である。
+
+複数repository projectでは、Component Repositoryへ変更を加えるWorkであっても、Project Repository側に次のproject-level assetが存在し得る。
+
+- Project Documentation
+- agent entrypoint / documentation routing
+- public command wrapper
+- cross-component policy
+- stable repository selector / ownership mapping
+- Work Identity / verification / integration rule
+
+したがって、repository-specific source ownershipを理由にComponent Repository checkoutをProject全体のAI session rootへ昇格させない。
+
+Project Repository / Project Rootでproject contextを解決した後、stable repository identityやWork Identityを通じて対象Component Repository / worktreeへ操作をroutingする。
+
+standaloneなdevelopment contextでは同じphysical repositoryがProject Repositoryになり得るため、判定はrepository名やdirectory位置ではなく、**そのWorkがどのProject contextに属するか**で行う。
+
 ## Primary Checkoutとの関係
 
 各repositoryにstableな基準checkoutを持たせる場合、そのcheckoutはrepository identity / root resolutionの基準として利用できる。
@@ -144,6 +163,8 @@ fixed_ref:
 CIやrelease検証が、指定されていないworkspace最新版へ偶然依存してはいけない。
 
 ## Sources
+
+- `../../records/2026-10-03-project-root-execution-routing/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md`

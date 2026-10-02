@@ -160,6 +160,47 @@ participating repository
 
 ---
 
+## Work RootとAgent Session Rootを分離する
+
+Work Rootは、Work Identityに属するWork Documentsとparticipating repository worktreeを束ねる**物理的な作業領域**である。
+
+ただしWork Rootは、Project全体を理解するためのAI development session entry rootではない。
+
+Projectに属するdevelopment workでは、
+
+```text
+Agent Session Root
+  = Project Root
+
+Work Root
+  = .worktrees/<work-type>/<work-name>/
+```
+
+を区別する。
+
+AIはProject RootからProject Documentation、project policy、public command interface、repository ownership / selector、Work Identity rule等を解決し、その後にWork Root内のparticipating repository worktreeへ操作をroutingする。
+
+```text
+Project Root
+  ↓ project context / routing
+Work Identity / Work Root
+  ↓ participating repository
+repository-specific worktree
+```
+
+したがって、
+
+```text
+.worktrees/<work-type>/<work-name>/
+.worktrees/<work-type>/<work-name>/<repository>/
+```
+
+をProject全体のAI session entry rootとして扱わない。
+
+Project Repository自身のlinked worktreeがWork Root配下にある場合も同じであり、そのworktreeはimplementation targetであってProject Rootの代替ではない。
+
+個々のbuild/test/install等でsubprocess working directoryをrepository-specific worktreeへ変えることは、この規範と矛盾しない。Project Rootからpublic commandを利用して別directoryへexecutionをroutingするgeneric contractは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有する。
+
 ## tracked Work Documents と nested worktree の技術課題
 
 Project Repository が、
@@ -229,5 +270,7 @@ Work Identity 固有の filesystem state は、必要に応じて Work Root 配�
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-project-root-execution-routing/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`

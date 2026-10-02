@@ -173,6 +173,34 @@ routine callerがabsolute/relative pathを自由入力するinterfaceにしな�
 
 ---
 
+## Generic `DIR` parameterとの境界
+
+この文書で禁止している「routine callerによるarbitrary worktree path input」は、**worktree identity / branch / materializationを決めるcreate/status/remove contract**に対する規則である。
+
+`../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有するgeneric execution targetの `DIR=<path>` と混同しない。
+
+```text
+worktree lifecycle:
+  WORK + REPO (+ BASE)
+      ↓
+  branch/path/materializationをdeterministicに解決
+      ↓
+  create/status/remove
+
+generic execution:
+  既に存在するtarget directory
+      ↓ DIR=<path>
+  build/install/test/lint/run/dev-up/verify 等
+```
+
+したがって、worktree lifecycleのcanonical inputを `DIR` に置き換えない。
+
+- `worktree-create DIR=.worktrees/...` のようにcaller指定pathをidentity sourceへしない。
+- `WORK + REPO` から解決されたpathをcallerが再入力する必要もない。
+- `DIR` は既にmaterializeされた対象へgeneric operationをroutingするためのpath primitiveであり、Work Identity、REPO、branch identityを意味しない。
+
+この区別により、Project RootをAI session rootとして維持したまま、作成済みrepository-specific worktreeへbuild/test等を実行できる一方、worktree lifecycleのdeterministic identity contractは維持される。
+
 ## Create preflight
 
 mutation前に最低限確認する。
@@ -407,5 +435,7 @@ single_multi_repo_command_shape: "uniform WORK + REPO"
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-project-root-execution-routing/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md`

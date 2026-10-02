@@ -22,6 +22,22 @@
 
 Project / Work / Runのownershipとlifecycleは `../work-identity/` が所有する。このsubjectは、それらを削除・破棄するoperationの安全条件を所有する。
 
+## Directory selectorは破壊権限ではない
+
+public commandが `DIR=<path>` のようなExecution Target Directory selectorを持つ場合も、directory pathを指定できること自体は、そのdirectoryに対する破壊操作のauthorizationを意味しない。
+
+特にdelete / reset / purge / force等では、
+
+- `DIR` だけからProject / Work / repository identityを推測して削除対象を決めない。
+- symlink / canonical pathがscope判定へ影響する場合は、解決後の対象を検証する。
+- Project Root外やabsolute pathを受け取るoperationは、projectが明示的にsupportしている場合に限る方向をdefaultとする。
+- 既存のownership、identity、precondition、confirmation boundaryを通す。
+- routine execution向けのdirectory selectorを、force cleanup用の万能target指定へ拡張しない。
+
+`DIR` のgeneric execution semanticsは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有する。このsubjectは、そのselectorが破壊操作の安全条件を短絡しないことを所有する。
+
 ## Sources
+
+- `../../records/2026-10-03-project-root-execution-routing/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`

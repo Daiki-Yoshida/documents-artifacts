@@ -83,3 +83,13 @@ Work Identityはそれらを前提として、Work Root、Work Documents、Work�
 今後さらに文体や重複を整理する場合も、recordsへのtraceabilityを維持し、条件・例外・反論・検証結果を失わないこと。
 
 旧development-environment分解時に、Work単位の責務へ属する前身モデル9 sectionを `S008_HISTORY.md` へ統合した。
+
+## Project Root / DIRとの境界
+
+Work RootはWork Identityの物理rootであり、Project全体のAI session entry rootではない。この境界は `S002_WORK_ROOT_AND_REPOSITORIES.md` が扱う。
+
+worktree create/status/removeでは従来どおり `WORK + REPO (+ BASE)` をidentity inputとし、generic execution-target `DIR=<path>` で置換しない。この境界は `S006_WORKTREE_COMMANDS.md` が扱う。
+
+generic `DIR` の意味・path resolution・public command routingは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
+
+source: `../../records/2026-10-03-project-root-execution-routing/`
