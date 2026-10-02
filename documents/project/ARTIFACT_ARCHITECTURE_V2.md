@@ -215,6 +215,14 @@ project_or_repository_structure:
   read:
     - "project/WORKSPACE.md"
 
+project_root_execution_routing:
+  read:
+    - "project/WORKSPACE.md"
+    - "execution/COMMANDS_AND_CI.md"
+  add_when:
+    - "project/WORK_IDENTITY.md when a Work Root or repository-specific worktree is involved"
+    - "safety/DESTRUCTIVE_OPERATIONS.md when the selected target operation is destructive"
+
 work_identity:
   read:
     - "project/WORK_IDENTITY.md"
