@@ -35,6 +35,11 @@ for file in \
   documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/MANIFEST.md \
   documents/knowledge/records/2026-06-13-operational-discipline-commit/RECORD.md \
+  documents/knowledge/records/2026-10-03-project-root-execution-routing/RECORD.md \
+  documents/knowledge/records/2026-10-03-project-root-execution-routing/USER_MESSAGES.md \
+  documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_BODY.md \
+  documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958273589.md \
+  documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958401218.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -218,6 +223,52 @@ grep -Fq 'Do **not** read every file by default.' artifacts/INDEX.md \
   || fail "Artifact v2 root lost selective-reading guard"
 grep -Fq 'managed derived snapshot' artifacts/INDEX.md \
   || fail "Artifact v2 root lost managed-copy guard"
+
+
+# Project Root / execution-target routing must remain present from canonical knowledge through Artifact v2.
+workspace_model=documents/knowledge/subjects/workspace-structure/S001_PROJECT_AND_REPOSITORY_MODEL.md
+workspace_ownership=documents/knowledge/subjects/workspace-structure/S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
+execution_commands=documents/knowledge/subjects/development-execution/S003_COMMAND_INTERFACE_AND_CI.md
+work_root_model=documents/knowledge/subjects/work-identity/S002_WORK_ROOT_AND_REPOSITORIES.md
+worktree_commands=documents/knowledge/subjects/work-identity/S006_WORKTREE_COMMANDS.md
+destructive_ops=documents/knowledge/subjects/development-safety/S002_DESTRUCTIVE_OPERATIONS.md
+
+grep -Fq 'AI development sessionは **Project Rootから開始する**' "$workspace_model" \
+  || fail "Project Root lost canonical AI development entry requirement"
+grep -Fq 'repository-specific source ownershipを理由にComponent Repository checkoutをProject全体のAI session rootへ昇格させない' "$workspace_ownership" \
+  || fail "Component Repository ownership/context boundary regressed"
+grep -Fq 'generic `DIR` は、**path-valued execution target selector**' "$execution_commands" \
+  || fail "generic DIR lost path-valued execution-target semantics"
+grep -Fq 'Project-owned public operationがrequested operationを提供している場合' "$execution_commands" \
+  || fail "public-command bypass guard missing from canonical knowledge"
+grep -Fq 'relative `DIR` はProject Rootを基準にresolveする' "$execution_commands" \
+  || fail "DIR lost Project Root-relative resolution rule"
+grep -Fq 'Work Rootは、Work Identityに属するWork Documentsとparticipating repository worktreeを束ねる**物理的な作業領域**である' "$work_root_model" \
+  || fail "Work Root physical-role boundary regressed"
+grep -Fq 'worktree lifecycleのcanonical inputを `DIR` に置き換えない' "$worktree_commands" \
+  || fail "DIR incorrectly replaced WORK+REPO worktree identity contract"
+grep -Fq 'directory pathを指定できること自体は、そのdirectoryに対する破壊操作のauthorizationを意味しない' "$destructive_ops" \
+  || fail "DIR selection became destructive authorization"
+
+artifact_workspace=artifacts/project/WORKSPACE.md
+artifact_work_identity=artifacts/project/WORK_IDENTITY.md
+artifact_commands=artifacts/execution/COMMANDS_AND_CI.md
+artifact_destructive=artifacts/safety/DESTRUCTIVE_OPERATIONS.md
+
+grep -Fq 'initialize the AI development session from the **Project Root**' "$artifact_workspace" \
+  || fail "Artifact projection lost Project Root session-entry requirement"
+grep -Fq 'Work Root is the physical area' "$artifact_work_identity" \
+  || fail "Artifact Work Root/session-root distinction missing"
+grep -Fq '`DIR` is a path-valued execution selector only' "$artifact_commands" \
+  || fail "Artifact DIR semantics missing"
+grep -Fq 'Generic `DIR` semantics must not infer repository roles or silently append project-specific suffixes' "$artifact_commands" \
+  || fail "Artifact DIR gained implicit Work/repository derivation"
+grep -Fq 'Do not replace Worktree identity/materialization inputs with `DIR`' "$artifact_commands" \
+  || fail "Artifact DIR/worktree identity boundary missing"
+grep -Fq 'does not authorize destructive effects' "$artifact_destructive" \
+  || fail "Artifact DIR destructive-authority guard missing"
+grep -Fq '| Project-root session / command target routing | `project/WORKSPACE.md` + `execution/COMMANDS_AND_CI.md` |' artifacts/INDEX.md \
+  || fail "Artifact root lost Project Root execution-target route"
 
 # Verify all 14 unique legacy file entries and their pinned SHA-1 hashes.
 snapshot_commit="e760eb38841650d60739750953c8342b639ce6f0"
