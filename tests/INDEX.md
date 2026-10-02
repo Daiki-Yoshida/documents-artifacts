@@ -239,11 +239,11 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `documentation-structural-migration` | documentation-structural-migration | canonical docのauthorized move/rename — incoming refs発見・INDEX/link修復・byte-for-byte本文維持・旧path消滅 / DOC_L2 moveはDOC_L3 model rebuildの権限ではない |
 
-## Twentieth-stage scenarios — run1 evaluated / cold-start rerun pending
+## Twentieth-stage scenarios — completed/evaluated
 
 | Scenario | Fixture | Main observation |
 |---|---|---|
-| `project-root-execution-routing` | project-root-execution-routing | run1はexecution/ownership/public-interface PASS、ただしprior exposure + observed read telemetryなしでcold-start discoveryはUNVERIFIED。fresh subject rerun pending |
+| `project-root-execution-routing` | project-root-execution-routing | fresh isolated subjectがProject Root entryからArtifact root→WORKSPACE/COMMANDS_AND_CIへ到達、whole-pack preloadなし / root public command + literal `DIR` で独立Component Repositoryのみ64→128 / final Project state PASS |
 
 ## Discovery pilots — defined, awaiting evaluation
 
