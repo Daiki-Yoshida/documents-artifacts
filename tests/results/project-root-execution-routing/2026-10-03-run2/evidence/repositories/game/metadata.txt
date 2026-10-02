@@ -1,0 +1,8 @@
+selector: game
+run_root_relative_path: repo/components/game
+resolved_path: /tmp/documents-artifacts-agent-tests-1000/project-root-execution-routing/repo/components/game
+baseline_tag: artifact-test-baseline
+baseline_sha: bbb8e438b8543242e688a3b35cb1edeb36baaa34
+head_sha_at_capture: bbb8e438b8543242e688a3b35cb1edeb36baaa34
+branch_at_capture: main
+captured_at_utc: 2026-10-02T21:44:00Z

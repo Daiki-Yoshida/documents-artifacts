@@ -1,0 +1,22 @@
+# Run provenance — operator-authored context for this blind execution run.
+# Not agent input: the execution agent is never shown this file.
+#
+# Operator-populated for run 2026-10-03-run2. Only values actually known
+# by the operator are recorded.
+#
+# Exact agent model identifier (required if any key is given).
+model: SWE-2 Max
+# Runner identity.
+agent_runtime: devin cli 3000.11.3
+# Run start/finish in ISO-8601 UTC (subject window between observer ready and stop).
+run_started_at_utc: 2026-10-02T21:42:36Z
+run_finished_at_utc: 2026-10-02T21:43:28Z
+# Fresh isolated subject with no inherited operator context; task input was
+# the generated PROMPT.md and the generated repo only.
+entry_condition: fresh-isolated-subagent
+# This run's index within the run set.
+repetition: 2
+# How the artifact read list was produced:
+read_evidence: self-reported
+# Run-specific evidence limitations.
+known_limitations: file-open events are OPEN events only, not read/comprehension proof; subject file/command list is self-reported

@@ -1,0 +1,11 @@
+d       4096 .
+d       4096 ./.project-runtime
+d       4096 ./config
+d       4096 ./scripts
+f          4 ./config/pathfinding-limit.txt
+f          5 ./.project-component
+f         18 ./.gitignore
+f         56 ./Makefile
+f        114 ./.project-runtime/dev-install.ok
+f        399 ./scripts/check-pathfinding.sh
+f        420 ./README.md
