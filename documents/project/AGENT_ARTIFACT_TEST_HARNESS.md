@@ -46,7 +46,8 @@ tests/
 │  ├─ multi-repo-workspace/
 │  ├─ requested-outcome-verification/
 │  ├─ documentation-maintenance-reconciliation/
-│  └─ state-ownership-consistency/
+│  ├─ state-ownership-consistency/
+│  └─ project-root-execution-routing/
 ├─ scenarios/
 │  ├─ contract-boundary/
 │  ├─ brownfield-scope/
@@ -421,6 +422,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Nineteenth-stage scenarios — completed/evaluated
 
 - `documentation-structural-migration` (fixture `documentation-structural-migration`): completed/evaluated。 canonical docのauthorized DOC_L2 move/rename。唯一のrelease procedure owner `documents/project/RELEASE.md`を既存`documents/runbooks/release-process.md`へ移し、incoming refs (README/INDEX/ONCALL — task一覧なし・agentがsearchで発見) を修復する。本文はbyte-for-byte維持 (checker埋め込みexpected内容と`cmp`照合)、旧path/redirect/stub/archive/second rootは禁止、`ARCHITECTURE.md`と`incident-response.md`はbyte-exact不変、documents treeはexpected file setと完全一致。`docs-check.sh`はdependency-free shellで全て検査し、1つのauthorized moveがDOC_L3 model rebuildの権限でないことを検証する。
+
+### Twentieth-stage scenarios — definition ready / run pending
+
+- `project-root-execution-routing` (fixture `project-root-execution-routing`, Issue #151): Project Repositoryをagent entry contextとして保持しながら、独立 `components/game` Component Repositoryへroot Make public interface + generic `DIR` でroutine executionをroutingできるかを見る。component-local `make check` はbaseline 64でもPASSするがProject targetは128なので、それだけをdone evidenceにできない。正解はcomponent source ownershipを維持したまま64→128だけを変更し、Project Rootからdev-install/test/verifyを通して最終PASSすること。generic `DIR` はliteral target pathで、Work Identity / REPO / hidden `/main`・`/android` derivationではない。
 
 ## Fixture immutability
 
