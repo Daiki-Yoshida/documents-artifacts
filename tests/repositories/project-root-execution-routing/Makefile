@@ -1,6 +1,6 @@
 SHELL := /bin/sh
 
-DIR ?= components/game
+DIR ?=
 
 .PHONY: help dev-install test verify
 
