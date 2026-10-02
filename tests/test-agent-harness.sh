@@ -274,6 +274,10 @@ for scenario_dir in "${scenario_dirs[@]}"; do
     make -C "$comp" check >/dev/null \
       || fail "component-local check should pass at baseline"
 
+    if make -C "$target" verify >/dev/null 2>&1; then
+      fail "Project verify unexpectedly accepted omitted DIR"
+    fi
+
     if make -C "$target" DIR=components/game verify >"$run_root/project-verify-baseline.log" 2>&1; then
       fail "Project verify unexpectedly passed at baseline"
     fi
