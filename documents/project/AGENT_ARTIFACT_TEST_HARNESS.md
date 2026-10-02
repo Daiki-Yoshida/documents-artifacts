@@ -424,9 +424,9 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 
 - `documentation-structural-migration` (fixture `documentation-structural-migration`): completed/evaluated。 canonical docのauthorized DOC_L2 move/rename。唯一のrelease procedure owner `documents/project/RELEASE.md`を既存`documents/runbooks/release-process.md`へ移し、incoming refs (README/INDEX/ONCALL — task一覧なし・agentがsearchで発見) を修復する。本文はbyte-for-byte維持 (checker埋め込みexpected内容と`cmp`照合)、旧path/redirect/stub/archive/second rootは禁止、`ARCHITECTURE.md`と`incident-response.md`はbyte-exact不変、documents treeはexpected file setと完全一致。`docs-check.sh`はdependency-free shellで全て検査し、1つのauthorized moveがDOC_L3 model rebuildの権限でないことを検証する。
 
-### Twentieth-stage scenarios — run1 evaluated / cold-start rerun pending
+### Twentieth-stage scenarios — completed/evaluated
 
-- `project-root-execution-routing` (fixture `project-root-execution-routing`, Issue #151): run1のpersisted state/ownership/public-interface behaviorはPASS。Project Repository clean、Component Repositoryで64→128のみ、ignored dev-install state、managed Artifact無変更をmachine evidenceで確認。一方、subjectがscenario definitionを事前に見たagentだったこととobserved read telemetry不在によりcold-start Artifact discovery/routingはUNVERIFIED。fresh subject rerun後にfull completionを判断する。
+- `project-root-execution-routing` (fixture `project-root-execution-routing`, Issue #151): completed/evaluated。fresh isolated subjectがProject Rootの `AGENTS.md` / project documentationからArtifact rootへ入り、OPEN-event evidenceで `project/WORKSPACE.md` と `execution/COMMANDS_AND_CI.md` を含むfocused routeを確認。whole-pack preloadは観測されず、Project Root contextを維持したままroot Make + literal `DIR=components/game` で独立Component Repositoryのみ64→128へ変更し、ignored dev-install stateを伴うProject-level final stateを満たした。Project Repositoryはclean、managed Artifact無変更。
 
 ## Fixture immutability
 
