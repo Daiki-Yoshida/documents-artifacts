@@ -234,6 +234,77 @@ for scenario_dir in "${scenario_dirs[@]}"; do
     fi
   fi
 
+  # Issue #151: Project Root must remain the development context while
+  # routine execution is routed to the independent game Component
+  # Repository through the root public command interface and literal DIR.
+  if [[ "$scenario" == "project-root-execution-routing" ]]; then
+    comp="$target/components/game"
+
+    grep -Fq 'Project Repository' "$target/README.md" \
+      || fail "project-root routing fixture does not identify Project Repository"
+    grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
+      || fail "project-root routing AGENTS.md lacks project documentation entry"
+    grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
+      || fail "project-root routing index lacks Artifact root entry"
+    grep -Fq 'DIR=<component-directory>' "$target/documents/project/DEVELOPMENT.md" \
+      || fail "project-root routing docs lack generic DIR public interface"
+
+    if grep -Eq 'WORKSPACE\.md|COMMANDS_AND_CI\.md|WORK_IDENTITY\.md' "$run_root/PROMPT.md"; then
+      fail "project-root routing prompt leaks expected Artifact leaves"
+    fi
+    if grep -Fq 'DIR=' "$run_root/PROMPT.md"; then
+      fail "project-root routing prompt leaks the expected DIR command shape"
+    fi
+
+    [[ -d "$comp/.git" ]] \
+      || fail "game Component Repository missing after prepare"
+    [[ -z "$(git -C "$comp" status --porcelain)" ]] \
+      || fail "game Component Repository dirty at baseline"
+    git -C "$target" check-ignore -q components/game \
+      || fail "game Component Repository is not ignored by Project Repository"
+    if git -C "$target" ls-files --error-unmatch components/game/config/pathfinding-limit.txt >/dev/null 2>&1; then
+      fail "Project Repository tracks Component Repository source"
+    fi
+
+    [[ "$(tr -d '[:space:]' < "$target/config/pathfinding-required.txt")" == "128" ]] \
+      || fail "Project target is not 128 at baseline"
+    [[ "$(tr -d '[:space:]' < "$comp/config/pathfinding-limit.txt")" == "64" ]] \
+      || fail "game component baseline is not 64"
+
+    make -C "$comp" check >/dev/null \
+      || fail "component-local check should pass at baseline"
+
+    if make -C "$target" DIR=components/game verify >"$run_root/project-verify-baseline.log" 2>&1; then
+      fail "Project verify unexpectedly passed at baseline"
+    fi
+    grep -Fq 'does not match Project target 128' "$run_root/project-verify-baseline.log" \
+      || fail "Project verify did not fail for intended 64-vs-128 mismatch"
+    rm -f "$run_root/project-verify-baseline.log"
+
+    # Generic DIR is the supplied directory itself. Passing the parent
+    # must not silently derive /game or another repository-role suffix.
+    if make -C "$target" DIR=components dev-install >/dev/null 2>&1; then
+      fail "DIR=components unexpectedly derived a hidden component suffix"
+    fi
+
+    # Definition-time satisfiability proof. Restore all disposable state
+    # afterwards so generic component-evidence self-tests still start clean.
+    printf '128\n' > "$comp/config/pathfinding-limit.txt"
+    make -C "$target" DIR=components/game dev-install >/dev/null \
+      || fail "Project public dev-install failed in satisfiability proof"
+    make -C "$target" DIR=components/game test >/dev/null \
+      || fail "Project public test failed in satisfiability proof"
+    make -C "$target" DIR=components/game verify >/dev/null \
+      || fail "Project public verify failed in satisfiability proof"
+    [[ -f "$comp/.project-runtime/dev-install.ok" ]] \
+      || fail "public dev-install marker missing in satisfiability proof"
+
+    git -C "$comp" checkout -- config/pathfinding-limit.txt
+    rm -rf -- "$comp/.project-runtime"
+    [[ -z "$(git -C "$comp" status --porcelain)" ]] \
+      || fail "satisfiability proof did not restore clean component baseline"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"
