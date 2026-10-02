@@ -239,6 +239,12 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `documentation-structural-migration` | documentation-structural-migration | canonical docのauthorized move/rename — incoming refs発見・INDEX/link修復・byte-for-byte本文維持・旧path消滅 / DOC_L2 moveはDOC_L3 model rebuildの権限ではない |
 
+## Twentieth-stage scenarios — definition ready / run pending
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `project-root-execution-routing` | project-root-execution-routing | Project Rootのcontextを維持したままroot public command + generic `DIR` で独立Component Repositoryを操作 / component-local PASSをProject完了と誤認しない / literal DIR semanticsとownership分離 |
+
 ## Discovery pilots — defined, awaiting evaluation
 
 | Scenario | Fixture | Main observation |
