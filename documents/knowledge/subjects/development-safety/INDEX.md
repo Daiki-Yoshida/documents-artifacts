@@ -39,3 +39,11 @@ repository境界を守った統合と、統合後の再検証を扱う。
 ## 再編元
 
 旧 `development-environment` のうち、安全性・破壊操作・診断・復旧・確認境界をこのsubjectへ移管した。
+
+## Execution Target selectorとの接続
+
+`DIR=<path>` のようなExecution Target Directory selectorはoperation authorityを意味しない。破壊操作でdirectory selectorがownership / identity / precondition / confirmationを短絡しないための規則は `S002_DESTRUCTIVE_OPERATIONS.md` が扱う。
+
+generic `DIR` semantics自体は `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
+
+source: `../../records/2026-10-03-project-root-execution-routing/`
