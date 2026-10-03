@@ -31,7 +31,9 @@ make worktree-status WORK=feat/example REPO=main
 make worktree-remove WORK=feat/example REPO=main
 ```
 
-このrepositoryはsingle-repository検証だが、public inputは将来multi-repositoryへ拡張しても変わらないよう、
+このrepositoryはsingle-repository検証で、ここでの `REPO=main` は**検証repository固有のstable repository selector**である。Git branch名 `main` と同じ文字列だが、generic contractで両者を同一視しない。
+
+public inputは将来multi-repositoryへ拡張しても変わらないよう、
 
 ```text
 WORK + REPO
@@ -326,9 +328,11 @@ base_ref_not_automatic_upstream: "validated after review fix"
 same_name_remote_tracking: "implementation policy retained; not the base-ref case"
 multi_repo_implementation: "not yet validated"
 distribute_reference_shell_as_artifact: false
-artifact_action: "record branch/upstream separation and stable Project Root resolution"
+projection_status: "completed; current Artifact v2 project/WORKTREES.md にbranch/upstream分離とstable Project Root resolutionを投影済み"
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md`

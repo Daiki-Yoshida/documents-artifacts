@@ -14,7 +14,7 @@ If accuracy and token cost conflict, accuracy wins. Solve token cost primarily w
 
 ## AI-facing canonical knowledge
 
-Project Documentation is the canonical project knowledge that AI agents should be able to route into during development. Human-facing setup/tutorial/background material may coexist, but should not become a competing authority for the same project facts.
+Project-owned Project Documentation is the canonical project knowledge that AI agents should be able to route into during development. Human-facing setup/tutorial/background material may coexist, but should not become a competing authority for the same project facts.
 
 ## Canonical project documentation root
 
@@ -24,7 +24,9 @@ Use:
 <project-root>/documents/
 ```
 
-as the canonical Project Documentation root.
+as the project documentation namespace and routing root.
+
+Project-owned documentation under this namespace is canonical project knowledge. A managed derived subtree such as `documents/artifacts/` may live there physically without becoming project-owned canonical authority.
 
 Its internal shape is project-specific. `documents/project/` and `documents/reference/` are useful examples, not mandatory directories.
 
@@ -36,7 +38,8 @@ Static placement/Git ownership belongs to project/workspace guidance; this file 
 
 It should provide:
 
-- inventory of documentation and purpose;
+- inventory of project-owned canonical documentation and purpose;
+- managed derived subtrees by their entrypoint rather than mirroring every internal leaf;
 - task → document routing;
 - useful cross-references.
 

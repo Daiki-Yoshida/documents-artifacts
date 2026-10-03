@@ -1,6 +1,6 @@
 # Worktree Contract
 
-Read this only when creating, diagnosing, or removing Work-specific Git worktrees.
+Read this only when a project has adopted Work-specific Git worktrees and you are creating, diagnosing, or removing them. Work Identity itself does not require every project or every Work to use a worktree.
 
 ## Identity inputs
 
@@ -12,7 +12,7 @@ REPO: "<stable project repository selector>"
 BASE: "required only when a missing Work branch needs a start ref and no documented default exists"
 ```
 
-Keep `REPO` explicit even for a single-repository project so the public contract does not change if the project later grows.
+Keep `REPO` explicit when this capability is adopted, even for a single-repository project, so the public contract does not change if the project later grows. `REPO` is a stable repository selector, not a Git branch name.
 
 Callers should not manually supply:
 
@@ -44,7 +44,9 @@ A same-name remote Work branch may track its corresponding remote branch accordi
 
 ## Project Repository materialization invariant
 
-When the selected repository's branch tree contains tracked project-level `.worktrees/**` coordination state, a nested linked worktree must **not recursively materialize the project-level `.worktrees/` tree**.
+When the selected repository's stable role owns (or can later receive) tracked project-level `.worktrees/**` coordination state, a nested linked worktree must **not recursively materialize the project-level `.worktrees/` tree**.
+
+Do not decide applicability only from whether the currently selected branch already contains `.worktrees/**`; a first Work or an older base branch can receive that coordination state later.
 
 Validated creation sequence:
 
@@ -58,7 +60,7 @@ git -C <path>   reset --hard HEAD
 
 This low-level sequence should be wrapped in a project-owned create operation. Reapply the policy on recreation because worktree-local sparse state is removed with the worktree.
 
-Do not blindly apply this sparse policy to independent Component Repositories that do not contain the project-level tracked coordination tree.
+Do not blindly apply this sparse policy to independent Component Repositories whose role does not own the project-level coordination namespace. Current branch-tree inspection can be diagnostic, but stable repository role is the primary applicability signal.
 
 ## Create contract
 
@@ -131,7 +133,7 @@ Force removal, branch deletion, Work Root purge, unpreserved commit loss, or sha
 
 ## Validation boundary
 
-Reference validation demonstrated the contract for:
+Reference validation demonstrated the contract for the test repository below. Here, `REPO: main` is that repository's selector and must not be read as a universal selector or branch-name requirement:
 
 ```yaml
 topology: "single repository"

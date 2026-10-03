@@ -13,7 +13,9 @@ Design / discussion
        ↓
 Work Identity confirmed
        ↓
-Work Documents created on Project main
+Work Documents initialized in Project Repository
+       ↓
+baseline visibility / publication reconciled as authorized (or explicitly recorded pending)
        ↓
 branch / checkout / optional worktree prepared
        ↓
@@ -31,6 +33,8 @@ work-scoped resources reconciled / cleaned
        ↓
 Work Identity completed
 ```
+
+Work DocumentsをProject baselineへpublishするcommit / push / merge authorityはこのlifecycle自体からは生じない。Project-local workflowと `../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` に従い、authorityが無い場合はpublication pendingを明示する。
 
 ### Work 完了と branch merge は同義ではない
 
@@ -212,6 +216,8 @@ Work Identity は **意味・ownership・lifecycleを揃えるための共通軸
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`
 - `../../records/2026-08-02-task-resource-ownership-pr/RECORD.md`

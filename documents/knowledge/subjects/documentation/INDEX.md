@@ -8,7 +8,7 @@
 
 ```yaml
 Project_Documentation:
-  意味: "<project-root>/documents/ に置く、Project全体の現在knowledge"
+  意味: "<project-root>/documents/ namespace内のproject-owned canonical knowledge。managed derived subtreeは物理的に含まれても同じauthorityではない"
 project_level_document:
   意味: "Project Documentation内でproject全体の状態・制約・設計を扱うdocument role"
 Work_Documents:
@@ -83,3 +83,7 @@ initial_reorganization:
 ```
 
 その後の判断でnormative本文は更新されうる。現在のH2 routing anchorも30 / 30存在することを再確認しているが、これはsource本文との逐語一致を意味しない。原文はrecords、旧判断はhistory / Git historyへ保持する。
+
+## 2026-10-03 consistency convergence
+
+managed Artifact v2 whole-pack、Project INDEX inventory scope、physical placementとauthority分離の横断整合は `../../records/2026-10-03-subject-consistency-convergence/` を根拠とする。

@@ -187,9 +187,11 @@ build / install / test / lint / run / dev-up / verify
 
 `DIR` はWork Identityを作るAPIでも、repository worktreeをmaterializeするAPIでもない。
 
-## `plaru_expo` の先行実例
+## Project-specific specialization example — `plaru_expo`
 
-`Daiki-Yoshida/plaru_expo` では、workspace rootのMakefileをpublic interfaceとして利用し、AI / developerがworkspace rootからcommandを実行したまま `DIR` でtask worktreeを指定する実装が既にある。
+以下は**generic `DIR` の推奨形を示す例ではなく、project-specific higher-level specializationの実例**である。
+
+`Daiki-Yoshida/plaru_expo` では、workspace rootのMakefileをpublic interfaceとして利用し、AI / developerがworkspace rootからcommandを実行したまま `DIR` でtask Work Rootを指定する実装がある。
 
 例:
 
@@ -199,7 +201,7 @@ make DIR=.worktrees/feat/example-change docker-dev-typecheck
 make DIR=.worktrees/feat/example-change android-dev-up
 ```
 
-ただし、このprojectでは `DIR=.worktrees/<task>` をtask Work Rootとして解釈し、operationに応じて `/main` または `/android` をproject-localに派生する。またGit helper側の `DIR` も `.worktrees/<type>/<task>` 系へ限定されている。
+このprojectでは `DIR=.worktrees/<task>` をtask Work Rootとして解釈し、operationに応じて `/main` または `/android` をproject-localに派生する。**この意味はgeneric `DIR` contractとは異なる。** またGit helper側の `DIR` も `.worktrees/<type>/<task>` 系へ限定されている。
 
 このtask-pair specializationは `plaru_expo` 固有の規約として扱う。
 
@@ -235,6 +237,8 @@ Work Identity operationをpublic commandとして公開する場合も、その�
 - 未指定の外部workspace最新版へ偶然依存しない。
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 

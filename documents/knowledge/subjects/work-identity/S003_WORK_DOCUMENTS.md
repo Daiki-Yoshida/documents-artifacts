@@ -1,6 +1,6 @@
 # Work Identity — Work Documents
 
-Work Documents、Project Documentationとの関係、Git所有権、Primary/mainの役割、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
+Work Documents、Project Documentationとの関係、Git所有権、Project baseline branchの役割とpublication権限境界、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
 
 ## Work Documents
 
@@ -59,7 +59,7 @@ Work Documents は、その Work Identity について現在進行している�
 ### Work Documents
 
 ```text
-<project-root>/.worktrees/<work-identity>/documents/
+<project-root>/.worktrees/<work-type>/<work-name>/documents/
 ```
 
 現在進行している変更についての knowledge。
@@ -104,7 +104,7 @@ Work Documents は Git 管理する。
 .worktrees/<work-type>/<work-name>/documents/
 ```
 
-は Project Repository の tracked files であり、原則として main に存在する。
+はProject Repositoryが所有するtracked filesであり、**Project baseline branchから現在のactive Workとして確認できる状態**を目標とする。Project baseline branchはprojectが定義するstable coordination/documentation branchであり、名前をliteral `main` に固定しない。
 
 一方、その兄弟ディレクトリである、
 
@@ -118,13 +118,11 @@ Work Documents は Git 管理する。
 
 ---
 
-## main の役割
+## Project baseline branch の役割
 
-main は、完成済みコードだけを示す場所ではなく、**プロジェクトの現在状態を把握する基準面**として扱う。
+Project baseline branchは、完成済みコードだけを示す場所ではなく、**プロジェクトの現在のcoordination / documentation stateを把握する基準面**として扱う。多くのprojectでは `main` がこのroleを担うが、branch名はproject-localである。
 
-実装途中のソースコードは各作業 branch に隔離する。
-
-一方、Work Documents は main から確認できるようにする。
+実装途中のソースコードは各Work branchへ隔離する。一方、Work DocumentsはProject baselineからactive Workとして確認できることを目標とする。
 
 例:
 
@@ -140,7 +138,7 @@ main は、完成済みコードだけを示す場所ではなく、**プロジ�
       └─ documents/
 ```
 
-これにより main を見るだけで、
+これによりProject baselineを確認することで、
 
 - 現在の canonical Project Documentation
 - 現在進行中の Work Identity
@@ -149,7 +147,17 @@ main は、完成済みコードだけを示す場所ではなく、**プロジ�
 
 を間接的に把握できる。
 
-これは人間だけでなく、AI がプロジェクト状況を理解する入口としても利用できる。
+これは人間だけでなく、AIがProject状況を理解する入口としても利用できる。
+
+### Baseline publicationとVCS authority
+
+Work Identityは、Work DocumentsがProject baselineから確認可能になるというlifecycle上の目標を所有する。ただし、その状態を成立させるためのcommit / push / merge authorityを自動付与しない。
+
+- project-local workflowがcoordination/documentation commitを明示的に許可する場合は、そのworkflowに従う。
+- baseline publicationのauthorityがまだ無い場合、未公開なのに「baselineへ反映済み」と扱わない。
+- その場合は、許可されたProject Repository working state等へWork contextを保持し、baseline publicationがpendingであることをreportする。
+
+commit / push / default-branch guard等のauthorityは `../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` が主所有する。
 
 ---
 
@@ -213,5 +221,7 @@ Work 完了後に Work Root が削除されても、tracked Work Documents の�
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`

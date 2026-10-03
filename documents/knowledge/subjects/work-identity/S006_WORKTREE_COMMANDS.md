@@ -33,12 +33,14 @@ verified Git worktree
 
 ## Public semantic operations
 
-exact CLI syntaxは各projectが所有するが、意味上は最低限次の3操作を持つ。
+このsectionは、projectが **Work Identity worktree lifecycle capabilityを採用する場合** のpublic semantic surfaceを定める。Work Identityが存在するだけで、全project / 全Workへworktreeを要求しない。
+
+capabilityを採用したprojectでは、exact CLI syntaxは各projectが所有するが、意味上は最低限次の3操作を持つ。
 
 ```yaml
-worktree_create: "required; create or reuse the requested Work Identity repository checkout safely"
-worktree_status: "required; inspect resolved identity/path/branch/materialization without mutation"
-worktree_remove: "required; remove only the selected Git worktree after safety checks"
+worktree_create: "required when capability is adopted; create or reuse the requested Work Identity repository checkout safely"
+worktree_status: "required when capability is adopted; inspect resolved identity/path/branch/materialization without mutation"
+worktree_remove: "required when capability is adopted; remove only the selected Git worktree after safety checks"
 ```
 
 Makefileをpublic routerとして使うprojectでは、既存命名規則と衝突しない限り次を推奨する。
@@ -67,7 +69,7 @@ conditional:
 
 重要:
 
-- `REPO`は単一repositoryでも省略しない。例: `main`。
+- capabilityを採用した場合、`REPO`は単一repositoryでも省略しない。例: `project`。`REPO`はstable repository selectorでありGit branch名ではない。
 - callerにworktree filesystem pathを入力させない。
 - callerにsparse適用要否を入力させない。
 - callerにbranch名を原則入力させない。projectのdeterministic mappingから導出する。
@@ -77,7 +79,7 @@ conditional:
 
 ```text
 WORK=feat/pathfinding
-REPO=main
+REPO=project
 ```
 
 複数repo例:
@@ -93,7 +95,7 @@ WORK=feat/user-auth REPO=back
 
 `REPO` が参照するstable repository identity / role /基準locationは `../workspace-structure/` が所有する。Work Identity側は、そのstatic mappingをWork単位のbranch/path/materializationへ変換する責務を持つ。
 
-`REPO`はWork Root直下のdirectory名とrepository identityを安定して対応させるproject-owned selector。
+`REPO`はWork Root直下のdirectory名とrepository identityを安定して対応させるproject-owned selector。**Git branch名ではない。** selectorが `main` という文字列であっても、それはrepository identityであり、baseline branchが `main` であることを意味しない。
 
 ```text
 .worktrees/feat/user-auth/front/
@@ -107,7 +109,7 @@ repository_resolution:
   source_repository: "which Git repository owns this checkout"
   worktree_directory_name: "path component under the Work Root"
   branch_mapping: "how the base Work Identity maps to this repository branch"
-  project_repository_role: "whether this repository carries Project-level tracked .worktrees/** state"
+  project_repository_role: "whether this repository owns / can receive Project-level tracked .worktrees/** coordination state"
 ```
 
 このmappingのためだけに、現在worktree一覧やDocker state等を複製したmanifestを作らない。
@@ -123,7 +125,7 @@ Work IdentityとREPOからbranchをdeterministically解決する。
 
 ```text
 WORK=feat/pathfinding
-REPO=main
+REPO=project
 → branch=feat/pathfinding
 ```
 
@@ -162,8 +164,8 @@ caller inputからpathをdeterministically導出する。
 例:
 
 ```text
-WORK=feat/pathfinding REPO=main
-→ .worktrees/feat/pathfinding/main/
+WORK=feat/pathfinding REPO=project
+→ .worktrees/feat/pathfinding/project/
 
 WORK=fix/session REPO=front
 → .worktrees/fix/session/front/
@@ -228,7 +230,11 @@ createはcallerから見てatomicな意味操作とする。
 
 ### Materialization Contractが必要なrepository
 
-selected branch treeがProject-level tracked `.worktrees/**` coordination stateを含む場合:
+stable repository roleとしてProject-level tracked `.worktrees/**` coordination stateを**所有する、または将来受け取るProject Repository**にはMaterialization Contractを適用する。
+
+selected branch treeへ現在 `.worktrees/**` が存在するかは診断材料にはなるが、適用要否をその瞬間のtree内容だけで決めない。first Workや古いbase branchでも、Project Repository roleがcoordination namespaceを所有するなら将来のbaseline growthに備えて同じcontractを適用する。
+
+適用sequence:
 
 ```bash
 git worktree add --no-checkout <resolved-path> <resolved-branch>
@@ -242,8 +248,8 @@ git -C <resolved-path> \
 
 ### 独立Component Repository
 
-Project-level tracked `.worktrees/**` を持たないrepositoryでは、同じsparse exclusionを無条件適用しない。
-helperがproject role / branch treeから適用要否を解決する。
+Project-level coordination namespaceを所有しない独立Component Repositoryでは、同じsparse exclusionを無条件適用しない。
+helperはstable repository roleを主基準として適用要否を解決し、branch tree inspectionは補助診断として利用できる。
 
 routine callerにはこの差を見せない。
 
@@ -431,10 +437,12 @@ state_source_of_truth: "Git/filesystem/runtime systems themselves; no duplicate 
 create: "idempotent, fail-closed, atomic semantic operation"
 status: "non-mutating diagnosis"
 remove: "normal selected-worktree removal only; branch/Work Documents/Work Root remain separate"
-single_multi_repo_command_shape: "uniform WORK + REPO"
+single_multi_repo_command_shape: "uniform WORK + REPO when worktree lifecycle capability is adopted"
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 

@@ -98,7 +98,7 @@ Work Root内のrepository-specific worktree
 
 ```text
 Project Repository
-  selector: main
+  selector: project
 
 Component Repository
   selector: front
@@ -110,6 +110,8 @@ Component Repository
 これは独自registry fileを必須化する意味ではない。
 
 実際のrepository / Git / filesystemを状態のsource of truthとし、projectがdeterministicに解決できるstable selectorを持てばよい。
+
+`REPO` はproject-local stable repository identityでありGit branch名ではない。selector文字列とbaseline/default branch名が偶然同じでも、意味は分離する。
 
 `REPO` からWork branchやWork Root内pathをどう導出するかは `../work-identity/S006_WORKTREE_COMMANDS.md` が所有する。
 
@@ -163,6 +165,8 @@ fixed_ref:
 CIやrelease検証が、指定されていないworkspace最新版へ偶然依存してはいけない。
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 

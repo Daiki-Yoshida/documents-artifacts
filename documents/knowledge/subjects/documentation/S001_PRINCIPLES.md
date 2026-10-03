@@ -40,7 +40,11 @@ does_not_govern:
   - "破壊操作・host変更等のoperational safety — development-safety"
 ```
 
-`<project-root>/documents/` を **Project Documentation** のcanonical rootとする。top-level placement / Git ownershipは `../workspace-structure/`、その内部routing / file role / maintenanceはこのsubjectが主所有する。
+`<project-root>/documents/` を **project documentation namespace / routing root** とする。ここに置かれるproject-owned Project Documentationはcanonical project knowledgeである。
+
+ただし、`documents/` 配下にmaterializeされたmanaged derived subtreeまでproject-owned canonical authorityになるわけではない。代表例である `documents/artifacts/` はcanonical sourceから配布されたmanaged snapshotであり、Project Documentationとはownership / authorityが異なる。物理的な包含と情報authorityを混同しない。
+
+top-level placement / Git ownershipは `../workspace-structure/`、Project Documentation内部のrouting / file role / maintenanceはこのsubjectが主所有する。managed derived guidanceの更新・ownership boundaryは `S003_WORKFLOW.md` を参照する。
 
 document固有のSemantic Versionや `last_updated_commit` registryは必須化しない。履歴と変更過程は原則Git historyを利用する。
 
@@ -61,6 +65,8 @@ scope:
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`

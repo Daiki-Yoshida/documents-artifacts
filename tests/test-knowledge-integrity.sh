@@ -40,6 +40,9 @@ for file in \
   documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_BODY.md \
   documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958273589.md \
   documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958401218.md \
+  documents/knowledge/records/2026-10-03-subject-consistency-convergence/RECORD.md \
+  documents/knowledge/records/2026-10-03-subject-consistency-convergence/USER_MESSAGES.md \
+  documents/knowledge/records/2026-10-03-subject-consistency-convergence/ISSUE_164_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -335,6 +338,53 @@ doc_workflow=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
 grep -Fq 'documents/project/ は標準的な配置例だが必須directoryではない' "$doc_routing"   || fail "documentation project/ layout became mandatory again"
 grep -Fq 'documents/reference/ は標準的な配置例だが必須directoryではない' "$doc_routing"   || fail "documentation reference/ layout became mandatory again"
 grep -Fq 'project/referenceを必須shapeにせず' "$doc_workflow"   || fail "documentation setup lost flexible internal layout rule"
+
+# Subject-consistency convergence guards (Issue #164).
+doc_principles=documents/knowledge/subjects/documentation/S001_PRINCIPLES.md
+doc_routing=documents/knowledge/subjects/documentation/S002_ROUTING_AND_STRUCTURE.md
+doc_workflow=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
+work_docs=documents/knowledge/subjects/work-identity/S003_WORK_DOCUMENTS.md
+work_lifecycle=documents/knowledge/subjects/work-identity/S004_LIFECYCLE_AND_RESOURCES.md
+worktrees=documents/knowledge/subjects/work-identity/S006_WORKTREE_COMMANDS.md
+change_lifecycle=documents/knowledge/subjects/engineering-operation/S001_CHANGE_LIFECYCLE.md
+vcs_reporting=documents/knowledge/subjects/engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md
+
+grep -Fq 'managed derived subtree' "$doc_principles" \
+  || fail "documentation authority does not distinguish managed derived subtrees"
+grep -Fq 'managed derived subtreeはentrypoint単位でroute' "$doc_routing" \
+  || fail "documents/INDEX inventory scope still requires managed internal leaves"
+if grep -Fq 'documents/artifacts/<module>/' "$doc_workflow"; then
+  fail "legacy Artifact module path remains in current documentation workflow"
+fi
+grep -Fq 'documents/artifacts/INDEX.md' "$doc_workflow" \
+  || fail "Artifact v2 managed entrypoint missing from canonical documentation workflow"
+grep -Fq 'Project baseline branch' "$work_docs" \
+  || fail "Work Documents remain hard-coded to literal main"
+grep -Fq 'baseline publicationがpending' "$work_docs" \
+  || fail "Work Documents lifecycle lost VCS publication boundary"
+grep -Fq 'baseline visibility / publication reconciled as authorized' "$work_lifecycle" \
+  || fail "Work lifecycle assumes unauthorized baseline publication"
+grep -Fq 'Git branch名ではない' "$worktrees" \
+  || fail "REPO selector/branch distinction missing"
+grep -Fq 'stable repository roleとしてProject-level tracked' "$worktrees" \
+  || fail "worktree materialization applicability still depends only on current branch tree"
+grep -Fq 'Work Identity worktree lifecycle capabilityを採用する場合' "$worktrees" \
+  || fail "worktree create/status/remove lacks capability adoption precondition"
+grep -Fq 'explicit user confirmation' "$change_lifecycle" \
+  || fail "engineering lifecycle does not route through Work Identity confirmation"
+grep -Fq 'Work Documents baseline publicationとの境界' "$vcs_reporting" \
+  || fail "VCS authority/Work Documents publication boundary missing"
+
+grep -Fq 'managed derived subtree' artifacts/documentation/PRINCIPLES_AND_ROUTING.md \
+  || fail "Artifact documentation projection lost managed-authority distinction"
+grep -Fq 'one managed pack under `documents/artifacts/`' artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md \
+  || fail "Artifact documentation workflow lost whole-pack model"
+grep -Fq 'stable repository selector, not a Git branch name' artifacts/project/WORKTREES.md \
+  || fail "Artifact worktree selector/branch distinction missing"
+grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.md \
+  || fail "Artifact worktree materialization applicability regressed"
+grep -Fq 'Work Identity model and a concrete implementation effort' artifacts/operation/CHANGE_LIFECYCLE.md \
+  || fail "Artifact operation flow lost Work Identity gate"
 
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do

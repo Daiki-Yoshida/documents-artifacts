@@ -20,7 +20,7 @@ engineering-operation/
 ```
 
 ### S001_CHANGE_LIFECYCLE.md
-要求理解からverificationまでのengineering change lifecycleを扱う。
+要求理解からverificationまでのengineering change lifecycleを扱い、Work Identity model採用projectではimplementation移行前のidentity confirmationへrouteする。
 
 ### S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md
 user intent、project-local rule、scope、曖昧さがある場合の停止・確認を扱う。
@@ -69,3 +69,7 @@ engineering-operation
 - `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`
 
 旧 `design-principles` のFLOW packagingをそのまま復活させるのではなく、現在のsubject responsibilityへ再整理する。
+
+## 2026-10-03 Work Identity routing convergence
+
+implementation移行時のWork Identity confirmation gateとWork Documents baseline publication / VCS authority分離は `../../records/2026-10-03-subject-consistency-convergence/` を根拠とする。

@@ -8,7 +8,7 @@ Work Identityのfilesystem表現、単一/複数repositoryの統一形状、repo
 
 `.worktrees/` を単なる Git worktree 格納ディレクトリとして扱わない。
 
-今後は、**Project Repository が所有する Work Identity Workspace** として扱う。
+現行モデルでは、**Project Repository が所有する Work Identity Workspace** として扱う。
 
 基本形:
 
@@ -54,10 +54,10 @@ Project Root は、`.worktrees/` が配置されている最上位の Project Re
 └─ feat/
    └─ pathfinding/
       ├─ documents/
-      └─ main/
+      └─ project/
 ```
 
-`main/` がそのプロジェクト本体 repository の Git worktree である。
+`project/` は、そのprojectでProject Repositoryを指すstable repository selectorの例である。selector名はproject-localであり、Git branch名を意味しない。
 
 ### 複数 repository
 
@@ -143,7 +143,7 @@ Git worktree は次へ配置する。
 単一 repository:
 
 ```text
-.worktrees/feat/pathfinding/main/
+.worktrees/feat/pathfinding/project/
 ```
 
 この構造により、
@@ -206,10 +206,10 @@ Project Repository自身のlinked worktreeがWork Root配下にある場合も�
 Project Repository が、
 
 ```text
-.worktrees/<work-identity>/documents/
+.worktrees/<work-type>/<work-name>/documents/
 ```
 
-を main で track すると、同じ Project Repository の feature worktree がその commit を取り込んだ際に、Project-level `.worktrees/` が feature worktree 内へ再帰的に materialize される可能性がある。
+をProject baseline branchでtrackすると、そのcoordination stateを取り込んだProject RepositoryのWork worktreeで、Project-level `.worktrees/` が再帰的にmaterializeされる可能性がある。
 
 望ましい filesystem state は次である。
 
@@ -225,23 +225,18 @@ project-root/
 ### Work Identity 内の Git worktree
 
 ```text
-.worktrees/feat/pathfinding/main/
+.worktrees/feat/pathfinding/project/
 ├─ documents/
 ├─ src/
 └─ ...
 # Project-level .worktrees/ はここへ再帰展開しない
 ```
 
-この問題は概念モデルを変更して回避せず、Git の materialization 設定で解決する方向とする。
+この問題は概念モデルを変更して回避せず、Project Repositoryのlinked Work worktreeへworktree-local materialization policyを適用して解決する。
 
-候補:
+現行の検証済みcontractは `S005_WORKTREE_MATERIALIZATION.md`、public create/status/remove semanticsは `S006_WORKTREE_COMMANDS.md` が所有する。具体的には、Project-level coordination stateを所有するrepositoryへ必要なsparse exclusionをworktree-localに適用し、nested filesystemへProject-level `.worktrees/` をmaterializeしない。
 
-- worktree ごとの sparse checkout
-- 同等の checkout exclusion mechanism
-
-ただし、**具体的な実装方式は artifact 化前または実装時に実機検証する**。
-
-この技術詳細は、Work Identity の概念そのものとは分離する。
+この技術詳細はWork Identityの概念そのものとは分離する。
 
 ---
 
@@ -258,7 +253,7 @@ Work Root がすでに、
 として存在するため、別の、
 
 ```text
-.work/<work-identity>/
+.work/<work-type>/<work-name>/
 ```
 
 は基本モデルとして導入しない。
@@ -270,6 +265,8 @@ Work Identity 固有の filesystem state は、必要に応じて Work Root 配�
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 

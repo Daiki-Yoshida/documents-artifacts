@@ -43,7 +43,7 @@ rule: "エントリファイルはdocuments/INDEX.mdへルーティングする�
 ### ステップ2: Project Documentation rootを作成する
 
 ```yaml
-action: "<project-root>/documents/ をProject Documentation rootとして用意する。"
+action: "<project-root>/documents/ をproject documentation namespace / routing rootとして用意する。project-owned canonical Project Documentationをここへ置き、managed derived subtreeは別authorityとして扱う。"
 required:
   - "documents/INDEX.md（ステップ3で作成）"
 optional_structure_examples:
@@ -57,8 +57,9 @@ rule: "内部directoryはproject固有routingに従う。project/referenceを必
 ```yaml
 action: "Project Documentationのルーティングハブを作成する。"
 content:
-  - "ドキュメントインベントリ: documents/配下の全ファイルとその目的をリストする"
-  - "ルーティングマップ: どのタスクにどのドキュメントを読むべきか"
+  - "project-owned Project Documentationのinventoryと目的"
+  - "managed derived subtreeがある場合は内部leafではなくentrypoint単位のrouting"
+  - "ルーティングマップ: どのタスクにどのdocument / managed entrypointを読むべきか"
   - "相互参照マップ"
 ```
 
@@ -210,13 +211,14 @@ rules:
 
 target projectへ配布された再利用guidanceは、project-owned Project Documentationと同じownershipで直接保守しない。
 
-典型的なmanaged path:
+現在のArtifact v2では、whole packを1つのmanaged rootとして次へmaterializeする。
 
 ```text
-documents/artifacts/<module>/
+documents/artifacts/
+└─ INDEX.md   # managed pack entrypoint
 ```
 
-ただし実際のinstall先は配布機構 / project conventionが所有する。重要なのはpath名ではなく、**canonical sourceからmaterializeされたmanaged guidanceかどうか**である。
+旧module-selective distributionは現行Artifact v2のcontractではない。より一般には、重要なのはpath名そのものではなく、**canonical sourceからmaterializeされたmanaged guidanceかどうか**である。
 
 ```yaml
 ownership:
@@ -226,11 +228,12 @@ update:
   rule: "canonical sourceまたは明示されたdistribution/sync mechanismから更新する"
   forbidden: "installed copyだけをproject-owned文書として黙ってpatchし、canonical sourceとの差分を恒久化する"
 remove:
-  rule: "distribution mechanismが定める明示的remove semanticsを使う"
-  omission: "update対象から外しただけではremove permissionとみなさない"
+  whole_pack_sync: "managed pack内部leafはcanonical source snapshotに従う。source packから削除されたleafは次回exact-replacement syncでstale fileとして除去され得る"
+  whole_pack_remove: "managed root全体を削除する場合はdistribution mechanismが定めるexplicit remove semanticsを使う"
+  project_omission: "通常のproject editでmanaged packを触らなかったこと自体をremove requestとみなさない"
 routing:
-  project_index: "installed moduleのentry INDEXへlinkしてよい"
-  internal_inventory: "project側INDEXがmanaged module内部fileの独立authority / version registryになる必要はない"
+  project_index: "managed packのentrypoint（Artifact v2では documents/artifacts/INDEX.md）へlinkしてよい"
+  internal_inventory: "project側INDEXがmanaged pack内部leafのinventory / 独立authority / version registryになる必要はない"
 local_override:
   rule: "generic guidanceよりproject-local ruleを優先する必要がある場合、installed copyを書き換えるのではなくproject-owned instruction/documentへoverrideを記録する"
 correction:
@@ -258,6 +261,8 @@ documentation側は、Work完了時に**何をProject Documentationへ残すか*
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
