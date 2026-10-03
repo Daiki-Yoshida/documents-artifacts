@@ -82,7 +82,7 @@ target projects
 7. traceabilityを維持する。
 8. 新subjectは旧module名ではなく独立した知識対象に基づいて作る。
 
-構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、decision relation / scope解決は `DECISION_LINEAGE_MODEL.md`、traceabilityは `TRACEABILITY_MODEL.md` に従う。
+構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、decision relation / scope解決は `documents/knowledge/system/DECISION_LINEAGE_MODEL.md`、traceabilityは `documents/knowledge/system/TRACEABILITY_MODEL.md` に従う。
 
 ## 4.1 Subject disposition accounting
 
