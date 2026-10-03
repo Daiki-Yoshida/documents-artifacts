@@ -215,7 +215,7 @@ subjects本文は日本語を標準とする。
 
 `unresolved` としてcurrent surfaceへ明示し、必要なら第0情報源で新しいdecisionを作成する。
 
-具体的なrelation / scope / resolution procedureは `../../system/DECISION_LINEAGE_MODEL.md` を参照する。
+具体的なrelation / scope / resolution procedureは `DECISION_LINEAGE_MODEL.md` を参照する。
 
 ## INDEX.md
 
