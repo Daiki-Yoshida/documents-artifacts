@@ -410,8 +410,10 @@ if grep -Fq 'children.md' "$doc_routing"; then
 fi
 grep -Fq 'Component Repositoryであること自体は独立Project Documentation treeを要求しない' "$doc_routing" \
   || fail "Component Repository/documentation authority boundary missing"
-grep -Fq 'Project Repository / Component Repository' "$workspace_index" \
-  || fail "workspace current-role summary missing Project/Component repository model"
+grep -Fq 'Project Repository / Project Root' "$workspace_index" \
+  || fail "workspace current-role summary missing Project Repository"
+grep -Fq 'Component Repository' "$workspace_index" \
+  || fail "workspace current-role summary missing Component Repository"
 if grep -Fq 'Workspace_Repository:' "$workspace_model"; then
   fail "Workspace Repository reintroduced as current peer role"
 fi
