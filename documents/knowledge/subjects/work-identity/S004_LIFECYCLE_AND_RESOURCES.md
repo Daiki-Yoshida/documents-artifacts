@@ -15,7 +15,7 @@ Work Identity confirmed
        ↓
 Work Documents initialized in Project Repository
        ↓
-baseline visibility / publication reconciled as authorized
+baseline visibility / publication reconciled as authorized (or explicitly recorded pending)
        ↓
 branch / checkout / optional worktree prepared
        ↓
