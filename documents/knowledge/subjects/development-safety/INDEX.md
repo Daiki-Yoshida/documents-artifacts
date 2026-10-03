@@ -47,3 +47,18 @@ repository境界を守った統合と、統合後の再検証を扱う。
 generic `DIR` semantics自体は `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
 
 source: `../../records/2026-10-03-project-root-execution-routing/`
+
+
+## Decision lineage — safety responsibility split
+
+Current:
+
+- `../../records/2026-09-22-six-subject-cross-audit-fixes/` — destructive operations, diagnostics/recovery, integration safety, and confirmation/reread are owned by this dedicated safety subject rather than the old development-environment umbrella.
+- `../../records/2026-10-03-project-component-documentation-boundary/` — later Project Repository / Component Repository terminology and ownership alignment is reflected in current safety guidance.
+
+Historical predecessor:
+
+- the old `development-environment` umbrella combined safety with execution, workspace, Work lifecycle, and resource concerns.
+- that predecessor semantic model is preserved in `../development-execution/S005_HISTORY.md` and the original development-environment source records; it is not current safety authority.
+
+No separate safety HISTORY file is required while the reusable predecessor semantics are already preserved and routed without ambiguity.
