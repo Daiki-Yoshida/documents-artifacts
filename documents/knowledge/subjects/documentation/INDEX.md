@@ -36,7 +36,7 @@ documentation/
 
 ### S002_ROUTING_AND_STRUCTURE.md
 
-INDEX、cross reference、file role、directory分割、階層projectなど、情報へ到達するための構造を扱う。
+INDEX、cross reference、file role、directory分割、複数repository Projectでのcomponent knowledge routingなど、情報へ到達するための構造を扱う。
 
 ### S003_WORKFLOW.md
 
@@ -87,3 +87,7 @@ initial_reorganization:
 ## 2026-10-03 consistency convergence
 
 managed Artifact v2 whole-pack、Project INDEX inventory scope、physical placementとauthority分離の横断整合は `../../records/2026-10-03-subject-consistency-convergence/` を根拠とする。
+
+## 2026-10-03 Project / Component documentation boundary
+
+旧parent/child hierarchical project modelをcurrent normativeから外し、Project Repository / Component Repository責務モデルへdocumentation ownershipを収束した判断は `../../records/2026-10-03-project-component-documentation-boundary/` を根拠とする。
