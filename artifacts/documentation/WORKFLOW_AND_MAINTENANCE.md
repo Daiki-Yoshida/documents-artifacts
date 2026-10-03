@@ -30,6 +30,16 @@ Update proportionally: a tiny implementation change does not require rereading o
 
 Do not maintain parallel manual version registries when Git history already tracks document evolution.
 
+## Multi-repository Projects
+
+Do not create a separate Project Documentation tree merely because a Project contains multiple Component Repositories.
+
+- keep Project-level policy, architecture, routing, and cross-component coordination in Project Repository-owned Project Documentation;
+- keep component-specific knowledge with its actual owner when appropriate;
+- update Project routing when a component knowledge location/responsibility changes;
+- treat a Component Repository as an independent Project only in an intentional standalone Project context;
+- do not reintroduce parent/child repository hierarchy or a required `children.md` role.
+
 ## Managed artifact copies
 
 Artifact v2 is delivered as one managed pack under `documents/artifacts/`, with `documents/artifacts/INDEX.md` as its entrypoint. Reusable guidance installed into a target project is a **managed derived snapshot**, not ordinary project-owned documentation.
@@ -104,7 +114,7 @@ Re-read or re-check the relevant routing when:
 
 - adding a new agent entry file;
 - moving documents across directories;
-- changing single-project ↔ hierarchical-project structure;
+- changing single-repository ↔ multi-repository Project topology or repository roles;
 - uncertain where new information belongs.
 
 Routine content edits inside an established routing structure do not require a full strategy re-read.
