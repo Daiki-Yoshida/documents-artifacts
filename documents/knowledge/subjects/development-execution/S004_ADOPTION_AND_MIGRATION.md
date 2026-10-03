@@ -10,7 +10,7 @@
 authority: "../workspace-structure/"
 resolve:
   - "Project Root / Project Repository"
-  - "Workspace Repository / Component Repository when applicable"
+  - "Project Repository / Component Repository when applicable"
   - "stable repository identity / base location"
 ```
 
@@ -89,11 +89,13 @@ CI: "local scriptとの重複や差異"
 この節は**environment migration固有**の保護だけを所有する。project-local rule優先、周辺違反を黙って直さない、一般的なtask scope disciplineは `../engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md` / `S007_BROWNFIELD_AND_APPROACH.md` が主所有する。
 
 - repository移動やenvironment state削除を黙って行わない。
-- 依頼に必要でないWorkspace・Component分割をexecution改善だけの理由で導入しない。
+- 依頼に必要でないProject Repository / Component Repository分割をexecution改善だけの理由で導入しない。
 - 現在checkoutで単独作業を安全に行える場合、不要なWork-scoped worktreeを導入しない。
 - current build/test/deploy pathを置換するときは、一度に一つのexecution boundaryを変更し、動作確認可能な状態を維持する。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
 - `../../records/2026-07-18-environment-workflow-origin-commit/RECORD.md`

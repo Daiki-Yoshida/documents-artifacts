@@ -55,16 +55,19 @@ document固有のSemantic Versionや `last_updated_commit` registryは必須化�
 ```yaml
 principle: "本戦略はAIエージェントを使用するあらゆるプロジェクトで機能する。"
 scope:
-  single_project: "1つのリポジトリ、1つのdocuments/ツリー、1つのINDEX.md。"
-  hierarchical_project: "親+子プロジェクト、それぞれが独立したdocuments/ツリーを持つ。"
-  scale_independence: "単一スクリプトのリポジトリからマルチサービスのモノレポまで。"
+  single_repository_project: "Project Repository自身がproduct sourceも所有できる。Project DocumentationはProject Rootのdocuments/からrouteする。"
+  multi_repository_project: "Project RepositoryがProject-level documentation/routingを所有し、Component Repository固有knowledgeへ必要に応じてrouteする。"
+  standalone_repository_context: "通常はComponent Repositoryとして参加するphysical repositoryも、独立Projectとして開発するcontextでは自身がProject Repositoryになり得る。"
+  scale_independence: "単一スクリプトのrepositoryから複数Component Repositoryを持つProjectまで。"
 ```
 
-階層projectのdocumentation構造は `S002_ROUTING_AND_STRUCTURE.md` の「階層プロジェクト」を参照する。
+repository roleとProject contextの判定は `../workspace-structure/` が主所有する。documentation側は、そのroleを前提としてProject Documentationのauthorityとroutingを扱う。
 
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 

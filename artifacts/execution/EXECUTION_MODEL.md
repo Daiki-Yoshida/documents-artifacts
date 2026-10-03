@@ -42,6 +42,6 @@ Prefer:
 - lock files;
 - repository-managed environment definitions;
 - local and CI paths converging on the same project commands;
-- explicit refs when depending on another workspace/tool repository.
+- explicit refs when depending on another Project Repository or project-level tool.
 
 Reproducibility means changes are intentional and traceable, not frozen forever.

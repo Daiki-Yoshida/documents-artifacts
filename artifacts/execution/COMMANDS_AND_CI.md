@@ -109,6 +109,6 @@ CI should call project-managed build/test/validation commands instead of reimple
 
 Provider-specific provisioning may differ, but converge on the same repository-managed verification scripts/targets.
 
-External workspace/tool dependencies must use an explicit ref/policy rather than accidentally consuming whatever latest checkout happens to exist.
+External repository/tool dependencies must use an explicit ref/policy rather than accidentally consuming whatever latest checkout happens to exist.
 
 Work-specific worktree command semantics live in `../project/WORKTREES.md`.

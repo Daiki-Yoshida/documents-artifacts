@@ -1,6 +1,6 @@
 # ドキュメント — ルーティングと構造
 
-情報を削るのではなく責務ごとに配置し、INDEX・cross reference・project/reference等のrole例・階層projectによって必要情報へ到達させる考え方を扱う。
+情報を削るのではなく責務ごとに配置し、INDEX・cross reference・project/reference等のrole例・複数repository Projectのroutingによって必要情報へ到達させる考え方を扱う。
 
 ## 切り詰めよりルーティング
 
@@ -144,51 +144,82 @@ when_not_to_create:
 
 ---
 
-## 8. 階層プロジェクト
+## 複数Repository ProjectのDocumentation routing
 
-マルチサービスまたはマルチパッケージプロジェクトの場合、各子は独立した
-`documents/` ツリーを持つ。親は子のツリーに入らない。
+repository topology / Git ownershipは `../workspace-structure/` が主所有する。Documentationはそのroleを再定義せず、Project-level knowledgeからComponent固有knowledgeへどう到達するかを扱う。
 
-### 原則
+### 基本model
 
-```yaml
-child_independence: "各子は独自のdocuments/INDEX.mdを持つ。"
-parent_containment: "親のdocuments/は子を高レベルで記述するが、子の詳細を複製しない。"
-information_flow: "親 → 子（一方向）。子は親の内部ドキュメントを参照しない。"
-external_reference: "子が親のコンテキストを必要とする場合、親を外部プロジェクトとして扱う。"
+```text
+Project
+│
+├─ Project Repository
+│   └─ documents/
+│       └─ INDEX.md
+│
+├─ Component Repository A
+└─ Component Repository B
 ```
 
-### 構造例
+Project RepositoryはProject-level canonical documentationとroutingを所有する。
 
-内部directory名は固定しない。次は `project/` / `reference/` を採用したprojectでの一例。
-
-```yaml
-parent_project:
-  documents:
-    index: "documents/INDEX.md（親のルーティング）"
-    project_example: "documents/project/（親project contextの配置例）"
-    reference_example: "documents/reference/（共有referenceの配置例）"
-    children_overview_example: "documents/project/children.md（子概要を置く場合の配置例）"
-
-child_projects:
-  each_child:
-    documents: "独自のINDEX.mdを持つ独立したdocuments/ツリー"
-    parent_awareness: false
-    rule: "子のINDEX.mdは親ドキュメントを自分のauthorityとして列挙しない。子は自身のProject Documentationで自己完結する。"
-```
-
-### 親側の子概要
+Component Repositoryはcomponent/product固有のsource・Git history・必要なcomponent-specific documentationを所有できる。ただし、**Component Repositoryであること自体は独立Project Documentation treeを要求しない**。
 
 ```yaml
-placement: "project固有。documents/project/children.md は標準的な配置例"
-purpose: "子projectの高レベル概要 — 名前、境界、責務、service間communication"
-audience: "親レベルの利用者 / agent"
-rule: "子側の詳細authorityを複製しない。協調が必要な場合は明示されたcross-project referenceとして扱う。"
+project_repository:
+  documentation_role: "Project-level canonical knowledge / routing authority"
+  index: "<project-root>/documents/INDEX.md"
+
+component_repository:
+  default_role: "component固有knowledgeを必要なGit ownershipの場所で保持できる"
+  does_not_imply:
+    - "独立Project context"
+    - "独自documents/INDEX.md必須"
+    - "Project-level authority"
+routing:
+  rule: "Project Documentationから、Project workに必要なcomponent固有knowledgeのlocation / authorityへ明示的にrouteする"
 ```
 
----
+component固有documentをProject Repositoryへ複製して二重authorityにしない。逆に、Project全体のpolicy / architecture / coordinationを各Component Repositoryへ独立複製しない。
+
+### standalone Project context
+
+通常はComponent Repositoryとして参加するphysical repositoryでも、上位Projectとは切り離された独立Projectとして意図的に開発される場合、そのcontextではrepository自身がProject Repositoryになり得る。
+
+```text
+same physical repository
+  ├─ enclosing Project context  → Component Repository
+  └─ standalone Project context → Project Repository
+```
+
+分類はfilesystem上の親子位置ではなく、**そのWorkがどのProject contextに属するか**で決める。
+
+### topology documentのfile名を固定しない
+
+Project Documentationは、必要に応じてrepository/component topology、責務境界、cross-component relationship、component-specific knowledgeのroutingを記述する。
+
+`children.md` のような特別file roleは要求しない。
+
+```text
+components.md
+repositories.md
+architecture.md
+workspace.md
+```
+
+等はproject-local routingの例であり、普遍的な必須file名ではない。
+
+### parent / child terminology
+
+Project Repository / Component Repositoryの関係をcurrent normativeで「親repository / 子repository」「親project / 子project」と表現しない。
+
+親子表現はfilesystem containment、Git ownership、dependency direction、Project contextを一つの上下関係へ誤って束ねるためである。
+
+旧hierarchical project / parent-child modelは `S006_HISTORY.md` とsource recordsへhistorical contextとして保存する。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 

@@ -43,6 +43,9 @@ for file in \
   documents/knowledge/records/2026-10-03-subject-consistency-convergence/RECORD.md \
   documents/knowledge/records/2026-10-03-subject-consistency-convergence/USER_MESSAGES.md \
   documents/knowledge/records/2026-10-03-subject-consistency-convergence/ISSUE_164_BODY.md \
+  documents/knowledge/records/2026-10-03-project-component-documentation-boundary/RECORD.md \
+  documents/knowledge/records/2026-10-03-project-component-documentation-boundary/USER_MESSAGES.md \
+  documents/knowledge/records/2026-10-03-project-component-documentation-boundary/ISSUE_167_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -385,6 +388,102 @@ grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.m
   || fail "Artifact worktree materialization applicability regressed"
 grep -Fq 'Work Identity model and a concrete implementation effort' artifacts/operation/CHANGE_LIFECYCLE.md \
   || fail "Artifact operation flow lost Work Identity gate"
+
+# Project Repository / Component Repository documentation boundary guards (Issue #167).
+doc_principles=documents/knowledge/subjects/documentation/S001_PRINCIPLES.md
+doc_routing=documents/knowledge/subjects/documentation/S002_ROUTING_AND_STRUCTURE.md
+doc_workflow=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
+doc_history=documents/knowledge/subjects/documentation/S006_HISTORY.md
+workspace_index=documents/knowledge/subjects/workspace-structure/INDEX.md
+workspace_model=documents/knowledge/subjects/workspace-structure/S001_PROJECT_AND_REPOSITORY_MODEL.md
+workspace_ownership=documents/knowledge/subjects/workspace-structure/S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
+workspace_history=documents/knowledge/subjects/workspace-structure/S003_HISTORY.md
+
+if grep -Fq 'hierarchical_project:' "$doc_principles"; then
+  fail "current documentation principles reintroduced hierarchical project model"
+fi
+if grep -Fq '## 8. 階層プロジェクト' "$doc_routing"; then
+  fail "current documentation routing reintroduced parent/child hierarchy"
+fi
+if grep -Fq 'documents/project/children.md' "$doc_routing"; then
+  fail "current documentation routing requires legacy children.md role"
+fi
+grep -Fq '特別file roleは要求しない' "$doc_routing" \
+  || fail "documentation routing lost explicit non-required fixed topology filename rule"
+grep -Fq 'Component Repositoryであること自体は独立Project Documentation treeを要求しない' "$doc_routing" \
+  || fail "Component Repository/documentation authority boundary missing"
+grep -Fq 'Project Repository / Project Root' "$workspace_index" \
+  || fail "workspace current-role summary missing Project Repository"
+grep -Fq 'Component Repository' "$workspace_index" \
+  || fail "workspace current-role summary missing Component Repository"
+if grep -Fq 'Workspace_Repository:' "$workspace_model"; then
+  fail "Workspace Repository reintroduced as current peer role"
+fi
+grep -Fq 'Workspace Repositoryという旧用語' "$workspace_model" \
+  || fail "Workspace Repository compatibility/history note missing"
+grep -Fq 'Project Repository / Component Repositoryをrepository roleとして用いる' "$workspace_ownership" \
+  || fail "workspace ownership does not declare current Project/Component roles"
+grep -Fq 'parent / child repositoryとは呼ばない' "$workspace_ownership" \
+  || fail "parent/child repository terminology guard missing"
+grep -Fq 'Parent / Child hierarchical project model' "$doc_history" \
+  || fail "legacy documentation hierarchy is not preserved/labeled in history"
+grep -Fq 'Workspace Repository terminology convergence' "$workspace_history" \
+  || fail "legacy Workspace Repository terminology is not preserved/labeled in history"
+
+grep -Fq 'Multi-repository Project routing' artifacts/documentation/PRINCIPLES_AND_ROUTING.md \
+  || fail "Artifact documentation lost multi-repository routing model"
+if grep -Fq '## Hierarchical projects' artifacts/documentation/PRINCIPLES_AND_ROUTING.md; then
+  fail "Artifact documentation reintroduced hierarchical project model"
+fi
+grep -Fq 'does not automatically make it an independent Project' artifacts/documentation/PRINCIPLES_AND_ROUTING.md \
+  || fail "Artifact Component Repository documentation boundary missing"
+grep -Fq 'Do not introduce a separate Workspace Repository as a required third peer role' artifacts/project/WORKSPACE.md \
+  || fail "Artifact workspace reintroduced Workspace Repository peer role"
+grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
+  || fail "Artifact workspace parent/child terminology guard missing"
+
+# Retired Workspace Repository / parent-child role wording must not survive in
+# current normative text or its Artifact projection (explicit old-term and
+# negative-guard mentions are exempted by the file locations checked here).
+safety_integration=documents/knowledge/subjects/development-safety/S004_INTEGRATION.md
+safety_diagnostics=documents/knowledge/subjects/development-safety/S003_DIAGNOSTICS_AND_RECOVERY.md
+worktree_materialization=documents/knowledge/subjects/work-identity/S005_WORKTREE_MATERIALIZATION.md
+artifact_integration=artifacts/safety/INTEGRATION_AND_CONFIRMATION.md
+artifact_diagnostics=artifacts/safety/DIAGNOSTICS_AND_RECOVERY.md
+artifact_execution_model=artifacts/execution/EXECUTION_MODEL.md
+artifact_commands=artifacts/execution/COMMANDS_AND_CI.md
+
+if grep -Fq 'Workspace Repository' "$safety_integration"; then
+  fail "current integration guidance still uses Workspace Repository as a peer role"
+fi
+if grep -Fq '別Workspace Repository' "$execution_commands"; then
+  fail "current CI guidance still treats Workspace Repository as a current repository kind"
+fi
+if grep -Fq 'Workspace tool' "$workspace_ownership" || grep -Fq 'Workspace ref' "$safety_diagnostics"; then
+  fail "retired Workspace tool/ref terminology remains in current normative text"
+fi
+if grep -Fn '親repository' "$worktree_materialization"; then
+  fail "worktree materialization still uses parent-repository wording for the Project Repository"
+fi
+if grep -Fq 'Workspace/Component topology' "$artifact_integration"; then
+  fail "Artifact safety reread trigger still uses retired Workspace/Component topology wording"
+fi
+if grep -Fq 'workspace ref' "$artifact_diagnostics"; then
+  fail "Artifact diagnostics still uses retired workspace ref wording"
+fi
+if grep -Fq 'workspace/tool repository' "$artifact_execution_model"; then
+  fail "Artifact execution model still uses retired workspace/tool repository wording"
+fi
+if grep -Fq 'External workspace/tool dependencies' "$artifact_commands"; then
+  fail "Artifact CI guidance still uses retired workspace/tool dependency wording"
+fi
+
+# Historical source must still preserve the original hierarchical model.
+legacy_doc_source=documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md
+grep -Fq '## 8. 階層プロジェクト' "$legacy_doc_source" \
+  || fail "historical hierarchical-project source was lost"
+grep -Fq 'children.md' "$legacy_doc_source" \
+  || fail "historical children.md evidence was lost"
 
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do

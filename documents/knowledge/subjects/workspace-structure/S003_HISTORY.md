@@ -4,6 +4,18 @@
 
 現在はWorkspace構造そのものをこのsubjectが所有し、Work Root / Work Documents / repository-specific worktreeは `../work-identity/` が所有する。
 
+## Workspace Repository terminology convergence
+
+旧development-environment modelでは、開発tool・workspace coordinationを所有するrepositoryを `Workspace Repository` と呼んでいた。
+
+current normativeでは、その責務は `Project Repository` に包含し、`Workspace Repository` をProject Repository / Component Repositoryと並ぶ第三のpeer roleとして要求しない。
+
+同様に、Project Repository / Component Repositoryの関係をparent / child repository hierarchyとして扱わない。旧用語と旧配置はhistoryとして以下に保存する。
+
+decision source: `../../records/2026-10-03-project-component-documentation-boundary/`
+
+---
+
 ## Original preamble
 
 # ワークスペース構造

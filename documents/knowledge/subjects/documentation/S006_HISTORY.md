@@ -6,6 +6,30 @@
 
 削除ではなく、**当時の設計・運用判断を保持するhistory**として扱う。
 
+## Parent / Child hierarchical project model
+
+旧Documentation Strategyには、マルチサービス / マルチパッケージを「親project / 子project」の階層として表し、各子へ独立 `documents/INDEX.md` を要求し、親の `children.md` で協調するmodelが存在した。
+
+この節および下記に保存された原文はhistorical contextであり、現在のrepository/documentation role modelではない。
+
+現行では:
+
+```text
+Project Repository
+  → Project-level documentation / routing / coordination
+
+Component Repository
+  → component固有source / Git history / 必要なcomponent-specific knowledge
+```
+
+という責務分離を用いる。Component Repositoryであること自体は独立Project Documentation treeを要求しない。同じphysical repositoryがstandalone Project contextではProject Repositoryになり得る。
+
+旧parent/child hierarchyは削除せず、このhistoryとsource recordsへ保存する。
+
+decision source: `../../records/2026-10-03-project-component-documentation-boundary/`
+
+---
+
 ## Original preambles
 
 ### DOCUMENTATION_PHILOSOPHY_JP.md

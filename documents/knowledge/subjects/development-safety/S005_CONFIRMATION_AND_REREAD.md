@@ -33,7 +33,7 @@ SAFETY_L3_destructive_or_host:
 ```yaml
 must_re_read:
   - "このstrategyを使うprojectへ初めて触れる"
-  - "Workspace / Component構造を変更する"
+  - "Project Repository / Component Repository構造を変更する"
   - "worktree contractを追加・再設計する"
   - "host / container boundaryを変更する"
   - "destructive operationを追加する"
@@ -42,7 +42,7 @@ should_re_read:
   - "runtime resource naming / isolationを変える"
   - "public command structureを変える"
   - "local / CI execution pathを変える"
-  - "external Workspace/tool ref policyを変える"
+  - "external repository/tool ref policyを変える"
 
 no_re_read_needed:
   - "確立済みcommandの日常利用"
@@ -51,6 +51,8 @@ no_re_read_needed:
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
 - `../../records/2026-09-22-six-subject-cross-audit-fixes/`

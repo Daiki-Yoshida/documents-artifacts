@@ -22,10 +22,6 @@ Project_Root:
     - "documents/ と .worktrees/ の所有境界"
     - "repository selector解決の起点"
 
-Workspace_Repository:
-  意味: "複数repository projectで、開発tool・workspace調整・project-level coordinationを所有するrepository"
-  関係: "複数repositoryを調整するWorkspace Repositoryが存在する場合、そのrepositoryがProject Repositoryを兼ねる"
-
 Component_Repository:
   意味: "productまたは独立versionを持つcomponentと、そのGit履歴を所有するrepository"
 
@@ -35,6 +31,21 @@ Primary_Checkout:
     - "Workごとにどのbranchを使うか決める"
     - "Workごとにworktreeを作るか決める"
 ```
+
+### 日本語でのrole名
+
+current normativeの説明では、次を使用できる。
+
+```yaml
+Project_Repository:
+  日本語: "プロジェクト管理リポジトリ"
+  短縮: "管理リポジトリ（文脈上Project roleであることが明確な場合）"
+
+Component_Repository:
+  日本語: "コンポーネントリポジトリ"
+```
+
+「親リポジトリ / 子リポジトリ」はcurrent role名として使用しない。
 
 ### 単一repository
 
@@ -50,23 +61,27 @@ Project Repository
 
 ### 複数repository
 
-複数repositoryをまとめるWorkspace Repositoryが存在する場合、
+複数repository Projectでは、Project Repositoryがproject-level coordinationを所有し、1つ以上のComponent Repositoryが参加できる。
 
 ```text
-Workspace Repository
-= Project Repository
+Project Repository
+  = project-level coordination / Project Root ownership
 
 Component Repository
-= projectに参加する独立repository
+  = projectに参加する独立repository
 ```
 
-を基本とする。
+Project RepositoryとComponent Repositoryは別のGit履歴を持ってよく、Git submoduleである必要はない。
 
-Workspace RepositoryとComponent Repositoryは別のGit履歴を持ってよく、Git submoduleである必要はない。
+### Workspace Repositoryという旧用語
+
+旧modelで `Workspace Repository` と呼んでいた「複数repositoryを調整するrepository」は、現行modelでは **Project Repository** の責務に包含する。
+
+`Workspace Repository` をProject Repository / Component Repositoryと並ぶ第三のcurrent roleとして要求しない。旧source・history・既存project固有用語の説明で必要な場合だけcompatibility / historical termとして扱う。
 
 ## Repository構造
 
-### Project / Workspace Repository
+### Project Repository
 
 project全体のcoordination責務を持つ。
 
@@ -105,7 +120,7 @@ Project Repository配下にcheckoutを置けるが、Project Repositoryの通常
 
 Project RootはProject Repositoryの基準working tree rootである。
 
-複数repository構成でWorkspace RepositoryがProject Repositoryなら、Workspace RootとProject Rootは同じ場所を指す。
+複数repository構成でも、Project RootはProject Repositoryの基準working tree rootである。Component Repository checkoutがその配下に配置されてもProject Rootは移動しない。
 
 典型形:
 
@@ -204,6 +219,8 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 その判断はWork Identity / project policyが所有する。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 

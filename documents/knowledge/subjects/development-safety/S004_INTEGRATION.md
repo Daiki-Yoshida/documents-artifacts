@@ -9,9 +9,9 @@ Work lifecycle上でintegrationがいつ行われ、Work全体をいつcompleted
 統合方式はproject固有だが、repository boundaryを守る。
 
 - merge / rebase / PRはbranchを所有するrepositoryで行う。
-- Component Repositoryの変更をProject / Workspace Repositoryの通常fileとしてcommitしない。
+- Component Repositoryの変更をProject Repositoryの通常fileとしてcommitしない。
 - integration後HEADで必要なvalidationを再実行する。
-- Workspace toolが変わった場合は意図したWorkspace refでComponentを検証する。
+- Project Repository側のtoolが変わった場合は意図したrefでComponentを検証する。
 - static repository resolutionにPrimary Checkoutを使うprojectでは、必要に応じてproject規則のstable stateへ戻す。
 
 一つのrepository branchがmergeされたことだけをWork全体のcompletionとみなさない。multi-repository Workのcompletion / Work Documents reconciliation / resource cleanupはWork Identity側で判定する。
@@ -19,6 +19,8 @@ Work lifecycle上でintegrationがいつ行われ、Work全体をいつcompleted
 このsubjectはPR承認policyやrelease governanceを決めない。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
 - `../../records/2026-09-22-six-subject-cross-audit-fixes/`

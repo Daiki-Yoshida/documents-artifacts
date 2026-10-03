@@ -31,7 +31,7 @@ project環境は、次に相当する操作を提供します。
 4_runtime: "container、network、port、mount、所有権、volume"
 5_command: "公開command parameterとexit status"
 6_Git状態: "dirty状態、branch所有、必要な場合のworktree metadata、remote ref"
-7_CI差異: "provider準備またはWorkspace ref不一致"
+7_CI差異: "provider準備または外部repository ref不一致"
 ```
 
 - host全体cleanupの前に、問題Workのresourceだけを対象に再作成・診断する。
@@ -43,6 +43,8 @@ project環境は、次に相当する操作を提供します。
 Work-scoped resourceのidentity / ownershipは `../work-identity/`、runtime materializationの詳細は `../development-execution/` を参照する。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md`
