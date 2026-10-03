@@ -222,4 +222,6 @@ Work 完了後に Work Root が削除されても、tracked Work Documents の�
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`
