@@ -8,11 +8,19 @@ Default reusable rule:
 
 ```yaml
 commit_push: "Do not commit or push unless the user/project workflow authorizes it."
-default_branch: "When a commit is needed, do not directly commit on the default branch unless the project explicitly uses that workflow."
+default_branch: "For implementation source changes, do not directly commit on the default/baseline branch unless the project explicitly uses that workflow."
 project_rule: "A more specific project-local VCS policy overrides this reusable default."
 ```
 
 Static repository ownership belongs to project structure guidance. Work-specific branch/worktree lifecycle belongs to project/work guidance.
+
+## Work Documents publication
+
+Work guidance may require Work Documents to become visible from the Project baseline, but that lifecycle goal does not itself grant commit/push/merge authority.
+
+- use the project-authorized documentation/coordination publication path;
+- if publication is not yet authorized, preserve the Work context in an authorized Project Repository working state and report publication as pending;
+- never report baseline publication that has not actually happened.
 
 ## Reporting
 
