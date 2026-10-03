@@ -11,7 +11,9 @@ scan current context and boundaries
         ↓
 route design/risk questions to the owning guidance
         ↓
-confirm when required
+establish / confirm Work Identity when required by the project model
+        ↓
+confirm other owner-specific gates when required
         ↓
 implement within agreed scope
         ↓
@@ -31,6 +33,8 @@ Know at least:
 - whether a public contract is affected;
 - whether destructive/operational risk exists;
 - whether project-local rules constrain the change.
+
+When a project uses the Work Identity model and a concrete implementation effort is about to begin, route to `../project/WORK_IDENTITY.md` and satisfy its explicit confirmation gate before implementation. Do not create a Work Identity merely for exploratory discussion.
 
 Use the specialized artifact for the answer:
 - boundary/contract design → `../design/INDEX.md`
