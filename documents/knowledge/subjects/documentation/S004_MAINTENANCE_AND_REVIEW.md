@@ -38,7 +38,7 @@ must_re_read:
 should_re_read:
   - "新しいエージェントエントリファイルの追加。"
   - "ドキュメントの再構築（ディレクトリ間でファイルを移動）。"
-  - "プロジェクトを単一から階層に変更（またはその逆）。"
+  - "single-repository / multi-repository Project topologyやProject Repository / Component Repositoryのroleを変更する。"
   - "情報がどこに属するか不確実な場合。"
 
 no_re_read_needed:
@@ -83,6 +83,8 @@ rule: "他のドキュメントがまだ参照しているドキュメントを�
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md`
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md`
