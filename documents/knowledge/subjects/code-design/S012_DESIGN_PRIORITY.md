@@ -46,6 +46,19 @@ expected failureの現在の規則は `S008_FAILURE_ASYNC_AND_CONTRACTS.md`、pu
 
 commit / push / reporting / task scope等の作業規律はこの文書の責務ではない。
 
+## Decision lineage — Mistake Prevention Priority
+
+Current:
+
+- the original Design Priority remains the predecessor basis for review ordering.
+- Mistake Prevention Priority is read through the current failure and compatibility semantics owned by `S008_FAILURE_ASYNC_AND_CONTRACTS.md` and `S010_COMPATIBILITY_AND_VERIFICATION.md`.
+- later adopted rules narrow how the old priority wording is interpreted; they do not discard the predecessor priority itself.
+
+Refined predecessor:
+
+- `../../records/2026-07-02-design-principles-final-source-snapshot/files/DESIGN_PHILOSOPHY.md` contains the older priority wording.
+- current failure/compatibility decisions refine items where the old wording could otherwise be overgeneralized.
+
 ## Sources
 
 - `../../records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md` §8–9

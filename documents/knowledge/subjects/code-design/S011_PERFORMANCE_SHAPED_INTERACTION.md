@@ -39,6 +39,19 @@ latency / throughput / memory / bounded work等をcallerが実際に保証とし
 
 resource guaranteeをcontractへ含める原理は `../encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md` を参照する。
 
+## Decision lineage — performance-shaped contract evolution
+
+Current:
+
+- `../../records/2026-09-20-performance-contract-evolution/RECORD.md` — interaction-shape redesign is allowed only when a load-bearing performance requirement and evidence show that the current shape is the limiting constraint.
+- the current rule preserves ordinary compatibility requirements for published contracts.
+
+Previous non-current state:
+
+- `../../records/2026-09-06-design-principles-proposals/RECORD.md` introduced the proposal.
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md` and `../../records/2026-09-15-performance-redesign-hold/RECORD.md` held that proposal pending clearer evidence/conditions.
+- that hold is resolved; it is not an unresolved current decision.
+
 ## Sources
 
 - `../../records/2026-09-06-design-principles-proposals/RECORD.md` 提案4

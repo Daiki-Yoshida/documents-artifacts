@@ -87,6 +87,22 @@ mere_future_possibility:
 
 ---
 
+## Decision lineage — Concept Generality / Semantic Identity
+
+Current:
+
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md` — one-sentence responsibility description is a neutrality/generalization **signal**, not proof of shared semantic identity.
+- semantic identity is evaluated through invariants, pre/postconditions, failure semantics, lifecycle/state transitions, and reason-to-change.
+
+Superseded interpretation:
+
+- the earlier source could be read as treating a shared one-sentence responsibility description as sufficient evidence of concept generality.
+- that sufficiency interpretation is non-current; the original source remains preserved in records.
+
+Refinement:
+
+- `../../records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md` further separates meaning required by the current responsibility from merely imaginable future reuse.
+
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md`

@@ -69,6 +69,23 @@ CONTRACT_L3_breaking:
 
 旧例示の原文はrecords snapshotに保持する。追加要素それ自体を安全性の根拠にしない。
 
+## Decision lineage — compatible public evolution
+
+Current:
+
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md` — L2 means compatibility has been checked for the relevant consumer/caller and provider/implementer dimensions.
+- additive shape alone is not compatibility evidence.
+
+Superseded interpretation:
+
+- the older example that effectively mapped "additive" changes to L2 without proving compatibility is non-current.
+- its original wording remains preserved in records; only the interpretation is superseded.
+
+Supporting alignment:
+
+- `../../records/2026-09-15-design-principles-proposal-status/RECORD.md`
+- `../../records/2026-09-24-strong-contract-explicit-not-maximal/RECORD.md`
+
 ## Sources
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md`

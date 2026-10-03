@@ -495,6 +495,22 @@ layout_redesign_required: false
 projection_status: "completed; current Artifact v2 project/WORKTREES.md にMaterialization Contractとatomic creation semanticsを投影済み"
 ```
 
+## Decision lineage — Worktree Materialization Contract
+
+Current:
+
+- the `# 採用判断` section in this document is the current materialization contract.
+- the adopted sequence is `--no-checkout -> worktree-local sparse policy -> materialize`, subject to the documented Git compatibility boundary.
+- current Artifact v2 projects this adopted contract.
+
+Candidate / evidence path:
+
+- plain `git worktree add` is preserved as a failed baseline because it recursively materialized Project-level `.worktrees/`.
+- worktree-local sparse checkout established the required filesystem exclusion.
+- the later `--no-checkout` experiment removed the transient invariant violation and became the adopted sequence.
+
+These experiment/candidate sections remain in the current subject as evidence for the adopted contract; they are not competing current procedures.
+
 ## Sources
 
 - `../../records/2026-10-03-project-component-documentation-boundary/`

@@ -51,6 +51,11 @@ for file in \
   documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/USER_MESSAGES.md \
   documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_BODY.md \
   documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_DECISION_COMMENTS.md \
+  documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/RECORD.md \
+  documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/USER_MESSAGE.md \
+  documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_BODY.md \
+  documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_AUDIT_RESULT.md \
+  documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_175_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -568,6 +573,66 @@ grep -Fq 'Component Repository' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current Component Repository guidance"
 grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current negative guard against old hierarchy"
+
+# Targeted multi-generation subject lineage guards (Issues #174 / #175).
+encap_altitude=documents/knowledge/subjects/encapsulation-horizon/S004_CONCEPT_ALTITUDE.md
+encap_guards=documents/knowledge/subjects/encapsulation-horizon/S008_OPERATIONAL_GUARDS.md
+code_testing=documents/knowledge/subjects/code-design/S009_TESTING_AND_RUNTIME.md
+code_performance=documents/knowledge/subjects/code-design/S011_PERFORMANCE_SHAPED_INTERACTION.md
+code_priority=documents/knowledge/subjects/code-design/S012_DESIGN_PRIORITY.md
+engineering_index=documents/knowledge/subjects/engineering-operation/INDEX.md
+safety_index=documents/knowledge/subjects/development-safety/INDEX.md
+work_materialization=documents/knowledge/subjects/work-identity/S005_WORKTREE_MATERIALIZATION.md
+work_validation=documents/knowledge/subjects/work-identity/S007_VALIDATION.md
+
+grep -Fq '## Decision lineage — Concept Generality / Semantic Identity' "$encap_altitude" \
+  || fail "Concept Altitude correction lost explicit Decision Lineage"
+grep -Fq 'Superseded interpretation:' "$encap_altitude" \
+  || fail "Concept Altitude predecessor is not classified as non-current"
+
+grep -Fq '## Decision lineage — compatible public evolution' "$encap_guards" \
+  || fail "Contract L2 correction lost explicit Decision Lineage"
+grep -Fq 'additive shape alone is not compatibility evidence' "$encap_guards" \
+  || fail "Contract L2 current rule no longer rejects additive-as-proof"
+
+grep -Fq '## Decision lineage — contract conformance and requested outcome' "$code_testing" \
+  || fail "Testing correction lost explicit Decision Lineage"
+grep -Fq 'passing Contract Test does not by itself establish task correctness' "$code_testing" \
+  || fail "Testing current rule lost requested-outcome distinction"
+
+grep -Fq '## Decision lineage — performance-shaped contract evolution' "$code_performance" \
+  || fail "Performance evolution lost explicit Decision Lineage"
+grep -Fq 'Previous non-current state:' "$code_performance" \
+  || fail "Performance proposal/hold lineage is no longer classified as non-current"
+grep -Fq 'that hold is resolved; it is not an unresolved current decision' "$code_performance" \
+  || fail "Historical performance hold regressed into an unresolved current state"
+
+grep -Fq '## Decision lineage — Mistake Prevention Priority' "$code_priority" \
+  || fail "Design priority refinement lost explicit Decision Lineage"
+grep -Fq 'Refined predecessor:' "$code_priority" \
+  || fail "Design priority predecessor refinement is not explicit"
+
+grep -Fq '## Decision lineage — verification completion and reporting' "$engineering_index" \
+  || fail "Engineering Operation correction lost INDEX Decision Lineage"
+grep -Fq 'Superseded completion interpretation:' "$engineering_index" \
+  || fail "Contract-Test-only completion is not marked superseded"
+
+grep -Fq '## Decision lineage — safety responsibility split' "$safety_index" \
+  || fail "Development Safety predecessor/current responsibility lineage missing"
+grep -Fq '../development-execution/S005_HISTORY.md' "$safety_index" \
+  || fail "Development Safety does not route predecessor umbrella semantics to preserved history"
+
+grep -Fq '## Decision lineage — Worktree Materialization Contract' "$work_materialization" \
+  || fail "Worktree materialization adoption lineage missing"
+grep -Fq 'Candidate / evidence path:' "$work_materialization" \
+  || fail "Worktree materialization candidates/evidence are not distinguished from adopted contract"
+
+grep -Fq '## Decision lineage — reference implementation validation' "$work_validation" \
+  || fail "Worktree validation fix lineage missing"
+grep -Fq 'Corrected predecessor evidence:' "$work_validation" \
+  || fail "Worktree validation predecessor evidence is not scope-corrected"
+grep -Fq 'validation is evidence for the Worktree Command Contract' "$work_validation" \
+  || fail "Worktree validation is being conflated with effective status"
 
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do

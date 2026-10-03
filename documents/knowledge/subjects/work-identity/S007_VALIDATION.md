@@ -331,6 +331,24 @@ distribute_reference_shell_as_artifact: false
 projection_status: "completed; current Artifact v2 project/WORKTREES.md にbranch/upstream分離とstable Project Root resolutionを投影済み"
 ```
 
+## Decision lineage — reference implementation validation
+
+Current evidence:
+
+- the focused revalidation after commit `d6ae75b1608fdbc1185f411b02d3513f41eae1b1` is the current evidence for base-ref/upstream separation.
+- the final evaluation in this document records the currently validated scope and explicit unvalidated scope.
+
+Corrected predecessor evidence:
+
+- the initial fresh-clone validation remains valid for the cases it actually exercised.
+- only its implicit acceptance of automatic `origin/main` upstream assignment for a newly created Work branch was invalidated by post-review.
+- the fix changed branch creation to `--no-track` for the base-ref case and was then revalidated.
+
+Evidence relation:
+
+- validation is evidence for the Worktree Command Contract; it is not itself a separate effective-status category.
+- unvalidated multi-repository/native-OS cases remain explicit limitations, not rejected semantics.
+
 ## Sources
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
