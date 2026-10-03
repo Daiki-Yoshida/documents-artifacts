@@ -13,7 +13,9 @@ Design / discussion
        ↓
 Work Identity confirmed
        ↓
-Work Documents created on Project main
+Work Documents initialized in Project Repository
+       ↓
+baseline visibility / publication reconciled as authorized
        ↓
 branch / checkout / optional worktree prepared
        ↓
@@ -31,6 +33,8 @@ work-scoped resources reconciled / cleaned
        ↓
 Work Identity completed
 ```
+
+Work DocumentsをProject baselineへpublishするcommit / push / merge authorityはこのlifecycle自体からは生じない。Project-local workflowと `../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` に従い、authorityが無い場合はpublication pendingを明示する。
 
 ### Work 完了と branch merge は同義ではない
 
