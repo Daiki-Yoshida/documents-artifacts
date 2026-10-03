@@ -28,7 +28,8 @@ target project / documents/artifacts/
 ```text
 .
 ├─ README.md
-├─ artifacts.sh
+├─ install.sh                 # curl | sh remote bootstrap
+├─ artifacts.sh               # managed pack sync/remove implementation
 ├─ artifacts/                 # Artifact v2。AI向け第2情報源
 │  ├─ INDEX.md                # 小さいtask router
 │  ├─ design/
@@ -129,46 +130,41 @@ syncはmanaged rootを**完全置換**する。旧artifact、stale file、target
 
 removeは `documents/artifacts/` 全体を明示的に削除する。project-ownedな他の `documents/` 内容は対象にしない。
 
-### GitHub からの直接 install/update (source checkout 常置なし)
+### GitHub からの直接 install/update
 
-このrepositoryをcloneして維持しなくても、GitHub `main` branchから直接install/updateできる。内部では一時directoryへの shallow clone で配布物を取得し、取得した snapshot の `artifacts.sh` を実行して、成功/失敗に関わらず一時checkoutを削除する。transportにGitを使うだけで、新しいruntime・package manager・ref選択・background updater・target側の自動commitは導入しない。
-
-対象projectのrootで実行する (初回installとupdateは同一command):
+対象Projectの**Project Root**で、次の1行を実行する。初回installとupdateは同じcommand。
 
 <!-- remote-delivery-snippet -->
 ```bash
-(
-  set -euo pipefail
-  target="${ARTIFACT_TARGET:-$PWD}"
-  tmp="$(mktemp -d)"
-  trap 'rm -rf -- "$tmp"' EXIT
-  GIT_TERMINAL_PROMPT=0 git clone -q --depth 1 --branch main \
-    https://github.com/Daiki-Yoshida/documents-artifacts.git \
-    "$tmp/documents-artifacts"
-  bash "$tmp/documents-artifacts/artifacts.sh" \
-    --target "$target" --non-interactive
-)
+curl -fsSL https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh | sh
 ```
 <!-- /remote-delivery-snippet -->
 
-- **完全置換**: syncは `<target>/documents/artifacts/` を旧内容から完全に置き換える。stale fileやmanaged copyへの直接編集は残らない。
-- **前提**: `git` と `mktemp` (coreutils)、github.comへのoutbound network。公開repositoryのためcredential/tokenは不要。既存のGit credential helper/SSH設定があればそのまま使われ、auth設定の変更やtokenの入力要求・記録は行わない (`GIT_TERMINAL_PROMPT=0` は対話的credential promptを抑制するだけで、auth設定自体は変更しない)。
-- targetはcommand実行時の `$PWD` を既定とし、取得処理を始める前に `target=` として明示的にcaptureされる。別pathへinstallする場合は、subshell blockの先頭に代入行を追加する ( `( ... )` の外側への `VAR=x` 前置はBashでは無効構文なので使わない):
+`install.sh` はremote acquisition専用の薄いbootstrapであり、Artifact v2の同期処理そのものは既存の `artifacts.sh` へ委譲する。
 
-  ```bash
-  (
-    ARTIFACT_TARGET=/path/to/project
-    set -euo pipefail
-    ...
-  )
-  ```
+```text
+current Project Root
+  ↓ ./documents/ の存在確認
+install.sh
+  ↓ GitHub main snapshotを一時取得
+artifacts.sh
+  ↓ whole-pack exact replacement
+./documents/artifacts/
+```
 
-  `--non-interactive` を外せばconfirm prompt付きで実行できる。
-- downloadはtargetへの変更を開始する前に完了する。fetchまたはsource validationの失敗時はinstalled packは変更されず、一時checkoutも削除される。
-- sync後はtarget repositoryをGitでreviewし、project側でcommitする (自動commitはしない — 導入先の既存commitはそのまま残る)。
-- `AGENTS.md`、`README.md`、project `documents/INDEX.md` などのproject-owned entry hookには触れない。targetには `artifacts/` の内容のみが `documents/artifacts/` へ届き、source repositoryの `.git` や他の内容は届かない。
-- source repository URLは上記の公式repositoryに固定される。取得refは常に `main` — commit/tag/ref選択・mirror/source差し替えinterfaceはこのversionでは提供しない (test/offline検証はtest-local Git shimで行う)。
-- stage/promote/backup動作はlocal `artifacts.sh` と同一で、実証済みの範囲を超えたcrash-atomicityは主張しない。raw URLから `artifacts.sh` 単体を直接実行する方法は推奨しない — sibling `artifacts/` directoryが必須のため。
+- **Project Root guard**: 実行directoryに既存の `./documents/` が無い場合は、日本語 / Englishのエラーを表示して終了する。bootstrapが `documents/` を勝手に作ることはない。
+- **symlink guard**: `./documents/` がsymlinkの場合も処理を中止する。
+- **完全置換**: `./documents/artifacts/` が無ければinstall、存在すればupdateとして、managed root全体を現在のpackで完全置換する。stale fileやmanaged copyへの直接編集は残らない。
+- **取得方式**: GitHub上の公式repository `main` archiveを `curl` で一時directoryへ取得・展開し、そのsnapshot内の `artifacts.sh` を実行する。source checkoutをtargetへ常置しない。
+- **前提**: `sh`, `bash`, `curl`, `tar`, `mktemp` とgithub.comへのoutbound network。Git clientはremote install/updateには不要。
+- **log**: bootstrapのstatus/errorは日本語 / English併記で出力する。
+- **failure safety**: source取得・展開・validationが失敗した場合はmanaged replacementを開始しない。sync失敗時のstage/promote/rollback semanticsは `artifacts.sh` と同じ。
+- **temporary cleanup**: success / failure / signalのいずれでもbootstrap用temporary directoryを削除する。
+- **project-owned files**: `AGENTS.md`、`README.md`、project `documents/INDEX.md` 等には触れない。自動commitもしない。
+- **固定source**: source repositoryは `Daiki-Yoshida/documents-artifacts`、refは `main` 固定。commit/tag/ref選択やbackground updaterは提供しない。
+- sync後はtarget repositoryをGitでreviewし、Project側でcommitする。
+
+`artifacts.sh` 単体をraw URLからpipe実行する方法は使わない。sibling `artifacts/` packが必要なため、remote入口は `install.sh` とする。
 
 local checkoutがある場合の従来の `./artifacts.sh --target ...` 利用とremovalは変わらない。
 
@@ -227,6 +223,7 @@ artifactの誤りを見つけた場合はknowledgeを確認する。knowledgeが
 ## Validation
 
 ```bash
+sh -n install.sh
 bash -n artifacts.sh
 bash tests/test-artifacts.sh
 
