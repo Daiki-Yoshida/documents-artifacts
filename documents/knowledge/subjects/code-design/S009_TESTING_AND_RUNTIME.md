@@ -62,6 +62,23 @@ runtime間のHTTP/RPC DTOはpublished contractであり、frontendがbackend内�
 
 business logicをentrypointへ置かない。
 
+## Decision lineage — contract conformance and requested outcome
+
+Current:
+
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md` — contract conformance and requested/user-visible outcome verification are distinct checks.
+- a passing Contract Test does not by itself establish task correctness.
+
+Superseded interpretation:
+
+- the older strong reading of Contract Test as the definition of correctness/completion is non-current.
+- the predecessor wording remains preserved in the source snapshots and `S013_HISTORY.md`.
+
+Supporting migration:
+
+- `../../records/2026-09-15-cross-artifact-consistency-issue/RECORD.md`
+- `../../records/2026-09-15-cross-artifact-consistency-pr/RECORD.md`
+
 ## Sources
 
 - `../../records/2026-07-02-design-principles-final-source-snapshot/files/CODING_STANDARDS.md`
