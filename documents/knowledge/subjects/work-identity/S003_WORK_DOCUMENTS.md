@@ -1,6 +1,6 @@
 # Work Identity — Work Documents
 
-Work Documents、Project Documentationとの関係、Git所有権、Primary/mainの役割、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
+Work Documents、Project Documentationとの関係、Git所有権、Project baseline branchの役割とpublication権限境界、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
 
 ## Work Documents
 

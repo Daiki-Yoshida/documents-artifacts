@@ -135,8 +135,6 @@ Force removal, branch deletion, Work Root purge, unpreserved commit loss, or sha
 
 Reference validation demonstrated the contract for the test repository below. Here, `REPO: main` is that repository's selector and must not be read as a universal selector or branch-name requirement:
 
-
-
 ```yaml
 topology: "single repository"
 REPO: "main"
