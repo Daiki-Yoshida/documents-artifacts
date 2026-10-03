@@ -10,9 +10,9 @@ artifactはknowledgeの保存形式ではなく、AIへのdelivery / routing形�
 第0情報源
   ↓
 records
-  ↓
+  ↓ Decision Lineage resolution
 subjects
-  ↓
+  ↓ current-effective projection
 artifacts
   ↓
 target projects
