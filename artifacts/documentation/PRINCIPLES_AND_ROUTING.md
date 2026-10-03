@@ -104,4 +104,4 @@ Project Documentation should route to component-specific knowledge when needed, 
 
 A physical repository that normally participates as a Component Repository may own its own Project Documentation only when it is intentionally used as a standalone Project context, in which case it acts as that context's Project Repository.
 
-Do not model Project Repository / Component Repository as parent/child repository hierarchy, and do not require a special `children.md` document.
+Do not model Project Repository / Component Repository as parent/child repository hierarchy, and do not require a special `documents/project/children.md` document.

@@ -38,7 +38,7 @@ Do not create a separate Project Documentation tree merely because a Project con
 - keep component-specific knowledge with its actual owner when appropriate;
 - update Project routing when a component knowledge location/responsibility changes;
 - treat a Component Repository as an independent Project only in an intentional standalone Project context;
-- do not reintroduce parent/child repository hierarchy or a required `children.md` role.
+- do not reintroduce parent/child repository hierarchy or a required `documents/project/children.md` role.
 
 ## Managed artifact copies
 

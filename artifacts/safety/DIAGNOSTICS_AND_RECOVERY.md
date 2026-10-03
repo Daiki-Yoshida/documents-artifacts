@@ -24,7 +24,7 @@ Show the selected repository/checkout and, when relevant, Work Identity, worktre
 4_runtime: "container/network/port/mount/ownership/volume"
 5_command: "public command parameters and exit status"
 6_git: "dirty state, branch ownership, worktree metadata, remote refs"
-7_ci_difference: "provider setup or external workspace ref mismatch"
+7_ci_difference: "provider setup or external repository ref mismatch"
 ```
 
 ## Recovery rules

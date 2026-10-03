@@ -89,7 +89,7 @@ b99c350084df58995e4093876c0aa28e0043063e
     → Project Repository が追跡
 
 .worktrees/<type>/<name>/<repository>/
-    → sibling Git worktreeなので親repositoryの通常ファイルとして無視
+    → sibling Git worktreeなのでProject Repositoryの通常ファイルとして無視
 ```
 
 このignore境界は成功したが、`.gitignore` は tracked paths のcheckoutを抑制しない。
@@ -168,7 +168,7 @@ Nested:
 Primary:
 - Work Documentsはmaterializeしたまま
 - Primary自体はsparseにならない
-- nested worktree filesystemは親repositoryのstatus noiseにならない
+- nested worktree filesystemはProject Repositoryのstatus noiseにならない
 
 確認されたworktree-local状態:
 
@@ -429,7 +429,7 @@ git -C <worktree-path> \
 Primary checkout:
 - Work Documents materialized
 - Work Documents tracked by Project Repository
-- sibling repository worktree pathは親repositoryで通常ファイルとしてignore
+- sibling repository worktree pathはProject Repositoryで通常ファイルとしてignore
 
 Nested worktree:
 - intended Work branch
@@ -496,6 +496,8 @@ projection_status: "completed; current Artifact v2 project/WORKTREES.md にMater
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 

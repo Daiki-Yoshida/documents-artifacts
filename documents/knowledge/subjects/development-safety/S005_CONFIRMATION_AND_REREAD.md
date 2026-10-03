@@ -42,7 +42,7 @@ should_re_read:
   - "runtime resource naming / isolationを変える"
   - "public command structureを変える"
   - "local / CI execution pathを変える"
-  - "external Workspace/tool ref policyを変える"
+  - "external repository/tool ref policyを変える"
 
 no_re_read_needed:
   - "確立済みcommandの日常利用"

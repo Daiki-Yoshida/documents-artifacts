@@ -152,7 +152,7 @@ standaloneなdevelopment contextでは同じphysical repositoryがProject Reposi
 
 Work単位の判断は `../work-identity/` またはproject固有policyが所有する。
 
-## Workspace toolへの依存
+## Project Repository側toolへの依存
 
 Component RepositoryがProject Repository側のtoolへ依存する場合、使用versionを明示する。
 

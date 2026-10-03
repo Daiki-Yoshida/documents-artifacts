@@ -233,7 +233,7 @@ Work Identity operationをpublic commandとして公開する場合も、その�
 - CIのworkflow YAMLへbuild/test本体を再実装せず、project管理commandを呼ぶ。
 - provisioningが異なっても、最終的には同じ検証scriptへ合流させる。
 - provider固有準備はCI edgeに置き、project動作はrepository管理commandへ置く。
-- CIで別Workspace Repositoryを利用する場合は、使用refを明示する。
+- CIでlocal開発時とは別のProject Repository / project-level tool checkoutを利用する場合は、使用refを明示する。
 - 未指定の外部workspace最新版へ偶然依存しない。
 
 ## Sources
