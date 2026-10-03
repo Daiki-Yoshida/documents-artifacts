@@ -143,7 +143,7 @@ Git worktree は次へ配置する。
 単一 repository:
 
 ```text
- .worktrees/feat/pathfinding/project/
+.worktrees/feat/pathfinding/project/
 ```
 
 この構造により、
