@@ -217,6 +217,8 @@ Work Identity は **意味・ownership・lifecycleを揃えるための共通軸
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md`
 - `../../records/2026-08-02-task-resource-ownership-pr/RECORD.md`
 - `../../records/2026-08-02-task-resource-reconciliation-commit/RECORD.md`
