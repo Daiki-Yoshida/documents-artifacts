@@ -11,7 +11,9 @@ scan current context and boundaries
         ↓
 route design/risk questions to owner
         ↓
-confirm when required
+establish / confirm Work Identity when required by project model
+        ↓
+confirm other change-specific gates when required
         ↓
 implement within agreed scope
         ↓
@@ -33,6 +35,16 @@ report
 - project-local conventionがあるか
 
 具体的なcode designは `../code-design/`、hardening判断は `../encapsulation-horizon/` へrouteする。
+
+### Implementation移行時のWork Identity gate
+
+projectがWork Identity modelを採用しており、exploration / designから**具体的なimplementation effortへ移る直前**には `../work-identity/S001_IDENTITY_MODEL.md` へrouteする。
+
+- goalがまだ曖昧な相談・調査ではWork Identityを急いで作らない。
+- implementation goalが具体化したら、Work Identity候補を明示し、owner subjectが要求するexplicit user confirmationを満たしてからimplementationへ進む。
+- internal changeで他のconfirmationが不要でも、このproject-level Work Identity gateをworkflow都合で省略しない。
+
+Work Identityを採用していないprojectへ新しいidentity制度を勝手に導入する規則ではない。
 
 ## 実装
 
