@@ -36,8 +36,9 @@ Artifact v2 is delivered as one managed pack under `documents/artifacts/`, with 
 
 - update it from its canonical source or the explicit distribution/sync mechanism;
 - do not patch only the installed copy and let it permanently diverge;
-- updates replace the managed pack according to its distribution contract; do not reintroduce legacy module-selective ownership assumptions;
-- omitting a managed artifact from some unrelated project edit does not imply permission to remove it;
+- updates replace the managed pack according to its distribution contract; a leaf removed from the canonical pack may therefore disappear on the next exact-replacement sync;
+- do not reintroduce legacy module-selective ownership assumptions;
+- removing the whole managed root requires the distribution mechanism's explicit remove operation; merely not touching it in an unrelated project edit is not a remove request;
 - record project-specific overrides in project-owned instructions/documentation rather than editing the managed copy;
 - if the reusable guidance itself is wrong, fix the canonical source and redistribute it.
 
