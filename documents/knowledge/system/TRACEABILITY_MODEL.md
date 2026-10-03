@@ -12,7 +12,7 @@ source record
 第0情報源
 ```
 
-traceabilityは「subjectを信用しない」ためではなく、整理・統合の過程で意味が変わっていないことを検証可能にするために持つ。
+traceabilityは「subjectを信用しない」ためではなく、整理・統合の過程で意味が変わっていないことと、current / non-current評価の根拠を検証可能にするために持つ。
 
 ## Source reference
 
@@ -43,15 +43,50 @@ subjectに記述する内容は、次のいずれかとして説明可能であ�
 
 先に第0情報源として議論・判断を行い、それをrecordへ保存したうえでsubjectへ反映する。
 
+## Decision Lineage traceability
+
+複数世代のdecisionが同じsemantic scopeに存在する場合、単純なSources一覧だけでは全sourceが同格に見えやすい。
+
+次の場合はDecision Lineageを明示する:
+
+- current / supersededの区別がsource一覧だけでは不明瞭
+- conflictを後続decisionで解決した
+- rejected proposalがcurrent modelと混同され得る
+- Artifact projectionがどのgenerationをcurrentとして使うかに依存する
+
+例:
+
+```text
+Decision lineage
+
+Current:
+- record C
+
+Superseded:
+- record A
+  superseded by C
+
+Rejected:
+- record B
+
+Supporting validation:
+- record D
+```
+
+すべてのsubject fileへこのsectionを強制しない。
+
+relationの意味・scope・resolutionは `DECISION_LINEAGE_MODEL.md` が所有する。
+
 ## Conflict
 
 subjectとrecordsに意味差が見つかった場合:
 
 1. 関連recordsを確認する。
-2. 後続recordによる訂正・採用・却下がないか確認する。
-3. subjectの整理ミスならsubjectを修正する。
-4. records側に新しい判断が必要なら、第0情報源で判断して新recordを追加する。
-5. 過去recordを現在の結論へ書き換えない。
+2. 後続recordによるadoption / supersede / correction / rejection / refinementとscopeを確認する。
+3. current / superseded / rejected / unresolvedの評価を解決する。
+4. subjectの整理・status表示ミスならsubjectを修正する。
+5. relationで解決できない場合はunresolvedとして明示し、第0情報源で判断して新recordを追加する。
+6. 過去recordを現在の結論へ書き換えない。
 
 ## Artifactとの関係
 
@@ -65,3 +100,4 @@ artifactから得た要約をsource recordの代わりに使用しない。
 
 - `../records/2026-09-21-knowledge-record-accuracy/`
 - `../records/2026-09-21-records-subjects-model/`
+- `../records/2026-10-03-knowledge-effective-status-lineage/`
