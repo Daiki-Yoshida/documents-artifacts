@@ -14,13 +14,13 @@ This file does **not** decide when commits/pushes are authorized; that belongs t
 
 Prefer the project's existing convention.
 
-If none exists, a Conventional-Commits-style prefix with a concise description is a reasonable default, for example:
+If none exists, a reasonable default is a Conventional-Commits-style English prefix with a concise Japanese description that says what changed, for example:
 
 ```text
-docs: update project overview
-fix: correct API endpoint in documentation
-refactor: reorganize documentation routing
-chore: update documentation tooling
+docs: プロジェクト概要を更新
+fix: API仕様のエンドポイントURLを修正
+refactor: documents/reference/ 配下を整理
+chore: documentation routing metadataを更新
 ```
 
 Do not let documentation-specific naming override a project-wide VCS policy.
