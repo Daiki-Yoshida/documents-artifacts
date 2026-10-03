@@ -42,14 +42,14 @@ require_command() {
 }
 
 validate_documents() {
-  if [ ! -e "$DOCUMENTS" ]; then
-    fail "./documents/ フォルダがありません。Project Rootで実行してください。" \
-      "./documents/ directory was not found. Run this command from the Project Root."
-  fi
-
   if [ -L "$DOCUMENTS" ]; then
     fail "./documents/ がsymlinkです。処理を中止します。" \
       "./documents/ is a symlink. Aborting."
+  fi
+
+  if [ ! -e "$DOCUMENTS" ]; then
+    fail "./documents/ フォルダがありません。Project Rootで実行してください。" \
+      "./documents/ directory was not found. Run this command from the Project Root."
   fi
 
   if [ ! -d "$DOCUMENTS" ]; then
