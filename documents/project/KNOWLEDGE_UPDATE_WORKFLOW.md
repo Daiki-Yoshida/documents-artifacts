@@ -75,11 +75,29 @@ target projects
 
 1. 必要なrecordと後続の採用・却下・訂正recordを確認する。
 2. `subjects/INDEX.md` から主責務を持つsubjectを選ぶ。
-3. 主authorityを更新し、関係subjectの局所再述・routingを整合させる。
-4. traceabilityを維持する。
-5. 新subjectは旧module名ではなく独立した知識対象に基づいて作る。
+3. related recordのDecision Lineage / scopeを確認し、current / superseded / rejected / unresolvedを解決する。
+4. meaningful informationへsubject disposition（current / non_current / unresolved / routed / represented / evidence_only）を与える。
+5. 主authorityを更新し、関係subjectの局所再述・routingを整合させる。
+6. non-current semantic knowledgeを黙って削除せず、必要なHISTORY / explicit non-current areaへ整理する。
+7. traceabilityを維持する。
+8. 新subjectは旧module名ではなく独立した知識対象に基づいて作る。
 
-構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、traceabilityは `TRACEABILITY_MODEL.md` に従う。
+構造規則は `documents/knowledge/system/SUBJECT_MODEL.md`、decision relation / scope解決は `DECISION_LINEAGE_MODEL.md`、traceabilityは `TRACEABILITY_MODEL.md` に従う。
+
+## 4.1 Subject disposition accounting
+
+recordからsubjectへ反映するmeaningful informationを、理由なく黙って落とさない。
+
+```text
+current      -> current subject surface
+non_current  -> HISTORY / explicit non-current area
+unresolved   -> current surfaceへ未解決として
+routed       -> 別semantic owner
+represented  -> 既存meaningで表現済み
+evidence_only-> raw evidenceとしてrecordに保持
+```
+
+`evidence_only` に分類するとreusable semantic meaningが失われる可能性がある場合、その分類を使わない。
 
 ## 5. 日本語
 
@@ -93,6 +111,9 @@ Artifact v2はsubjectsのdirectory構造をコピーしない。
 
 projection時は:
 
+- subjectsでcurrent effectiveと解決されたknowledgeを主入力とする。
+- runtimeで必要なunresolved constraintとcurrent negative guardだけを必要に応じて追加する。
+- completeなsuperseded / rejected semantic modelをruntimeへ平坦化して持ち込まない。
 - semantic ownershipはsubjectsへ残す。
 - AIが同じtaskで同時に必要とするknowledgeをcontext co-occurrenceでまとめる。
 - root / directory INDEXをrouterとして使う。
@@ -117,9 +138,9 @@ artifact本文に疑義がある場合、artifact同士で正しさを決めずk
 第0情報源
   ↓
 records
-  ↓
+  ↓ Decision Lineage resolution
 subjects
-  ↓
+  ↓ current-effective projection
 artifacts
   ↓
 target projects
