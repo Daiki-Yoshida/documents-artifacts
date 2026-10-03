@@ -94,6 +94,8 @@ event typeだけでcurrent statusを決めない。relation / scope /後続decis
 
 proposal / candidateを採用decisionへ昇格する。
 
+adoption event自体がdecisionを直接含んでよく、先行するproposal recordを必須としない。`adopts` keyはproposal recordを参照する場合だけ使う。
+
 ```text
 proposal A
    ↓ adopts
