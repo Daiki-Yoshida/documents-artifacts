@@ -32,6 +32,21 @@ Primary_Checkout:
     - "Workごとにworktreeを作るか決める"
 ```
 
+### 日本語でのrole名
+
+current normativeの説明では、次を使用できる。
+
+```yaml
+Project_Repository:
+  日本語: "プロジェクト管理リポジトリ"
+  短縮: "管理リポジトリ（文脈上Project roleであることが明確な場合）"
+
+Component_Repository:
+  日本語: "コンポーネントリポジトリ"
+```
+
+「親リポジトリ / 子リポジトリ」はcurrent role名として使用しない。
+
 ### 単一repository
 
 Project全体が1repositoryで成立する場合、そのrepositoryがProject Repositoryとなる。
