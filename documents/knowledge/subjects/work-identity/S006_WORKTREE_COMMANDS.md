@@ -125,7 +125,7 @@ Work IdentityとREPOからbranchをdeterministically解決する。
 
 ```text
 WORK=feat/pathfinding
-REPO=main
+REPO=project
 → branch=feat/pathfinding
 ```
 
@@ -164,7 +164,7 @@ caller inputからpathをdeterministically導出する。
 例:
 
 ```text
-WORK=feat/pathfinding REPO=main
+WORK=feat/pathfinding REPO=project
 → .worktrees/feat/pathfinding/project/
 
 WORK=fix/session REPO=front
@@ -441,6 +441,8 @@ single_multi_repo_command_shape: "uniform WORK + REPO when worktree lifecycle ca
 ```
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 
