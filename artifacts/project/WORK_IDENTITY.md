@@ -95,7 +95,9 @@ is formal work-specific knowledge for active design, investigation, decisions, m
 
 Project Documentation describes the current canonical project state; Work Documents describe the active change.
 
-Work Documents are tracked by the Project Repository according to the project model and should remain visible from the Project Repository's current baseline (normally `main`) while the Work is active. They are not hidden only inside a feature worktree.
+Work Documents are owned by the Project Repository and should become visible from the project's **baseline branch** while the Work is active. The baseline branch is the project-defined stable coordination/documentation branch; its literal name is not fixed to `main`.
+
+This is a lifecycle/visibility goal, not implicit VCS authority. Use the project-authorized commit/merge workflow. If baseline publication is not yet authorized, preserve the Work context in an authorized Project Repository working state and report publication as pending rather than claiming it already happened.
 
 Reconcile durable conclusions into Project Documentation when the Work completes.
 
@@ -108,5 +110,7 @@ Work Identity + repository selector
 ```
 
 to its branch/worktree identity.
+
+A repository selector is a stable project-local repository identity, **not a Git branch name**. A selector named `main` does not imply that the repository's baseline branch is also named `main`.
 
 Do not make filesystem paths or random run IDs the primary work identity.
