@@ -40,6 +40,8 @@ final reportは、少なくともtask判断に必要な事実を伝える。
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-06-13-operational-discipline-commit/RECORD.md`
 - `../../records/2026-07-01-brownfield-policy-commit/RECORD.md`
 - `../../records/2026-07-02-design-principles-final-source-snapshot/files/AI_WORKFLOW.md`
