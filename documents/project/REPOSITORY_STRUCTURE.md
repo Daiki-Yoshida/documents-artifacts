@@ -137,19 +137,36 @@ EXPECTATIONSをblind evaluation対象agentから分離するため、generated r
 
 ## Distribution
 
-`artifacts.sh` はArtifact v2全体を:
+distributionはremote bootstrapとmanaged syncを分離する。
 
 ```text
+install.sh
+  = remote acquisition / Project Root guard / bilingual logs
+        ↓
+artifacts.sh
+  = managed whole-pack sync / replace / remove
+        ↓
 <target>/documents/artifacts/
 ```
 
-へstaging後にwhole-pack exact replacementする。置換失敗時は旧packへのrollbackを試みる。
+remote install/updateの標準入口:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh | sh
+```
+
+`install.sh` はcurrent working directoryをProject Rootとして扱い、既存のreal `./documents/` が無ければfail closedする。bootstrap自身は `documents/` を作らない。GitHub `main` snapshotを一時取得し、そのsnapshot内の `artifacts.sh` へ同期を委譲する。temporary source checkoutはtargetへ残さない。
+
+`artifacts.sh` はArtifact v2全体を `<target>/documents/artifacts/` へstaging後にwhole-pack exact replacementする。置換失敗時は旧packへのrollbackを試みる。
 
 - 部分module選択は行わない。
 - updateはmanaged rootを完全置換する。
 - removalは `--remove` で明示する。
 - symlinked destination/source packを拒否する。
 - project側のlocal overrideはinstalled artifact copyへ直接patchしない。
+- remote bootstrapはproject-owned `AGENTS.md` / `README.md` / `documents/INDEX.md` を変更しない。
+- remote bootstrapは自動commitしない。
+- bootstrap status/errorは日本語 / English併記で出力する。
 
 ## Legacy evidence
 
