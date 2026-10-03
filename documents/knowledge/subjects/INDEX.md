@@ -1,6 +1,6 @@
 # Subjects
 
-`subjects/` は、recordsを根拠に整理された日本語knowledgeの入口である。
+`subjects/` は、recordsを根拠にsemantic knowledgeを整理し、current / superseded / rejected / unresolved等の現在評価を明示する日本語knowledgeの入口である。
 
 このINDEXはsubjectのinventory/routingを担当する。個々のsubjectの意味をここで再定義しない。
 
@@ -18,3 +18,5 @@
 | [documentation](documentation/INDEX.md) | project documentationの正確性、routing、structure、workflow、maintenance、Git履歴 |
 
 subjectはrecordsの分類folderではない。1つのrecordが複数subjectの根拠になることを許容する。
+
+通常のcurrent surfaceと `*_HISTORY.md` 等のnon-current semantic areaを区別し、旧/new knowledgeをeffective status未解決のまま同格に扱わない。Decision / scopeの解決規則は `../system/DECISION_LINEAGE_MODEL.md` を参照する。
