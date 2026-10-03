@@ -447,7 +447,10 @@ LIVE_TARGET="$TMP_ROOT/live-target"
 mkdir -p "$LIVE_TARGET/documents"
 RAW_URL="https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh"
 ARCHIVE_URL="https://github.com/Daiki-Yoshida/documents-artifacts/archive/refs/heads/main.tar.gz"
-if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" sh "$3"' \
+# `curl ... | sh` exits 0 even when curl itself fails (sh sees empty stdin),
+# so the bootstrap only counts as verified once INDEX.md actually lands.
+if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" sh "$3" \
+    && test -f documents/artifacts/INDEX.md' \
     _ "$LIVE_TARGET" "$BOOT_TMP" "$README_BOOTSTRAP" >/dev/null 2>&1; then
   assert_file "$LIVE_TARGET/documents/artifacts/INDEX.md"
   assert_tmp_clean "after live acquisition"
@@ -456,7 +459,7 @@ elif timeout 30 "$REAL_CURL" -fsSL "$RAW_URL" -o /dev/null >/dev/null 2>&1 \
     && timeout 60 "$REAL_CURL" -fsSL "$ARCHIVE_URL" -o /dev/null >/dev/null 2>&1; then
   fail "live curl bootstrap failed while both GitHub endpoints are reachable"
 else
-  printf 'SKIP: live GitHub curl bootstrap blocked (egress unavailable); fixture coverage passed\n'
+  printf 'SKIP: live GitHub curl bootstrap unavailable (raw installer not yet published on main or egress blocked); fixture coverage passed\n'
 fi
 
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
