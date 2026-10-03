@@ -497,4 +497,6 @@ projection_status: "completed; current Artifact v2 project/WORKTREES.md にMater
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md`
