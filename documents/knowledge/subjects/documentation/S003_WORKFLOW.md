@@ -43,7 +43,7 @@ rule: "エントリファイルはdocuments/INDEX.mdへルーティングする�
 ### ステップ2: Project Documentation rootを作成する
 
 ```yaml
-action: "<project-root>/documents/ をProject Documentation rootとして用意する。"
+action: "<project-root>/documents/ をproject documentation namespace / routing rootとして用意する。project-owned canonical Project Documentationをここへ置き、managed derived subtreeは別authorityとして扱う。"
 required:
   - "documents/INDEX.md（ステップ3で作成）"
 optional_structure_examples:
@@ -228,8 +228,9 @@ update:
   rule: "canonical sourceまたは明示されたdistribution/sync mechanismから更新する"
   forbidden: "installed copyだけをproject-owned文書として黙ってpatchし、canonical sourceとの差分を恒久化する"
 remove:
-  rule: "distribution mechanismが定める明示的remove semanticsを使う"
-  omission: "update対象から外しただけではremove permissionとみなさない"
+  whole_pack_sync: "managed pack内部leafはcanonical source snapshotに従う。source packから削除されたleafは次回exact-replacement syncでstale fileとして除去され得る"
+  whole_pack_remove: "managed root全体を削除する場合はdistribution mechanismが定めるexplicit remove semanticsを使う"
+  project_omission: "通常のproject editでmanaged packを触らなかったこと自体をremove requestとみなさない"
 routing:
   project_index: "managed packのentrypoint（Artifact v2では documents/artifacts/INDEX.md）へlinkしてよい"
   internal_inventory: "project側INDEXがmanaged pack内部leafのinventory / 独立authority / version registryになる必要はない"
