@@ -151,6 +151,8 @@ rules:
 
 effective statusはimmutable record metadataではなく、subjectsがDecision Lineageから解決する**現在評価**である。
 
+すべての歴史的fact / raw evidenceへstatus labelを強制しない。effective statusを明示的に解決すべき主対象は、現在のauthority・規範・設計判断・constraintとして誤読され得るsemantic knowledge、および複数世代が存在するknowledgeである。
+
 core status:
 
 ```yaml
