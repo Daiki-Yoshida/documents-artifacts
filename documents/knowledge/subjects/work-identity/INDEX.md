@@ -29,7 +29,7 @@ Project Root、Work Root、単一/複数repositoryの統一形状、repository�
 
 ### S003_WORK_DOCUMENTS.md
 
-Work Documents、Project Documentationとの関係、Git ownership、Primary/mainの役割、完了時reconciliation、Git historyによる履歴管理を扱う。
+Work Documents、Project Documentationとの関係、Git ownership、Project baseline branchへのvisibility/publication、完了時reconciliation、Git historyによる履歴管理を扱う。
 
 ### S004_LIFECYCLE_AND_RESOURCES.md
 
@@ -41,7 +41,7 @@ Project Repository自身がWorkへ参加する場合のrecursive materialization
 
 ### S006_WORKTREE_COMMANDS.md
 
-Work Identityとrepository selectorを入力とするworktree create/status/removeのpublic semantic contract、preflight、postconditions、idempotency、rollback、安全境界を扱う。
+Work Identity worktree lifecycle capabilityを採用するprojectでの、WORK + REPO (+ BASE)を入力とするcreate/status/remove public semantic contract、preflight、postconditions、idempotency、rollback、安全境界を扱う。
 
 ### S007_VALIDATION.md
 
@@ -93,3 +93,7 @@ worktree create/status/removeでは従来どおり `WORK + REPO (+ BASE)` をide
 generic `DIR` の意味・path resolution・public command routingは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
 
 source: `../../records/2026-10-03-project-root-execution-routing/`
+
+## 2026-10-03 consistency convergence
+
+Project baseline branch、repository selectorとbranchの分離、worktree capability adoption、materialization applicability、VCS publication boundaryの横断整合は `../../records/2026-10-03-subject-consistency-convergence/` を根拠とする。
