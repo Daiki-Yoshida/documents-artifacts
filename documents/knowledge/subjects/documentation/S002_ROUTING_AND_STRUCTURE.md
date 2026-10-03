@@ -7,7 +7,7 @@
 ```yaml
 principle: "関心事ごとにファイルを分割し、エージェントを正しいファイルにルーティングする。情報を圧縮しない。"
 mechanisms:
-  index_file: "documents/INDEX.mdがすべてのドキュメントを目的とルーティングとともにリストする。"
+  index_file: "documents/INDEX.mdがproject-owned Project Documentation authorityを目的とroutingとともにinventoryする。managed derived subtreeはentrypoint単位でrouteしてよい。"
   cross_references: "同じ規範を独立authorityとして複製せず、必要な局所再述と関連authorityへのlinkを使う。"
   concern_separation: "1ファイルは1つの主関心事へ集中させる。1つの関心事には主authorityを定め、必要な関連authorityはcross referenceで辿る。"
   gradual_disclosure: "INDEX → 概要 → 詳細。エージェントは必要な分だけチェーンをたどる。"
@@ -28,9 +28,10 @@ purpose: "Project Documentationのルーティングハブ"
 placement: "documents/INDEX.md"
 required: true
 content:
-  - "ドキュメントインベントリ: documents/ 配下のすべてのファイルとその目的"
-  - "ルーティングマップ: どのタスクにどのドキュメントを読むべきか"
-  - "相互参照マップ: どのドキュメントがどのドキュメントにリンクしているか"
+  - "project-owned Project Documentation inventory: canonical authorityとなるdocument / routed unitとその目的"
+  - "managed derived subtree: internal leafを全列挙せず、managed entrypointを1 routed unitとして登録してよい"
+  - "ルーティングマップ: どのタスクにどのdocument / managed entrypointを読むべきか"
+  - "相互参照マップ: project-owned authority間の有用なcross reference"
 ```
 
 
@@ -95,7 +96,7 @@ rule: "README.mdをProject Documentationの代替authorityにしない。詳細k
 ```yaml
 routing_chain: "agent entry → documents/INDEX.md → taskに必要なdocument role / topic → 詳細ファイル"
 principles:
-  - "INDEX.mdが唯一のルーティングハブである。すべてのドキュメントがそこにリストされる。"
+  - "INDEX.mdがProject Documentationのルーティングハブである。project-owned canonical authorityはそこから到達可能にし、managed derived subtreeはentrypoint単位でrouteして内部inventoryを複製しない。"
   - "同じ規範を独立authorityとして複製しない。理解に必要な局所再述は許容し、主authorityへリンクする。"
   - "1ファイルは1つの主関心事へ集中させる。関連subject / documentが必要なtaskでは、主authorityから必要なcross referenceだけを辿る。"
   - "エージェントは必要な範囲だけルーティングチェーンをたどる。"
