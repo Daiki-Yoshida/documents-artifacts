@@ -11,7 +11,7 @@ engineering-operationは一つの巨大なconfirmation levelを定義しない�
 | code boundary / public contract impact | `encapsulation-horizon/S008_OPERATIONAL_GUARDS.md` |
 | documentation structure / authority model | `documentation/S004_MAINTENANCE_AND_REVIEW.md` |
 | destructive / host / recovery operation | `development-safety/S005_CONFIRMATION_AND_REREAD.md` |
-| Work identity / resource lifecycle | `work-identity/` + destructive部分はdevelopment-safety |
+| Work Identity確定 / implementation移行 / resource lifecycle | `work-identity/` + destructive部分はdevelopment-safety |
 | code realization detail | `code-design/` |
 
 ## 原則
@@ -22,6 +22,8 @@ engineering-operationは一つの巨大なconfirmation levelを定義しない�
 - cleanupがresource lifecycle上必要でも、destructive actionの安全条件を省略しない。
 
 workflowは**いつrouteするか**を所有し、各levelの意味はowner subjectが所有する。
+
+projectがWork Identity modelを採用している場合、具体的implementation開始前のWork Identity confirmationは `work-identity/S001_IDENTITY_MODEL.md` の明示gateを適用する。これはcode contract / documentation / safety levelとは別のproject-work identity gateである。
 
 ## Sources
 
