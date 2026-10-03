@@ -51,9 +51,13 @@ Component Repository自身が次を所有する。
 
 Project RepositoryがComponent Repository内部の通常fileや生成物を誤って所有しないようにする。
 
+## Current repository roles
+
+current normativeではProject Repository / Component Repositoryをrepository roleとして用いる。filesystem上の包含を理由にparent / child repositoryとは呼ばない。旧Workspace Repository用語はProject Repositoryへ統合済みであり、第三のpeer roleとして要求しない。
+
 ## 複数repository
 
-一つのProject / Workspace Repositoryで複数Component Repositoryを調整できる。
+一つのProject Repositoryで複数Component Repositoryを調整できる。
 
 必要な性質:
 
@@ -72,9 +76,9 @@ ownership:
   - "Project RepositoryがComponent Repositoryのsource/historyを重複所有しない"
 ```
 
-無関係なrepositoryを同じfolderへ置くだけのためにWorkspace Repositoryを作らない。
+無関係なrepositoryを同じfolderへ置くだけのためにProject Repositoryを新設しない。
 
-共有tool、project-level coordination、cross-component orchestrationなど、実際の調整責務がある場合に利用する。
+Project Repositoryというroleは、Project Documentation、共有tool、project-level coordination、cross-component orchestration等の実際のProject責務が存在するときに成立する。
 
 ## Stable repository identity と REPO selector
 
@@ -150,7 +154,7 @@ Work単位の判断は `../work-identity/` またはproject固有policyが所有
 
 ## Workspace toolへの依存
 
-Component Repositoryが別Workspace / Project Repository内のtoolへ依存する場合、使用versionを明示する。
+Component RepositoryがProject Repository側のtoolへ依存する場合、使用versionを明示する。
 
 ```yaml
 moving_ref:
@@ -165,6 +169,8 @@ fixed_ref:
 CIやrelease検証が、指定されていないworkspace最新版へ偶然依存してはいけない。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 
