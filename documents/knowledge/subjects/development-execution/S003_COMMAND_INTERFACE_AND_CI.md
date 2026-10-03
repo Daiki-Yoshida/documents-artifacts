@@ -201,7 +201,7 @@ make DIR=.worktrees/feat/example-change docker-dev-typecheck
 make DIR=.worktrees/feat/example-change android-dev-up
 ```
 
-このprojectでは `DIR=.worktrees/<task>` をtask Work Rootとして解釈し、operationに応じて `/main` または `/android` をproject-localに派生する。**この意味はgeneric `DIR` contractとは異なる。**またGit helper側の `DIR` も `.worktrees/<type>/<task>` 系へ限定されている。
+このprojectでは `DIR=.worktrees/<task>` をtask Work Rootとして解釈し、operationに応じて `/main` または `/android` をproject-localに派生する。**この意味はgeneric `DIR` contractとは異なる。** またGit helper側の `DIR` も `.worktrees/<type>/<task>` 系へ限定されている。
 
 このtask-pair specializationは `plaru_expo` 固有の規約として扱う。
 
@@ -237,6 +237,8 @@ Work Identity operationをpublic commandとして公開する場合も、その�
 - 未指定の外部workspace最新版へ偶然依存しない。
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 
