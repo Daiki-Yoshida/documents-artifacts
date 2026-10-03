@@ -3,6 +3,7 @@ set -euo pipefail
 
 REPO_ROOT="$(cd -- "$(dirname -- "$BASH_SOURCE")/.." && pwd -P)"
 SCRIPT="$REPO_ROOT/artifacts.sh"
+INSTALLER="$REPO_ROOT/install.sh"
 
 fail() {
   printf 'FAIL: %s\n' "$*" >&2
@@ -18,6 +19,7 @@ assert_absent() {
 }
 
 bash -n "$SCRIPT" || fail "artifacts.sh syntax check failed"
+sh -n "$INSTALLER" || fail "install.sh syntax check failed"
 
 ROUTE_CHECK="$REPO_ROOT/tests/scripts/check-artifact-routes.sh"
 bash -n "$ROUTE_CHECK" || fail "check-artifact-routes.sh syntax check failed"
@@ -182,10 +184,12 @@ grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
 # Legitimate project-owned example tokens and valid indirect routing
 # stay accepted: the shipped pack exercises both.
 
-# --- Remote delivery (Issue #146) -----------------------------------------
-# Run the exact README bootstrap command against local Git fixtures, so
-# no regression depends solely on GitHub availability.
-command -v git >/dev/null || fail "git is required for remote-delivery tests"
+# --- Remote delivery bootstrap (Issues #146 / #160) ------------------------
+# Run the exact README curl | sh command through a test-local curl shim.
+# This verifies the public bootstrap without depending on external network.
+command -v curl >/dev/null || fail "curl is required for remote-delivery tests"
+command -v tar >/dev/null || fail "tar is required for remote-delivery tests"
+command -v git >/dev/null || fail "git is required for remote-delivery target-state tests"
 
 README_BOOTSTRAP="$TMP_ROOT/readme-bootstrap.sh"
 awk '/<!-- remote-delivery-snippet -->/{f=1;next} /<!-- \/remote-delivery-snippet -->/{f=0} f' \
@@ -193,69 +197,140 @@ awk '/<!-- remote-delivery-snippet -->/{f=1;next} /<!-- \/remote-delivery-snippe
   | awk '/^```bash$/{c=1;next} /^```$/{if(c)exit} c' \
   > "$README_BOOTSTRAP"
 [[ -s "$README_BOOTSTRAP" ]] || fail "README remote-delivery snippet not found"
-bash -n "$README_BOOTSTRAP" || fail "README bootstrap snippet has a syntax error"
+sh -n "$README_BOOTSTRAP" || fail "README bootstrap snippet has a syntax error"
+grep -Fqx 'curl -fsSL https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh | sh' \
+  "$README_BOOTSTRAP" || fail "README bootstrap is not the canonical one-line curl installer"
 
 BOOT_TMP="$TMP_ROOT/boot-tmp"
 mkdir -p "$BOOT_TMP"
 
-# Test-local git shim: redirects the snippet's fixed official source URL
-# to a fixture remote named by TEST_GIT_REDIRECT. It only rewrites argv;
-# no user/global Git configuration is touched.
-REAL_GIT="$(command -v git)"
+# Build a GitHub-archive-shaped local snapshot.
+ARCHIVE_PARENT="$TMP_ROOT/archive-parent"
+ARCHIVE_ROOT="$ARCHIVE_PARENT/documents-artifacts-main"
+ARCHIVE_FILE="$TMP_ROOT/documents-artifacts-main.tar.gz"
+mkdir -p "$ARCHIVE_ROOT"
+cp "$SCRIPT" "$ARCHIVE_ROOT/artifacts.sh"
+cp "$INSTALLER" "$ARCHIVE_ROOT/install.sh"
+chmod +x "$ARCHIVE_ROOT/artifacts.sh"
+cp -r "$REPO_ROOT/artifacts" "$ARCHIVE_ROOT/artifacts"
+
+refresh_archive() {
+  rm -f -- "$ARCHIVE_FILE"
+  tar -czf "$ARCHIVE_FILE" -C "$ARCHIVE_PARENT" documents-artifacts-main
+}
+refresh_archive
+
+# Test-local curl shim:
+# - serves the raw install.sh URL to stdout;
+# - serves the GitHub main archive to install.sh -o <path>;
+# - can inject archive acquisition failure;
+# - records requested URLs so wrong-root checks can prove no archive fetch.
+REAL_CURL="$(command -v curl)"
 SHIM_BIN="$TMP_ROOT/shim-bin"
 mkdir -p "$SHIM_BIN"
-cat > "$SHIM_BIN/git" <<EOF
+cat > "$SHIM_BIN/curl" <<'EOF'
 #!/usr/bin/env bash
 set -euo pipefail
-args=()
-for a in "\$@"; do
-  if [[ "\$a" == "https://github.com/Daiki-Yoshida/documents-artifacts.git" ]]; then
-    args+=("\${TEST_GIT_REDIRECT:?TEST_GIT_REDIRECT must name the fixture remote}")
-  else
-    args+=("\$a")
-  fi
+out=""
+url=""
+while (($# > 0)); do
+  case "$1" in
+    -o|--output)
+      (($# >= 2)) || exit 2
+      out="$2"
+      shift 2
+      ;;
+    -*)
+      shift
+      ;;
+    *)
+      url="$1"
+      shift
+      ;;
+  esac
 done
-exec "$REAL_GIT" "\${args[@]}"
+[[ -n "$url" ]] || exit 2
+printf '%s\n' "$url" >> "${TEST_CURL_LOG:?TEST_CURL_LOG is required}"
+case "$url" in
+  https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh)
+    src="${TEST_INSTALL_SOURCE:?TEST_INSTALL_SOURCE is required}"
+    ;;
+  https://github.com/Daiki-Yoshida/documents-artifacts/archive/refs/heads/main.tar.gz)
+    [[ "${TEST_ARCHIVE_FAIL:-0}" != "1" ]] || exit 22
+    src="${TEST_ARCHIVE_SOURCE:?TEST_ARCHIVE_SOURCE is required}"
+    ;;
+  *)
+    printf 'unexpected curl URL: %s\n' "$url" >&2
+    exit 22
+    ;;
+esac
+if [[ -n "$out" ]]; then
+  cp -- "$src" "$out"
+else
+  cat -- "$src"
+fi
 EOF
-chmod +x "$SHIM_BIN/git"
+chmod +x "$SHIM_BIN/curl"
 
 assert_tmp_clean() {
   [[ -z "$(ls -A "$BOOT_TMP")" ]] || fail "bootstrap temp not cleaned: $*"
 }
 
+CURL_LOG="$TMP_ROOT/curl.log"
+
 run_bootstrap() {
-  # $1 = target dir, $2 = fixture remote URL (empty = no shim, real GitHub)
-  local tdir="$1" redir="${2:-}"
-  if [[ -n "$redir" ]]; then
-    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" TEST_GIT_REDIRECT="$redir" \
-        PATH="$SHIM_BIN:$PATH" bash "$README_BOOTSTRAP" )
-  else
-    ( cd -- "$tdir" && TMPDIR="$BOOT_TMP" GIT_TERMINAL_PROMPT=0 bash "$README_BOOTSTRAP" )
-  fi
+  # $1 = target dir; optional env TEST_ARCHIVE_SOURCE/TEST_ARCHIVE_FAIL may specialize.
+  local tdir="$1"
+  : > "$CURL_LOG"
+  (
+    cd -- "$tdir"
+    TMPDIR="$BOOT_TMP" \
+    TEST_CURL_LOG="$CURL_LOG" \
+    TEST_INSTALL_SOURCE="$INSTALLER" \
+    TEST_ARCHIVE_SOURCE="${TEST_ARCHIVE_SOURCE:-$ARCHIVE_FILE}" \
+    TEST_ARCHIVE_FAIL="${TEST_ARCHIVE_FAIL:-0}" \
+    PATH="$SHIM_BIN:$PATH" \
+      sh "$README_BOOTSTRAP"
+  )
 }
 
-# Fixture "remote": a standalone Git repo holding artifacts.sh + the real pack.
-GIT_REMOTE="$TMP_ROOT/git-remote"
-mkdir -p "$GIT_REMOTE"
-cp "$SCRIPT" "$GIT_REMOTE/artifacts.sh"
-chmod +x "$GIT_REMOTE/artifacts.sh"
-cp -r "$REPO_ROOT/artifacts" "$GIT_REMOTE/artifacts"
-git -C "$GIT_REMOTE" -c init.defaultBranch=main init -q
-git -C "$GIT_REMOTE" add -A
-git -C "$GIT_REMOTE" \
-    -c user.email=test@example.com -c user.name=test \
-    commit -qm 'pack v1'
+# Wrong root: documents/ is required and must not be created or followed.
+NO_DOCS="$TMP_ROOT/no-documents-target"
+mkdir -p "$NO_DOCS"
+if run_bootstrap "$NO_DOCS" >"$TMP_ROOT/no-docs.log" 2>&1; then
+  fail "bootstrap unexpectedly created/accepted missing documents directory"
+fi
+assert_absent "$NO_DOCS/documents"
+grep -Fq './documents/ フォルダがありません。Project Rootで実行してください。' "$TMP_ROOT/no-docs.log" \
+  || fail "missing-documents error lacks Japanese message"
+grep -Fq './documents/ directory was not found. Run this command from the Project Root.' "$TMP_ROOT/no-docs.log" \
+  || fail "missing-documents error lacks English message"
+[[ "$(wc -l < "$CURL_LOG" | tr -d ' ')" == "1" ]] \
+  || fail "missing-documents run fetched the source archive before failing"
+assert_tmp_clean "after missing-documents refusal"
 
-# First install into a fresh target whose path contains spaces; the
-# target defaults to the current directory. The target is a Git repo
-# with committed project-owned files so existing commit history and
-# owner state can be verified.
+SYMLINK_TARGET="$TMP_ROOT/symlink-documents-target"
+SYMLINK_OUTSIDE="$TMP_ROOT/symlink-documents-outside"
+mkdir -p "$SYMLINK_TARGET" "$SYMLINK_OUTSIDE"
+ln -s "$SYMLINK_OUTSIDE" "$SYMLINK_TARGET/documents"
+if run_bootstrap "$SYMLINK_TARGET" >"$TMP_ROOT/symlink-docs.log" 2>&1; then
+  fail "bootstrap unexpectedly accepted symlinked documents directory"
+fi
+grep -Fq './documents/ がsymlinkです。' "$TMP_ROOT/symlink-docs.log" \
+  || fail "symlink refusal lacks Japanese message"
+grep -Fq './documents/ is a symlink.' "$TMP_ROOT/symlink-docs.log" \
+  || fail "symlink refusal lacks English message"
+assert_absent "$SYMLINK_OUTSIDE/artifacts"
+assert_tmp_clean "after symlink refusal"
+
+# First install into a target whose path contains spaces. documents/ already
+# exists and contains project-owned state; bootstrap must preserve it.
 RTARGET="$TMP_ROOT/remote target with spaces"
 mkdir -p "$RTARGET/documents/project"
 printf 'project agents\n' > "$RTARGET/AGENTS.md"
 printf 'project readme\n' > "$RTARGET/README.md"
 printf 'project index\n' > "$RTARGET/documents/INDEX.md"
-printf 'owner doc\n'      > "$RTARGET/documents/project/OWNERS.md"
+printf 'owner doc\n' > "$RTARGET/documents/project/OWNERS.md"
 git -C "$RTARGET" -c init.defaultBranch=main init -q
 git -C "$RTARGET" add -A
 git -C "$RTARGET" \
@@ -265,18 +340,25 @@ OWNER_HEAD="$(git -C "$RTARGET" rev-parse HEAD)"
 
 assert_owner_head() {
   [[ "$(git -C "$RTARGET" rev-parse HEAD)" == "$OWNER_HEAD" ]] \
-      || fail "target commit history changed: $*"
+    || fail "target commit history changed: $*"
 }
 
-run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
-    || fail "remote-delivery first install failed"
+run_bootstrap "$RTARGET" >"$TMP_ROOT/install.log" 2>&1 \
+  || { cat "$TMP_ROOT/install.log"; fail "curl bootstrap first install failed"; }
 assert_file "$RTARGET/documents/artifacts/INDEX.md"
 assert_file "$RTARGET/documents/artifacts/implementation/TESTING.md"
 assert_tmp_clean "after first install"
+grep -Fq '[INFO] Project Rootを確認しました:' "$TMP_ROOT/install.log" \
+  || fail "success log lacks Japanese Project Root status"
+grep -Fq 'Project Root detected:' "$TMP_ROOT/install.log" \
+  || fail "success log lacks English Project Root status"
+grep -Fq '[OK] Artifact v2を同期しました:' "$TMP_ROOT/install.log" \
+  || fail "success log lacks Japanese completion status"
+grep -Fq 'Artifact v2 synced successfully:' "$TMP_ROOT/install.log" \
+  || fail "success log lacks English completion status"
 
-# Only artifacts/ contents may reach the target: no source .git under
-# the managed root (the target's own repository .git is legitimate),
-# no artifacts.sh copy, no source-only docs.
+# Only artifacts/ contents may reach the target.
+assert_absent "$RTARGET/install.sh"
 assert_absent "$RTARGET/artifacts.sh"
 assert_absent "$RTARGET/artifacts"
 assert_absent "$RTARGET/documents/knowledge"
@@ -284,21 +366,18 @@ if find "$RTARGET/documents" -name '.git' -print -quit | grep -q .; then
   fail "source .git reached target documents"
 fi
 [[ -z "$(find "$RTARGET/documents" -name '.artifacts.*' -print -quit)" ]] \
-    || fail "stage residue left in target documents"
+  || fail "stage residue left in target documents"
 assert_owner_head "after first install"
 
-# Update: the remote moves forward; a stale managed file is removed and
-# project-owned files stay untouched.
+# Update: change the served archive pack, leave a stale managed file in target,
+# then re-run the exact same public command.
 printf 'stale\n' > "$RTARGET/documents/artifacts/STALE.md"
-printf 'testing-v2\n' > "$GIT_REMOTE/artifacts/implementation/TESTING.md"
-git -C "$GIT_REMOTE" \
-    -c user.email=test@example.com -c user.name=test \
-    commit -qam 'pack v2'
-
-run_bootstrap "$RTARGET" "file://$GIT_REMOTE" >/dev/null \
-    || fail "remote-delivery update failed"
+printf 'testing-v2\n' > "$ARCHIVE_ROOT/artifacts/implementation/TESTING.md"
+refresh_archive
+run_bootstrap "$RTARGET" >"$TMP_ROOT/update.log" 2>&1 \
+  || { cat "$TMP_ROOT/update.log"; fail "curl bootstrap update failed"; }
 [[ "$(cat "$RTARGET/documents/artifacts/implementation/TESTING.md")" == "testing-v2" ]] \
-    || fail "remote update did not apply new pack content"
+  || fail "remote update did not apply new pack content"
 assert_absent "$RTARGET/documents/artifacts/STALE.md"
 assert_tmp_clean "after update"
 assert_owner_head "after update"
@@ -308,8 +387,6 @@ assert_owner_head "after update"
 [[ "$(cat "$RTARGET/documents/INDEX.md")" == "project index" ]] || fail "documents/INDEX.md changed"
 [[ "$(cat "$RTARGET/documents/project/OWNERS.md")" == "owner doc" ]] || fail "owner doc changed"
 
-# Failed fetch leaves the installed pack, owner files, and target Git
-# state unchanged — compare content hashes, not just names/sizes.
 tree_hashes() {
   ( cd -- "$1" && find . -type f -print0 | LC_ALL=C sort -z \
       | xargs -0 sha256sum )
@@ -318,60 +395,71 @@ BEFORE_PACK="$(tree_hashes "$RTARGET/documents/artifacts")"
 BEFORE_OWNER="$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
     "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")"
 BEFORE_STATUS="$(git -C "$RTARGET" status --porcelain -uall)"
-if run_bootstrap "$RTARGET" "file://$TMP_ROOT/missing-remote" >/dev/null 2>&1; then
-  fail "unreachable remote unexpectedly succeeded"
+
+# Failed archive fetch leaves the current installation untouched.
+if TEST_ARCHIVE_FAIL=1 run_bootstrap "$RTARGET" >"$TMP_ROOT/fetch-fail.log" 2>&1; then
+  fail "archive acquisition failure unexpectedly succeeded"
 fi
 [[ "$BEFORE_PACK" == "$(tree_hashes "$RTARGET/documents/artifacts")" ]] \
-    || fail "failed fetch changed installed pack contents"
+  || fail "failed archive fetch changed installed pack contents"
 [[ "$BEFORE_OWNER" == "$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
     "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")" ]] \
-    || fail "failed fetch changed owner files"
+  || fail "failed archive fetch changed owner files"
 [[ "$BEFORE_STATUS" == "$(git -C "$RTARGET" status --porcelain -uall)" ]] \
-    || fail "failed fetch changed target Git state"
-assert_owner_head "after failed fetch"
-assert_tmp_clean "after failed fetch"
+  || fail "failed archive fetch changed target Git state"
+assert_owner_head "after failed archive fetch"
+assert_tmp_clean "after failed archive fetch"
+grep -Fq '配布元の取得に失敗しました。' "$TMP_ROOT/fetch-fail.log" \
+  || fail "fetch failure lacks Japanese log"
+grep -Fq 'Failed to fetch the distribution source.' "$TMP_ROOT/fetch-fail.log" \
+  || fail "fetch failure lacks English log"
 
-# A fetchable source whose pack fails validation also leaves the target
-# unchanged (validation finishes before managed replacement).
-BAD_REMOTE="$TMP_ROOT/git-bad-remote"
-mkdir -p "$BAD_REMOTE/artifacts"
-cp "$SCRIPT" "$BAD_REMOTE/artifacts.sh"
-printf '# bad\n' > "$BAD_REMOTE/artifacts/INDEX.md"
-ln -s INDEX.md "$BAD_REMOTE/artifacts/link.md"
-git -C "$BAD_REMOTE" -c init.defaultBranch=main init -q
-git -C "$BAD_REMOTE" add -A
-git -C "$BAD_REMOTE" \
-    -c user.email=test@example.com -c user.name=test \
-    commit -qm 'invalid pack'
-if run_bootstrap "$RTARGET" "file://$BAD_REMOTE" >/dev/null 2>&1; then
+# A fetchable but invalid pack also leaves target state untouched.
+BAD_PARENT="$TMP_ROOT/bad-archive-parent"
+BAD_ROOT="$BAD_PARENT/documents-artifacts-main"
+BAD_ARCHIVE="$TMP_ROOT/bad-documents-artifacts-main.tar.gz"
+mkdir -p "$BAD_ROOT/artifacts"
+cp "$SCRIPT" "$BAD_ROOT/artifacts.sh"
+printf '# bad\n' > "$BAD_ROOT/artifacts/INDEX.md"
+ln -s INDEX.md "$BAD_ROOT/artifacts/link.md"
+tar -czf "$BAD_ARCHIVE" -C "$BAD_PARENT" documents-artifacts-main
+if TEST_ARCHIVE_SOURCE="$BAD_ARCHIVE" run_bootstrap "$RTARGET" >"$TMP_ROOT/invalid.log" 2>&1; then
   fail "invalid source pack unexpectedly succeeded"
 fi
 [[ "$BEFORE_PACK" == "$(tree_hashes "$RTARGET/documents/artifacts")" ]] \
-    || fail "invalid source changed installed pack contents"
+  || fail "invalid source changed installed pack contents"
 [[ "$BEFORE_OWNER" == "$(sha256sum "$RTARGET/AGENTS.md" "$RTARGET/README.md" \
     "$RTARGET/documents/INDEX.md" "$RTARGET/documents/project/OWNERS.md")" ]] \
-    || fail "invalid source changed owner files"
+  || fail "invalid source changed owner files"
 [[ "$BEFORE_STATUS" == "$(git -C "$RTARGET" status --porcelain -uall)" ]] \
-    || fail "invalid source changed target Git state"
+  || fail "invalid source changed target Git state"
 assert_owner_head "after invalid source"
 assert_tmp_clean "after invalid source"
+grep -Fq 'Artifact v2の同期に失敗しました。' "$TMP_ROOT/invalid.log" \
+  || fail "invalid-pack failure lacks Japanese log"
+grep -Fq 'Failed to sync Artifact v2.' "$TMP_ROOT/invalid.log" \
+  || fail "invalid-pack failure lacks English log"
 
-# Live probe: the documented default command performs an actual
-# GitHub-main acquisition into a disposable target. Distinguish blocked
-# egress from a passing run — never silently pass.
+# Live probe: execute the exact documented curl | sh command against GitHub.
+# If either raw/install or archive acquisition is blocked, report SKIP rather
+# than claiming live coverage.
 LIVE_TARGET="$TMP_ROOT/live-target"
-mkdir -p "$LIVE_TARGET"
-if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" GIT_TERMINAL_PROMPT=0 bash "$3"' \
+mkdir -p "$LIVE_TARGET/documents"
+RAW_URL="https://raw.githubusercontent.com/Daiki-Yoshida/documents-artifacts/main/install.sh"
+ARCHIVE_URL="https://github.com/Daiki-Yoshida/documents-artifacts/archive/refs/heads/main.tar.gz"
+# `curl ... | sh` exits 0 even when curl itself fails (sh sees empty stdin),
+# so the bootstrap only counts as verified once INDEX.md actually lands.
+if timeout 180 bash -c 'cd -- "$1" && TMPDIR="$2" sh "$3" \
+    && test -f documents/artifacts/INDEX.md' \
     _ "$LIVE_TARGET" "$BOOT_TMP" "$README_BOOTSTRAP" >/dev/null 2>&1; then
   assert_file "$LIVE_TARGET/documents/artifacts/INDEX.md"
   assert_tmp_clean "after live acquisition"
-  printf 'NOTE: live GitHub main acquisition verified\n'
-elif timeout 30 git ls-remote \
-    https://github.com/Daiki-Yoshida/documents-artifacts.git HEAD \
-    >/dev/null 2>&1; then
-  fail "live acquisition failed while the GitHub repo is reachable"
+  printf 'NOTE: live GitHub curl bootstrap verified\n'
+elif timeout 30 "$REAL_CURL" -fsSL "$RAW_URL" -o /dev/null >/dev/null 2>&1 \
+    && timeout 60 "$REAL_CURL" -fsSL "$ARCHIVE_URL" -o /dev/null >/dev/null 2>&1; then
+  fail "live curl bootstrap failed while both GitHub endpoints are reachable"
 else
-  printf 'SKIP: live GitHub probe blocked (egress unavailable); fixture coverage passed\n'
+  printf 'SKIP: live GitHub curl bootstrap unavailable (raw installer not yet published on main or egress blocked); fixture coverage passed\n'
 fi
 
 printf 'PASS: artifacts.sh Artifact v2 whole-pack sync/remove\n'
