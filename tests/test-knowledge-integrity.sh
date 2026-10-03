@@ -21,6 +21,7 @@ for file in \
   documents/knowledge/system/INDEX.md \
   documents/knowledge/system/KNOWLEDGE_MODEL.md \
   documents/knowledge/system/RECORD_MODEL.md \
+  documents/knowledge/system/DECISION_LINEAGE_MODEL.md \
   documents/knowledge/system/SUBJECT_MODEL.md \
   documents/knowledge/system/TRACEABILITY_MODEL.md \
   documents/knowledge/system/ARTIFACT_MODEL.md \
@@ -46,6 +47,10 @@ for file in \
   documents/knowledge/records/2026-10-03-project-component-documentation-boundary/RECORD.md \
   documents/knowledge/records/2026-10-03-project-component-documentation-boundary/USER_MESSAGES.md \
   documents/knowledge/records/2026-10-03-project-component-documentation-boundary/ISSUE_167_BODY.md \
+  documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/RECORD.md \
+  documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/USER_MESSAGES.md \
+  documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_BODY.md \
+  documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_DECISION_COMMENTS.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -484,6 +489,85 @@ grep -Fq '## 8. 階層プロジェクト' "$legacy_doc_source" \
   || fail "historical hierarchical-project source was lost"
 grep -Fq 'children.md' "$legacy_doc_source" \
   || fail "historical children.md evidence was lost"
+
+# Knowledge effective-status / Decision Lineage guards (Issue #171).
+knowledge_model=documents/knowledge/system/KNOWLEDGE_MODEL.md
+record_model=documents/knowledge/system/RECORD_MODEL.md
+lineage_model=documents/knowledge/system/DECISION_LINEAGE_MODEL.md
+subject_model=documents/knowledge/system/SUBJECT_MODEL.md
+traceability_model=documents/knowledge/system/TRACEABILITY_MODEL.md
+artifact_model=documents/knowledge/system/ARTIFACT_MODEL.md
+knowledge_workflow=documents/project/KNOWLEDGE_UPDATE_WORKFLOW.md
+documentation_index=documents/knowledge/subjects/documentation/INDEX.md
+workspace_index=documents/knowledge/subjects/workspace-structure/INDEX.md
+
+grep -Fq 'records   = source completeness' "$knowledge_model" \
+  || fail "knowledge model lost source completeness contract"
+grep -Fq 'subjects  = semantic completeness + effective-status resolution' "$knowledge_model" \
+  || fail "knowledge model lost subject semantic completeness contract"
+grep -Fq 'artifacts = runtime relevance / current-effective projection' "$knowledge_model" \
+  || fail "knowledge model lost Artifact runtime projection contract"
+
+grep -Fq '後から変化し得る現在評価をimmutable recordへ固定しない' "$record_model" \
+  || fail "record model allows mutable current status to be frozen into records"
+grep -Fq 'decision_lineage:' "$record_model" \
+  || fail "record model lost optional decision lineage metadata"
+
+for relation in adopts supersedes refines corrects rejects validates; do
+  grep -Fq "### $relation" "$lineage_model" \
+    || fail "decision lineage relation missing: $relation"
+done
+grep -Fq 'Date is not authority' "$lineage_model" \
+  || fail "decision lineage lost date-not-authority rule"
+grep -Fq 'Fail closed' "$lineage_model" \
+  || fail "decision lineage lost fail-closed conflict handling"
+grep -Fq 'Subject disposition accounting' "$lineage_model" \
+  || fail "decision lineage lost disposition accounting"
+
+for status in current superseded rejected unresolved; do
+  grep -Fq "$status:" "$subject_model" \
+    || fail "subject model missing effective status: $status"
+done
+grep -Fq 'superseded / rejected / obsoleteだからという理由だけでreusable semantic knowledgeを削除しない' "$subject_model" \
+  || fail "subject model permits silent deletion of non-current semantic knowledge"
+grep -Fq '*_HISTORY.md' "$subject_model" \
+  || fail "subject model lost HISTORY semantic-completeness contract"
+grep -Fq 'evidence_only' "$subject_model" \
+  || fail "subject model lost evidence-only disposition"
+grep -Fq 'unresolved' "$subject_model" \
+  || fail "subject model lost unresolved conflict state"
+
+grep -Fq 'Decision Lineage traceability' "$traceability_model" \
+  || fail "traceability model lost decision-lineage presentation"
+grep -Fq 'Current-effective projection gate' "$artifact_model" \
+  || fail "Artifact model lost current-effective projection gate"
+grep -Fq 'current effectiveと解決されたknowledgeを主入力' "$knowledge_workflow" \
+  || fail "knowledge workflow does not gate Artifact projection on current-effective knowledge"
+grep -Fq 'Subject disposition accounting' "$knowledge_workflow" \
+  || fail "knowledge workflow lost promotion/disposition accounting"
+
+# Reference fixture: old source is preserved, subjects expose current + superseded,
+# Artifact v2 projects current guidance and only a needed negative guard.
+grep -Fq '## 8. 階層プロジェクト' "$legacy_doc_source" \
+  || fail "Decision Lineage fixture lost the old hierarchical source"
+grep -Fq '## Decision lineage — hierarchical project model' "$documentation_index" \
+  || fail "documentation fixture lacks explicit decision lineage"
+grep -Fq 'Current:' "$documentation_index" \
+  || fail "documentation fixture lacks current classification"
+grep -Fq 'Superseded:' "$documentation_index" \
+  || fail "documentation fixture lacks superseded classification"
+grep -Fq 'S006_HISTORY.md' "$documentation_index" \
+  || fail "documentation fixture does not preserve old model in subject history"
+grep -Fq '## Decision lineage — repository role model' "$workspace_index" \
+  || fail "workspace fixture lacks explicit decision lineage"
+grep -Fq 'S003_HISTORY.md' "$workspace_index" \
+  || fail "workspace fixture does not preserve old repository model in subject history"
+grep -Fq 'Project Repository' artifacts/project/WORKSPACE.md \
+  || fail "Artifact fixture lost current Project Repository guidance"
+grep -Fq 'Component Repository' artifacts/project/WORKSPACE.md \
+  || fail "Artifact fixture lost current Component Repository guidance"
+grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
+  || fail "Artifact fixture lost current negative guard against old hierarchy"
 
 # Historical candidates must not claim current canonical authority.
 for file in documents/project/migration/semantic-preservation-candidate/*.md; do

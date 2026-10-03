@@ -1,12 +1,14 @@
 # Subject Model
 
-`subjects/` は、recordsを根拠として、責務範囲・概念・domain knowledgeごとに整理した日本語knowledgeを置く層である。
+`subjects/` は、recordsを根拠として、責務範囲・概念・domain knowledgeごとに整理し、**semantic completenessと現在のeffective statusを表現する**日本語knowledgeを置く層である。
 
 ## 目的
 
 recordsは情報保存には強いが、量が増えるほど横断的な理解が難しくなる。
 
 subjectsは、原文を単に並べるのではなく、保持している情報を意味構造に沿って整理する。
+
+同時に、同一scopeの複数世代knowledgeを無評価で平坦化せず、Decision Lineageを根拠にcurrent / superseded / rejected / unresolvedを区別する。
 
 ```text
 records
@@ -109,6 +111,74 @@ subject内部はWHY/HOW/WHERE/FLOWのような一律のfacetでは分けない�
 
 実際のfile分割は情報量と責務境界に応じて決める。
 
+## Semantic completeness
+
+subjectsのcompleteはrecordsのsource completenessとは異なる。
+
+```text
+records
+  = 原文・event・evidenceのsource completeness
+
+subjects
+  = reusableな意味・判断・制約・反論・評価関係のsemantic completeness
+```
+
+subjectsはrecordsを逐語再掲する必要はない。
+
+一方、superseded / rejected / obsoleteだからという理由だけでreusable semantic knowledgeを削除しない。
+
+## Effective status
+
+subjectsでは少なくとも次を区別できるようにする。
+
+すべてのhistorical fact / raw evidenceへstatusを機械的に付ける必要はない。current authorityと混同し得るdecision / normative knowledge / constraint、または複数世代が存在するsemantic knowledgeではeffective statusを明示する。
+
+```yaml
+current: "現在有効なknowledge / decision / constraint"
+superseded: "以前は有効だったが後続decisionにより置換された"
+rejected: "proposal / candidateだったが明示的に不採用となった"
+unresolved: "現在も判断・scope conflictが解決されていない"
+```
+
+validation / observation / experimentはeffective statusではなくevidence / eventとして扱う。
+
+ordinaryな `S001_...` 等のcurrent surfaceは、明示的にnon-currentとlabelしない限りcurrent knowledgeとして読まれる。したがってsuperseded / rejected knowledgeを無labelでcurrent proseへ混在させない。
+
+`unresolved` は「まだ決まっていない」というcurrent factなのでcurrent surfaceへ明示できる。
+
+## Current surfaceとHISTORY
+
+substantialなsuperseded / rejected / obsolete semantic modelは `*_HISTORY.md` 等の明示的non-current areaへ整理できる。
+
+`*_HISTORY.md` はsubjectsの一部であり、semantic completenessの一部を担う。raw record archiveではない。
+
+HISTORYへ置ける代表例:
+
+- superseded semantic model
+- rejected design
+- obsolete terminology
+- meaningful transition
+- current model理解に価値があるpast semantic state
+
+current fileへnon-current contextを残す場合は `Superseded` / `Rejected` / `Historical context` 等で明示する。
+
+## Subject disposition
+
+recordからsubjectsへmeaningful informationを反映するとき、「採用する/捨てる」の二択にしない。
+
+```yaml
+current: "current subject surfaceへ反映"
+non_current: "HISTORY / explicit non-current areaへ反映し、superseded/rejectedを明示"
+unresolved: "未解決であることをcurrent subject surfaceへ反映"
+routed: "別subjectがsemantic ownerなのでそこへ反映"
+represented: "同じsemantic meaningが既存subjectに既に存在"
+evidence_only: "raw evidence/provenance/logとしてrecordsへ保持し、subject本文へraw複製しない"
+```
+
+重要なsemantic claimを分類せず黙って落とさない。
+
+`evidence_only` かreusable semantic knowledgeか判断できない場合、勝手に削らずpreserve / route / unresolvedとして扱う。
+
 ## 情報保存方針
 
 subjectsでは整理のために以下を許可する。
@@ -125,11 +195,13 @@ subjectsでは整理のために以下を許可する。
 禁止・注意:
 
 - token削減のために重要情報を落とす
-- 過去の却下案や反論が理解に必要なのに削除する
+- semantic meaningを持つsuperseded / rejected knowledgeを「もう使わない」という理由だけで削除する
 - 不確定情報を確定事項へ変える
-- 「Aが提案された」を「Aが正しい」へ変える
+- 「Aが提案された」を「Aがcurrentである」へ変える
 - 条件・例外・評価の強さを弱める
-- sourceに存在しない結論を追加する
+- source / Decision Lineageに存在しない結論を追加する
+- old/new decisionをeffective status未解決のまま両方currentとして併記する
+- 日付が新しいことだけでcurrent authorityを決める
 
 肥大化は許容する。短さより情報完全性と理解可能性を優先する。
 
@@ -138,6 +210,14 @@ subjectsでは整理のために以下を許可する。
 subjects本文は日本語を標準とする。
 
 技術用語、固有概念、code、command、API名などは意味精度のため原語を維持してよい。
+
+## Unresolved conflict
+
+同一scopeのcompeting decisionをrelationで解決できない場合、latest-winsやsilent mergeを行わない。
+
+`unresolved` としてcurrent surfaceへ明示し、必要なら第0情報源で新しいdecisionを作成する。
+
+具体的なrelation / scope / resolution procedureは `DECISION_LINEAGE_MODEL.md` を参照する。
 
 ## INDEX.md
 
@@ -166,3 +246,4 @@ DRYより意味の完全性を優先する。
 - `../records/2026-09-21-records-subjects-model/`
 - `../records/2026-09-21-knowledge-structure-implementation/`
 - `../records/2026-09-22-development-environment-subject-split/`
+- `../records/2026-10-03-knowledge-effective-status-lineage/`

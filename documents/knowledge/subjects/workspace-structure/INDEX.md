@@ -85,3 +85,15 @@ source: `../../records/2026-10-03-project-root-execution-routing/`
 ## Project / Component repository terminology
 
 current normativeでは `Project Repository` / `Component Repository` を責務roleとして使用する。parent/child repository hierarchyと旧Workspace Repository peer-role modelはcurrent authorityにしない。判断根拠は `../../records/2026-10-03-project-component-documentation-boundary/` を参照する。
+
+## Decision lineage — repository role model
+
+Current:
+
+- `../../records/2026-10-03-project-component-documentation-boundary/` — Project Repository / Component Repositoryをcurrent repository roleとする責務model
+
+Superseded:
+
+- `../../records/2026-09-21-docs-jp-snapshot/` — Workspace Repositoryを独立current roleとして扱う旧model。semantic knowledgeは `S003_HISTORY.md` に保持する
+
+parent / child repository hierarchyと旧Workspace Repository peer-role modelはcurrent authorityではないが、subjectsからsemantic historyを削除しない。

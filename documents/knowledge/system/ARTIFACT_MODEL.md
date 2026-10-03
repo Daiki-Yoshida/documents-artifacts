@@ -10,9 +10,9 @@ artifactはknowledgeの保存形式ではなく、AIへのdelivery / routing形�
 第0情報源
   ↓
 records
-  ↓
+  ↓ Decision Lineage resolution
 subjects
-  ↓
+  ↓ current-effective projection
 artifacts
   ↓
 target projects
@@ -102,7 +102,7 @@ specialized / cross-cutting artifact
 
 artifactへ優先して残す:
 
-- 現在採用されている規範
+- subjectsでcurrent effectiveと解決された規範
 - 判断条件
 - MUST / SHOULD等の強度
 - 適用条件と例外
@@ -112,6 +112,7 @@ artifactへ優先して残す:
 
 artifactでは通常落としてよい:
 
+- completeなsuperseded / rejected semantic model
 - history
 - source recovery経緯
 - provenanceの詳細
@@ -123,9 +124,37 @@ artifactでは通常落としてよい:
 
 ただし、削除すると現在の規範の意味・条件・例外・強度が変わる情報は圧縮対象にしない。
 
+`unresolved` は通常historyではない。AIが誤った仮定を置かないためにruntimeで知る必要があるcurrent unresolved constraintはprojection対象にできる。
+
+old modelを禁止するnegative guardがcurrent ruleなら、old model本体がsupersededでもnegative guardはprojectionできる。
+
 > **compression は semantic weakening ではない。**
 
-## 7. File granularity — few filesではなくsmall relevant context
+## 7. Current-effective projection gate
+
+Artifact projectionでsubjects内のstatusを平坦化しない。
+
+```text
+subjects
+  current
+  superseded
+  rejected
+  unresolved
+  evidence
+       ↓ projection review
+artifacts
+  current effective guidance
+  + runtimeに必要なunresolved constraint
+  + current negative guard
+```
+
+projection前に、対象knowledgeがcurrent effectiveなのか、non-current semantic historyなのか、unresolvedなのかを確認する。
+
+Decision Lineage bookkeepingそのものをruntimeへ大量配布しない。
+
+Artifact側でstatusが不明な場合、Artifactだけを見て解決せずsubjects / Decision Lineage / recordsへ戻る。
+
+## 8. File granularity — few filesではなくsmall relevant context
 
 artifactのfile数そのものを最小化しない。
 
@@ -153,7 +182,7 @@ keep_together_when:
 
 逆にfile数が少なくても、1 fileへ多くの無関係knowledgeを押し込めて毎回読ませる構造はartifactとして不適切である。
 
-## 8. Runtime language
+## 9. Runtime language
 
 Artifact本文は、AI runtime guidanceとして**簡潔な英語をdefault**とする。
 
@@ -170,7 +199,7 @@ override: "明確なconsumer要件がある場合はartifact packaging側で別l
 
 languageはauthorityを変更しない。意味に疑義があれば日本語subject / source recordへ戻る。
 
-## 9. Self-contained delivery
+## 10. Self-contained delivery
 
 target projectでは通常 `documents/knowledge/` は存在しない前提でartifactを読めるようにする。
 
@@ -178,14 +207,14 @@ artifact本文は、理解に不可欠な規範をupstream subjectへの参照�
 
 一方でartifactのmaintenance時には、repository側でどのsubjectsからprojectionしたかを追跡可能にする。
 
-## 10. Project-local context
+## 11. Project-local context
 
 artifactは再利用可能な共通知識であり、target project固有の事実を発明しない。
 
 project-local rule / architecture / command / documentationが存在する場合、AIはそれをartifactと合わせて解釈する。
 artifactがproject固有の選択を固定的に仮定しない。
 
-## 11. 更新
+## 12. 更新
 
 ```text
 new decision
@@ -211,3 +240,5 @@ artifact更新では、単に旧artifactとの差分を見るのではなく、�
 - `KNOWLEDGE_MODEL.md`
 - `SUBJECT_MODEL.md`
 - `TRACEABILITY_MODEL.md`
+- `DECISION_LINEAGE_MODEL.md`
+- `../records/2026-10-03-knowledge-effective-status-lineage/`

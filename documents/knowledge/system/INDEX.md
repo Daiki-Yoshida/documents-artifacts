@@ -8,7 +8,8 @@
 |---|---|
 | `KNOWLEDGE_MODEL.md` | INDEX / system / records / subjects の全体モデル |
 | `RECORD_MODEL.md` | 原文・snapshot recordの保存単位、命名、改変禁止、metadata |
-| `SUBJECT_MODEL.md` | recordsを責務・domain knowledgeとして整理する規則 |
+| `DECISION_LINEAGE_MODEL.md` | decision event / relation / scopeからsubjectsのeffective statusを解決する規則 |
+| `SUBJECT_MODEL.md` | recordsをsemantic completenessを保って整理し、current / non-current / unresolvedを配置する規則 |
 | `TRACEABILITY_MODEL.md` | subjectsからrecordsへ戻って意味を検証する規則 |
 | `ARTIFACT_MODEL.md` | 第1情報源からAI向け第2情報源へprojection・routingする規則 |
 

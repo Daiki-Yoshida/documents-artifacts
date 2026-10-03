@@ -65,6 +65,8 @@ recordsを根拠として、責務範囲・概念・domain knowledgeごとに整
 
 subjectsでは情報を理解可能な構造へ整理するが、artifactのようなcontext圧縮は目的にしない。
 
+subjectsはsemantic knowledgeを捨てず、Decision Lineageを根拠にcurrent / superseded / rejected / unresolved等の現在評価を明示する。
+
 情報劣化を避けるため、必要であれば文書の肥大化を許容する。
 
 ## 基本的な読み方
@@ -97,7 +99,7 @@ subjects
 
 過去のrecordは、後から判断が変わったという理由で書き換えない。
 
-subjectの整理に誤りが見つかった場合はrecordsへ戻って検証し、subject側を修正する。
+subjectの整理・effective statusに誤りが見つかった場合はrecordsとDecision Lineageへ戻って検証し、subject側を修正する。日付だけでauthorityを決めない。
 
 ## 言語
 
