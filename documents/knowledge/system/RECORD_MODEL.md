@@ -71,6 +71,37 @@ records/2026-09-21-docs-jp-snapshot/
 
 metadataは原文の代替ではない。
 
+decision eventを含むrecordでは、raw source本文とは別にoptionalな `decision_lineage` metadataを持てる。relation / scopeの意味は `DECISION_LINEAGE_MODEL.md` が所有する。
+
+## Decision event metadata
+
+recordは「そのsource eventで何が起きたか」を保存する。
+
+後から変化し得る現在評価をimmutable recordへ固定しない。
+
+禁止例:
+
+```yaml
+current: true
+superseded: true
+```
+
+optional metadata例:
+
+```yaml
+decision_lineage:
+  event: "adoption"
+  scope: "repository role model"
+  adopts:
+    - "../proposal-record/"
+  supersedes:
+    - "../older-decision-record/"
+```
+
+relationは必要なkeyだけを記述する。old recordへretroactively current statusを書き込むのではなく、later event側からrelationを張る。
+
+event type / relation / scope / conflict解決は `DECISION_LINEAGE_MODEL.md` を参照する。
+
 ## Snapshot / Import
 
 directory単位のsnapshotは次のように保存できる。
@@ -96,3 +127,4 @@ record本文の変更を許可する代表例は、取り込み時の転記ミ�
 
 - `../records/2026-09-21-knowledge-source-model/`
 - `../records/2026-09-21-records-subjects-model/`
+- `../records/2026-10-03-knowledge-effective-status-lineage/`
