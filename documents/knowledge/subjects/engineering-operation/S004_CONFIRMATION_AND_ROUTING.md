@@ -27,6 +27,8 @@ projectがWork Identity modelを採用している場合、具体的implementati
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-06-13-operational-discipline-commit/RECORD.md`
 - `../../records/2026-09-06-design-principles-proposals/RECORD.md`
 - `../../records/2026-09-15-design-principles-contract-decision/RECORD.md`
