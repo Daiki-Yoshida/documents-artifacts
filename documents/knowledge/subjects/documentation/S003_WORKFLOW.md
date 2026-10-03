@@ -207,6 +207,26 @@ rules:
 
 ---
 
+## 複数Repository Projectの更新
+
+ProjectへComponent Repositoryが参加している場合も、Componentごとに独立したProject Documentation treeを機械的に作らない。
+
+更新時は次を確認する。
+
+```yaml
+project_level_change:
+  owner: "Project Repository側のProject Documentation"
+component_specific_change:
+  owner: "component固有knowledgeの実authority"
+routing_change:
+  rule: "Project workで必要なcomponent knowledgeのlocation / responsibilityが変わる場合、Project Documentation側のroutingを更新する"
+standalone_context:
+  rule: "同じphysical repositoryを独立Projectとして扱う場合だけ、そのcontextのProject Documentationをそのrepository自身が所有できる"
+```
+
+Project RepositoryとComponent Repositoryのrole定義は `../workspace-structure/` を参照する。parent/child repository hierarchyをdocumentation workflow側で再導入しない。
+
+
 ## Managed Artifact Handling
 
 target projectへ配布された再利用guidanceは、project-owned Project Documentationと同じownershipで直接保守しない。
@@ -261,6 +281,8 @@ documentation側は、Work完了時に**何をProject Documentationへ残すか*
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 
