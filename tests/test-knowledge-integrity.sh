@@ -398,6 +398,10 @@ grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.m
   || fail "Artifact worktree materialization applicability regressed"
 grep -Fq 'Work Identity model and a concrete implementation effort' artifacts/operation/CHANGE_LIFECYCLE.md \
   || fail "Artifact operation flow lost Work Identity gate"
+grep -Fq "Prefer the project's existing convention" artifacts/documentation/FORMAT_AND_GIT.md \
+  || fail "Artifact documentation lost project-convention-first commit rule"
+grep -Eq 'If none exists.*Japanese description' artifacts/documentation/FORMAT_AND_GIT.md \
+  || fail "Artifact documentation lost conditional Japanese-description default"
 
 # Project Repository / Component Repository documentation boundary guards (Issue #167).
 doc_principles=documents/knowledge/subjects/documentation/S001_PRINCIPLES.md
