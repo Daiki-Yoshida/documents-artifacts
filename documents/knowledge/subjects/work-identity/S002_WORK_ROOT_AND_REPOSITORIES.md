@@ -225,7 +225,7 @@ project-root/
 ### Work Identity 内の Git worktree
 
 ```text
-.worktrees/feat/pathfinding/main/
+.worktrees/feat/pathfinding/project/
 ├─ documents/
 ├─ src/
 └─ ...
@@ -265,6 +265,8 @@ Work Identity 固有の filesystem state は、必要に応じて Work Root 配�
 ---
 
 ## Sources
+
+- `../../records/2026-10-03-subject-consistency-convergence/`
 
 - `../../records/2026-10-03-project-root-execution-routing/`
 
