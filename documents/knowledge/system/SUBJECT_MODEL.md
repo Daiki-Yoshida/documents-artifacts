@@ -131,6 +131,8 @@ subjectsはrecordsを逐語再掲する必要はない。
 
 subjectsでは少なくとも次を区別できるようにする。
 
+すべてのhistorical fact / raw evidenceへstatusを機械的に付ける必要はない。current authorityと混同し得るdecision / normative knowledge / constraint、または複数世代が存在するsemantic knowledgeではeffective statusを明示する。
+
 ```yaml
 current: "現在有効なknowledge / decision / constraint"
 superseded: "以前は有効だったが後続decisionにより置換された"
