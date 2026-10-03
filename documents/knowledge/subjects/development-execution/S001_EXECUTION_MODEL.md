@@ -49,11 +49,13 @@ Project/repositoryの静的配置は `../workspace-structure/`、Work単位のid
   - "依存関係のlockファイルを尊重する"
   - "文書化されていないホスト状態へ依存しない"
   - "可能な限りローカルとCIが同じプロジェクト管理コマンドを使う"
-  - "外部Workspace Repositoryへの依存version選択を明示する"
+  - "外部Project Repository / project-level toolへの依存version選択を明示する"
 ```
 
 再現性とは、更新を禁止することではありません。変更が意図的で、追跡できることです。
 
 ## Sources
+
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
