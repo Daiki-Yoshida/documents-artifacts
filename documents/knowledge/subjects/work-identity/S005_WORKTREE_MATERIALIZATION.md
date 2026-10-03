@@ -386,7 +386,7 @@ mainで増えたWork Documentsをbranchへ取り込んでもnested filesystemに
 └─ <repository>/
 ```
 
-- Work DocumentsをProject Repository mainでtrack可能
+- Work DocumentsをProject Repositoryのbaseline branchでtrack可能
 - 同一repositoryを含むGit worktreeを兄弟配置可能
 - single/multi repositoryの統一形状を維持可能
 
@@ -396,7 +396,7 @@ mainで増えたWork Documentsをbranchへ取り込んでもnested filesystemに
 
 Nested repository worktreeは、Project-level `.worktrees/` をfilesystemへmaterializeしてはならない。
 
-標準作成候補:
+Materialization Contractが適用される場合の検証済み標準sequence:
 
 ```bash
 git worktree add --no-checkout <worktree-path> <work-branch>
@@ -492,7 +492,7 @@ merge_rebase_switch_regression: "validated"
 main_work_document_growth: "validated"
 remove_prune_recreate: "validated"
 layout_redesign_required: false
-artifact_action: "encode Worktree Materialization Contract and atomic creation operation"
+projection_status: "completed; current Artifact v2 project/WORKTREES.md にMaterialization Contractとatomic creation semanticsを投影済み"
 ```
 
 ## Sources
