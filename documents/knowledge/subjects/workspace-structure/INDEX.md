@@ -16,7 +16,7 @@ workspace-structure/
 
 ### S001_PROJECT_AND_REPOSITORY_MODEL.md
 
-Project Repository / Project Root、Workspace Repository / Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。
+Project Repository / Project Root、Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。旧Workspace Repository用語はhistory / compatibility contextへ退避する。
 
 ### S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
 
@@ -49,7 +49,7 @@ work-identity
 ```yaml
 workspace_structure_owns:
   - "Project Repository / Project Root"
-  - "Workspace Repository / Component Repository"
+  - "Component Repository"
   - "stable repository identity / role / base location"
   - "project-level Git ownership boundary"
 
@@ -67,7 +67,7 @@ work_identity_owns:
 - `.worktrees/` 全体ignoreを撤回
 - Work Documents trackingとrepository-specific worktree ignoreを分離
 - 旧Task Worktree定義をhistoryへ移動
-- Project Repository / Project RootとWorkspace Repositoryの関係を明文化
+- Project Repository / Component Repositoryをcurrent roleとして明文化し、Workspace Repositoryを旧/compatibility用語へ整理
 - stable repository identityとWork Identityの `REPO` selectorを接続
 
 旧定義は `S003_HISTORY.md` に保存している。
@@ -81,3 +81,7 @@ Component RepositoryのGit ownershipとProject-level development context ownersh
 実際のcommand target / `DIR` selectionは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md`、Work Rootとrepository-specific worktreeの動的意味は `../work-identity/` が主所有する。
 
 source: `../../records/2026-10-03-project-root-execution-routing/`
+
+## Project / Component repository terminology
+
+current normativeでは `Project Repository` / `Component Repository` を責務roleとして使用する。parent/child repository hierarchyと旧Workspace Repository peer-role modelはcurrent authorityにしない。判断根拠は `../../records/2026-10-03-project-component-documentation-boundary/` を参照する。
