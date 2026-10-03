@@ -73,3 +73,21 @@ engineering-operation
 ## 2026-10-03 Work Identity routing convergence
 
 implementation移行時のWork Identity confirmation gateとWork Documents baseline publication / VCS authority分離は `../../records/2026-10-03-subject-consistency-convergence/` を根拠とする。
+
+
+## Decision lineage — verification completion and reporting
+
+Current:
+
+- `../../records/2026-09-15-design-principles-contract-decision/RECORD.md` — completion requires distinguishing contract conformance from the requested observable outcome.
+- `S005_VERIFICATION_AND_DONE.md` owns the current verification/done discipline.
+
+Superseded completion interpretation:
+
+- older AI_WORKFLOW material could be read as treating Contract Tests PASS as completion.
+- that interpretation is non-current and is preserved in `S008_HISTORY.md` and source records.
+
+Historical reporting policy:
+
+- the predecessor workflow's fixed thinking/interim reporting language is not a universal current rule.
+- current reporting semantics are owned by `S006_VERSION_CONTROL_AND_REPORTING.md`.
