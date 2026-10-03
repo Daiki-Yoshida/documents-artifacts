@@ -189,6 +189,7 @@ grep -Fq '4 reachable' "$TMP_ROOT/mini-real.log" \
 # This verifies the public bootstrap without depending on external network.
 command -v curl >/dev/null || fail "curl is required for remote-delivery tests"
 command -v tar >/dev/null || fail "tar is required for remote-delivery tests"
+command -v git >/dev/null || fail "git is required for remote-delivery target-state tests"
 
 README_BOOTSTRAP="$TMP_ROOT/readme-bootstrap.sh"
 awk '/<!-- remote-delivery-snippet -->/{f=1;next} /<!-- \/remote-delivery-snippet -->/{f=0} f' \
