@@ -84,10 +84,24 @@ agent entry
 
 Use relative links from the referring document.
 
-## Hierarchical projects
+## Multi-repository Project routing
 
-A child project may own an independent `documents/` tree and INDEX.
+Repository roles come from Project/workspace guidance.
 
-Parent documentation may describe children at a high level, but should not duplicate each child's detailed authority.
+A Project Repository owns the Project-level documentation/routing authority. Component Repositories may own component-specific knowledge according to their Git/source ownership, but **being a Component Repository does not automatically make it an independent Project or require another `documents/INDEX.md`**.
 
-Each child should remain self-contained through its own `documents/INDEX.md`; do not make child documentation depend on the parent's internal documentation as an implicit authority. Cross-project context should be an explicit external reference.
+Typical shape:
+
+```text
+Project
+├─ Project Repository
+│  └─ documents/INDEX.md
+├─ Component Repository A
+└─ Component Repository B
+```
+
+Project Documentation should route to component-specific knowledge when needed, without duplicating it as a competing authority.
+
+A physical repository that normally participates as a Component Repository may own its own Project Documentation only when it is intentionally used as a standalone Project context, in which case it acts as that context's Project Repository.
+
+Do not model Project Repository / Component Repository as parent/child repository hierarchy, and do not require a special `children.md` document.
