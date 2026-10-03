@@ -18,10 +18,10 @@ first_source: "documents/knowledge/"
   Chat / Issue / 調査 / 実験 / ユーザー・AIの提言
         ↓
 documents/knowledge/records/
-        ↓
+        ↓ Decision Lineage resolution
 documents/knowledge/subjects/
 第1情報源
-        ↓ projection
+        ↓ current-effective projection
 artifacts/
 第2情報源
         ↓ distribution
