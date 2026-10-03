@@ -8,7 +8,7 @@ authority: "../ARTIFACT_ARCHITECTURE_V2.md"
 ```
 
 このmapはartifact本文のauthorityではない。
-current subjectsから正式 `artifacts/` のどのAI-facing leafへprojectionするかを保守するためのrepository-local mappingである。
+subjectsで **current effective** と解決されたknowledgeから正式 `artifacts/` のどのAI-facing leafへprojectionするかを保守するためのrepository-local mappingである。
 
 ## design/
 
@@ -85,8 +85,8 @@ YAGNI across the Horizonは `BOUNDARY_HORIZON.md` と `CONTRACTS.md` の接続�
 
 ## Excluded by default
 
-各subjectの `*_HISTORY.md` はartifactへ通常projectionしない。
+各subjectの `*_HISTORY.md` に整理されたsuperseded / rejected等のnon-current semantic knowledgeはartifactへ通常projectionしない。
 
 source / provenance / migration説明もAI runtime guidanceには含めず、repository側のknowledgeと本mapに残す。
 
-history由来の情報でも現在採用されている規範の理解に不可欠な場合は、historyであることを理由に自動除外せずcurrent normative subjectへ先に昇格させてからartifactへprojectionする。
+non-current knowledge由来でも、現在の誤読防止に必要なnegative guard等がcurrent guidanceとして成立する場合は、そのcurrent meaningをsubject側で明示してからartifactへprojectionする。statusが不明なままhistory/recordから直接Artifactへ持ち込まない。
