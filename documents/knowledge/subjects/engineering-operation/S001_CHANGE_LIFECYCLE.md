@@ -54,6 +54,8 @@ Work Identityを採用していないprojectへ新しいidentity制度を勝手�
 
 ## Sources
 
+- `../../records/2026-10-03-subject-consistency-convergence/`
+
 - `../../records/2026-01-31-initial-code-design-source/files/AI_WORKFLOW.md`
 - `../../records/2026-07-02-design-principles-final-source-snapshot/files/AI_WORKFLOW.md`
 - `../../records/2026-06-13-operational-discipline-commit/RECORD.md`
