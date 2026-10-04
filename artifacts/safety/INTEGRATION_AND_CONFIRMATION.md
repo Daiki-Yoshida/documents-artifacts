@@ -7,9 +7,9 @@ Read this for repository integration operations or when changing the development
 Use the target repository's own merge/rebase/PR policy.
 
 - integrate in the repository that owns the branch;
-- do not commit Component Repository changes as ordinary Project Repository files;
+- do not commit Component Repository changes as ordinary Management Root Repository files;
 - rerun required validation on the integrated HEAD;
-- when Project Repository-side tooling changed, verify components against the intended ref;
+- when Management Root Repository-side tooling changed, verify components against the intended ref;
 - one merged component branch does not automatically complete a multi-repository Work.
 
 This guidance does not define PR approval/release governance.
@@ -18,7 +18,7 @@ This guidance does not define PR approval/release governance.
 
 **Must re-read**
 - first contact with a project using this model;
-- Project Repository / Component Repository topology changes;
+- Management Root Repository / Component Repository topology changes;
 - worktree contract is added/redesigned;
 - host/container boundary changes;
 - destructive operation is added.
