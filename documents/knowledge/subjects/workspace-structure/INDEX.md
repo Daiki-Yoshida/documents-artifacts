@@ -16,7 +16,7 @@ workspace-structure/
 
 ### S001_PROJECT_AND_REPOSITORY_MODEL.md
 
-Management Root Repository / Project Root、Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。旧Workspace Repository用語はhistory / compatibility contextへ退避する。
+Management Root Repository / Project Root、Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。旧Project Repository / Workspace Repository用語はhistory / compatibility contextへ退避する。
 
 ### S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
 
@@ -67,7 +67,7 @@ work_identity_owns:
 - `.worktrees/` 全体ignoreを撤回
 - Work Documents trackingとrepository-specific worktree ignoreを分離
 - 旧Task Worktree定義をhistoryへ移動
-- Management Root Repository / Component Repositoryをcurrent roleとして明文化し、Workspace Repositoryを旧/compatibility用語へ整理
+- repository role model（当時の名称Project Repository / Component Repository、現Management Root Repository / Component Repository）をcurrent roleとして明文化し、Workspace Repositoryを旧/compatibility用語へ整理
 - stable repository identityとWork Identityの `REPO` selectorを接続
 
 旧定義は `S003_HISTORY.md` に保存している。

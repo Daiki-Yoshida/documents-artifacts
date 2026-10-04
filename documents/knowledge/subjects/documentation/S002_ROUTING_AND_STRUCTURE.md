@@ -166,7 +166,7 @@ Management Root RepositoryはProject-level canonical documentationとroutingを�
 Component Repositoryはcomponent/product固有のsource・Git history・必要なcomponent-specific documentationを所有できる。ただし、**Component Repositoryであること自体は独立Project Documentation treeを要求しない**。
 
 ```yaml
-project_repository:
+management_root_repository:
   documentation_role: "Project-level canonical knowledge / routing authority"
   index: "<project-root>/documents/INDEX.md"
 

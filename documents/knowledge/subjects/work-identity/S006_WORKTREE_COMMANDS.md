@@ -109,7 +109,7 @@ repository_resolution:
   source_repository: "which Git repository owns this checkout"
   worktree_directory_name: "path component under the Work Root"
   branch_mapping: "how the base Work Identity maps to this repository branch"
-  project_repository_role: "whether this repository owns / can receive Project-level tracked .worktrees/** coordination state"
+  management_root_repository_role: "whether this repository owns / can receive Project-level tracked .worktrees/** coordination state"
 ```
 
 このmappingのためだけに、現在worktree一覧やDocker state等を複製したmanifestを作らない。

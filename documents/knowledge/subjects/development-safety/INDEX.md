@@ -54,7 +54,8 @@ source: `../../records/2026-10-03-project-root-execution-routing/`
 Current:
 
 - `../../records/2026-09-22-six-subject-cross-audit-fixes/` — destructive operations, diagnostics/recovery, integration safety, and confirmation/reread are owned by this dedicated safety subject rather than the old development-environment umbrella.
-- `../../records/2026-10-03-project-component-documentation-boundary/` — later Management Root Repository / Component Repository terminology and ownership alignment is reflected in current safety guidance.
+- `../../records/2026-10-03-project-component-documentation-boundary/` — later repository-role terminology and ownership alignment is reflected in current safety guidance（当時のrole名はProject Repository、現在はManagement Root Repository）。
+- `../../records/2026-10-04-management-root-repository-terminology/` — repository role名をProject RepositoryからManagement Root Repositoryへterminology refinement。semantic responsibilityは継承する。
 
 Historical predecessor:
 
