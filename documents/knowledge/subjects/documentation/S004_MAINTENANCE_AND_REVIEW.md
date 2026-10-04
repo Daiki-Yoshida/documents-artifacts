@@ -38,7 +38,7 @@ must_re_read:
 should_re_read:
   - "新しいエージェントエントリファイルの追加。"
   - "ドキュメントの再構築（ディレクトリ間でファイルを移動）。"
-  - "single-repository / multi-repository Project topologyやProject Repository / Component Repositoryのroleを変更する。"
+  - "single-repository / multi-repository Project topologyやManagement Root Repository / Component Repositoryのroleを変更する。"
   - "情報がどこに属するか不確実な場合。"
 
 no_re_read_needed:

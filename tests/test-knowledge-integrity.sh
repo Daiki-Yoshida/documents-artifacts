@@ -58,6 +58,8 @@ for file in \
   documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_175_BODY.md \
   documents/knowledge/records/2026-10-04-negative-alternative-leakage/RECORD.md \
   documents/knowledge/records/2026-10-04-negative-alternative-leakage/ISSUE_190_BODY.md \
+  documents/knowledge/records/2026-10-04-management-root-repository-terminology/RECORD.md \
+  documents/knowledge/records/2026-10-04-management-root-repository-terminology/ISSUE_192_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -405,7 +407,7 @@ grep -Fq "Prefer the project's existing convention" artifacts/documentation/FORM
 grep -Eq 'If none exists.*Japanese description' artifacts/documentation/FORMAT_AND_GIT.md \
   || fail "Artifact documentation lost conditional Japanese-description default"
 
-# Project Repository / Component Repository documentation boundary guards (Issue #167).
+# Management Root Repository / Component Repository documentation boundary guards (Issue #167).
 doc_principles=documents/knowledge/subjects/documentation/S001_PRINCIPLES.md
 doc_routing=documents/knowledge/subjects/documentation/S002_ROUTING_AND_STRUCTURE.md
 doc_workflow=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
@@ -428,18 +430,18 @@ grep -Fq '特別file roleは要求しない' "$doc_routing" \
   || fail "documentation routing lost explicit non-required fixed topology filename rule"
 grep -Fq 'Component Repositoryであること自体は独立Project Documentation treeを要求しない' "$doc_routing" \
   || fail "Component Repository/documentation authority boundary missing"
-grep -Fq 'Project Repository / Project Root' "$workspace_index" \
-  || fail "workspace current-role summary missing Project Repository"
+grep -Fq 'Management Root Repository / Project Root' "$workspace_index" \
+  || fail "workspace current-role summary missing Management Root Repository"
 grep -Fq 'Component Repository' "$workspace_index" \
   || fail "workspace current-role summary missing Component Repository"
 if grep -Fq 'Workspace_Repository:' "$workspace_model"; then
   fail "Workspace Repository reintroduced as current peer role"
 fi
-grep -Fq 'Workspace Repositoryという旧用語' "$workspace_model" \
-  || fail "Workspace Repository compatibility/history note missing"
-grep -Fq 'Project Repository / Component Repositoryをrepository roleとして用いる' "$workspace_ownership" \
-  || fail "workspace ownership does not declare current Project/Component roles"
-grep -Fq 'parent / child repositoryとは呼ばない' "$workspace_ownership" \
+grep -Fq '旧用語: Project Repository / Workspace Repository' "$workspace_model" \
+  || fail "retired repository role terminology history note missing"
+grep -Fq 'Management Root Repository / Component Repositoryをrepository roleとして用いる' "$workspace_ownership" \
+  || fail "workspace ownership does not declare current Management Root/Component roles"
+grep -Fq 'filesystem上の包含だけからGit ownership / authority / dependencyの親子関係を導かない' "$workspace_ownership" \
   || fail "parent/child repository terminology guard missing"
 grep -Fq 'Parent / Child hierarchical project model' "$doc_history" \
   || fail "legacy documentation hierarchy is not preserved/labeled in history"
@@ -479,7 +481,7 @@ if grep -Fq 'Workspace tool' "$workspace_ownership" || grep -Fq 'Workspace ref' 
   fail "retired Workspace tool/ref terminology remains in current normative text"
 fi
 if grep -Fn '親repository' "$worktree_materialization"; then
-  fail "worktree materialization still uses parent-repository wording for the Project Repository"
+  fail "worktree materialization still uses parent-repository wording for the Management Root Repository"
 fi
 if grep -Fq 'Workspace/Component topology' "$artifact_integration"; then
   fail "Artifact safety reread trigger still uses retired Workspace/Component topology wording"
@@ -599,12 +601,25 @@ grep -Fq '## Decision lineage — repository role model' "$workspace_index" \
   || fail "workspace fixture lacks explicit decision lineage"
 grep -Fq 'S003_HISTORY.md' "$workspace_index" \
   || fail "workspace fixture does not preserve old repository model in subject history"
-grep -Fq 'Project Repository' artifacts/project/WORKSPACE.md \
-  || fail "Artifact fixture lost current Project Repository guidance"
+grep -Fq 'Management Root Repository' artifacts/project/WORKSPACE.md \
+  || fail "Artifact fixture lost current Management Root Repository guidance"
 grep -Fq 'Component Repository' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current Component Repository guidance"
 grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current negative guard against old hierarchy"
+
+# Management Root Repository terminology guards (Issue #192).
+grep -Fq '管理ルートリポジトリ' "$workspace_index" \
+  || fail "workspace index lost the Japanese canonical role name"
+grep -Fq '管理ルートリポジトリ' "$workspace_model" \
+  || fail "workspace model lost the Japanese canonical role name"
+grep -Fq 'Project Repository` はこのroleの旧current名称' "$workspace_ownership" \
+  || fail "workspace ownership lost Project Repository superseded-terminology note"
+grep -Fq 'Management Root Repository terminology adoption' "$workspace_history" \
+  || fail "workspace history does not preserve the terminology adoption record"
+if grep -rlq 'Project Repository' artifacts/; then
+  fail "Artifact runtime still carries retired Project Repository terminology (NAL)"
+fi
 
 # Targeted multi-generation subject lineage guards (Issues #174 / #175).
 encap_altitude=documents/knowledge/subjects/encapsulation-horizon/S004_CONCEPT_ALTITUDE.md

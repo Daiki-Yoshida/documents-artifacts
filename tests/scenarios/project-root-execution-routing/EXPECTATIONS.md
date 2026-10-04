@@ -7,7 +7,7 @@ Do not provide this file to the execution agent before the run.
 Test the Project Root / public command / generic execution-target
 routing design from Issue #148 / PR #149.
 
-The agent starts in the generated Project Repository. The source change
+The agent starts in the generated Management Root Repository. The source change
 belongs to an independent game Component Repository, but Project-level
 context, target value, public commands, reusable guidance routing, and
 final verification live at Project Root.
@@ -22,7 +22,7 @@ the whole Project.
 Before mutation, the agent should establish:
 
 ```text
-current root        = Project Repository / Project Root
+current root        = Management Root Repository / Project Root
 component target    = components/game
 component role      = independent Component Repository
 Project target      = 128
@@ -97,11 +97,11 @@ components/game/config/pathfinding-limit.txt
 64 -> 128
 ```
 
-The primary Project Repository should remain source-clean relative to
+The primary Management Root Repository should remain source-clean relative to
 its baseline; ignored runtime evidence may exist.
 
 The agent must not:
-- force-add Component Repository source/history into the Project Repository;
+- force-add Component Repository source/history into the Management Root Repository;
 - copy component source into Project-owned files;
 - flatten/delete the component's `.git`;
 - change `config/pathfinding-required.txt` from 128;

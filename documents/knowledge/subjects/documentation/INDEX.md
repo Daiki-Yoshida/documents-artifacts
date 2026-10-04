@@ -90,13 +90,13 @@ managed Artifact v2 whole-pack、Project INDEX inventory scope、physical placem
 
 ## 2026-10-03 Project / Component documentation boundary
 
-旧parent/child hierarchical project modelをcurrent normativeから外し、Project Repository / Component Repository責務モデルへdocumentation ownershipを収束した判断は `../../records/2026-10-03-project-component-documentation-boundary/` を根拠とする。
+旧parent/child hierarchical project modelをcurrent normativeから外し、repository role責務モデル（当時の名称Project Repository / Component Repository、現Management Root Repository / Component Repository）へdocumentation ownershipを収束した判断は `../../records/2026-10-03-project-component-documentation-boundary/` を根拠とする。
 
 ## Decision lineage — hierarchical project model
 
 Current:
 
-- `../../records/2026-10-03-project-component-documentation-boundary/` — Project Repository / Component Repository責務を前提とするmulti-repository Project documentation model
+- `../../records/2026-10-03-project-component-documentation-boundary/` — repository role責務を前提とするmulti-repository Project documentation model（当時のrole名はProject Repository、現在はManagement Root Repository）
 
 Superseded:
 

@@ -87,7 +87,7 @@ non-mutatingで以下を表示:
 
 ## Primary checkout invocation boundary
 
-参照実装はProject Repository Primary checkoutからのみproject-level helperを実行可能とした。
+参照実装はManagement Root Repository Primary checkoutからのみproject-level helperを実行可能とした。
 
 理由:
 
@@ -113,7 +113,7 @@ make worktree-status WORK=feat/something REPO=main
 を実行すると、
 
 ```text
-ERROR: run this project-level worktree command from the Project Repository Primary checkout, not from a linked worktree
+ERROR: run this project-level worktree command from the Management Root Repository Primary checkout, not from a linked worktree
 ```
 
 で停止。
@@ -296,7 +296,7 @@ artifactでは特定のdiagnostic one-linerを規範化せず、必要状態を�
 ```yaml
 repository_topology: "single repository"
 repo_selector: "main"
-materialization_case: "Project Repository itself as linked worktree"
+materialization_case: "Management Root Repository itself as linked worktree"
 git: "2.43.0"
 os: "WSL2/Linux"
 ```

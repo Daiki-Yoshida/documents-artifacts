@@ -153,7 +153,7 @@ repository topology / Git ownershipは `../workspace-structure/` が主所有す
 ```text
 Project
 │
-├─ Project Repository
+├─ Management Root Repository
 │   └─ documents/
 │       └─ INDEX.md
 │
@@ -161,12 +161,12 @@ Project
 └─ Component Repository B
 ```
 
-Project RepositoryはProject-level canonical documentationとroutingを所有する。
+Management Root RepositoryはProject-level canonical documentationとroutingを所有する。
 
 Component Repositoryはcomponent/product固有のsource・Git history・必要なcomponent-specific documentationを所有できる。ただし、**Component Repositoryであること自体は独立Project Documentation treeを要求しない**。
 
 ```yaml
-project_repository:
+management_root_repository:
   documentation_role: "Project-level canonical knowledge / routing authority"
   index: "<project-root>/documents/INDEX.md"
 
@@ -180,16 +180,16 @@ routing:
   rule: "Project Documentationから、Project workに必要なcomponent固有knowledgeのlocation / authorityへ明示的にrouteする"
 ```
 
-component固有documentをProject Repositoryへ複製して二重authorityにしない。逆に、Project全体のpolicy / architecture / coordinationを各Component Repositoryへ独立複製しない。
+component固有documentをManagement Root Repositoryへ複製して二重authorityにしない。逆に、Project全体のpolicy / architecture / coordinationを各Component Repositoryへ独立複製しない。
 
 ### standalone Project context
 
-通常はComponent Repositoryとして参加するphysical repositoryでも、上位Projectとは切り離された独立Projectとして意図的に開発される場合、そのcontextではrepository自身がProject Repositoryになり得る。
+通常はComponent Repositoryとして参加するphysical repositoryでも、上位Projectとは切り離された独立Projectとして意図的に開発される場合、そのcontextではrepository自身がManagement Root Repositoryになり得る。
 
 ```text
 same physical repository
   ├─ enclosing Project context  → Component Repository
-  └─ standalone Project context → Project Repository
+  └─ standalone Project context → Management Root Repository
 ```
 
 分類はfilesystem上の親子位置ではなく、**そのWorkがどのProject contextに属するか**で決める。
@@ -211,7 +211,7 @@ workspace.md
 
 ### parent / child terminology
 
-Project Repository / Component Repositoryの関係をcurrent normativeで「親repository / 子repository」「親project / 子project」と表現しない。
+Management Root Repository / Component Repositoryの関係をcurrent normativeで「親repository / 子repository」「親project / 子project」と表現しない。
 
 親子表現はfilesystem containment、Git ownership、dependency direction、Project contextを一つの上下関係へ誤って束ねるためである。
 

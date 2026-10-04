@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 # Prepare hook for multi-repo-workspace-ownership.
 # Runs after the Artifact install commit with $TARGET pointing at the
-# generated Project Repository. Creates the declared Component
+# generated Management Root Repository. Creates the declared Component
 # Repositories as independent Git repos under components/ (ignored by
-# the Project Repository's .gitignore, so the tree stays clean).
+# the Management Root Repository's .gitignore, so the tree stays clean).
 # The artifact-test-baseline tag inside each component is created by the
 # generic prepare step, not here.
 set -euo pipefail

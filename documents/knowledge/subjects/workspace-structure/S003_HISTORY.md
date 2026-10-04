@@ -4,6 +4,24 @@
 
 現在はWorkspace構造そのものをこのsubjectが所有し、Work Root / Work Documents / repository-specific worktreeは `../work-identity/` が所有する。
 
+## Management Root Repository terminology adoption
+
+2026-10-04、current repository role名 `Project Repository` を **`Management Root Repository`**（日本語: **管理ルートリポジトリ**）へ変更した。
+
+理由:
+
+- repository自体が通常何らかのProjectに属するため、`Project Repository` はrole固有の責務を名称として十分に説明しない。
+- 実際のroleはProject全体のmanagement / coordination、Project Root ownership、Project Documentation、public command surface、stable repository identity、Work Identity coordination state等の基準repositoryである。
+- `Management Root Repository` はこのmanagement / coordinationとroot性を名称へ含める。
+
+これは単なる文字列置換ではなく、既存semantic responsibilityを再確認した上でのterminology refinementである。`Project Root` はrepository role名ではなくfilesystem / development contextのroot概念なので、このdecisionではrenameしない。
+
+`Project Repository` は2026-10-03〜2026-10-04の中間世代のcurrent terminologyとしてこのHISTORYに保持する。
+
+decision source: `../../records/2026-10-04-management-root-repository-terminology/`
+
+---
+
 ## Workspace Repository terminology convergence
 
 旧development-environment modelでは、開発tool・workspace coordinationを所有するrepositoryを `Workspace Repository` と呼んでいた。

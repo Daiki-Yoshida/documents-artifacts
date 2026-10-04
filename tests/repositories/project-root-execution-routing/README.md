@@ -1,6 +1,6 @@
 # RPG Project Workspace
 
-This repository is the **Project Repository**. Start project development from this root so project documentation, command routing, repository ownership, and final verification remain visible.
+This repository is the **Management Root Repository**. Start project development from this root so project documentation, command routing, repository ownership, and final verification remain visible.
 
 The game implementation lives in an independent Component Repository at:
 

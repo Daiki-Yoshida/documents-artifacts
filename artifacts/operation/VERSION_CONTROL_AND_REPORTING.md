@@ -19,7 +19,7 @@ Static repository ownership belongs to project structure guidance. Work-specific
 Work guidance may require Work Documents to become visible from the Project baseline, but that lifecycle goal does not itself grant commit/push/merge authority.
 
 - use the project-authorized documentation/coordination publication path;
-- if publication is not yet authorized, preserve the Work context in an authorized Project Repository working state and report publication as pending;
+- if publication is not yet authorized, preserve the Work context in an authorized Management Root Repository working state and report publication as pending;
 - never report baseline publication that has not actually happened.
 
 ## Reporting

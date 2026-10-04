@@ -1,12 +1,12 @@
 # Workspace構造 — Git所有境界と複数Repository
 
-Project Repository / Component Repository間のGit所有境界、複数repository構成、stable repository identity、Work Identityとの接続を扱う。
+Management Root Repository / Component Repository間のGit所有境界、複数repository構成、stable repository identity、Work Identityとの接続を扱う。
 
 ## Git所有境界
 
-### Project Repository
+### Management Root Repository
 
-Project Repositoryは、project-level coordination stateを所有する。
+Management Root Repositoryは、project-level coordination stateを所有する。
 
 `.worktrees/` 全体を一律ignoreしてはならない。
 
@@ -14,11 +14,11 @@ Work Identityの現行モデルでは、少なくとも次を区別する。
 
 ```text
 .worktrees/<work-type>/<work-name>/documents/
-    → Project Repositoryがtracked fileとして所有
+    → Management Root Repositoryがtracked fileとして所有
 
 .worktrees/<work-type>/<work-name>/<repository>/
     → participating repositoryのGit worktree
-    → Project Repositoryの通常fileとしては所有しない
+    → Management Root Repositoryの通常fileとしては所有しない
 ```
 
 したがってignore / materialization policyは、
@@ -29,7 +29,7 @@ Work Identityの現行モデルでは、少なくとも次を区別する。
 
 具体的な `.gitignore` patternやnested worktree materialization contractは `../work-identity/` が所有する。
 
-Project Repository側で通常ignoreする代表例:
+Management Root Repository側で通常ignoreする代表例:
 
 - 独立Git履歴を持つComponent Repositoryのcheckout
 - Work Identity配下のrepository-specific worktree path
@@ -49,15 +49,19 @@ Component Repository自身が次を所有する。
 - component cache / build output / generated file
 - component固有tool state
 
-Project RepositoryがComponent Repository内部の通常fileや生成物を誤って所有しないようにする。
+Management Root RepositoryがComponent Repository内部の通常fileや生成物を誤って所有しないようにする。
 
 ## Current repository roles
 
-current normativeではProject Repository / Component Repositoryをrepository roleとして用いる。filesystem上の包含を理由にparent / child repositoryとは呼ばない。旧Workspace Repository用語はProject Repositoryへ統合済みであり、第三のpeer roleとして要求しない。
+current normativeではManagement Root Repository / Component Repositoryをrepository roleとして用いる。
+
+`Management Root Repository` はproject-level management / coordinationとProject Rootの基準repositoryを表し、`Component Repository` はcomponent/product固有sourceとGit historyのownerを表す。
+
+`Project Repository` はこのroleの旧current名称、`Workspace Repository` はさらに古い名称としてhistoryへ保持する。filesystem上の包含だけからGit ownership / authority / dependencyの親子関係を導かない。
 
 ## 複数repository
 
-一つのProject Repositoryで複数Component Repositoryを調整できる。
+一つのManagement Root Repositoryで複数Component Repositoryを調整できる。
 
 必要な性質:
 
@@ -73,12 +77,12 @@ operation_scope:
 
 ownership:
   - "各repositoryのGit履歴所有者が明確"
-  - "Project RepositoryがComponent Repositoryのsource/historyを重複所有しない"
+  - "Management Root RepositoryがComponent Repositoryのsource/historyを重複所有しない"
 ```
 
-無関係なrepositoryを同じfolderへ置くだけのためにProject Repositoryを新設しない。
+無関係なrepositoryを同じfolderへ置くだけのためにManagement Root Repositoryを新設しない。
 
-Project Repositoryというroleは、Project Documentation、共有tool、project-level coordination、cross-component orchestration等の実際のProject責務が存在するときに成立する。
+Management Root Repositoryというroleは、Project Documentation、共有tool、project-level coordination、cross-component orchestration等の実際のProject責務が存在するときに成立する。
 
 ## Stable repository identity と REPO selector
 
@@ -101,7 +105,7 @@ Work Root内のrepository-specific worktree
 例:
 
 ```text
-Project Repository
+Management Root Repository
   selector: project
 
 Component Repository
@@ -123,7 +127,7 @@ Component Repository
 
 Component Repositoryがproduct sourceと独立Git履歴を所有することと、そのcheckoutがProject全体のdevelopment entry surfaceであることは別である。
 
-複数repository projectでは、Component Repositoryへ変更を加えるWorkであっても、Project Repository側に次のproject-level assetが存在し得る。
+複数repository projectでは、Component Repositoryへ変更を加えるWorkであっても、Management Root Repository側に次のproject-level assetが存在し得る。
 
 - Project Documentation
 - agent entrypoint / documentation routing
@@ -134,9 +138,9 @@ Component Repositoryがproduct sourceと独立Git履歴を所有することと�
 
 したがって、repository-specific source ownershipを理由にComponent Repository checkoutをProject全体のAI session rootへ昇格させない。
 
-Project Repository / Project Rootでproject contextを解決した後、stable repository identityやWork Identityを通じて対象Component Repository / worktreeへ操作をroutingする。
+Management Root Repository / Project Rootでproject contextを解決した後、stable repository identityやWork Identityを通じて対象Component Repository / worktreeへ操作をroutingする。
 
-standaloneなdevelopment contextでは同じphysical repositoryがProject Repositoryになり得るため、判定はrepository名やdirectory位置ではなく、**そのWorkがどのProject contextに属するか**で行う。
+standaloneなdevelopment contextでは同じphysical repositoryがManagement Root Repositoryになり得るため、判定はrepository名やdirectory位置ではなく、**そのWorkがどのProject contextに属するか**で行う。
 
 ## Primary Checkoutとの関係
 
@@ -152,9 +156,9 @@ standaloneなdevelopment contextでは同じphysical repositoryがProject Reposi
 
 Work単位の判断は `../work-identity/` またはproject固有policyが所有する。
 
-## Project Repository側toolへの依存
+## Management Root Repository側toolへの依存
 
-Component RepositoryがProject Repository側のtoolへ依存する場合、使用versionを明示する。
+Component RepositoryがManagement Root Repository側のtoolへ依存する場合、使用versionを明示する。
 
 ```yaml
 moving_ref:
@@ -169,6 +173,8 @@ fixed_ref:
 CIやrelease検証が、指定されていないworkspace最新版へ偶然依存してはいけない。
 
 ## Sources
+
+- `../../records/2026-10-04-management-root-repository-terminology/RECORD.md`
 
 - `../../records/2026-10-03-project-component-documentation-boundary/`
 

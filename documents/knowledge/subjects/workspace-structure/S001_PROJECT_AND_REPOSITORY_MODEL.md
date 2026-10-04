@@ -7,7 +7,7 @@ project全体の**静的なrepository/filesystem構造**を扱う。
 ## 基本用語
 
 ```yaml
-Project_Repository:
+Management_Root_Repository:
   意味: "Project全体のcoordination stateを所有する最上位repository"
   主な責務:
     - "Project DocumentationのGit ownership"
@@ -16,7 +16,7 @@ Project_Repository:
     - "project-level helperを安定して実行する基準面"
 
 Project_Root:
-  意味: "Project Repositoryの基準working tree root"
+  意味: "Management Root Repositoryの基準working tree root"
   用途:
     - "project-level path解決"
     - "documents/ と .worktrees/ の所有境界"
@@ -37,22 +37,26 @@ Primary_Checkout:
 current normativeの説明では、次を使用できる。
 
 ```yaml
-Project_Repository:
-  日本語: "プロジェクト管理リポジトリ"
-  短縮: "管理リポジトリ（文脈上Project roleであることが明確な場合）"
+Management_Root_Repository:
+  日本語: "管理ルートリポジトリ"
+  短縮: "管理ルート（repository roleであることが明確な場合）"
 
 Component_Repository:
   日本語: "コンポーネントリポジトリ"
 ```
 
+名称の `Management Root` は、このrepositoryが単なる「Projectに属するrepository」ではなく、Project全体のmanagement / coordinationの基準repositoryであり、そのbaseline working treeがProject Rootとなることを表す。
+
+`Project Root` はfilesystem / development contextのroot概念であり、repository role名とは別に維持する。
+
 「親リポジトリ / 子リポジトリ」はcurrent role名として使用しない。
 
 ### 単一repository
 
-Project全体が1repositoryで成立する場合、そのrepositoryがProject Repositoryとなる。
+Project全体が1repositoryで成立する場合、そのrepositoryがManagement Root Repositoryとなる。
 
 ```text
-Project Repository
+Management Root Repository
 = product repository
 = Project Rootを所有するrepository
 ```
@@ -61,27 +65,31 @@ Project Repository
 
 ### 複数repository
 
-複数repository Projectでは、Project Repositoryがproject-level coordinationを所有し、1つ以上のComponent Repositoryが参加できる。
+複数repository Projectでは、Management Root Repositoryがproject-level coordinationを所有し、1つ以上のComponent Repositoryが参加できる。
 
 ```text
-Project Repository
+Management Root Repository
   = project-level coordination / Project Root ownership
 
 Component Repository
   = projectに参加する独立repository
 ```
 
-Project RepositoryとComponent Repositoryは別のGit履歴を持ってよく、Git submoduleである必要はない。
+Management Root RepositoryとComponent Repositoryは別のGit履歴を持ってよく、Git submoduleである必要はない。
 
-### Workspace Repositoryという旧用語
+### 旧用語: Project Repository / Workspace Repository
 
-旧modelで `Workspace Repository` と呼んでいた「複数repositoryを調整するrepository」は、現行modelでは **Project Repository** の責務に包含する。
+`Project Repository` は、2026-10-03の責務model収束でcurrent role名として採用されたが、「Projectに属するrepository」という以上の責務を名称だけでは十分に表せないため、2026-10-04に **Management Root Repository** へ改称した。
 
-`Workspace Repository` をProject Repository / Component Repositoryと並ぶ第三のcurrent roleとして要求しない。旧source・history・既存project固有用語の説明で必要な場合だけcompatibility / historical termとして扱う。
+この変更はsemantic responsibilityの全面置換ではない。Project-level management / coordination、Project Root ownership、Project Documentation、public command surface、stable repository identity、Work Identity coordination state等の責務はManagement Root Repositoryへ継承する。
+
+さらに古いmodelで `Workspace Repository` と呼んでいた「複数repositoryを調整するrepository」の責務も、現行modelではManagement Root Repositoryへ収束している。
+
+`Project Repository` と `Workspace Repository` はcurrent peer roleとして要求しない。source / history / Decision Lineageの説明で必要な場合にhistorical termとして保持する。
 
 ## Repository構造
 
-### Project Repository
+### Management Root Repository
 
 project全体のcoordination責務を持つ。
 
@@ -114,13 +122,13 @@ product/component固有のsourceとGit履歴を所有する。
   - "componentのGit履歴"
 ```
 
-Project Repository配下にcheckoutを置けるが、Project Repositoryの通常fileとして管理しない。
+Management Root Repository配下にcheckoutを置けるが、Management Root Repositoryの通常fileとして管理しない。
 
 ## Project Rootとtop-level構造
 
-Project RootはProject Repositoryの基準working tree rootである。
+Project RootはManagement Root Repositoryの基準working tree rootである。
 
-複数repository構成でも、Project RootはProject Repositoryの基準working tree rootである。Component Repository checkoutがその配下に配置されてもProject Rootは移動しない。
+複数repository構成でも、Project RootはManagement Root Repositoryの基準working tree rootである。Component Repository checkoutがその配下に配置されてもProject Rootは移動しない。
 
 典型形:
 
@@ -145,11 +153,11 @@ Project RootはProject Repositoryの基準working tree rootである。
 - `documents/` 内部構造は `../documentation/` が所有する。
 - application内部moduleの配置はこのsubjectの責務ではない。
 
-## Project Repositoryの開発入口責務
+## Management Root Repositoryの開発入口責務
 
-Project Repositoryはproject-level coordination stateのGit ownershipを持つだけでなく、**人・AIがproject全体の開発contextへ入る基準面**でもある。
+Management Root Repositoryはproject-level coordination stateのGit ownershipを持つだけでなく、**人・AIがproject全体の開発contextへ入る基準面**でもある。
 
-日本語で役割を説明するときは、`Project Repository` を **プロジェクト管理リポジトリ**、文脈上明確な場合は **管理リポジトリ** と表現できる。ただし「管理」は単なるadministrative repositoryを意味しない。Project Repositoryは少なくとも次をproject-levelに束ねる。
+日本語では `Management Root Repository` を **管理ルートリポジトリ** と表現する。「管理ルート」は単なるadministrative repositoryではなく、Project全体のmanagement / coordinationとProject Rootの基準repositoryであることを示す。少なくとも次をproject-levelに束ねる。
 
 - Project Documentation
 - agent entrypointやdocumentation routing
@@ -158,7 +166,7 @@ Project Repositoryはproject-level coordination stateのGit ownershipを持つ�
 - repository/component間のcoordination
 - Work Identityが利用するproject-level coordination state
 
-「親repository / 子repository」という表現は、Git ownershipや依存方向を誤解させやすいため、Project Repository / Component Repositoryの役割名で区別する。
+「親repository / 子repository」という表現は、Git ownershipや依存方向を誤解させやすいため、Management Root Repository / Component Repositoryの役割名で区別する。
 
 ### Project RootはAI development sessionのentry surface
 
@@ -190,15 +198,15 @@ repository checkout / worktree
 
 これは「すべてのsubprocessをProject Rootのworking directoryで実行する」という意味ではない。実際のcommand target / subprocess working directoryの選択は `../development-execution/` が所有し、Work Rootとrepository-specific worktreeの意味は `../work-identity/` が所有する。
 
-### Project Repository自身のworktree
+### Management Root Repository自身のworktree
 
-Project Repository自身が1つのWorkへ参加し、Project Root配下の `.worktrees/<work-type>/<work-name>/<repository>/` にProject Repositoryのlinked worktreeが存在する場合も、そのlinked worktreeは実装対象であってAI development sessionのentry rootではない。
+Management Root Repository自身が1つのWorkへ参加し、Project Root配下の `.worktrees/<work-type>/<work-name>/<repository>/` にManagement Root Repositoryのlinked worktreeが存在する場合も、そのlinked worktreeは実装対象であってAI development sessionのentry rootではない。
 
 AIはProject Rootからproject contextを取得したうえで、対象worktreeへ操作をroutingする。
 
 ### standalone Component Repository
 
-Component Repositoryであるrepositoryが、上位Projectから切り離された独立projectとして意図的に開発される場合、そのdevelopment contextではそのrepository自身がProject Repositoryになり得る。
+Component Repositoryであるrepositoryが、上位Projectから切り離された独立projectとして意図的に開発される場合、そのdevelopment contextではそのrepository自身がManagement Root Repositoryになり得る。
 
 したがって規範は「Component RepositoryではAIを起動してはならない」ではなく、**そのWorkが属するProjectのProject RootからAI development sessionを開始する**ことである。
 
@@ -219,6 +227,8 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 その判断はWork Identity / project policyが所有する。
 
 ## Sources
+
+- `../../records/2026-10-04-management-root-repository-terminology/RECORD.md`
 
 - `../../records/2026-10-03-project-component-documentation-boundary/`
 

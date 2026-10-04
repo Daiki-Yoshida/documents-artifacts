@@ -86,7 +86,7 @@ documents/architecture/pathfinding.md
 現在何を変えようとしているか
 ```
 
-を同じ Project Repository から把握できる。
+を同じ Management Root Repository から把握できる。
 
 ---
 
@@ -96,7 +96,7 @@ documents/architecture/pathfinding.md
 
 Work Documents は Git 管理する。
 
-所有者は、`.worktrees/` が配置されている Project Root を所有する **最上位の Project Repository** とする。
+所有者は、`.worktrees/` が配置されている Project Root を所有する **最上位の Management Root Repository** とする。
 
 つまり、
 
@@ -104,7 +104,7 @@ Work Documents は Git 管理する。
 .worktrees/<work-type>/<work-name>/documents/
 ```
 
-はProject Repositoryが所有するtracked filesであり、**Project baseline branchから現在のactive Workとして確認できる状態**を目標とする。Project baseline branchはprojectが定義するstable coordination/documentation branchであり、名前をliteral `main` に固定しない。
+はManagement Root Repositoryが所有するtracked filesであり、**Project baseline branchから現在のactive Workとして確認できる状態**を目標とする。Project baseline branchはprojectが定義するstable coordination/documentation branchであり、名前をliteral `main` に固定しない。
 
 一方、その兄弟ディレクトリである、
 
@@ -112,7 +112,7 @@ Work Documents は Git 管理する。
 .worktrees/<work-type>/<work-name>/<repository>/
 ```
 
-は、それぞれ参加 repository の Git worktree であり、親 Project Repository の通常ファイルとしては管理しない。
+は、それぞれ参加 repository の Git worktree であり、親 Management Root Repository の通常ファイルとしては管理しない。
 
 ---
 
@@ -155,7 +155,7 @@ Work Identityは、Work DocumentsがProject baselineから確認可能になる�
 
 - project-local workflowがcoordination/documentation commitを明示的に許可する場合は、そのworkflowに従う。
 - baseline publicationのauthorityがまだ無い場合、未公開なのに「baselineへ反映済み」と扱わない。
-- その場合は、許可されたProject Repository working state等へWork contextを保持し、baseline publicationがpendingであることをreportする。
+- その場合は、許可されたManagement Root Repository working state等へWork contextを保持し、baseline publicationがpendingであることをreportする。
 
 commit / push / default-branch guard等のauthorityは `../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md` が主所有する。
 

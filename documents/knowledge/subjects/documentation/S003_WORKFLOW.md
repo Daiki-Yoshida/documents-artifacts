@@ -215,7 +215,7 @@ ProjectへComponent Repositoryが参加している場合も、Componentごと�
 
 ```yaml
 project_level_change:
-  owner: "Project Repository側のProject Documentation"
+  owner: "Management Root Repository側のProject Documentation"
 component_specific_change:
   owner: "component固有knowledgeの実authority"
 routing_change:
@@ -224,7 +224,7 @@ standalone_context:
   rule: "同じphysical repositoryを独立Projectとして扱う場合だけ、そのcontextのProject Documentationをそのrepository自身が所有できる"
 ```
 
-Project RepositoryとComponent Repositoryのrole定義は `../workspace-structure/` を参照する。parent/child repository hierarchyをdocumentation workflow側で再導入しない。
+Management Root RepositoryとComponent Repositoryのrole定義は `../workspace-structure/` を参照する。parent/child repository hierarchyをdocumentation workflow側で再導入しない。
 
 
 ## Managed Artifact Handling

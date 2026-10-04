@@ -15,7 +15,7 @@ Do not provide this file to the execution agent before the run.
   - base: documented default `main`
   - path: `.worktrees/feat/audit-log-export/main/`
 - Creates a **real registered linked Git worktree** (visible via `git worktree list --porcelain` or equivalent), not just a marker/plain directory.
-- Applies the Project Repository materialization invariant: the branch tree contains tracked `.worktrees/PROJECT_COORDINATION.md`, so the linked worktree must not recursively materialize the project-level `.worktrees/` tree.
+- Applies the Management Root Repository materialization invariant: the branch tree contains tracked `.worktrees/PROJECT_COORDINATION.md`, so the linked worktree must not recursively materialize the project-level `.worktrees/` tree.
 - Leaves the linked worktree clean after materialization.
 - Leaves the primary generated repository free of tracked task changes (runtime worktree state is ignored; coordination file remains tracked and unmodified).
 - Leaves `documents/artifacts/` unchanged.
