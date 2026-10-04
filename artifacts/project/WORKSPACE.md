@@ -8,11 +8,27 @@ Read this when resolving Project Root, repository ownership, multi-repository st
 
 **Project Root** is the baseline working-tree root of the Management Root Repository and the reference point for project-level paths such as `documents/` and `.worktrees/`.
 
-In a multi-repository Project, the **Management Root Repository** owns Project-level coordination while independent **Component Repositories** own product/component source and Git history.
-
-Do not introduce a separate Workspace Repository as a required third peer role. Older/project-local uses of that term may describe a Management Root Repository focused on workspace coordination, but the current reusable role model is Management Root Repository + Component Repository.
+In a multi-repository Project, the **Management Root Repository** owns Project-level coordination while independent **Component Repositories** own product/component source and Git history. The reusable role model is exactly these two roles.
 
 Do not create a Management Root Repository merely because unrelated repositories share a folder; it must have real Project-level coordination responsibility.
+
+## Physical layout
+
+Component Repository primary checkouts live **under the Project Root by default**:
+
+```text
+<project-root>/
+├─ documents/
+├─ <component-a>/    # independent Component Repository primary checkout
+├─ <component-b>/    # independent Component Repository primary checkout
+└─ .worktrees/       # Work-specific checkouts — see WORKTREES.md
+```
+
+The exact relative path of each component checkout is project-local — resolve it through the project's stable repository mapping; a project may specialize it explicitly. Absent explicit project-local specialization, place component checkouts under the Project Root rather than as sibling directories next to it.
+
+Filesystem containment is placement only: it does not define Git ownership, dependency direction, or Project context. Each Component Repository keeps its own independent Git repository and history.
+
+Static primary checkouts and Work-specific checkouts are different layers. Work-specific repository checkouts resolve only through the Work Root contract — read `WORKTREES.md` when creating them, and do not place ad-hoc checkouts beside the Project Root. A task that sets up repository placement and materializes Work checkouts needs both this file and `WORKTREES.md`.
 
 ## Ownership
 
@@ -31,8 +47,6 @@ Component Repository owns its own:
 - Git history.
 
 Do not accidentally commit Component Repository source/history as ordinary Management Root Repository files.
-
-Do not describe this relationship as parent/child repository hierarchy. Filesystem containment does not define Git ownership, dependency direction, or Project context.
 
 ## `.worktrees/` ownership boundary
 
@@ -53,7 +67,7 @@ Detailed materialization belongs to `WORKTREES.md`.
 
 ## Stable repository identity
 
-Each participating repository should be deterministically resolvable by a stable project-local selector/role.
+Each participating repository should be deterministically resolvable by a stable project-local selector/role. That mapping also resolves each Component Repository's default checkout location (see Physical layout).
 
 The live Git/filesystem state remains source of truth; do not create a duplicate registry merely to mirror worktree state.
 
@@ -83,7 +97,7 @@ Project Root
 
 This does not require every subprocess to run with Project Root as its working directory. Execution-target routing belongs to `../execution/COMMANDS_AND_CI.md`.
 
-A repository that normally acts as a Component Repository may itself be the Management Root Repository when it is intentionally developed as a standalone Project. Repository role is therefore contextual: use the Project context that owns the Work, not a permanent parent/child label or filesystem position.
+A repository that normally acts as a Component Repository may itself be the Management Root Repository when it is intentionally developed as a standalone Project. Repository role is therefore contextual: use the Project context that owns the Work, not a fixed role label or filesystem position.
 
 ## Documentation ownership in multi-repository Projects
 
@@ -93,6 +107,6 @@ Project Documentation should route to component-specific knowledge when Project 
 
 ## Primary checkout
 
-A Primary Checkout is a stable reference checkout for repository/root resolution and project-level helper operations.
+A Primary Checkout is a stable reference checkout for repository/root resolution and project-level helper operations. A Component Repository's Primary Checkout lives under the Project Root by default (see Physical layout).
 
 It does not decide which branch/worktree a Work must use.

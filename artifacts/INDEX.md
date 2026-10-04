@@ -24,6 +24,7 @@ This directory is a **managed derived snapshot**. Do not edit the installed arti
 | Performance-driven redesign | `implementation/PERFORMANCE.md`; add `design/CONTRACTS.md` if interaction shape changes |
 | Documentation | `documentation/INDEX.md`; also use `operation/CHANGE_LIFECYCLE.md` when documentation is part of an engineering change |
 | Project / repository structure | `project/WORKSPACE.md` |
+| Multi-repository workspace setup (primary checkouts + Work checkouts) | `project/WORKSPACE.md` → `project/WORKTREES.md` |
 | Project-root session / command target routing | `project/WORKSPACE.md` + `execution/COMMANDS_AND_CI.md` |
 | Work identity / lifecycle | `project/WORK_IDENTITY.md`; add `project/WORK_LIFECYCLE.md` when needed |
 | Worktree operation | `project/WORKTREES.md`; add safety guidance for destructive actions |
