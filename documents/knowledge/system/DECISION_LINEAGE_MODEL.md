@@ -294,7 +294,7 @@ Artifact projectionは、subjectsのstatusを無視して全knowledgeを平坦�
 - lineage bookkeeping
 - historical provenance
 
-old modelへのnegative guard自体がcurrent ruleならprojectionできる。
+old modelへのnegative guardがcurrent ruleでも、それだけで自動的にprojectionしない。negative guardを残す具体的なprojection条件は `ARTIFACT_MODEL.md` のpositive-first projection / Negative Alternative Leakage規則が所有する。
 
 ## 12. Incremental adoption
 
