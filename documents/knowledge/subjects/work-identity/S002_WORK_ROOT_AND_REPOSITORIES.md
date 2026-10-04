@@ -1,14 +1,14 @@
 # Work Identity — Work Root and Repositories
 
 Work Identityのfilesystem表現、単一/複数repositoryの統一形状、repository派生identity、Git worktreeの物理配置とProject-level `.worktrees/` の境界を扱う。
-> Project Repository / Project Root / Component Repositoryの**静的な定義と配置**は `../workspace-structure/` が主所有する。ここでは、それらが1つのWorkへ参加するときのWork Root内構造と関係だけを扱う。
+> Management Root Repository / Project Root / Component Repositoryの**静的な定義と配置**は `../workspace-structure/` が主所有する。ここでは、それらが1つのWorkへ参加するときのWork Root内構造と関係だけを扱う。
 
 
 ## Project Root と `.worktrees/`
 
 `.worktrees/` を単なる Git worktree 格納ディレクトリとして扱わない。
 
-現行モデルでは、**Project Repository が所有する Work Identity Workspace** として扱う。
+現行モデルでは、**Management Root Repository が所有する Work Identity Workspace** として扱う。
 
 基本形:
 
@@ -30,7 +30,7 @@ Work Identityのfilesystem表現、単一/複数repositoryの統一形状、repo
 
 が Work Identity の物理的な **Work Root** となる。
 
-Project Root は、`.worktrees/` が配置されている最上位の Project Repository のルートである。
+Project Root は、`.worktrees/` が配置されている最上位の Management Root Repository のルートである。
 
 ---
 
@@ -57,7 +57,7 @@ Project Root は、`.worktrees/` が配置されている最上位の Project Re
       └─ project/
 ```
 
-`project/` は、そのprojectでProject Repositoryを指すstable repository selectorの例である。selector名はproject-localであり、Git branch名を意味しない。
+`project/` は、そのprojectでManagement Root Repositoryを指すstable repository selectorの例である。selector名はproject-localであり、Git branch名を意味しない。
 
 ### 複数 repository
 
@@ -197,19 +197,19 @@ repository-specific worktree
 
 をProject全体のAI session entry rootとして扱わない。
 
-Project Repository自身のlinked worktreeがWork Root配下にある場合も同じであり、そのworktreeはimplementation targetであってProject Rootの代替ではない。
+Management Root Repository自身のlinked worktreeがWork Root配下にある場合も同じであり、そのworktreeはimplementation targetであってProject Rootの代替ではない。
 
 個々のbuild/test/install等でsubprocess working directoryをrepository-specific worktreeへ変えることは、この規範と矛盾しない。Project Rootからpublic commandを利用して別directoryへexecutionをroutingするgeneric contractは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有する。
 
 ## tracked Work Documents と nested worktree の技術課題
 
-Project Repository が、
+Management Root Repository が、
 
 ```text
 .worktrees/<work-type>/<work-name>/documents/
 ```
 
-をProject baseline branchでtrackすると、そのcoordination stateを取り込んだProject RepositoryのWork worktreeで、Project-level `.worktrees/` が再帰的にmaterializeされる可能性がある。
+をProject baseline branchでtrackすると、そのcoordination stateを取り込んだManagement Root RepositoryのWork worktreeで、Project-level `.worktrees/` が再帰的にmaterializeされる可能性がある。
 
 望ましい filesystem state は次である。
 
@@ -232,7 +232,7 @@ project-root/
 # Project-level .worktrees/ はここへ再帰展開しない
 ```
 
-この問題は概念モデルを変更して回避せず、Project Repositoryのlinked Work worktreeへworktree-local materialization policyを適用して解決する。
+この問題は概念モデルを変更して回避せず、Management Root Repositoryのlinked Work worktreeへworktree-local materialization policyを適用して解決する。
 
 現行の検証済みcontractは `S005_WORKTREE_MATERIALIZATION.md`、public create/status/remove semanticsは `S006_WORKTREE_COMMANDS.md` が所有する。具体的には、Project-level coordination stateを所有するrepositoryへ必要なsparse exclusionをworktree-localに適用し、nested filesystemへProject-level `.worktrees/` をmaterializeしない。
 
