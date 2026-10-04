@@ -37,7 +37,7 @@ Work lifecycle、Work completion、Project/Work/Run resource scope、Resource Id
 
 ### S005_WORKTREE_MATERIALIZATION.md
 
-Project Repository自身がWorkへ参加する場合のrecursive materialization問題、実験、採用したworktree-local sparse contract、creation/recreation invariant、compatibility境界を扱う。
+Management Root Repository自身がWorkへ参加する場合のrecursive materialization問題、実験、採用したworktree-local sparse contract、creation/recreation invariant、compatibility境界を扱う。
 
 ### S006_WORKTREE_COMMANDS.md
 
@@ -54,7 +54,7 @@ worktree command reference implementationのfresh-clone検証、post-reviewで�
 
 ## Workspace Structureとの境界
 
-Project Repository、Project Root、Component Repository、stable repository identity / locationなど、**project全体の静的構造**は `../workspace-structure/` が主所有する。
+Management Root Repository、Project Root、Component Repository、stable repository identity / locationなど、**project全体の静的構造**は `../workspace-structure/` が主所有する。
 
 Work Identityはそれらを前提として、Work Root、Work Documents、Work単位のbranch/worktree/resource lifecycleを所有する。Project Documentation内部のrouting / structureは `../documentation/` が所有する。 commit / pushを行うauthorityとengineering change全体のreportingは `../engineering-operation/`、branch/worktreeを破壊するoperationのrisk判定は `../development-safety/` が主所有する。
 
