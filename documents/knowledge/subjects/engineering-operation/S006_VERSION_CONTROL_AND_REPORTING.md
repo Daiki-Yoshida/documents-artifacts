@@ -20,7 +20,7 @@ project-local workflowがより具体的にcommit authorityを定める場合は
 
 - Work Identityの確認だけでbaseline branchへのcommit権限が生じるわけではない。
 - project-local workflowがcoordination/documentation commitやPR/merge経路を明示している場合は、その経路でbaseline-visible stateを成立させてよい。
-- authorityが無い場合は、Work Documentsを許可されたProject Repository working state等へ保持し、baseline publicationがpendingであることをreportする。
+- authorityが無い場合は、Work Documentsを許可されたManagement Root Repository working state等へ保持し、baseline publicationがpendingであることをreportする。
 - 未commit / 未mergeなのに「Project baselineへ反映済み」と報告しない。
 
 これにより、Work IdentityはWork Documentsのownership/lifecycleを所有し、engineering-operationはそのGit publication authorityを所有する。
