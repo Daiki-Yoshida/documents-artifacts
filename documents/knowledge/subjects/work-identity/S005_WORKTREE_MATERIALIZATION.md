@@ -1,6 +1,6 @@
 # Work Identity — Worktree Materialization
 
-Project RepositoryがWork Documentsをtrackしながら、同じWork Root配下へ同一repositoryのGit worktreeを安全に配置するためのmaterialization contract、実験結果、compatibility境界を扱う。
+Management Root RepositoryがWork Documentsをtrackしながら、同じWork Root配下へ同一repositoryのGit worktreeを安全に配置するためのmaterialization contract、実験結果、compatibility境界を扱う。
 
 ## 検証対象
 
@@ -17,7 +17,7 @@ feat/materialization-test
 └─ .worktrees/
    └─ feat/
       └─ materialization-test/
-         ├─ documents/   # Project Repository が main で追跡する Work Documents
+         ├─ documents/   # Management Root Repository が main で追跡する Work Documents
          └─ main/        # 同じ repository の Git worktree
 ```
 
@@ -86,10 +86,10 @@ b99c350084df58995e4093876c0aa28e0043063e
 
 ```text
 .worktrees/<type>/<name>/documents/
-    → Project Repository が追跡
+    → Management Root Repository が追跡
 
 .worktrees/<type>/<name>/<repository>/
-    → sibling Git worktreeなのでProject Repositoryの通常ファイルとして無視
+    → sibling Git worktreeなのでManagement Root Repositoryの通常ファイルとして無視
 ```
 
 このignore境界は成功したが、`.gitignore` は tracked paths のcheckoutを抑制しない。
@@ -168,7 +168,7 @@ Nested:
 Primary:
 - Work Documentsはmaterializeしたまま
 - Primary自体はsparseにならない
-- nested worktree filesystemはProject Repositoryのstatus noiseにならない
+- nested worktree filesystemはManagement Root Repositoryのstatus noiseにならない
 
 確認されたworktree-local状態:
 
@@ -386,7 +386,7 @@ mainで増えたWork Documentsをbranchへ取り込んでもnested filesystemに
 └─ <repository>/
 ```
 
-- Work DocumentsをProject Repositoryのbaseline branchでtrack可能
+- Work DocumentsをManagement Root Repositoryのbaseline branchでtrack可能
 - 同一repositoryを含むGit worktreeを兄弟配置可能
 - single/multi repositoryの統一形状を維持可能
 
@@ -428,8 +428,8 @@ git -C <worktree-path> \
 
 Primary checkout:
 - Work Documents materialized
-- Work Documents tracked by Project Repository
-- sibling repository worktree pathはProject Repositoryで通常ファイルとしてignore
+- Work Documents tracked by Management Root Repository
+- sibling repository worktree pathはManagement Root Repositoryで通常ファイルとしてignore
 
 Nested worktree:
 - intended Work branch
