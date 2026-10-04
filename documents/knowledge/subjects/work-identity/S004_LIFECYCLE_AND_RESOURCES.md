@@ -13,7 +13,7 @@ Design / discussion
        ↓
 Work Identity confirmed
        ↓
-Work Documents initialized in Project Repository
+Work Documents initialized in Management Root Repository
        ↓
 baseline visibility / publication reconciled as authorized (or explicitly recorded pending)
        ↓
