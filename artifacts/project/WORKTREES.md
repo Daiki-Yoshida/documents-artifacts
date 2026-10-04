@@ -42,7 +42,7 @@ For a missing Work branch:
 
 A same-name remote Work branch may track its corresponding remote branch according to project policy.
 
-## Project Repository materialization invariant
+## Management Root Repository materialization invariant
 
 When the selected repository's stable role owns (or can later receive) tracked project-level `.worktrees/**` coordination state, a nested linked worktree must **not recursively materialize the project-level `.worktrees/` tree**.
 
@@ -73,7 +73,7 @@ Preflight at least:
 - target path is absent or the exact requested registered worktree;
 - no unrelated content occupies the path;
 - branch is not owned by another incompatible writable worktree;
-- Project Repository ignore boundary covers the sibling worktree path where required;
+- Management Root Repository ignore boundary covers the sibling worktree path where required;
 - required materialization capability is supported.
 
 Create should be idempotent:
@@ -87,7 +87,7 @@ Verify before returning success:
 - the registered Git worktree path equals the resolved path;
 - the checked-out branch equals the resolved Work branch;
 - the single-writable-checkout ownership invariant holds;
-- for a Project Repository checkout, Work Documents remain materialized/tracked and the sibling worktree path does not appear as ordinary untracked project content — never blanket-ignore Work Documents;
+- for a Management Root Repository checkout, Work Documents remain materialized/tracked and the sibling worktree path does not appear as ordinary untracked project content — never blanket-ignore Work Documents;
 - where the materialization contract applies, ordinary repository content is materialized, nested `.worktrees/` is absent, and worktree-local sparse state is active.
 
 Creation that fails these checks is not successful even if its commands exited 0.
@@ -138,7 +138,7 @@ Reference validation demonstrated the contract for the test repository below. He
 ```yaml
 topology: "single repository"
 REPO: "main"
-case: "Project Repository itself as linked worktree"
+case: "Management Root Repository itself as linked worktree"
 Git: "2.43.0"
 OS: "WSL2/Linux"
 ```
