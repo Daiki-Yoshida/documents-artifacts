@@ -60,6 +60,8 @@ for file in \
   documents/knowledge/records/2026-10-04-negative-alternative-leakage/ISSUE_190_BODY.md \
   documents/knowledge/records/2026-10-04-management-root-repository-terminology/RECORD.md \
   documents/knowledge/records/2026-10-04-management-root-repository-terminology/ISSUE_192_BODY.md \
+  documents/knowledge/records/2026-10-04-workspace-physical-topology/RECORD.md \
+  documents/knowledge/records/2026-10-04-workspace-physical-topology/ISSUE_191_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -455,10 +457,16 @@ if grep -Fq '## Hierarchical projects' artifacts/documentation/PRINCIPLES_AND_RO
 fi
 grep -Fq 'does not automatically make it an independent Project' artifacts/documentation/PRINCIPLES_AND_ROUTING.md \
   || fail "Artifact Component Repository documentation boundary missing"
-grep -Fq 'Do not introduce a separate Workspace Repository as a required third peer role' artifacts/project/WORKSPACE.md \
-  || fail "Artifact workspace reintroduced Workspace Repository peer role"
-grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
-  || fail "Artifact workspace parent/child terminology guard missing"
+grep -Fq 'Component Repository primary checkouts live **under the Project Root by default**' artifacts/project/WORKSPACE.md \
+  || fail "Artifact workspace lost the positive component containment rule"
+grep -Fq 'A task that sets up repository placement and materializes Work checkouts needs both this file and `WORKTREES.md`' artifacts/project/WORKSPACE.md \
+  || fail "Artifact workspace lost the WORKTREES handoff"
+if grep -Fq 'Workspace Repository' artifacts/project/WORKSPACE.md; then
+  fail "Artifact workspace carries retired Workspace Repository terminology (NAL)"
+fi
+if grep -Fq 'parent/child' artifacts/project/WORKSPACE.md; then
+  fail "Artifact workspace carries old parent/child model explanation (NAL)"
+fi
 
 # Retired Workspace Repository / parent-child role wording must not survive in
 # current normative text or its Artifact projection (explicit old-term and
@@ -605,8 +613,8 @@ grep -Fq 'Management Root Repository' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current Management Root Repository guidance"
 grep -Fq 'Component Repository' artifacts/project/WORKSPACE.md \
   || fail "Artifact fixture lost current Component Repository guidance"
-grep -Fq 'Do not describe this relationship as parent/child repository hierarchy' artifacts/project/WORKSPACE.md \
-  || fail "Artifact fixture lost current negative guard against old hierarchy"
+grep -Fq 'Filesystem containment is placement only' artifacts/project/WORKSPACE.md \
+  || fail "Artifact fixture lost the containment/ownership axis separation"
 
 # Management Root Repository terminology guards (Issue #192).
 grep -Fq '管理ルートリポジトリ' "$workspace_index" \
@@ -620,6 +628,31 @@ grep -Fq 'Management Root Repository terminology adoption' "$workspace_history" 
 if grep -rlq 'Project Repository' artifacts/; then
   fail "Artifact runtime still carries retired Project Repository terminology (NAL)"
 fi
+
+# Workspace physical topology guards (Issue #191).
+grep -Fq 'defaultではProject Root配下に配置する' "$workspace_model" \
+  || fail "workspace model lost the positive primary-checkout containment rule"
+grep -Fq 'primary_checkout_placement:' "$workspace_model" \
+  || fail "workspace model lost the structured placement contract"
+grep -Fq 'Project Rootのsiblingへのad-hoc checkout/worktree配置は現行guidanceが正当化しない' "$workspace_model" \
+  || fail "workspace model lost the sibling-placement guard"
+grep -Fq 'Component Repository primary checkoutのdefault物理配置' "$workspace_index" \
+  || fail "workspace index does not own the physical placement contract"
+grep -Fq '2026-10-04-workspace-physical-topology' "$workspace_index" \
+  || fail "workspace index lost the physical-topology decision lineage"
+grep -Fq '## Physical containment clarification' "$workspace_history" \
+  || fail "workspace history lost the #167 containment scope clarification"
+grep -Fq '167が廃止したのはrole / authority / documentation上のparent/child hierarchy' "$workspace_history" \
+  || fail "workspace history conflated role-hierarchy removal with containment removal"
+grep -Fq '先に `../workspace-structure/` の静的配置契約' documents/knowledge/subjects/work-identity/S002_WORK_ROOT_AND_REPOSITORIES.md \
+  || fail "work-identity lost the static-placement connection"
+require_file tests/scenarios/multi-repo-workspace-bootstrap/scenario.conf
+require_file tests/scenarios/multi-repo-workspace-bootstrap/prepare.sh
+require_file tests/scenarios/multi-repo-workspace-bootstrap/PROMPT.md
+require_file tests/scenarios/multi-repo-workspace-bootstrap/EXPECTATIONS.md
+require_file tests/repositories/multi-repo-bootstrap/scripts/verify-workspace.sh
+require_file tests/repositories/multi-repo-bootstrap/workspace/repositories.conf
+require_file tests/repositories/multi-repo-bootstrap/.worktrees/PROJECT_COORDINATION.md
 
 # Targeted multi-generation subject lineage guards (Issues #174 / #175).
 encap_altitude=documents/knowledge/subjects/encapsulation-horizon/S004_CONCEPT_ALTITUDE.md

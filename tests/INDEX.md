@@ -258,5 +258,6 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `separate-runtime-boundary` | separate-runtime-boundary | separate deployables間はpublished wire contract経由 / frontend→backend internals import禁止 (boundary guard `make verify`) / same-runtime CLI→Applicationは合法維持 / reported vs observed reads分離 (Issue #141) |
 | `worktree-removal-preflight` | worktree-project | clean・registered・期待pathのworktreeが**別branch**にbindされている mismatch を検出してremoval前に停止するか (PASS=refusal) / force・branch削除禁止 (Issue #144) |
+| `multi-repo-workspace-bootstrap` | multi-repo-bootstrap | component sources外部・component checkout未配置の状態からagent自身がprimary checkout containment + 全participating repositoryのWork worktree materializationを解決 / sibling配置・ad-hoc checkout・unregistered dirは不可 (Issue #191) |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
