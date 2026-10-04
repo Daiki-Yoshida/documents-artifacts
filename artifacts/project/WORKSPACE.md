@@ -4,19 +4,19 @@ Read this when resolving Project Root, repository ownership, multi-repository st
 
 ## Static model
 
-**Project Repository** owns project-level coordination state.
+**Management Root Repository** owns project-level coordination state.
 
-**Project Root** is the baseline working-tree root of the Project Repository and the reference point for project-level paths such as `documents/` and `.worktrees/`.
+**Project Root** is the baseline working-tree root of the Management Root Repository and the reference point for project-level paths such as `documents/` and `.worktrees/`.
 
-In a multi-repository Project, the **Project Repository** owns Project-level coordination while independent **Component Repositories** own product/component source and Git history.
+In a multi-repository Project, the **Management Root Repository** owns Project-level coordination while independent **Component Repositories** own product/component source and Git history.
 
-Do not introduce a separate Workspace Repository as a required third peer role. Older/project-local uses of that term may describe a Project Repository focused on workspace coordination, but the current reusable role model is Project Repository + Component Repository.
+Do not introduce a separate Workspace Repository as a required third peer role. Older/project-local uses of that term may describe a Management Root Repository focused on workspace coordination, but the current reusable role model is Management Root Repository + Component Repository.
 
-Do not create a Project Repository merely because unrelated repositories share a folder; it must have real Project-level coordination responsibility.
+Do not create a Management Root Repository merely because unrelated repositories share a folder; it must have real Project-level coordination responsibility.
 
 ## Ownership
 
-Project Repository may statically own/project:
+Management Root Repository may statically own/project:
 
 - Project Documentation;
 - project-level Docker/Compose definitions;
@@ -30,7 +30,7 @@ Component Repository owns its own:
 - component-specific CI/release files;
 - Git history.
 
-Do not accidentally commit Component Repository source/history as ordinary Project Repository files.
+Do not accidentally commit Component Repository source/history as ordinary Management Root Repository files.
 
 Do not describe this relationship as parent/child repository hierarchy. Filesystem containment does not define Git ownership, dependency direction, or Project context.
 
@@ -42,11 +42,11 @@ Current model distinguishes:
 
 ```text
 .worktrees/<work-type>/<work-name>/documents/
-  → tracked by the Project Repository
+  → tracked by the Management Root Repository
 
 .worktrees/<work-type>/<work-name>/<repository>/
   → Git worktree of the participating repository
-  → not an ordinary Project Repository file
+  → not an ordinary Management Root Repository file
 ```
 
 Detailed materialization belongs to `WORKTREES.md`.
@@ -70,7 +70,7 @@ Do not treat these as the Project-level AI session root merely because implement
 - a Work Root;
 - a Component Repository checkout;
 - a repository-specific Work worktree;
-- a linked worktree of the Project Repository itself.
+- a linked worktree of the Management Root Repository itself.
 
 Resolve project context first, then route operations to the selected repository/worktree.
 
@@ -83,13 +83,13 @@ Project Root
 
 This does not require every subprocess to run with Project Root as its working directory. Execution-target routing belongs to `../execution/COMMANDS_AND_CI.md`.
 
-A repository that normally acts as a Component Repository may itself be the Project Repository when it is intentionally developed as a standalone Project. Repository role is therefore contextual: use the Project context that owns the Work, not a permanent parent/child label or filesystem position.
+A repository that normally acts as a Component Repository may itself be the Management Root Repository when it is intentionally developed as a standalone Project. Repository role is therefore contextual: use the Project context that owns the Work, not a permanent parent/child label or filesystem position.
 
 ## Documentation ownership in multi-repository Projects
 
-Project Repository owns Project-level documentation/routing. Component Repository may own component-specific documentation where that ownership is appropriate, but Component Repository status alone does not imply a separate Project Documentation tree or a separate Project context.
+Management Root Repository owns Project-level documentation/routing. Component Repository may own component-specific documentation where that ownership is appropriate, but Component Repository status alone does not imply a separate Project Documentation tree or a separate Project context.
 
-Project Documentation should route to component-specific knowledge when Project work needs it; do not duplicate component authority into Project Repository merely for convenience.
+Project Documentation should route to component-specific knowledge when Project work needs it; do not duplicate component authority into Management Root Repository merely for convenience.
 
 ## Primary checkout
 
