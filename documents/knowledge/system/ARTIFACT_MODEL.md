@@ -126,9 +126,62 @@ artifactでは通常落としてよい:
 
 `unresolved` は通常historyではない。AIが誤った仮定を置かないためにruntimeで知る必要があるcurrent unresolved constraintはprojection対象にできる。
 
-old modelを禁止するnegative guardがcurrent ruleなら、old model本体がsupersededでもnegative guardはprojectionできる。
+old modelを禁止するnegative guardがcurrent ruleでも、それだけで自動的にprojectionしない。positive current ruleだけでruntime判断を十分に導けるかを先に確認し、negative guardは現実的な誤読・failure modeを防ぐdecision valueがcontext costを上回る場合に限って残す。obsolete model全体を説明せず短いguardだけで足りるなら、そうする。
 
 > **compression は semantic weakening ではない。**
+
+## 6.1 Positive-first projection と Negative Alternative Leakage
+
+Artifact projectionでは、consumerが現在どう判断・行動すべきかを、可能な限り **current positive model** から直接表現する。
+
+```text
+current positive model
+  → expected state / role / procedure
+  → necessary condition / exception
+```
+
+情報圧縮で本来落とせるold / superseded / rejected / undesired alternativeを、「それを否定する説明」のためだけにruntime contextへ再導入し、current modelよりalternative側を目立たせることを **Negative Alternative Leakage (NAL / 否定代替案リーク)** と呼ぶ。
+
+典型的なNAL:
+
+```text
+Aは使わない
+Aとはこういうもの
+Aになる手順はこう
+Aを避けること
+ちなみにBを使う
+```
+
+positive-first projection:
+
+```text
+Bを使う
+Bのrole / state / procedureはこう
+必要なcondition / exceptionはこう
+```
+
+NALは「negative sentenceを使うな」という規則ではない。次のようなcurrent negative contractは、その禁止自体がruntime decisionに必要なので保持してよい。
+
+- destructive / safety boundary
+- secret exposure禁止
+- incompatible ownership禁止
+- positive ruleだけでは防ぎにくいrealistic misreadingへの短いguard
+
+negative guardを残すときは、少なくとも次を確認する。
+
+```yaml
+negative_guard_projection:
+  realistic_failure_mode: "対象となる誤読・failureがruntimeで現実的か"
+  positive_rule_insufficient: "positive current ruleだけでは十分に防げないか"
+  decision_value_over_context_cost: "guardの価値がalternativeを想起させるcontext costを上回るか"
+  minimal_form: "obsolete alternative全体を説明せず短いguardだけで表現できないか"
+```
+
+重要な適用境界:
+
+> **NALはprojection / compressionのアンチパターンであり、knowledge preservationのアンチパターンではない。**
+
+`subjects/` はsemantic completenessを担うため、superseded / rejected / historical knowledgeや、その否定・訂正・Decision Lineageを必要に応じて保持する。Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない。
 
 ## 7. Current-effective projection gate
 
@@ -242,3 +295,4 @@ artifact更新では、単に旧artifactとの差分を見るのではなく、�
 - `TRACEABILITY_MODEL.md`
 - `DECISION_LINEAGE_MODEL.md`
 - `../records/2026-10-03-knowledge-effective-status-lineage/`
+- `../records/2026-10-04-negative-alternative-leakage/RECORD.md`
