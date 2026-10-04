@@ -88,13 +88,13 @@ Use relative links from the referring document.
 
 Repository roles come from Project/workspace guidance.
 
-A Project Repository owns the Project-level documentation/routing authority. Component Repositories may own component-specific knowledge according to their Git/source ownership, but **being a Component Repository does not automatically make it an independent Project or require another `documents/INDEX.md`**.
+A Management Root Repository owns the Project-level documentation/routing authority. Component Repositories may own component-specific knowledge according to their Git/source ownership, but **being a Component Repository does not automatically make it an independent Project or require another `documents/INDEX.md`**.
 
 Typical shape:
 
 ```text
 Project
-├─ Project Repository
+├─ Management Root Repository
 │  └─ documents/INDEX.md
 ├─ Component Repository A
 └─ Component Repository B
@@ -102,6 +102,6 @@ Project
 
 Project Documentation should route to component-specific knowledge when needed, without duplicating it as a competing authority.
 
-A physical repository that normally participates as a Component Repository may own its own Project Documentation only when it is intentionally used as a standalone Project context, in which case it acts as that context's Project Repository.
+A physical repository that normally participates as a Component Repository may own its own Project Documentation only when it is intentionally used as a standalone Project context, in which case it acts as that context's Management Root Repository.
 
-Do not model Project Repository / Component Repository as parent/child repository hierarchy, and do not require a special `documents/project/children.md` document.
+Do not model Management Root Repository / Component Repository as parent/child repository hierarchy, and do not require a special `documents/project/children.md` document.
