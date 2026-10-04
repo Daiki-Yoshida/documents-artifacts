@@ -275,16 +275,23 @@ normal_task:
 
 ## Projection rules
 
+Projectionは **positive current model first** を基本とする。runtime agentが現在どう判断・行動すべきかを直接書ける場合、obsolete / rejected / undesired alternativeを「使うな」と説明するためだけに持ち込まない。
+
+本来圧縮できるalternativeをnegative explanation経由でruntimeへ漏らし、current modelより目立たせることを **Negative Alternative Leakage (NAL)** として避ける。
+
+NALはArtifact projectionの規則であり、subjectsのsemantic completenessへ逆適用しない。
+
 ```yaml
 preserve:
   - "normative strength"
   - "preconditions"
   - "exceptions"
-  - "negative guards"
+  - "runtime decisionに必要なnegative guards（positive ruleだけでは防ぎにくいrealistic failure modeに限定）"
   - "ownership / routing boundaries"
   - "decision rules needed by an agent"
 
 remove_or_compress:
+  - "negative explanationのためだけに再導入されるnon-current / undesired alternative"
   - "history"
   - "source provenance detail"
   - "migration state"
