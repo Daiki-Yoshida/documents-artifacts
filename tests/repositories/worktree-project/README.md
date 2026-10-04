@@ -1,10 +1,10 @@
 # Worktree Project Sample
 
-Single-**Project Repository** fixture for isolated feature work.
+Single-**Management Root Repository** fixture for isolated feature work.
 
 ## Work environment conventions
 
-- This project is a single Project Repository; the stable repository
+- This project is a single Management Root Repository; the stable repository
   selector is `main`.
 - A confirmed Work Identity maps to a branch of the same name
   (e.g. `feat/audit-log-export` → branch `feat/audit-log-export`).

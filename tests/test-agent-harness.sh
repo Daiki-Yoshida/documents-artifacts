@@ -240,8 +240,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   if [[ "$scenario" == "project-root-execution-routing" ]]; then
     comp="$target/components/game"
 
-    grep -Fq 'Project Repository' "$target/README.md" \
-      || fail "project-root routing fixture does not identify Project Repository"
+    grep -Fq 'Management Root Repository' "$target/README.md" \
+      || fail "project-root routing fixture does not identify Management Root Repository"
     grep -Fq 'documents/INDEX.md' "$target/AGENTS.md" \
       || fail "project-root routing AGENTS.md lacks project documentation entry"
     grep -Fq '`artifacts/INDEX.md`' "$target/documents/INDEX.md" \
@@ -261,9 +261,9 @@ for scenario_dir in "${scenario_dirs[@]}"; do
     [[ -z "$(git -C "$comp" status --porcelain)" ]] \
       || fail "game Component Repository dirty at baseline"
     git -C "$target" check-ignore -q components/game \
-      || fail "game Component Repository is not ignored by Project Repository"
+      || fail "game Component Repository is not ignored by Management Root Repository"
     if git -C "$target" ls-files --error-unmatch components/game/config/pathfinding-limit.txt >/dev/null 2>&1; then
-      fail "Project Repository tracks Component Repository source"
+      fail "Management Root Repository tracks Component Repository source"
     fi
 
     [[ "$(tr -d '[:space:]' < "$target/config/pathfinding-required.txt")" == "128" ]] \
@@ -474,7 +474,7 @@ grep -Fq 'commits are preserved according to project policy' "$wt_doc" \
 if grep -qiE 'push.*preserv|preserv.*push|remote.*requir' "$wt_doc"; then
   fail "WORKTREES preservation drifted toward a remote-push requirement"
 fi
-# create preflight: the Project Repository ignore-boundary gate
+# create preflight: the Management Root Repository ignore-boundary gate
 grep -Fq 'ignore boundary covers the sibling worktree path' "$wt_doc" \
   || fail "WORKTREES create preflight lost the ignore-boundary gate"
 # create postconditions: registered path/branch identity plus Work

@@ -2,7 +2,7 @@
 set -euo pipefail
 
 [[ -n "${TARGET:-}" && -d "$TARGET/.git" ]] || {
-  echo "prepare.sh: TARGET must point at the generated Project Repository" >&2
+  echo "prepare.sh: TARGET must point at the generated Management Root Repository" >&2
   exit 1
 }
 

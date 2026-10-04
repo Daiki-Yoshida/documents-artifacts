@@ -1,6 +1,6 @@
 # Multi-Repo Workspace
 
-This repository is the **Workspace / Project Repository**. It owns:
+This repository is the **Management Root Repository**. It owns:
 
 - project coordination state;
 - workspace repository mapping;

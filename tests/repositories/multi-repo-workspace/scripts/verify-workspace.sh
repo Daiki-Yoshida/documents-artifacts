@@ -33,11 +33,11 @@ while IFS='=' read -r sel rel; do
     continue
   fi
 
-  # ownership: the Project Repository must not track component source
+  # ownership: the Management Root Repository must not track component source
   if [ -n "$(git ls-files -- "$rel" "$rel/")" ]; then
-    fail "project repository tracks component source under $rel"
+    fail "Management Root Repository tracks component source under $rel"
   else
-    pass "component '$sel' source is not tracked by the project repository"
+    pass "component '$sel' source is not tracked by the Management Root Repository"
   fi
 
   # component protocol conforms to the workspace target
