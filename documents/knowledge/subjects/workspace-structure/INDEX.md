@@ -1,6 +1,6 @@
 # Workspace Structure
 
-このsubjectは、**project全体の静的なrepository/filesystem構造、Project Repository / Project Root、Git所有境界、stable repository identity**を扱う。
+このsubjectは、**project全体の静的なrepository/filesystem構造、Management Root Repository / Project Root、Git所有境界、stable repository identity**を扱う。
 
 Work Root、Work Documents、repository-specific worktreeなど1つのWorkに属する動的構造は `../work-identity/` が主所有する。
 
@@ -16,7 +16,7 @@ workspace-structure/
 
 ### S001_PROJECT_AND_REPOSITORY_MODEL.md
 
-Project Repository / Project Root、Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。旧Workspace Repository用語はhistory / compatibility contextへ退避する。
+Management Root Repository / Project Root、Component Repository、単一/複数repository、top-level filesystem構造、Primary Checkoutの静的役割を扱う。旧Workspace Repository用語はhistory / compatibility contextへ退避する。
 
 ### S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md
 
@@ -48,7 +48,7 @@ work-identity
 
 ```yaml
 workspace_structure_owns:
-  - "Project Repository / Project Root"
+  - "Management Root Repository / Project Root"
   - "Component Repository"
   - "stable repository identity / role / base location"
   - "project-level Git ownership boundary"
@@ -67,14 +67,14 @@ work_identity_owns:
 - `.worktrees/` 全体ignoreを撤回
 - Work Documents trackingとrepository-specific worktree ignoreを分離
 - 旧Task Worktree定義をhistoryへ移動
-- Project Repository / Component Repositoryをcurrent roleとして明文化し、Workspace Repositoryを旧/compatibility用語へ整理
+- Management Root Repository / Component Repositoryをcurrent roleとして明文化し、Workspace Repositoryを旧/compatibility用語へ整理
 - stable repository identityとWork Identityの `REPO` selectorを接続
 
 旧定義は `S003_HISTORY.md` に保存している。
 
 ## AI development entryとの接続
 
-Project Repository / Project RootをAI development sessionの入口として扱うstatic contractは `S001_PROJECT_AND_REPOSITORY_MODEL.md` が主所有する。
+Management Root Repository / Project RootをAI development sessionの入口として扱うstatic contractは `S001_PROJECT_AND_REPOSITORY_MODEL.md` が主所有する。
 
 Component RepositoryのGit ownershipとProject-level development context ownershipを分離する規則は `S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md` を参照する。
 
@@ -82,18 +82,28 @@ Component RepositoryのGit ownershipとProject-level development context ownersh
 
 source: `../../records/2026-10-03-project-root-execution-routing/`
 
-## Project / Component repository terminology
+## Management Root / Component repository terminology
 
-current normativeでは `Project Repository` / `Component Repository` を責務roleとして使用する。parent/child repository hierarchyと旧Workspace Repository peer-role modelはcurrent authorityにしない。判断根拠は `../../records/2026-10-03-project-component-documentation-boundary/` を参照する。
+current normativeでは `Management Root Repository` / `Component Repository` を責務roleとして使用する。
+
+`Management Root Repository` はProject全体のmanagement / coordinationとProject Rootの基準repositoryを表す。日本語current role名は **管理ルートリポジトリ**。
+
+`Project Repository` は直前世代のcurrent名称、`Workspace Repository` はさらに古い名称としてhistoryへ保持する。parent/child repository hierarchyもcurrent authorityにはしない。
+
+判断根拠:
+
+- `../../records/2026-10-04-management-root-repository-terminology/`
+- `../../records/2026-10-03-project-component-documentation-boundary/`
 
 ## Decision lineage — repository role model
 
 Current:
 
-- `../../records/2026-10-03-project-component-documentation-boundary/` — Project Repository / Component Repositoryをcurrent repository roleとする責務model
+- `../../records/2026-10-04-management-root-repository-terminology/` — Management Root Repository / Component Repositoryをcurrent repository roleとする。Project Root terminologyは維持。
 
-Superseded:
+Superseded terminology:
 
-- `../../records/2026-09-21-docs-jp-snapshot/` — Workspace Repositoryを独立current roleとして扱う旧model。semantic knowledgeは `S003_HISTORY.md` に保持する
+- `../../records/2026-10-03-project-component-documentation-boundary/` — Project Repository / Component Repositoryをcurrent roleとした中間model。責務の大部分はManagement Root Repositoryへ継承し、`Project Repository` というrole名はsuperseded。
+- `../../records/2026-09-21-docs-jp-snapshot/` — Workspace Repositoryを独立current roleとして扱う旧model。semantic knowledgeは `S003_HISTORY.md` に保持する。
 
-parent / child repository hierarchyと旧Workspace Repository peer-role modelはcurrent authorityではないが、subjectsからsemantic historyを削除しない。
+parent / child repository hierarchy、Project Repository、Workspace Repositoryはcurrent role名ではないが、subjectsからsemantic historyを削除しない。
