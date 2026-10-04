@@ -28,9 +28,24 @@ decision source: `../../records/2026-10-04-management-root-repository-terminolog
 
 current normativeでは、その責務は `Project Repository` に包含し、`Workspace Repository` をProject Repository / Component Repositoryと並ぶ第三のpeer roleとして要求しない。
 
-同様に、Project Repository / Component Repositoryの関係をparent / child repository hierarchyとして扱わない。旧用語と旧配置はhistoryとして以下に保存する。
+同様に、Project Repository / Component Repositoryの関係をparent / child repository hierarchyとして扱わない。旧用語と旧modelはhistoryとして以下に保存する。
 
 decision source: `../../records/2026-10-03-project-component-documentation-boundary/`
+
+---
+
+## Physical containment clarification
+
+2026-10-04、multi-repository Projectのagent runで次の誤配置が観測された: Management Root RepositoryとComponent Repository primary checkoutがProject Rootのsiblingとして同じ外部階層へ置かれ、Work-specific checkoutがProject Root外のad-hoc directoryへ作られた。
+
+このdecisionのscope確認:
+
+- #167が廃止したのはrole / authority / documentation上のparent/child hierarchyであり、**Project Root配下へのComponent Repository primary checkout containmentそのものではない**。
+- filesystem上のcontainmentとGit ownership / authority / dependencyの上下関係は別の軸である。
+- Component Repository primary checkoutのdefault物理配置はProject Root配下として `S001_PROJECT_AND_REPOSITORY_MODEL.md` に保持される（exact relative pathはproject-local deterministic mapping）。
+- Work-specific checkoutは `.worktrees/<work-type>/<work-name>/<repo-selector>/` へのみ解決される（`../work-identity/` 所有）。
+
+decision source: `../../records/2026-10-04-workspace-physical-topology/`
 
 ---
 

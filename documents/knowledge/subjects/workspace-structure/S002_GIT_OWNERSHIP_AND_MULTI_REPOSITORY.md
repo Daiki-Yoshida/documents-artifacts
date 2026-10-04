@@ -84,6 +84,8 @@ ownership:
 
 Management Root Repositoryというroleは、Project Documentation、共有tool、project-level coordination、cross-component orchestration等の実際のProject責務が存在するときに成立する。
 
+各Component Repositoryの基準checkout（Primary Checkout）のdefault物理配置はProject Root配下であり、その契約は `S001_PROJECT_AND_REPOSITORY_MODEL.md` が所有する。filesystem上のcontainmentは配置だけを意味し、Git ownership / authority / dependencyの親子関係を構成しない。
+
 ## Stable repository identity と REPO selector
 
 Workspace Structureは、projectに参加するrepositoryの**静的identity・role・基準location**を所有する。
@@ -173,6 +175,8 @@ fixed_ref:
 CIやrelease検証が、指定されていないworkspace最新版へ偶然依存してはいけない。
 
 ## Sources
+
+- `../../records/2026-10-04-workspace-physical-topology/RECORD.md`
 
 - `../../records/2026-10-04-management-root-repository-terminology/RECORD.md`
 

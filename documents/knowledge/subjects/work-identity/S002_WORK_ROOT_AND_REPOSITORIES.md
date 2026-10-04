@@ -146,6 +146,8 @@ Git worktree は次へ配置する。
 .worktrees/feat/pathfinding/project/
 ```
 
+各repository-specific worktreeは、対象repositoryの既存local checkoutから `git worktree` で作成する。participating Component Repositoryがまだproject内へcheckoutされていない場合は、先に `../workspace-structure/` の静的配置契約（default: Project Root配下のPrimary Checkout）に従って解決してからworktreeをmaterializeする。worktree作成を理由に、primary checkoutをWork Root内やProject Root外へad-hoc配置しない。
+
 この構造により、
 
 ```text

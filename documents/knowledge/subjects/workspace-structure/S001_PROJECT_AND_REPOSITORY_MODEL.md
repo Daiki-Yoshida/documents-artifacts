@@ -122,7 +122,22 @@ product/component固有のsourceとGit履歴を所有する。
   - "componentのGit履歴"
 ```
 
-Management Root Repository配下にcheckoutを置けるが、Management Root Repositoryの通常fileとして管理しない。
+### Component RepositoryのPrimary Checkout配置
+
+Component RepositoryのPrimary Checkoutは、**defaultではProject Root配下に配置する**。
+
+```yaml
+primary_checkout_placement:
+  default: "Project Root配下のdescendant"
+  exact_relative_path: "project-local deterministic mappingで解決する"
+  例: ["<project-root>/api/", "<project-root>/components/api/"]
+  project_local_specialization: "明示的なproject-local contractがある場合はそれに従う"
+  non_default: "明示的なproject-local specializationがない限り、Project Rootのsiblingへ配置しない"
+```
+
+このcontainmentはfilesystem上の配置だけを意味する。Component Repositoryは独立したGit repository / Git history / source ownershipを維持し、Management Root Repositoryはそのsource/historyを通常fileとしてtrackしない。filesystem上の包含からGit ownership / authority / dependency / Project context上の上下関係を導かない。その境界は `S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md` が所有する。
+
+静的なPrimary Checkout配置とWork専用のrepository checkoutは別層である。Work-specific checkoutは `<project-root>/.worktrees/<work-type>/<work-name>/<repository-selector>/` contractにのみ解決され、`../work-identity/` が所有する。Project Rootのsiblingへのad-hoc checkout/worktree配置は現行guidanceが正当化しない。同一taskが静的配置とworktree materializationの両方を行う場合、両方のcontractを辿ること。
 
 ## Project Rootとtop-level構造
 
@@ -140,10 +155,12 @@ Project RootはManagement Root Repositoryの基準working tree rootである。
 ├─ docker/
 ├─ scripts/
 ├─ documents/
-├─ <component-a>/        # independent repository checkout when applicable
-├─ <component-b>/        # independent repository checkout when applicable
+├─ <component-a>/        # independent Component Repository primary checkout
+├─ <component-b>/        # independent Component Repository primary checkout
 └─ .worktrees/           # Work Identity-owned coordination namespace
 ```
+
+この構成はsingle-exampleではなく、multi-repository ProjectにおけるComponent Repository primary checkoutの **default physical topology** を表す。`documents/`・Makefile等のproject-level artifactの有無はprojectごとに異なってよいが、明示的なproject-local specializationがない限りComponent Repository primary checkoutはProject Root配下へ置く。
 
 重要:
 
@@ -227,6 +244,8 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 その判断はWork Identity / project policyが所有する。
 
 ## Sources
+
+- `../../records/2026-10-04-workspace-physical-topology/RECORD.md`
 
 - `../../records/2026-10-04-management-root-repository-terminology/RECORD.md`
 

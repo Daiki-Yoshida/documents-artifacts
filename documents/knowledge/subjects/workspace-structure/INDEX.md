@@ -50,6 +50,7 @@ work-identity
 workspace_structure_owns:
   - "Management Root Repository / Project Root"
   - "Component Repository"
+  - "Component Repository primary checkoutのdefault物理配置 (Project Root配下)"
   - "stable repository identity / role / base location"
   - "project-level Git ownership boundary"
 
@@ -100,6 +101,7 @@ current normativeでは `Management Root Repository` / `Component Repository` �
 Current:
 
 - `../../records/2026-10-04-management-root-repository-terminology/` — Management Root Repository / Component Repositoryをcurrent repository roleとする。Project Root terminologyは維持。
+- `../../records/2026-10-04-workspace-physical-topology/` — Component Repository primary checkoutのdefault containmentをProject Root配下として明確化し、静的配置と `.worktrees/` の動的Work Root contractを分離。filesystem containmentとGit ownership/authority階層は別軸であることを確認。#167のrole hierarchy廃止はphysical containment廃止を意味しない。
 
 Superseded terminology:
 
