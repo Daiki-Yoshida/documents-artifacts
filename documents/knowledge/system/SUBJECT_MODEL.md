@@ -205,6 +205,37 @@ subjectsでは整理のために以下を許可する。
 
 肥大化は許容する。短さより情報完全性と理解可能性を優先する。
 
+## Artifact compressionとの境界
+
+`subjects/` と `artifacts/` は情報削減に対する責務が異なる。
+
+```text
+subjects
+  semantic completeness
+  + effective-status resolution
+        ↓ projection / compression
+artifacts
+  runtime relevance
+  + small relevant context
+```
+
+Artifact projectionでは、runtimeに不要なhistoryやnon-current alternativeを圧縮・省略できる。一方、その削減規則をsubjectsへ逆適用してはならない。
+
+特に、Artifact側で **Negative Alternative Leakage (NAL)** を避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない。
+
+subjectsでは、current authorityと混同しないようeffective statusを明示した上で、reusableなnon-current semantic knowledge、否定、訂正、反論、Decision Lineageを保持することが正しい。
+
+```yaml
+artifact_projection:
+  may_reduce: "runtimeに不要なnon-current alternative / history / provenance detail"
+
+subject_preservation:
+  must_not_infer: "Artifactで省略するためsubjectsからも削除してよい"
+  priority: "semantic completeness + status clarity"
+```
+
+この境界に疑義がある場合、短さではなくsemantic completenessを優先し、Artifact側で必要なprojection量を調整する。
+
 ## 日本語
 
 subjects本文は日本語を標準とする。
@@ -247,3 +278,4 @@ DRYより意味の完全性を優先する。
 - `../records/2026-09-21-knowledge-structure-implementation/`
 - `../records/2026-09-22-development-environment-subject-split/`
 - `../records/2026-10-03-knowledge-effective-status-lineage/`
+- `../records/2026-10-04-negative-alternative-leakage/RECORD.md`
