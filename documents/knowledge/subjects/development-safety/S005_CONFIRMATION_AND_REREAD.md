@@ -33,7 +33,7 @@ SAFETY_L3_destructive_or_host:
 ```yaml
 must_re_read:
   - "このstrategyを使うprojectへ初めて触れる"
-  - "Project Repository / Component Repository構造を変更する"
+  - "Management Root Repository / Component Repository構造を変更する"
   - "worktree contractを追加・再設計する"
   - "host / container boundaryを変更する"
   - "destructive operationを追加する"
