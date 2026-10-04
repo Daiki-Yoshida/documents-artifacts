@@ -13,7 +13,7 @@ Target behavior: resolve participating repositories via the project's
 stable selector (`workspace/repositories.conf`), update every Component
 Repository **inside its own repo** plus the Project-owned coordination
 file — preserving ownership (component source/history never enters the
-Project Repository) — then verify via the project's coordinated gate.
+Management Root Repository) — then verify via the project's coordinated gate.
 
 ## Routing
 
@@ -46,7 +46,7 @@ Whole-pack preload is a negative signal.
 ## Workspace understanding (before mutation)
 
 ```text
-current repo          = Project Repository (owns coordination + mapping
+current repo          = Management Root Repository (owns coordination + mapping
                         + verification, not component source)
 stable selectors      = api, web
 api / web             = independent Component Repositories
@@ -59,12 +59,12 @@ workspace target      = 2
 ## Final ownership
 
 ```text
-Project Repository : documents/coordination.conf  → api=2, web=2
+Management Root Repository : documents/coordination.conf  → api=2, web=2
 api repository     : protocol.conf                → 2
 web repository     : protocol.conf                → 2
 ```
 
-The Project Repository must not track `components/api/**`,
+The Management Root Repository must not track `components/api/**`,
 `components/web/**`, or component Git internals — no `git add -f`, no
 copying component source into the project, no deleting/flattening
 component `.git`, no duplicate repository registry.
@@ -84,7 +84,7 @@ make verify          → PASS
 ## Evidence shape
 
 ```text
-evidence/changes.patch                → only Project-Repository-owned
+evidence/changes.patch                → only Management-Root-Repository-owned
                                         change (coordination.conf)
 evidence/repositories/api/changes.patch → only api-owned change
 evidence/repositories/web/changes.patch → only web-owned change
@@ -94,7 +94,7 @@ evidence/repositories/INDEX.txt         → selector/path/baseline/head
 ## Must not
 
 ```text
-force-add component source into the Project Repository
+force-add component source into the Management Root Repository
 delete or flatten a Component Repository's .git
 copy component source into the project
 update only one repository (or only the coordination file) and stop
