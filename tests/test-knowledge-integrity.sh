@@ -56,6 +56,8 @@ for file in \
   documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_BODY.md \
   documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_AUDIT_RESULT.md \
   documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_175_BODY.md \
+  documents/knowledge/records/2026-10-04-negative-alternative-leakage/RECORD.md \
+  documents/knowledge/records/2026-10-04-negative-alternative-leakage/ISSUE_190_BODY.md \
   documents/project/migration/LEGACY_ARTIFACT_COVERAGE_AUDIT.md \
   documents/project/migration/LEGACY_ARTIFACT_SECTION_INVENTORY.md \
   documents/project/migration/LEGACY_CODE_DESIGN_GAP_AUDIT.md \
@@ -564,7 +566,7 @@ grep -Fq 'Artifact向けの削減規則をrecords / subjectsへ逆適用してse
   || fail "Artifact model allows compression rules to back-propagate into knowledge preservation"
 grep -Fq 'Artifact compressionとの境界' "$subject_model" \
   || fail "Subject model lost Artifact-compression boundary"
-grep -Fq 'NALを避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない' "$subject_model" \
+grep -Fq 'を避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない' "$subject_model" \
   || fail "Subject model permits NAL avoidance to delete non-current semantic knowledge"
 grep -Fq 'positive current modelを先に直接表現する' "$knowledge_workflow" \
   || fail "Knowledge workflow lost positive-first Artifact projection"
@@ -572,6 +574,14 @@ grep -Fq 'Negative Alternative Leakage (NAL)' "$knowledge_workflow" \
   || fail "Knowledge workflow lost NAL review"
 grep -Fq 'Negative Alternative Leakage (NAL)' documents/project/ARTIFACT_ARCHITECTURE_V2.md \
   || fail "Artifact architecture lost NAL projection rule"
+grep -Fq 'positive-first projection / Negative Alternative Leakage規則が所有する' "$lineage_model" \
+  || fail "Decision Lineage model lost NAL deferral to Artifact model"
+if grep -Fq 'old modelを禁止するnegative guardがcurrent ruleなら、old model本体がsupersededでもnegative guardはprojectionできる' "$artifact_model"; then
+  fail "Artifact model restored automatic negative-guard projection"
+fi
+if grep -Fq 'old modelへのnegative guard自体がcurrent ruleならprojectionできる' "$lineage_model"; then
+  fail "Decision Lineage model restored automatic negative-guard projection"
+fi
 
 # Reference fixture: old source is preserved, subjects expose current + superseded,
 # Artifact v2 projects current guidance and only a needed negative guard.

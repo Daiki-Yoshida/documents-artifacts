@@ -106,7 +106,7 @@ artifactへ優先して残す:
 - 判断条件
 - MUST / SHOULD等の強度
 - 適用条件と例外
-- 誤読しやすいnegative guard
+- 現実的な誤読・failure modeを防ぐnegative guard
 - cross-file routingに必要なownership境界
 - AIが実際のchangeで判断するための短いdecision rule
 
