@@ -216,7 +216,7 @@ preflight:
   - "target path is absent, or is the exact already-registered worktree being requested"
   - "no unrelated filesystem content occupies the target path"
   - "the selected branch is not owned by another incompatible writable worktree"
-  - "Project Repository ignore boundary covers the sibling worktree path where required"
+  - "Management Root Repository ignore boundary covers the sibling worktree path where required"
   - "supported Git/materialization capability is available when the Materialization Contract applies"
 ```
 
@@ -230,9 +230,9 @@ createはcallerから見てatomicな意味操作とする。
 
 ### Materialization Contractが必要なrepository
 
-stable repository roleとしてProject-level tracked `.worktrees/**` coordination stateを**所有する、または将来受け取るProject Repository**にはMaterialization Contractを適用する。
+stable repository roleとしてProject-level tracked `.worktrees/**` coordination stateを**所有する、または将来受け取るManagement Root Repository**にはMaterialization Contractを適用する。
 
-selected branch treeへ現在 `.worktrees/**` が存在するかは診断材料にはなるが、適用要否をその瞬間のtree内容だけで決めない。first Workや古いbase branchでも、Project Repository roleがcoordination namespaceを所有するなら将来のbaseline growthに備えて同じcontractを適用する。
+selected branch treeへ現在 `.worktrees/**` が存在するかは診断材料にはなるが、適用要否をその瞬間のtree内容だけで決めない。first Workや古いbase branchでも、Management Root Repository roleがcoordination namespaceを所有するなら将来のbaseline growthに備えて同じcontractを適用する。
 
 適用sequence:
 
@@ -333,7 +333,7 @@ status_fields:
   - "whether Materialization Contract applies"
   - "sparse/materialization state when applicable"
   - "whether nested Project-level .worktrees/ is absent/present"
-  - "Work Documents path and Project Repository tracking visibility where relevant"
+  - "Work Documents path and Management Root Repository tracking visibility where relevant"
 ```
 
 Git状態は`git worktree list`等から読み、custom registryを真実源にしない。
