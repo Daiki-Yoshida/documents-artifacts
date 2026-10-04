@@ -555,6 +555,24 @@ grep -Fq 'current effectiveと解決されたknowledgeを主入力' "$knowledge_
 grep -Fq 'Subject disposition accounting' "$knowledge_workflow" \
   || fail "knowledge workflow lost promotion/disposition accounting"
 
+# Negative Alternative Leakage / projection-boundary guards (Issue #190).
+grep -Fq 'Negative Alternative Leakage (NAL / 否定代替案リーク)' "$artifact_model" \
+  || fail "Artifact model lost NAL definition"
+grep -Fq 'NALはprojection / compressionのアンチパターンであり、knowledge preservationのアンチパターンではない' "$artifact_model" \
+  || fail "NAL lost projection-only applicability boundary"
+grep -Fq 'Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない' "$artifact_model" \
+  || fail "Artifact model allows compression rules to back-propagate into knowledge preservation"
+grep -Fq 'Artifact compressionとの境界' "$subject_model" \
+  || fail "Subject model lost Artifact-compression boundary"
+grep -Fq 'NALを避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない' "$subject_model" \
+  || fail "Subject model permits NAL avoidance to delete non-current semantic knowledge"
+grep -Fq 'positive current modelを先に直接表現する' "$knowledge_workflow" \
+  || fail "Knowledge workflow lost positive-first Artifact projection"
+grep -Fq 'Negative Alternative Leakage (NAL)' "$knowledge_workflow" \
+  || fail "Knowledge workflow lost NAL review"
+grep -Fq 'Negative Alternative Leakage (NAL)' documents/project/ARTIFACT_ARCHITECTURE_V2.md \
+  || fail "Artifact architecture lost NAL projection rule"
+
 # Reference fixture: old source is preserved, subjects expose current + superseded,
 # Artifact v2 projects current guidance and only a needed negative guard.
 grep -Fq '## 8. 階層プロジェクト' "$legacy_doc_source" \
