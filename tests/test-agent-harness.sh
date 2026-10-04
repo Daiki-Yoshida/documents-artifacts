@@ -309,6 +309,75 @@ for scenario_dir in "${scenario_dirs[@]}"; do
       || fail "satisfiability proof did not restore clean component baseline"
   fi
 
+  # issue #191: the bootstrap scenario must force the agent itself to
+  # resolve BOTH the static primary-checkout containment and the dynamic
+  # Work Root contract — the prepared state therefore ships component
+  # *sources* outside the Project Root and no component checkouts inside.
+  if [[ "$scenario" == "multi-repo-workspace-bootstrap" ]]; then
+    [[ ! -e "$target/components" ]] \
+      || fail "bootstrap fixture pre-placed component checkouts"
+    for comp in api web; do
+      [[ -d "$run_root/sources/$comp/.git" ]] \
+        || fail "component source missing outside the Project Root: $comp"
+      [[ -z "$(git -C "$run_root/sources/$comp" status --porcelain)" ]] \
+        || fail "component source dirty at baseline: $comp"
+    done
+    git -C "$target" ls-files --error-unmatch .worktrees/PROJECT_COORDINATION.md >/dev/null \
+      || fail "tracked project coordination file missing at baseline"
+    if make -C "$target" verify WORK=feat/bootstrap-check >/dev/null 2>&1; then
+      fail "bootstrap verification unexpectedly green at baseline"
+    fi
+    if grep -Eq 'WORKSPACE\.md|WORKTREES\.md|WORK_IDENTITY\.md' "$run_root/PROMPT.md"; then
+      fail "bootstrap prompt leaks expected artifact leaves"
+    fi
+
+    # Definition-time satisfiability proof: resolve the documented
+    # contract deterministically and prove the project gate accepts the
+    # expected final topology.
+    mkdir -p "$target/components"
+    for comp in api web; do
+      git clone -q "$run_root/sources/$comp" "$target/components/$comp"
+    done
+    wt="$target/.worktrees/feat/bootstrap-check"
+    mkdir -p "$wt/documents"
+    printf '# feat/bootstrap-check\n\nWork coordination documents.\n' > "$wt/documents/WORK.md"
+    git -C "$target" add ".worktrees/feat/bootstrap-check/documents/WORK.md"
+    git -C "$target" commit -qm "docs: bootstrap-check work documents"
+
+    git -C "$target" branch feat/bootstrap-check
+    git -C "$target" worktree add --no-checkout -q "$wt/main" feat/bootstrap-check
+    git -C "$wt/main" sparse-checkout set --no-cone '/*' '!/.worktrees/' >/dev/null
+    git -C "$wt/main" reset -q --hard HEAD
+    for comp in api web; do
+      git -C "$target/components/$comp" worktree add -q -b feat/bootstrap-check "$wt/$comp"
+    done
+
+    # Machine evidence: registration, identity, ownership, invariants.
+    git -C "$target" worktree list --porcelain | grep -Fxq "worktree $wt/main" \
+      || fail "management worktree not registered: bootstrap"
+    [[ "$(git -C "$wt/main" branch --show-current)" == "feat/bootstrap-check" ]] \
+      || fail "management worktree branch mismatch: bootstrap"
+    [[ -z "$(git -C "$wt/main" status --porcelain)" ]] \
+      || fail "management worktree dirty: bootstrap"
+    [[ ! -e "$wt/main/.worktrees" ]] \
+      || fail "management worktree materialized nested .worktrees/: bootstrap"
+    git -C "$wt/main" sparse-checkout list | grep -Fqx '!/.worktrees/' \
+      || fail "management worktree sparse exclusion missing: bootstrap"
+    for comp in api web; do
+      git -C "$target/components/$comp" worktree list --porcelain \
+        | grep -Fxq "worktree $wt/$comp" \
+        || fail "component worktree not registered: bootstrap/$comp"
+      [[ "$(git -C "$wt/$comp" branch --show-current)" == "feat/bootstrap-check" ]] \
+        || fail "component worktree branch mismatch: bootstrap/$comp"
+      [[ -z "$(git -C "$wt/$comp" status --porcelain)" ]] \
+        || fail "component worktree dirty: bootstrap/$comp"
+    done
+    [[ -z "$(git -C "$target" ls-files -- 'components/')" ]] \
+      || fail "management repository tracks component source: bootstrap"
+    make -C "$target" verify WORK=feat/bootstrap-check >/dev/null \
+      || fail "bootstrap verification rejected the documented topology"
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"

@@ -1,0 +1,10 @@
+# Component Repository primary checkouts are independent Git repositories —
+# their source and history are never tracked here as ordinary files.
+/components/api/
+/components/web/
+
+# Work worktree runtime state is ignored; tracked Work Documents and the
+# coordination file below are not.
+.worktrees/*/*/*
+!.worktrees/*/*/documents/
+!.worktrees/*/*/documents/**
