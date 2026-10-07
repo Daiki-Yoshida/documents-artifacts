@@ -47,6 +47,7 @@ YAGNI across the Horizonは `BOUNDARY_HORIZON.md` と `CONTRACTS.md` の接続�
 | `VERIFICATION_AND_DONE.md` | engineering-operation S005 |
 | `VERSION_CONTROL_AND_REPORTING.md` | engineering-operation S006 |
 | `BROWNFIELD.md` | engineering-operation S007 |
+| `CONTEXT_SHAPING.md` | context-shaping S001 / S002 / S003 |
 
 ## documentation/
 

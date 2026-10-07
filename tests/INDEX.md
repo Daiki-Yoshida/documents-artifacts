@@ -18,7 +18,7 @@ bash tests/test-knowledge-integrity.sh
 bash tests/test-agent-harness.sh
 ```
 
-`test-artifacts.sh` は `tests/scripts/check-artifact-routes.sh` も実行する。runtime pack内でbacktick記法 (`` `path` ``) でadvertiseされる `.md` 参照は、containing fileのdirectoryからの相対pathとしてpack内に解決されなければならない — 未解決のrouteは `BROKEN`、INDEX.mdから推移的に到達不能なfileは `UNREACHABLE` としてfailする (対象: inline typo・inner-router orphan)。project-owned example token (`documents/...`・`docs-jp/...`・`AGENTS.md`/`CLAUDE.md`/`GEMINI.md`/`README.md`・directory参照・`<...>` placeholder・glob) はruntime edgeとして分類しない — 広範なignoreではなく明示分類。`#fragment` anchorは除去する (anchor自体の検証はしない、現在advertiseなし)。mechanical validityのみで、意味あるrouting・実read・理解を証明しない。現baseline: 85 advertised refs / 41 file全到達。
+`test-artifacts.sh` は `tests/scripts/check-artifact-routes.sh` も実行する。runtime pack内でbacktick記法 (`` `path` ``) でadvertiseされる `.md` 参照は、containing fileのdirectoryからの相対pathとしてpack内に解決されなければならない — 未解決のrouteは `BROKEN`、INDEX.mdから推移的に到達不能なfileは `UNREACHABLE` としてfailする (対象: inline typo・inner-router orphan)。project-owned example token (`documents/...`・`docs-jp/...`・`AGENTS.md`/`CLAUDE.md`/`GEMINI.md`/`README.md`・directory参照・`<...>` placeholder・glob) はruntime edgeとして分類しない — 広範なignoreではなく明示分類。`#fragment` anchorは除去する (anchor自体の検証はしない、現在advertiseなし)。mechanical validityのみで、意味あるrouting・実read・理解を証明しない。現baseline: 87 advertised refs / 42 file全到達。
 
 remote-delivery regressionはREADME記載のbootstrap commandをそのまま抽出し、test-local `git` shim (固定URLをfixture remoteへargv書き換え、user/global Git設定は不変) 経由で実行する (初回install・update/stale除去・fetch失敗・invalid source・temp cleanup・空白を含むtarget path・project-owned file非変更・`.git`/source knowledge非混入)。失敗系はcontent hash・owner file hash・target Git status/HEADを比較する。GitHub実取得はlive probeとして行い、egress不可の場合は成功と区別して報告する。
 

@@ -16,6 +16,7 @@
 | [development-execution](development-execution/INDEX.md) | host/container境界、Docker-first、公開command、local/CI、実行環境の再現性 |
 | [development-safety](development-safety/INDEX.md) | 破壊操作、診断、復旧、統合、確認境界など開発操作の安全性 |
 | [documentation](documentation/INDEX.md) | project documentationの正確性、routing、structure、workflow、maintenance、Git履歴 |
+| [context-shaping](context-shaping/INDEX.md) | purpose-directed context、Positive-first、Negative Alternative Leakage、必要なalternative / guardの境界 |
 
 subjectはrecordsの分類folderではない。1つのrecordが複数subjectの根拠になることを許容する。
 

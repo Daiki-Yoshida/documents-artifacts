@@ -130,9 +130,13 @@ old modelを禁止するnegative guardがcurrent ruleでも、それだけで自
 
 > **compression は semantic weakening ではない。**
 
-## 6.1 Positive-first projection と Negative Alternative Leakage
+## 6.1 Positive-first projection と NAL の Artifact specialization
 
-Artifact projectionでは、consumerが現在どう判断・行動すべきかを、可能な限り **current positive model** から直接表現する。
+一般化したcontext shaping / NALのsemantic meaningは [context-shaping](../subjects/context-shaping/INDEX.md) が所有する。
+Artifact projectionは、その一般原則のspecializationである。
+
+Artifact consumerの目的は、current-effective knowledgeからruntimeで必要な判断・行動へ到達することである。
+そのためArtifact projectionでは、可能な限りcurrent positive modelを直接表現する。
 
 ```text
 current positive model
@@ -140,32 +144,27 @@ current positive model
   → necessary condition / exception
 ```
 
-情報圧縮で本来落とせるold / superseded / rejected / undesired alternativeを、「それを否定する説明」のためだけにruntime contextへ再導入し、current modelよりalternative側を目立たせることを **Negative Alternative Leakage (NAL / 否定代替案リーク)** と呼ぶ。
-
-典型的なNAL:
+Artifact-specific NALの典型は、情報圧縮で本来落とせるold / superseded / rejected / undesired alternativeを、「それを否定する説明」のためだけにruntime contextへ再導入・再提示・展開することである。
 
 ```text
-Aは使わない
-Aとはこういうもの
-Aになる手順はこう
-Aを避けること
-ちなみにBを使う
+NAL:
+  Aは使わない
+  Aとはこういうもの
+  Aになる手順はこう
+  Aを避けること
+  ちなみにBを使う
+
+positive-first:
+  Bを使う
+  Bのrole / state / procedureはこう
+  必要なcondition / exceptionはこう
 ```
 
-positive-first projection:
+これは一般化NALの完全な定義ではなく、Artifact projectionにおける適用形である。
+comparison / correction / migration等の目的でalternative自体が必要なら、その必要範囲を保持する。
 
-```text
-Bを使う
-Bのrole / state / procedureはこう
-必要なcondition / exceptionはこう
-```
-
-NALは「negative sentenceを使うな」という規則ではない。次のようなcurrent negative contractは、その禁止自体がruntime decisionに必要なので保持してよい。
-
-- destructive / safety boundary
-- secret exposure禁止
-- incompatible ownership禁止
-- positive ruleだけでは防ぎにくいrealistic misreadingへの短いguard
+NALはnegative sentence禁止ではない。
+current negative contractや、positive ruleだけでは防ぎにくいrealistic failure modeへのguardはruntime decisionに必要なら保持する。
 
 negative guardを残すときは、少なくとも次を確認する。
 
@@ -177,11 +176,12 @@ negative_guard_projection:
   minimal_form: "obsolete alternative全体を説明せず短いguardだけで表現できないか"
 ```
 
-重要な適用境界:
+重要なpreservation boundary:
 
-> **NALはprojection / compressionのアンチパターンであり、knowledge preservationのアンチパターンではない。**
+> ArtifactでNALを避けるためにnon-current alternativeを省略できることは、knowledge preservation層から同じsemantic knowledgeを削除する根拠にならない。
 
-`subjects/` はsemantic completenessを担うため、superseded / rejected / historical knowledgeや、その否定・訂正・Decision Lineageを必要に応じて保持する。Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない。
+`subjects/` はsemantic completenessを担うため、superseded / rejected / historical knowledgeや、その否定・訂正・Decision Lineageを必要に応じて保持する。
+Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない。
 
 ## 7. Current-effective projection gate
 
@@ -296,3 +296,4 @@ artifact更新では、単に旧artifactとの差分を見るのではなく、�
 - `DECISION_LINEAGE_MODEL.md`
 - `../records/2026-10-03-knowledge-effective-status-lineage/`
 - `../records/2026-10-04-negative-alternative-leakage/RECORD.md`
+- `../records/2026-10-07-generalized-nal-adoption/RECORD.md`
