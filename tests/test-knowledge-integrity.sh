@@ -603,6 +603,12 @@ grep -Fq 'Artifact向けの削減規則をrecords / subjectsへ逆適用してse
   || fail "Artifact model allows compression rules to back-propagate into knowledge preservation"
 grep -Fq '一般化した **Negative Alternative Leakage (NAL)** はcontext shapingのアンチパターン' "$subject_model" \
   || fail "Subject model lost generalized NAL preservation boundary"
+grep -Fq 'Artifact compressionとの境界' "$subject_model" \
+  || fail "Subject model lost Artifact-compression boundary"
+grep -Fq 'を避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない' "$subject_model" \
+  || fail "Subject model permits NAL avoidance to delete non-current semantic knowledge"
+grep -Fq 'subjects/context-shaping/' "$knowledge_workflow" \
+  || fail "Knowledge workflow lost generalized context-shaping route"
 grep -Fq 'current positive modelを直接表現する' "$knowledge_workflow" \
   || fail "Knowledge workflow lost positive-first Artifact projection"
 grep -Fq 'Positive-first context shaping / Negative Alternative Leakage (NAL)' documents/project/ARTIFACT_ARCHITECTURE_V2.md \
@@ -611,6 +617,10 @@ grep -Fq 'Negative Alternative Leakage (NAL)' "$artifact_context" \
   || fail "Artifact runtime guidance lost NAL"
 grep -Fq 'Judge the role of the information, not the document type.' "$artifact_context" \
   || fail "Artifact runtime guidance lost purpose-based applicability"
+grep -Fq '| Instruction / task-spec / review / handoff / explanation context | `operation/CONTEXT_SHAPING.md` |' artifacts/INDEX.md \
+  || fail "Artifact root lost explicit context-shaping route"
+grep -Fq 'Shape guidance around the model needed for the current purpose.' artifacts/INDEX.md \
+  || fail "Artifact root lost global positive-first context guard"
 grep -Fq 'context-shaping S001 / S002 / S003' documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md \
   || fail "Artifact projection map does not trace CONTEXT_SHAPING.md"
 grep -Fq '一般化したcontext shaping / Negative Alternative Leakageのsemantic meaning' "$lineage_model" \
