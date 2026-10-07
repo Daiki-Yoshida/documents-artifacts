@@ -613,7 +613,7 @@ grep -Fq 'Judge the role of the information, not the document type.' "$artifact_
   || fail "Artifact runtime guidance lost purpose-based applicability"
 grep -Fq 'context-shaping S001 / S002 / S003' documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md \
   || fail "Artifact projection map does not trace CONTEXT_SHAPING.md"
-grep -Fq 'generalized context shaping / Negative Alternative Leakageのsemantic meaning' "$lineage_model" \
+grep -Fq '一般化したcontext shaping / Negative Alternative Leakageのsemantic meaning' "$lineage_model" \
   || fail "Decision Lineage model lost generalized NAL semantic ownership"
 if grep -Fq 'old modelを禁止するnegative guardがcurrent ruleなら、old model本体がsupersededでもnegative guardはprojectionできる' "$artifact_model"; then
   fail "Artifact model restored automatic negative-guard projection"
