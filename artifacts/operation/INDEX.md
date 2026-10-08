@@ -6,3 +6,4 @@
 - verification and done criteria → `VERIFICATION_AND_DONE.md`
 - commit / push / reporting → `VERSION_CONTROL_AND_REPORTING.md`
 - existing-code / brownfield discipline → `BROWNFIELD.md`
+- instructions / task specs / reviews / handoffs / explanations → `CONTEXT_SHAPING.md`

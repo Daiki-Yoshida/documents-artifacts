@@ -58,6 +58,12 @@ for file in \
   documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_175_BODY.md \
   documents/knowledge/records/2026-10-04-negative-alternative-leakage/RECORD.md \
   documents/knowledge/records/2026-10-04-negative-alternative-leakage/ISSUE_190_BODY.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-proposal/RECORD.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-proposal/CHAT_PROPOSAL.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-adoption/RECORD.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-adoption/USER_APPROVAL.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-issue/RECORD.md \
+  documents/knowledge/records/2026-10-07-generalized-nal-issue/ISSUE_196_BODY.md \
   documents/knowledge/records/2026-10-04-management-root-repository-terminology/RECORD.md \
   documents/knowledge/records/2026-10-04-management-root-repository-terminology/ISSUE_192_BODY.md \
   documents/knowledge/records/2026-10-04-workspace-physical-topology/RECORD.md \
@@ -232,9 +238,9 @@ for document in "${entrypoints[@]}"; do
 done
 
 
-# Artifact v2 is the current runtime projection: 41 files, 7 routed domains, no legacy modules.
+# Artifact v2 is the current runtime projection: 42 files, 7 routed domains, no legacy modules.
 artifact_files=(artifacts/INDEX.md artifacts/*/*.md)
-[[ "${#artifact_files[@]}" == 41 ]] || fail "expected 41 Artifact v2 Markdown files, got ${#artifact_files[@]}"
+[[ "${#artifact_files[@]}" == 42 ]] || fail "expected 42 Artifact v2 Markdown files, got ${#artifact_files[@]}"
 for dir in design implementation operation documentation project execution safety; do
   require_file "artifacts/$dir/INDEX.md"
 done
@@ -567,25 +573,58 @@ grep -Fq 'current effectiveと解決されたknowledgeを主入力' "$knowledge_
 grep -Fq 'Subject disposition accounting' "$knowledge_workflow" \
   || fail "knowledge workflow lost promotion/disposition accounting"
 
-# Negative Alternative Leakage / projection-boundary guards (Issue #190).
-grep -Fq 'Negative Alternative Leakage (NAL / 否定代替案リーク)' "$artifact_model" \
-  || fail "Artifact model lost NAL definition"
-grep -Fq 'NALはprojection / compressionのアンチパターンであり、knowledge preservationのアンチパターンではない' "$artifact_model" \
-  || fail "NAL lost projection-only applicability boundary"
+# Context shaping / Negative Alternative Leakage guards (Issues #190 / #196).
+context_shaping_index=documents/knowledge/subjects/context-shaping/INDEX.md
+context_positive=documents/knowledge/subjects/context-shaping/S001_POSITIVE_FIRST_CONTEXT.md
+context_nal=documents/knowledge/subjects/context-shaping/S002_NEGATIVE_ALTERNATIVE_LEAKAGE.md
+context_guards=documents/knowledge/subjects/context-shaping/S003_APPLICABILITY_AND_GUARDS.md
+artifact_context=artifacts/operation/CONTEXT_SHAPING.md
+
+for file in "$context_shaping_index" "$context_positive" "$context_nal" "$context_guards" "$artifact_context"; do
+  require_file "$file"
+done
+
+grep -Fq '特定の目的に向けて受け手へcontextを構成・提示する際' "$context_nal" \
+  || fail "generalized NAL definition missing from context-shaping"
+grep -Fq 'current modelよりalternativeが目立つ' "$context_nal" \
+  || fail "generalized NAL lost the prominence-as-symptom distinction"
+grep -Fq '文書種別ではなく' "$context_guards" \
+  || fail "NAL applicability is no longer purpose-scoped"
+grep -Fq 'NALはnegative sentence禁止ではない' "$context_guards" \
+  || fail "generalized NAL incorrectly bans negative statements"
+grep -Fq 'Positive-firstは文章順序の固定ruleではない' "$context_positive" \
+  || fail "Positive-first regressed into a presentation-order rule"
+
+grep -Fq '一般化したcontext shaping / NALのsemantic meaning' "$artifact_model" \
+  || fail "Artifact model does not defer generalized NAL semantics to context-shaping"
+grep -Fq 'Artifact projectionは、その一般原則のspecialization' "$artifact_model" \
+  || fail "Artifact-specific NAL is not modeled as a specialization"
 grep -Fq 'Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない' "$artifact_model" \
   || fail "Artifact model allows compression rules to back-propagate into knowledge preservation"
+grep -Fq '一般化した **Negative Alternative Leakage (NAL)** はcontext shapingのアンチパターン' "$subject_model" \
+  || fail "Subject model lost generalized NAL preservation boundary"
 grep -Fq 'Artifact compressionとの境界' "$subject_model" \
   || fail "Subject model lost Artifact-compression boundary"
 grep -Fq 'を避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない' "$subject_model" \
   || fail "Subject model permits NAL avoidance to delete non-current semantic knowledge"
-grep -Fq 'positive current modelを先に直接表現する' "$knowledge_workflow" \
+grep -Fq 'subjects/context-shaping/' "$knowledge_workflow" \
+  || fail "Knowledge workflow lost generalized context-shaping route"
+grep -Fq 'current positive modelを直接表現する' "$knowledge_workflow" \
   || fail "Knowledge workflow lost positive-first Artifact projection"
-grep -Fq 'Negative Alternative Leakage (NAL)' "$knowledge_workflow" \
-  || fail "Knowledge workflow lost NAL review"
-grep -Fq 'Negative Alternative Leakage (NAL)' documents/project/ARTIFACT_ARCHITECTURE_V2.md \
-  || fail "Artifact architecture lost NAL projection rule"
-grep -Fq 'positive-first projection / Negative Alternative Leakage規則が所有する' "$lineage_model" \
-  || fail "Decision Lineage model lost NAL deferral to Artifact model"
+grep -Fq 'Positive-first context shaping / Negative Alternative Leakage (NAL)' documents/project/ARTIFACT_ARCHITECTURE_V2.md \
+  || fail "Artifact architecture lost generalized NAL specialization"
+grep -Fq 'Negative Alternative Leakage (NAL)' "$artifact_context" \
+  || fail "Artifact runtime guidance lost NAL"
+grep -Fq 'Judge the role of the information, not the document type.' "$artifact_context" \
+  || fail "Artifact runtime guidance lost purpose-based applicability"
+grep -Fq '| Instruction / task-spec / review / handoff / explanation context | `operation/CONTEXT_SHAPING.md` |' artifacts/INDEX.md \
+  || fail "Artifact root lost explicit context-shaping route"
+grep -Fq 'Shape guidance around the model needed for the current purpose.' artifacts/INDEX.md \
+  || fail "Artifact root lost global positive-first context guard"
+grep -Fq 'context-shaping S001 / S002 / S003' documents/project/migration/ARTIFACT_PROJECTION_MAP_V2.md \
+  || fail "Artifact projection map does not trace CONTEXT_SHAPING.md"
+grep -Fq '一般化したcontext shaping / Negative Alternative Leakageのsemantic meaning' "$lineage_model" \
+  || fail "Decision Lineage model lost generalized NAL semantic ownership"
 if grep -Fq 'old modelを禁止するnegative guardがcurrent ruleなら、old model本体がsupersededでもnegative guardはprojectionできる' "$artifact_model"; then
   fail "Artifact model restored automatic negative-guard projection"
 fi

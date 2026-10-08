@@ -221,7 +221,7 @@ artifacts
 
 Artifact projectionでは、runtimeに不要なhistoryやnon-current alternativeを圧縮・省略できる。一方、その削減規則をsubjectsへ逆適用してはならない。
 
-特に、Artifact側で **Negative Alternative Leakage (NAL)** を避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない。
+一般化した **Negative Alternative Leakage (NAL)** はcontext shapingのアンチパターンであり、それ自体はsubjectsを削減する規則ではない。特にArtifact projectionでNALを避けるためにold / superseded / rejected alternativeを省略する判断は、subjectsから同じsemantic knowledgeを削除する根拠にはならない。
 
 subjectsでは、current authorityと混同しないようeffective statusを明示した上で、reusableなnon-current semantic knowledge、否定、訂正、反論、Decision Lineageを保持することが正しい。
 

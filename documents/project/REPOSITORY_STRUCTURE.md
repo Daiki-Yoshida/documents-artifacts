@@ -77,7 +77,7 @@ documents/knowledge/
       └─ ...
 ```
 
-`records/` はsource event・snapshotの原文を保持する。現在は8 subject（encapsulation-horizon、code-design、engineering-operation、documentation、workspace-structure、development-execution、development-safety、work-identity）で整理している。
+`records/` はsource event・snapshotの原文を保持する。現在は9 subject（encapsulation-horizon、code-design、engineering-operation、documentation、workspace-structure、development-execution、development-safety、work-identity、context-shaping）で整理している。
 
 ## documents/project/
 

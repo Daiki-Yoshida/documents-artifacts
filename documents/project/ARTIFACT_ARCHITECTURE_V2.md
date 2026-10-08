@@ -73,7 +73,8 @@ artifacts/
 │  ├─ PRE_IMPLEMENTATION_SCAN.md
 │  ├─ VERIFICATION_AND_DONE.md
 │  ├─ VERSION_CONTROL_AND_REPORTING.md
-│  └─ BROWNFIELD.md
+│  ├─ BROWNFIELD.md
+│  └─ CONTEXT_SHAPING.md
 │
 ├─ documentation/
 │  ├─ INDEX.md
@@ -275,11 +276,11 @@ normal_task:
 
 ## Projection rules
 
-Projectionは **positive current model first** を基本とする。runtime agentが現在どう判断・行動すべきかを直接書ける場合、obsolete / rejected / undesired alternativeを「使うな」と説明するためだけに持ち込まない。
+Projectionは一般化した **Positive-first context shaping / Negative Alternative Leakage (NAL)** をArtifact runtime deliveryへspecializeする。runtime agentが現在どう判断・行動すべきかを直接書ける場合、obsolete / rejected / undesired alternativeを「使うな」と説明するためだけに持ち込まない。
 
-本来圧縮できるalternativeをnegative explanation経由でruntimeへ漏らし、current modelより目立たせることを **Negative Alternative Leakage (NAL)** として避ける。
+Artifactでは特に、本来圧縮できるalternativeをnegative explanation経由でruntimeへ再導入・再提示・展開するNALを避ける。comparison / correction / migration等でalternative自体がruntime purposeに必要なら、その必要範囲を保持する。
 
-NALはArtifact projectionの規則であり、subjectsのsemantic completenessへ逆適用しない。
+NALによるcontext shaping判断をsubjectsのsemantic completenessへ逆適用しない。
 
 ```yaml
 preserve:

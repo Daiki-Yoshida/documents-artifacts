@@ -112,10 +112,11 @@ Artifact v2はsubjectsのdirectory構造をコピーしない。
 projection時は:
 
 - subjectsでcurrent effectiveと解決されたknowledgeを主入力とする。
-- **positive current modelを先に直接表現する。** expected state / role / procedureをpositive formで十分に伝えられる場合、old / rejected / undesired alternativeを否定説明のためだけにruntimeへ再導入しない。
+- Artifact projectionをpurpose-directed context shapingとして扱い、`subjects/context-shaping/` のPositive-first / NAL原則を適用する。
+- **current positive modelを直接表現する。** expected state / role / procedureを十分に伝えられる場合、old / rejected / undesired alternativeを否定説明のためだけにruntimeへ再導入・再提示・展開しない。
 - runtimeで必要なunresolved constraintとcurrent negative guardだけを必要に応じて追加する。negative guardは、positive ruleだけでは防ぎにくいrealistic failure modeがあり、decision valueがcontext costを上回る場合に絞る。
 - completeなsuperseded / rejected semantic modelをruntimeへ平坦化して持ち込まない。
-- 本来削減できるalternativeを否定のために再導入してcurrent modelより目立たせる **Negative Alternative Leakage (NAL)** を避ける。
+- alternativeがcomparison / correction / migration等のruntime purposeに必要な場合は、その必要範囲を保持する。
 - このcompression判断をsubjects / recordsへ逆適用しない。subjectsではsemantic completenessとeffective-status clarityを維持する。
 - semantic ownershipはsubjectsへ残す。
 - AIが同じtaskで同時に必要とするknowledgeをcontext co-occurrenceでまとめる。

@@ -30,9 +30,12 @@ This directory is a **managed derived snapshot**. Do not edit the installed arti
 | Worktree operation | `project/WORKTREES.md`; add safety guidance for destructive actions |
 | Repository integration / merge / rebase | `safety/INTEGRATION_AND_CONFIRMATION.md` → `operation/VERIFICATION_AND_DONE.md` |
 | Scope / authority / clarification, approach-only / brownfield entry, commit / push / reporting decisions | `operation/INDEX.md` |
+| Instruction / task-spec / review / handoff / explanation context | `operation/CONTEXT_SHAPING.md` |
 | Docker / build / test / CI environment | `execution/INDEX.md` |
 | Delete / cleanup / reset / recovery | `safety/INDEX.md` |
 
 ## Global guard
 
 Keep public boundaries precise and contained internals flexible. Use YAGNI to avoid speculative surface and internal machinery, not to weaken a selected contract merely because completing it is expensive.
+
+Shape guidance around the model needed for the current purpose. Do not expand rejected or undesired alternatives solely to negate them; preserve alternatives when they carry necessary decision, correction, migration, safety, or explanatory value.
