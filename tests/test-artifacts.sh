@@ -110,11 +110,15 @@ sed -i 's|implementation/TESTING\.md|implmentation/TESTING.md|' \
 grep -Fq 'BROKEN: INDEX.md -> implmentation/TESTING.md' "$TMP_ROOT/broken.log" \
     || fail "broken route not reported with source and target"
 
-# An inner-router entry removal must orphan its leaf even though the
-# root INDEX and router file still exist and link fine.
+# A leaf can have multiple valid incoming routes across the pack.
+# In the synthetic orphan probe, remove *all* advertised links to this
+# leaf while preserving the target file. Removing only its local router
+# entry would be insufficient when cross-file routes also reach it.
 PACK_ORPHAN="$TMP_ROOT/pack-orphan"
 cp -r "$REPO_ROOT/artifacts" "$PACK_ORPHAN"
-sed -i '/SCOPE_AND_AUTHORITY\.md/d' "$PACK_ORPHAN/operation/INDEX.md"
+while IFS= read -r -d '' route_file; do
+  sed -i '/SCOPE_AND_AUTHORITY\.md/d' "$route_file"
+done < <(find "$PACK_ORPHAN" -type f -name '*.md' -print0)
 "$ROUTE_CHECK" "$PACK_ORPHAN" >"$TMP_ROOT/orphan.log" 2>&1 \
     && fail "route check accepted an orphaned leaf"
 grep -Fq 'UNREACHABLE: operation/SCOPE_AND_AUTHORITY.md' "$TMP_ROOT/orphan.log" \

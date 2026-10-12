@@ -1,0 +1,10 @@
+=== recent commits ===
+1daad5c test: install Artifact v2
+ecc2cc2 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.sandbox/validation/
+tests/tmp/smoke.ok

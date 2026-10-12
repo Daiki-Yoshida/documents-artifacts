@@ -30,6 +30,14 @@ Filesystem containment is placement only: it does not define Git ownership, depe
 
 Static primary checkouts and Work-specific checkouts are different layers. Work-specific repository checkouts resolve only through the Work Root contract — read `WORKTREES.md` when creating them, and do not place ad-hoc checkouts beside the Project Root. A task that sets up repository placement and materializes Work checkouts needs both this file and `WORKTREES.md`.
 
+## Project-owned local work areas
+
+Use the Project Root as the default physical home for project-owned checkouts, isolated legacy state, and temporary validation/scratch outputs. Resolve a suitable project-local location and its Git ignore/tracking and cleanup policy; a test-output directory such as `tests/tmp/` is one possible project-local choice, not a universal path.
+
+When a primary checkout cannot serve a new task safely, evaluate protected state and a contained alternative before creating a separate Project checkout elsewhere. A legacy checkout may be retained in a project-owned isolated area, while new work uses the appropriate primary/Work checkout contract. Relocating an existing Project Root is a structural migration: preserve dirty/index state, Git metadata/worktree registrations, path dependencies, and the identity of the resulting Project Root. Do not treat moving a checkout into its own descendant as a routine move.
+
+Filesystem containment does not grant Git ownership or write permission over every contained resource. For external read access or a justified external write target, apply `../operation/SCOPE_AND_AUTHORITY.md`; use `../safety/INDEX.md` for structural, destructive, or host-level risk. An intentionally isolated harness may use a managed external temporary root when its isolation and cleanup contract requires that.
+
 ## Ownership
 
 Management Root Repository may statically own/project:

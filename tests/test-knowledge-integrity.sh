@@ -188,6 +188,22 @@ for record_dir in documents/knowledge/records/*/; do
     || fail "record without RECORD.md or MANIFEST.md: $record_dir"
 done
 
+# Project Root write boundary (#199): canonical scope, positive containment,
+# permitted external reads/writes, and runtime routing must remain aligned.
+root_write_record=documents/knowledge/records/2026-10-12-project-root-write-boundary/ISSUE_199_BODY.md
+root_workspace=documents/knowledge/subjects/workspace-structure/S001_PROJECT_AND_REPOSITORY_MODEL.md
+root_authority=documents/knowledge/subjects/engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md
+root_safety=documents/knowledge/subjects/development-safety/S001_SAFETY_PRINCIPLES.md
+[[ -s "$root_write_record" ]] || fail "Issue #199 source record missing"
+grep -Fq 'Project Root配下のローカル作業領域' "$root_workspace" || fail "contained local workspace model missing"
+grep -Fq 'Project Root配下の許可された対象をdefault write scope' "$root_authority" || fail "default project write boundary missing"
+grep -Fq '外部の読み取り専用参照' "$root_authority" || fail "safe external reading missing"
+grep -Fq '必要かつ承認された外部書込' "$root_authority" || fail "authorized external exceptions missing"
+grep -Fq '実効的な操作対象と構造変更' "$root_safety" || fail "structural migration safety guard missing"
+grep -Fq '## Project-owned local work areas' artifacts/project/WORKSPACE.md || fail "project containment projection missing"
+grep -Fq '## Local write boundary' artifacts/operation/SCOPE_AND_AUTHORITY.md || fail "external authority projection missing"
+grep -Fq '| Project-owned scratch / isolated checkout / Project-Root-external write |' artifacts/INDEX.md || fail "project root write boundary route missing"
+
 # Validate navigational Markdown links in the active repository-local entrypoints.
 entrypoints=(
   README.md

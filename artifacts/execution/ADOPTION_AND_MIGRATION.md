@@ -43,4 +43,6 @@ Then migrate incrementally:
 
 Change one execution boundary at a time and keep behavior verifiable.
 
+Keep project-owned temporary and alternate work areas under the resolved Project Root by default, using project-local locations and ignore/cleanup policies. Before an environment migration relocates a repository checkout or materializes an external test/runtime target, apply `../project/WORKSPACE.md` and `../operation/SCOPE_AND_AUTHORITY.md`.
+
 Do not silently move repositories, delete environment state, or create unnecessary worktrees as a side effect of "environment improvement."
