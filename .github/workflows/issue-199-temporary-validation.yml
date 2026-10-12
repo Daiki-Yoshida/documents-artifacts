@@ -26,6 +26,8 @@ jobs:
       - name: Artifact delivery regression
         run: bash tests/test-artifacts.sh
       - name: Knowledge integrity
+        if: ${{ always() }}
         run: bash tests/test-knowledge-integrity.sh
       - name: Agent harness deterministic suite
+        if: ${{ always() }}
         run: bash tests/test-agent-harness.sh
