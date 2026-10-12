@@ -1,0 +1,15 @@
+scenario: project-root-isolated-checkout
+run_id: 2026-10-12-quick1
+fixture: project-root-isolated-checkout
+prepared_at_utc: 2026-10-12T14:52:12Z
+captured_at_utc: 2026-10-12T14:54:42Z
+source_repo_head_at_prepare: 3f60fc318e95e257c370551f59ab8a9c0fb2b6ee
+source_repo_head_at_capture: 3f60fc318e95e257c370551f59ab8a9c0fb2b6ee
+generated_repo: /tmp/documents-artifacts-i199-quick1/project-root-isolated-checkout/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 1daad5cc7c6002d1c4762e7da8215d480ce101af
+head_sha_at_capture: 1daad5cc7c6002d1c4762e7da8215d480ce101af
+provenance: present
+verification_output: present
+observed_reads: not-provided
+file_open_events: present
