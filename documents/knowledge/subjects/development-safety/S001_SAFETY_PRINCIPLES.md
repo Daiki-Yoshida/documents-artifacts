@@ -36,6 +36,14 @@
 
 Project / Work / Runのresource ownershipは `../work-identity/` が主所有し、このsubjectはそのscopeを安全な操作境界として利用する。
 
+## 実効的な操作対象と構造変更
+
+Project Root配下の隔離領域・一時環境は、project-localなowner、Git追跡/ignore境界、lifecycle/cleanup対象を明確にして使用する。旧checkout等の移設は、意図した内容保存だけでなく、staged/dirty state、Git metadata、linked worktree登録、absolute path依存への影響を調査してから行う。
+
+書込場所の文字列ではなく、symlink / bind mount / container mount / host operation等を通じた実効的な変更先と副作用を評価する。外部への必要な書込の権限判断は `../engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md`、destructive / structural operationのgateは `S002_DESTRUCTIVE_OPERATIONS.md` と `S005_CONFIRMATION_AND_REREAD.md` が所有する。
+
 ## Sources
+
+- `../../records/2026-10-12-project-root-write-boundary/ISSUE_199_BODY.md`
 
 - `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`

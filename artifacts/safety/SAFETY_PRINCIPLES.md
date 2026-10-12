@@ -19,6 +19,12 @@ Safety should not make routine work unnecessarily cumbersome.
 
 > Make the safe operation the easiest/default operation.
 
+## Effective targets
+
+Check where an operation actually writes, including targets reached through symlinks, mounts, nested repositories, and host/container APIs, when those boundaries affect ownership or safety. A contained legacy checkout or temporary workspace needs a defined owner, Git ignore/tracking boundary, and cleanup scope. Repository-root relocation additionally needs a state-preservation and registration plan.
+
+General external-write authorization belongs to `../operation/SCOPE_AND_AUTHORITY.md`; destructive and host-risk gates remain in `DESTRUCTIVE_OPERATIONS.md`.
+
 ## Default design
 
 - routine commands are non-destructive by default;

@@ -170,6 +170,23 @@ Project RootはManagement Root Repositoryの基準working tree rootである。
 - `documents/` 内部構造は `../documentation/` が所有する。
 - application内部moduleの配置はこのsubjectの責務ではない。
 
+## Project Root配下のローカル作業領域
+
+Project Rootは、Management Root RepositoryがProject全体の構造と配置を調整する基準directoryでもある。Projectに属するcheckout、隔離された旧環境、検証用の一時作業領域などは、project-localの所有・配置規約に従い、**デフォルトではProject Root配下の適切な領域へ配置する**。
+
+代表的な構成要素:
+
+- Component RepositoryのPrimary Checkout: 上記のstable repository mappingが定める位置。
+- Work-specific repository checkout: `../work-identity/` が定義する `.worktrees/<work-type>/<work-name>/<repository-selector>/`。
+- 旧checkoutの保護・隔離領域: 保護すべきstateと移行対象が明確な場合にproject-localで定義する、独立した配置。
+- project-ownedなテスト生成物・scratch: project-localで定義する一時領域。例として `tests/tmp/` 等があり、名称を一律には固定しない。
+
+こうした物理的な包含関係はGit ownershipを統合しない。独立repository、生成物、旧環境は適切なignore/track境界、resource identity、lifecycleを持つ。Project Root配下に存在するだけではManagement Root Repositoryに通常のGit fileとして追加しない。
+
+既存のProject Root checkout自体を再編する場合は、**移設対象のGit履歴・staged/dirty state・worktree登録・設定pathを保護して、移行前後のProject Root identityを明示的に設計する**。既存checkoutを自己の子directoryへ単純移動する操作として扱わず、必要なstaging位置・実際の書込対象・構造変更の権限を解決する。
+
+独立性や安全性のためにProject Root外の一時領域が必要なtaskもある。その場合の変更権限・read-only access・例外判断は `../engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md`、構造変更の安全性は `../development-safety/` が所有する。外部配置の必要性を判断する前に、Project Root内の適切な代替配置を検討する。
+
 ## Management Root Repositoryの開発入口責務
 
 Management Root Repositoryはproject-level coordination stateのGit ownershipを持つだけでなく、**人・AIがproject全体の開発contextへ入る基準面**でもある。
@@ -244,6 +261,8 @@ Primary Checkoutはstatic repository resolutionのための概念として扱う
 その判断はWork Identity / project policyが所有する。
 
 ## Sources
+
+- `../../records/2026-10-12-project-root-write-boundary/ISSUE_199_BODY.md` — Project Rootをlocal materializationの基準として使う新しい適用範囲。
 
 - `../../records/2026-10-04-workspace-physical-topology/RECORD.md`
 

@@ -19,6 +19,16 @@ When nearby problems are discovered:
 
 "While I am here" is not a scope argument.
 
+## Local write boundary
+
+For ordinary project-owned changes, resolve the Management Root Repository's Project Root and use authorized locations within it. When alternate checkout or scratch space is needed, first evaluate a project-contained location according to `../project/WORKSPACE.md`.
+
+Before writing outside that boundary, resolve the effective target, purpose, necessity, ownership, user/project authorization, and side effects. Paths, directory selectors, and tool access are not authorization on their own.
+
+Task-relevant, permitted read-only inspection outside the Project Root is allowed. Explicitly authorized changes to external dependencies, project-declared resources, or host/Docker configuration may proceed within their delegated scope and applicable safety gates. A managed external test root is valid when isolation requires it.
+
+If a necessary external write lacks authorization, continue safe in-scope diagnosis or an internal alternative where possible; seek confirmation only for the remaining unauthorized effect. Structural relocation and destructive/host operations must follow `../safety/INDEX.md`.
+
 ## Clarification
 
 Clarify when ambiguity would force you to invent caller-visible meaning, public contract, destructive scope, or another high-impact decision.
