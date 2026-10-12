@@ -120,8 +120,8 @@ for scenario_dir in "${scenario_dirs[@]}"; do
     if (cd "$target" && make verify >/dev/null 2>&1); then
       fail "external authorized library fixture baseline unexpectedly passes"
     fi
-    printf 'v2\\n' > "$target/config/library-capability.txt"
-    printf 'v2\\n' > "$shared/api/capability.txt"
+    printf 'v2\n' > "$target/config/library-capability.txt"
+    printf 'v2\n' > "$shared/api/capability.txt"
     (cd "$target" && make verify >/dev/null) \
       || fail "authorized external-library positive control failed"
     git -C "$target" restore -- config/library-capability.txt
