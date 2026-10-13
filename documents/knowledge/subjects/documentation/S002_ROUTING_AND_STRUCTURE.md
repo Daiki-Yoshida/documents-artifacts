@@ -217,6 +217,17 @@ Management Root Repository / Component Repositoryの関係をcurrent normative�
 
 旧hierarchical project / parent-child modelは `S006_HISTORY.md` とsource recordsへhistorical contextとして保存する。
 
+## 完了Workの履歴Archiveへのrouting
+
+`<project-root>/documents/archive/works/` は、完了したWorkのRecordsを管理ルートリポジトリが保持する**過去参照用の文書領域**である。current Project Documentationとはauthorityが異なる。
+
+- `documents/INDEX.md` は必要ならArchiveの軽量な入口だけを案内する。完了Workの全件や内部のRecordsを通常のタスクで列挙・preloadしない。
+- 過去の設計判断・障害・作業経緯を調べる場合は、対象Work Identityを用いて `documents/archive/works/<work-type>/<work-name>/` へ進む。Work単位の短いINDEXは、関連するIssue/PR/commitとRecordsの所在を示せれば十分である。
+- 個々のArchiveを現行仕様の第二の正本としない。現在の採用仕様は通常のProject Documentationを確認し、歴史的経緯が必要な場合だけArchiveを照合する。
+- Archiveの所有・Work完了時の移管は `../work-identity/S003_WORK_DOCUMENTS.md` / `S004_LIFECYCLE_AND_RESOURCES.md` が担当する。
+
+---
+
 ## Sources
 
 - `../../records/2026-10-03-project-component-documentation-boundary/`
