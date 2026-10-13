@@ -185,6 +185,63 @@ BAD_SHARED
       || fail "external-library fixture library dirty after control"
   fi
 
+  # Issue #204: Archive only historical Work Records, while reconciling
+  # durable knowledge into the current owner and removing temporary Work Docs.
+  # This is a disposable generated fixture; do not mutate source repositories.
+  if [[ "$scenario" == "work-records-closeout" ]]; then
+    if (cd "$target" && make verify >/dev/null 2>&1); then
+      fail "Work Records closeout baseline unexpectedly passes"
+    fi
+
+    archive="$target/documents/archive/works/feat/contact-export"
+    active="$target/.worktrees/feat/contact-export/documents"
+    mkdir -p "$archive"
+    mv -- "$active/records" "$archive/records"
+    cat >> "$target/documents/project/EXPORT.md" <<'DURABLE_CSV'
+Published header order: id,name,email.
+Quote fields containing comma, quote, or newline.
+Escape embedded quotes by doubling the quote character.
+DURABLE_CSV
+    rm -- "$active/DESIGN.md"
+    rmdir -- "$active"
+
+    (cd "$target" && make verify >/dev/null) \
+      || fail "Work Records selective archive positive control failed"
+
+    cp -- "$archive/records/2026-10-13-investigation.md" "$run_root/record-original"
+    printf '\ncorruption\n' >> "$archive/records/2026-10-13-investigation.md"
+    if (cd "$target" && make verify >/dev/null 2>&1); then
+      fail "Work Records gate accepted modified archived evidence"
+    fi
+    cp -- "$run_root/record-original" "$archive/records/2026-10-13-investigation.md"
+
+    cp -- "$fixture/.worktrees/feat/contact-export/documents/DESIGN.md" "$archive/DESIGN.md"
+    if (cd "$target" && make verify >/dev/null 2>&1); then
+      fail "Work Records gate accepted archiving all Work Documents"
+    fi
+    rm -- "$archive/DESIGN.md"
+
+    mkdir -p "$active"
+    printf '# stale\n' > "$active/STALE.md"
+    if (cd "$target" && make verify >/dev/null 2>&1); then
+      fail "Work Records gate accepted unfinished active Work Documents"
+    fi
+    rm -- "$active/STALE.md"
+    rmdir -- "$active"
+
+    (cd "$target" && make verify >/dev/null) \
+      || fail "Work Records fixture not restored after negative controls"
+    cmp -s "$fixture/.worktrees/fix/unrelated/documents/NOTES.md" \
+      "$target/.worktrees/fix/unrelated/documents/NOTES.md" \
+      || fail "Work Records closeout touched unrelated active Work"
+
+    rm -rf -- "$target/documents/archive"
+    git -C "$target" restore -- .worktrees/feat/contact-export/documents \
+      documents/project/EXPORT.md
+    [[ -z "$(git -C "$target" status --porcelain -uall)" ]] \
+      || fail "Work Records fixture controls left modified source state"
+  fi
+
   # issue #136: the integration scenario's agent-visible surfaces must
   # state the commit authority a blind run needs to finish on `main` —
   # checked on PROMPT.md and the project README only, never EXPECTATIONS
