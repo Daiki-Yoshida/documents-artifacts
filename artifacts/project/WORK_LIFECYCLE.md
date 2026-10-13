@@ -14,8 +14,10 @@ goal established
   → implementation
   → verification
   → integration
-  → reconcile durable Work Documents
-  → reconcile/clean work-scoped resources
+  → reconcile durable Work Documents into current Project Documentation
+  → finalize lightweight Work Records
+  → transfer Records to Project-owned historical archive and verify preservation
+  → reconcile/clean remaining Work Documents and work-scoped resources
   → Work complete
 ```
 
@@ -75,6 +77,18 @@ An unexplained leftover with unknown owner/purpose is not a valid completion sta
 
 Do not delete shared/persistent resources merely because the Work used them.
 
-## Work Documents completion
+## Work Documents completion and historical Work Records
 
-Reconcile durable confirmed information into Project Documentation. Drop work-only hypotheses/logs when no longer needed. Use Git history for the past; do not build a parallel archive system.
+Reconcile confirmed durable design, constraints and decisions into their current Project Documentation owners. Work-only hypotheses, scratch and execution logs may be dropped when no longer needed.
+
+Work Records (see `WORK_IDENTITY.md`) preserve the **development process** rather than define current project truth. At Work completion:
+
+1. Verify the Work-wide requested outcome, integration, relevant checks and unresolved issues (including all participating repositories).
+2. Reconcile durable current knowledge into the owning Project Documentation.
+3. Close the Work Records with a brief outcome, remaining items and available Issue/PR/commit evidence.
+4. Transfer the Records alone to `documents/archive/works/<work-type>/<work-name>/records/` under the Management Root Repository, preserving content, identity and relevant references.
+5. Verify the destination and authorized Git preservation/publication, then safely reconcile and clean remaining Work Documents and Work-owned resources.
+
+The archive is historical, normally excluded from everyday AI reading and **not** a current design authority. The rest of the Work Documents are not archived wholesale. Git remains the version-history mechanism; no extra history database or manual version registry is needed.
+
+If the destination is occupied by unrelated content, symlink/ownership boundaries are unclear, or archival/publication fails, keep the original Records and treat Work closeout as **pending**. Never overwrite existing archived history or delete the source before preservation is confirmed. Record the outcome and use the project's existing VCS and destructive-operation authorization gates.
