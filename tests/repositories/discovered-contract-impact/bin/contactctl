@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)"
+
+if (($# != 2)); then
+  printf 'Usage: bash bin/contactctl preview|export RAW_NAME\n' >&2
+  exit 2
+fi
+
+case "$1" in
+  preview)
+    source "$repo_root/src/internal/preview.sh"
+    preview_contact "$2"
+    ;;
+  export)
+    source "$repo_root/src/public/export.sh"
+    export_contact "$2"
+    ;;
+  *)
+    printf 'Unknown command: %s\n' "$1" >&2
+    exit 2
+    ;;
+esac

@@ -91,6 +91,59 @@ for scenario_dir in "${scenario_dirs[@]}"; do
   git -C "$target" rev-parse -q --verify refs/tags/artifact-test-baseline >/dev/null \
     || fail "prepared baseline tag missing: $scenario"
 
+  # Issue #198: discovered impact has an asymmetric baseline. A repair at
+  # the private presentation edge must pass both gates, whereas applying the
+  # same normalization to the shared raw source would break the public wire.
+  if [[ "$scenario" == "discovered-contract-impact" ]]; then
+    bash "$target/tests/test-export.sh" >/dev/null \
+      || fail "discovered-impact baseline exported data is already broken"
+    if bash "$target/tests/test-preview.sh" >/dev/null 2>&1; then
+      fail "discovered-impact baseline preview unexpectedly passes"
+    fi
+    if bash "$target/scripts/verify.sh" >/dev/null 2>&1; then
+      fail "discovered-impact baseline final gate unexpectedly passes"
+    fi
+    if grep -Eqi 'export|contract|compatibility|CONTRACTS[.]md|COMPATIBILITY[.]md' \
+      "$run_root/PROMPT.md"; then
+      fail "discovered-impact prompt reveals hidden cross-boundary responsibility"
+    fi
+
+    cat > "$target/src/internal/preview.sh" <<'REFERENCE_PREVIEW'
+#!/usr/bin/env bash
+source "$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd -P)/shared/name.sh"
+preview_contact() {
+  local value
+  value="$(contact_name "$1")"
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%"${value##*[![:space:]]}"}"
+  while [[ "$value" == *"  "* ]]; do value="${value//  / }"; done
+  printf 'Name: %s\n' "$value"
+}
+REFERENCE_PREVIEW
+    bash "$target/scripts/verify.sh" >/dev/null \
+      || fail "discovered-impact preview-local reference repair does not pass"
+    git -C "$target" restore -- src/internal/preview.sh
+
+    cat > "$target/src/shared/name.sh" <<'BAD_SHARED'
+#!/usr/bin/env bash
+contact_name() {
+  local value="$1"
+  value="${value#"${value%%[![:space:]]*}"}"
+  value="${value%"${value##*[![:space:]]}"}"
+  while [[ "$value" == *"  "* ]]; do value="${value//  / }"; done
+  printf '%s' "$value"
+}
+BAD_SHARED
+    bash "$target/tests/test-preview.sh" >/dev/null \
+      || fail "discovered-impact wrong shared repair fails to fix preview"
+    if bash "$target/tests/test-export.sh" >/dev/null 2>&1; then
+      fail "discovered-impact export gate accepted a breaking shared normalization"
+    fi
+    git -C "$target" restore -- src/shared/name.sh
+    [[ -z "$(git -C "$target" status --porcelain)" ]] \
+      || fail "discovered-impact fixture controls left uncommitted changes"
+  fi
+
   # Issue #199: baseline must be reproducibly incomplete, and valid
   # contained/authorized completions must pass the fixture gate.
   if [[ "$scenario" == "project-root-isolated-checkout" ]]; then

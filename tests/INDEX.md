@@ -245,6 +245,13 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `project-root-execution-routing` | project-root-execution-routing | fresh isolated subjectがProject Root entryからArtifact root→WORKSPACE/COMMANDS_AND_CIへ到達、whole-pack preloadなし / root public command + literal `DIR` で独立Component Repositoryのみ64→128 / final Project state PASS |
 
+## Selective-reading / discovered-impact — defined, awaiting evaluation
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `discovered-contract-impact` | discovered-contract-impact | preview-only taskのrepo調査でshared sourceの公開export consumerを発見し、必要ならcontract/compatibility guidanceへ参照を拡張できるか / preview修正とbyte-preserving export維持を別gateで検証する（Issue #198）。focused baselineは既存`brownfield-scope` / `project-root-execution-routing`結果を再利用する |
+
+
 ## Discovery pilots — defined, awaiting evaluation
 
 | Scenario | Fixture | Main observation |
