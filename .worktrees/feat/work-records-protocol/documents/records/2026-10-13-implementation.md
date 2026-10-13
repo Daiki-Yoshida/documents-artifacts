@@ -21,7 +21,9 @@ Scope: [Issue #204](https://github.com/Daiki-Yoshida/documents-artifacts/issues/
 
 ## Validation and open state
 
-The fixture and test controls are authored. **No repository-wide validation or independent fresh-agent behavior run has been claimed at this checkpoint.** A review PR and static/focused checks remain to be completed. GitHub Actions and external CI were not used.
+The fixture and test controls are authored. GitHub read-back confirmed that selected Issue comments in the new source record equal their source bodies, and a focused route check of six changed Artifact files found no broken references. An isolated local reproduction of the Bash fixture gate showed baseline FAIL, Records-only preservation PASS, and correctly rejected corrupted Records, wholesale Work Documents archive and unclosed Work Documents. The fixture source blobs match the SHA-256 values in its gate.
+
+**Repository-wide tests and an independent fresh-agent run remain NOT RUN.** This chat environment has no clone of the full repository and GitHub egress is unavailable. No GitHub Actions/external CI were used. [Draft PR #206](https://github.com/Daiki-Yoshida/documents-artifacts/pull/206) remains stacked on [source PR #205](https://github.com/Daiki-Yoshida/documents-artifacts/pull/205) pending source integration, full validation, and review.
 
 ## Relevant evidence
 
