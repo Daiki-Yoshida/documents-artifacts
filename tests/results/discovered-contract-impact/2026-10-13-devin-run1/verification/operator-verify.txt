@@ -1,0 +1,5 @@
+$ bash scripts/verify.sh
+PASS: staff preview formatting
+PASS: published export compatibility
+PASS: Contact CLI final verification
+exit_code: 0

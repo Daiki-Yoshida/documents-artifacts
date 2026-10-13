@@ -1,0 +1,15 @@
+scenario: discovered-contract-impact
+run_id: 2026-10-13-devin-run1
+fixture: discovered-contract-impact
+prepared_at_utc: 2026-10-13T05:35:04Z
+captured_at_utc: 2026-10-13T05:38:26Z
+source_repo_head_at_prepare: 391136b7a5fb29d64e05f2498b541ec25efe87e1
+source_repo_head_at_capture: 391136b7a5fb29d64e05f2498b541ec25efe87e1
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/discovered-contract-impact/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: ec5fc5c705c13bc204a0b122d24c9568dc2e6da7
+head_sha_at_capture: ec5fc5c705c13bc204a0b122d24c9568dc2e6da7
+provenance: present
+verification_output: present
+observed_reads: not-provided
+file_open_events: present

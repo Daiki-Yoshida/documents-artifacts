@@ -1,0 +1,6 @@
+$ bash bin/contactctl export (od -c of output)
+0000000   c   o   n   t   a   c   t  \t           A   d   a            
+0000020   L   o   v   e   l   a   c   e          \n
+0000033
+$ bash bin/contactctl preview
+Name: Ada Lovelace
