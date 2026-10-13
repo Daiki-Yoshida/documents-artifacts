@@ -45,6 +45,10 @@ It should provide:
 
 An AI should not need to read all documentation to find one answer.
 
+## Historical Work Archive routing
+
+Completed Work's development-process journals may be retained under `documents/archive/works/`. That directory is an on-demand **historical** source, not an independent current Project Documentation authority. Route to it from the project's INDEX only when the task requires old decisions, failures or implementation rationale; do not enumerate or preload all archived Work Records in routine engineering context. A small archive entrypoint or Work-local INDEX can point to the relevant Work Identity and records.
+
 ## Agent entry files
 
 Files such as `AGENTS.md`, `CLAUDE.md`, or `GEMINI.md` may contain:
