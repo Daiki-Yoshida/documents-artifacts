@@ -32,10 +32,11 @@ target projects
 
 - [knowledge-source-model](../knowledge/records/2026-09-21-knowledge-source-model/RECORD.md)
 - [knowledge-record-accuracy](../knowledge/records/2026-09-21-knowledge-record-accuracy/RECORD.md)
+- [record-intake-regulation](../knowledge/records/2026-10-13-record-intake-regulation/RECORD.md)
 
 ## 2. 第0情報源の取り込み
 
-第0情報源から第1情報源へ入れる際は、1つのsource eventを完全な単位として扱う。
+第0情報源から第1情報源へ入れる際、取り込む各source eventを原則全文の単位として扱う。相互に関連するeventを一つのBundleへ収録しても、eventごとの出典・境界・原文を区別する。
 
 例:
 
@@ -60,6 +61,20 @@ target projects
 記録の外側にはprovenance metadataを付与してよい。保存先は原則 `documents/knowledge/records/YYYY-MM-DD-<short-title>/` とする。
 
 短い採用・修正指示が直前のAI提案や監査結果を参照している場合、その指示だけで承認対象を推測復元しない。取得可能な元提案・監査結果を別source eventとして記録する。
+
+## 2.1 新規recordの取り込み手順
+
+保存形状・最低限のmetadata・原文の扱いは `documents/knowledge/system/RECORD_MODEL.md` が所有する。
+
+1. **取り込み単位を決める**: 単独event / 関連eventのBundle / 時点固定のsnapshotを選び、何の判断・出来事を保存するかを特定する。同じtopicやIssueに関するsourceを際限なく1directoryへ集めない。
+2. **sourceを選ぶ**: Bundleでは対象eventの境界と選択範囲を先に確定する。選択した完全event群の保存は「議論全体の完全保存」と同義ではない。
+3. **出典と本文を保存する**: 各eventの全文を維持し、短い採用・訂正が参照する提案等を同じBundleか別recordへ追跡可能にする。原文の改行・formatを変更した場合や部分取得しかできない場合、その限界をFidelityとCoverageに分けて明示する。
+4. **provenanceを記述する**: 新規 `RECORD.md` / snapshot `MANIFEST.md` へ `record_format: 1`、`record_kind`、取り込み日、scope、`Source inventory`（payload・source/locator・Coverage・Fidelity）を記載する。source日と取得日時は別で、判明する場合のみ正確に記す。
+5. **取り込み単位を固定する**: 後から新しいsourceが発生したら、別recordとして作成し関連先を参照する。既存原文の書き換えはsourceとの転記差異の訂正に限定する。
+
+単一eventでは `RECORD.md` 内に本文を収録してよい。Bundleは複数fileも1file内の複数eventも許容し、境界とinventoryを明確にする。snapshotでは原treeを保全し `MANIFEST.md` に取得範囲と一致確認を記録する。
+
+既存recordsはgrandfatheringし、一括rename・転記・メタデータ移植を行わない。新規契約の導入を理由にsubjects / artifactsを独立したrecordのauthorityへ置き換えない。
 
 ## 3. 議論の評価を保存する
 
