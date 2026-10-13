@@ -230,6 +230,9 @@ Management Root Repository / Component Repositoryの関係をcurrent normative�
 
 ## Sources
 
+- `../../records/2026-10-13-work-records-proposal/`
+- `../../records/2026-10-13-work-records-implementation-adoption/`
+
 - `../../records/2026-10-03-project-component-documentation-boundary/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
