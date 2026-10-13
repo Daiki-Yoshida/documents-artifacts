@@ -25,11 +25,13 @@ implementation
        ↓
 verification
        ↓
-integration
+integration / requested outcome verification
        ↓
-Work Documents reconciled into Project Documentation
+Work Documentsのdurable knowledgeをProject Documentationへreconcile
        ↓
-work-scoped resources reconciled / cleaned
+Work Recordsを締め、Project-owned Archiveへ移管・保全を確認
+       ↓
+不要になったWork Documentsとwork-scoped resourcesを安全に整理
        ↓
 Work Identity completed
 ```
@@ -54,6 +56,24 @@ feat/hogehoge
 Work 全体の完了判定では、参加 repository の状態と Work Documents の reconciliation を含めて判断する。integration operationの安全規則は `../development-safety/S004_INTEGRATION.md` を参照する。
 
 ---
+
+---
+
+## Work Recordsの完了とArchive移管
+
+Work Recordsは`S003_WORK_DOCUMENTS.md`が定義する軽量な開発ジャーナルである。Work完了処理は、履歴の保存とProject Documentationの現行authorityへの統合を分けて扱う。
+
+1. Workに参加したrepositoryのintegration、依頼された成果、検証・残課題を確認する。複数repositoryのうち1件のmergeだけではWork全体をcompletedにしない。
+2. 現行仕様として残すべき設計・制約・判断理由を適切なProject Documentationのownerへreconcileする。
+3. Work Recordsへ最終結果・未解決事項・関連Issue/PR/commit等を必要な分だけ追記して区切る。
+4. `<project-root>/documents/archive/works/<work-type>/<work-name>/records/`へWork Recordsを移管し、元の記録内容と参照可能性を確認する。Management Root RepositoryのGit所有権と許可された保存・publication経路を守る。
+5. 移管と必要な保存が確認できてから、Work専用文書と実際に作成したWork-scoped resourcesを既存のscope/safety契約に従って整理し、Work completedを判断する。
+
+既存の移管先、Work Identityの再開、同名path、symlink/異なるGit所有者を検出した場合は、既存の記録を上書きせず調査する。移管が途中で失敗・未公開なら**元のRecordsを保持し、完了処理を保留**する。失敗を隠すためにソース側や既存Archiveを削除しない。両側に同じ内容が一時的に残る場合は、どちらが保存確認済みかを明示し、再試行時は保存状態を確認してから整理する。
+
+ArchiveはWork完了後に保持されるProject-ownedの履歴資料であり、Work終了時に除去するWork-scoped runtime resourceではない。Archive内の履歴を現在有効な仕様のauthorityとして利用しない。
+
+このライフサイクルは通常の記録更新・commit/push・削除の権限を拡張しない。VCS publicationは`../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md`、削除・移管時のriskは`../development-safety/`が所有する。
 
 ---
 
@@ -216,6 +236,9 @@ Work Identity は **意味・ownership・lifecycleを揃えるための共通軸
 ---
 
 ## Sources
+
+- `../../records/2026-10-13-work-records-proposal/`
+- `../../records/2026-10-13-work-records-implementation-adoption/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 
