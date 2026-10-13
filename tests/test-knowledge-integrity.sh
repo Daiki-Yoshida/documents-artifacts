@@ -831,7 +831,7 @@ grep -Fq 'Work Recordsだけ' "$doc_workflow_owner" \
   || fail "documentation workflow does not distinguish historical Records"
 grep -Fq '通常のAI作業では全Archiveを読み込まず' "$work_docs_owner" \
   || fail "archive is not selective-reading historical material"
-grep -Fq 'file write / commit / remote push / Project baseline publication' \
+grep -Fq 'A journal file update does not itself authorize commit, push' \
   artifacts/operation/VERSION_CONTROL_AND_REPORTING.md \
   || fail "checkpoint recording silently grants VCS publication"
 grep -Fq 'Work Records checkpoint / completed Work archive' artifacts/INDEX.md \
