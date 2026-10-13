@@ -1,0 +1,17 @@
+2026-10-13T14:26:36Z documents/artifacts/INDEX.md
+2026-10-13T14:26:36Z documents/INDEX.md
+2026-10-13T14:26:42Z documents/artifacts/project/WORK_IDENTITY.md
+2026-10-13T14:26:42Z documents/artifacts/project/WORK_LIFECYCLE.md
+2026-10-13T14:26:42Z documents/artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md
+2026-10-13T14:26:42Z documents/artifacts/documentation/INDEX.md
+2026-10-13T14:26:49Z documents/artifacts/documentation/FORMAT_AND_GIT.md
+2026-10-13T14:26:49Z documents/project/EXPORT.md
+2026-10-13T14:26:49Z Makefile
+2026-10-13T14:26:49Z scripts/verify.sh
+2026-10-13T14:26:49Z README.md
+2026-10-13T14:26:54Z .worktrees/feat/contact-export/documents/DESIGN.md
+2026-10-13T14:26:54Z .worktrees/feat/contact-export/documents/records/2026-10-13-investigation.md
+2026-10-13T14:26:54Z .worktrees/feat/contact-export/documents/records/2026-10-13-verification.md
+2026-10-13T14:26:54Z .worktrees/fix/unrelated/documents/NOTES.md
+2026-10-13T14:32:39Z documents/artifacts/operation/VERSION_CONTROL_AND_REPORTING.md
+2026-10-13T14:32:39Z documents/artifacts/operation/SCOPE_AND_AUTHORITY.md

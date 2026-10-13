@@ -1,0 +1,3 @@
+$ cd /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo && make verify
+PASS: Work Records archived selectively with intact history and current documentation
+exit_code: 0

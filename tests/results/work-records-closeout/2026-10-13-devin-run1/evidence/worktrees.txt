@@ -1,0 +1,23 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo
+HEAD 70e0cb1b0bcec9c4588ec916c7de32b8415861c1
+branch refs/heads/main
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/work-records-closeout
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo
+  registration_head: 70e0cb1b0bcec9c4588ec916c7de32b8415861c1
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: 70e0cb1b0bcec9c4588ec916c7de32b8415861c1
+  branch: main
+  status: dirty
+  status_detail:
+    ?? .serena/
+  sparse_checkout: disabled
