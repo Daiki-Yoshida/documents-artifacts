@@ -186,6 +186,38 @@ for record_dir in documents/knowledge/records/*/; do
     || fail "invalid record directory name: $record_dir"
   [[ -f "${record_dir}RECORD.md" || -f "${record_dir}MANIFEST.md" ]] \
     || fail "record without RECORD.md or MANIFEST.md: $record_dir"
+
+  # Issue #189: apply the new format only to records captured after adoption.
+  # The October 13 completion record predates this decision and is grandfathered.
+  if [[ "${name:0:10}" < "2026-10-13" ||
+        "$name" == "2026-10-13-project-root-write-boundary-completion" ]]; then
+    continue
+  fi
+
+  metadata="${record_dir}RECORD.md"
+  [[ -f "$metadata" ]] || metadata="${record_dir}MANIFEST.md"
+  # Only the first YAML block is authoritative; example metadata does not count.
+  header="$(awk '
+    /^```yaml$/ { inside=1; next }
+    inside && /^```$/ { exit }
+    inside { print }
+  ' "$metadata")"
+  grep -Eq '^record_format:[[:space:]]*1[[:space:]]*$' <<< "$header" \
+    || fail "missing record_format: 1: $record_dir"
+  grep -Eq "^recorded_date:[[:space:]]*\"?${name:0:10}\"?[[:space:]]*$" <<< "$header" \
+    || fail "intake date mismatch: $record_dir"
+  grep -Eq '^scope:[[:space:]]*"?[^"[:space:]][^"]*"?[[:space:]]*$' <<< "$header" \
+    || fail "missing record intake scope: $record_dir"
+  grep -Fqx '## Source inventory' "$metadata" \
+    || fail "missing source inventory: $record_dir"
+
+  if grep -Eq '^record_kind:[[:space:]]*"?(event|bundle)"?[[:space:]]*$' <<< "$header"; then
+    [[ -f "${record_dir}RECORD.md" ]] || fail "event/bundle needs RECORD.md: $record_dir"
+  elif grep -Eq '^record_kind:[[:space:]]*"?snapshot"?[[:space:]]*$' <<< "$header"; then
+    [[ -f "${record_dir}MANIFEST.md" ]] || fail "snapshot needs MANIFEST.md: $record_dir"
+  else
+    fail "invalid record_kind (event/bundle/snapshot): $record_dir"
+  fi
 done
 
 # Project Root write boundary (#199): canonical scope, positive containment,
