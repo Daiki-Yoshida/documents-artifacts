@@ -14,7 +14,7 @@ source_issue: "https://github.com/Daiki-Yoshida/documents-artifacts/issues/189"
 |---|---|---|---|
 | `ISSUE_189_BODY.md` | GitHub Issue #189: https://github.com/Daiki-Yoshida/documents-artifacts/issues/189 | 2026-10-13取り込み時点のIssue本文全体。後続コメントや会話履歴は含まない | GitHubから取得した本文を無加工保存 |
 | `USER_MESSAGES.md` | このChatGPT会話のユーザー発言（永続的な個別message locatorは未取得） | 設計相談開始、B案選択、実装指示の3件を選定して全文収録。会話全体ではない | 各収録メッセージの本文は無要約・無言い換え。event見出し・fenceは追加した外枠 |
-| `DESIGN_CONTEXT.md` | 直前のChatGPT assistant設計提案（個別message locator未取得） | B案採用に先行する提案の主要な意味。全文転記ではない | 表示会話からの再構成。byte-identical原文ではなく、補助文脈として明示 |
+| `DESIGN_CONTEXT.md` | このChatGPT会話の先行assistant返信（個別message locator未取得） | B案の詳細提案について選択した返信1件の全文。会話全体は含まない | 会話表示からMarkdown/DILを含む本文を転記。再構成要約ではない。APIエクスポートとのbyte-for-byte一致は未検証 |
 
 ## Relation
 
