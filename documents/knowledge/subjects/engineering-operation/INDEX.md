@@ -35,7 +35,7 @@ contract / document / operation risk等を、それぞれのownerが持つconfir
 contract conformanceとrequested outcomeを分け、done宣言までのverification disciplineを扱う。
 
 ### S006_VERSION_CONTROL_AND_REPORTING.md
-commit / push authority、default branch guard、reportingを扱う。
+commit / push authority、default branch guard、長時間Workの軽量記録とreportingを扱う。
 
 ### S007_BROWNFIELD_AND_APPROACH.md
 brownfield scope disciplineと「どう進めるか」というapproach questionへの対応を扱う。
