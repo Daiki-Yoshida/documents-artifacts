@@ -1,0 +1,5 @@
+=== git status --short ===
+ M src/internal/preview.sh
+
+=== ignored paths present (names only) ===
+none

@@ -245,6 +245,15 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 |---|---|---|
 | `project-root-execution-routing` | project-root-execution-routing | fresh isolated subjectがProject Root entryからArtifact root→WORKSPACE/COMMANDS_AND_CIへ到達、whole-pack preloadなし / root public command + literal `DIR` で独立Component Repositoryのみ64→128 / final Project state PASS |
 
+## Selective-reading / discovered-impact — completed/evaluated
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `discovered-contract-impact` | discovered-contract-impact | fresh SWE-2 Max run1: preview修正＋既存published exportのbyte-preservationをPASS / shared raw sourceを調査後、公開contractとcompatibilityを含む関連Artifact 6件のOPEN観測（whole-pack preloadなし） / dynamic expansionは1 runの範囲でPASS、理解の直接証明ではない（Issue #198） |
+
+Evaluation: [`discovered-contract-impact/2026-10-13-devin-run1.md`](evaluations/discovered-contract-impact/2026-10-13-devin-run1.md)。focused baselineは既存`brownfield-scope` / `project-root-execution-routing`評価を再利用し、Artifact正文は変更しない。
+
+
 ## Discovery pilots — defined, awaiting evaluation
 
 | Scenario | Fixture | Main observation |
