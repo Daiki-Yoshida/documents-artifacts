@@ -28,6 +28,7 @@ This directory is a **managed derived snapshot**. Do not edit the installed arti
 | Multi-repository workspace setup (primary checkouts + Work checkouts) | `project/WORKSPACE.md` → `project/WORKTREES.md` |
 | Project-root session / command target routing | `project/WORKSPACE.md` + `execution/COMMANDS_AND_CI.md` |
 | Work identity / lifecycle | `project/WORK_IDENTITY.md`; add `project/WORK_LIFECYCLE.md` when needed |
+| Work Records checkpoint / completed Work archive | `project/WORK_IDENTITY.md` + `project/WORK_LIFECYCLE.md`; add `documentation/WORKFLOW_AND_MAINTENANCE.md` for reconciliation |
 | Worktree operation | `project/WORKTREES.md`; add safety guidance for destructive actions |
 | Repository integration / merge / rebase | `safety/INTEGRATION_AND_CONFIRMATION.md` → `operation/VERIFICATION_AND_DONE.md` |
 | Scope / authority / clarification, approach-only / brownfield entry, commit / push / reporting decisions | `operation/INDEX.md` |
