@@ -1,0 +1,12 @@
+$ cd /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo && make verify && sha256sum documents/archive/works/feat/contact-export/records/*.md && cat .worktrees/fix/unrelated/documents/NOTES.md | head -3 && git log --oneline -3
+PASS: Work Records archived selectively with intact history and current documentation
+b3a87e15984237a3f3762cdb5d81ebf1e3e220aa83b66fbc81cbdd5c7818e5cb  documents/archive/works/feat/contact-export/records/2026-10-13-closeout.md
+8507c6eb029dbbcb8aa75b823718d1680387dbe04fedfbafde4d008ee574692b  documents/archive/works/feat/contact-export/records/2026-10-13-investigation.md
+8949b332aab234b4f04a58d977cc82c32046b2f1b2d7ff15e16fcc2ad53efdf3  documents/archive/works/feat/contact-export/records/2026-10-13-verification.md
+# Separate active Work
+
+The other Work is still active. Its content is unrelated to the closeout of feat/contact-export and must be preserved.
+70e0cb1 docs: reconcile feat/contact-export closeout and archive Work Records
+6ee6e2e test: install Artifact v2
+a2b99cc test: fixture baseline
+exit_code: 0

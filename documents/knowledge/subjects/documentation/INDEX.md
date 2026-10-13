@@ -36,11 +36,11 @@ documentation/
 
 ### S002_ROUTING_AND_STRUCTURE.md
 
-INDEX、cross reference、file role、directory分割、複数repository Projectでのcomponent knowledge routingなど、情報へ到達するための構造を扱う。
+INDEX、cross reference、file role、directory分割、複数repository Projectと完了Work Archiveへの必要時のroutingを扱う。
 
 ### S003_WORKFLOW.md
 
-新規project、brownfield、継続的更新、Work Documentsからのreconciliationを扱う。
+新規project、brownfield、継続的更新、Work Documentsの現行知識へのreconciliationとWork Records履歴移管の文書責務を扱う。
 
 ### S004_MAINTENANCE_AND_REVIEW.md
 

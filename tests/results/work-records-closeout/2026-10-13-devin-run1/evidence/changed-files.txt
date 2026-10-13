@@ -1,0 +1,7 @@
+A	.serena/.gitignore
+A	.serena/project.yml
+D	.worktrees/feat/contact-export/documents/DESIGN.md
+A	documents/archive/works/feat/contact-export/records/2026-10-13-closeout.md
+R100	.worktrees/feat/contact-export/documents/records/2026-10-13-investigation.md	documents/archive/works/feat/contact-export/records/2026-10-13-investigation.md
+R100	.worktrees/feat/contact-export/documents/records/2026-10-13-verification.md	documents/archive/works/feat/contact-export/records/2026-10-13-verification.md
+M	documents/project/EXPORT.md

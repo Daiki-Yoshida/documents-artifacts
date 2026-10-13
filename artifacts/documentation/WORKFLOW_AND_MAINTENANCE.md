@@ -54,7 +54,7 @@ Artifact v2 is delivered as one managed pack under `documents/artifacts/`, with 
 
 The project INDEX may route to the installed artifact entrypoint; it does not need to mirror every internal artifact file as an independent authority.
 
-## Work Documents reconciliation
+## Work Documents reconciliation and historical Records
 
 Work-specific investigation/design lives with the Work while it is active.
 
@@ -63,11 +63,12 @@ At completion, reconcile rather than copy everything:
 ```text
 Work Documents
    ↓ review
-durable confirmed knowledge → Project Documentation
-temporary hypotheses/logs    → discard when no longer needed
+durable confirmed knowledge  → current Project Documentation owner
+lightweight Work Records     → documents/archive/works/<work-type>/<work-name>/records/
+temporary Work-only material → discard when no longer needed
 ```
 
-Do not preserve raw work notes as permanent project authority merely because they existed.
+Only the purpose-built Work Records are transferred as historical process evidence. Do not copy all scratch or rejected hypotheses into the current Project Documentation, or archive all Work Documents wholesale. The archive is not a competing current authority; Git tracks file revision history. Complete Work-wide verification, transfer checks and authorized publication before cleaning up source Records. If transfer cannot be confirmed, keep the source and report pending closeout. Detailed ownership and lifecycle are in `../project/WORK_LIFECYCLE.md`.
 
 ## Delete safely
 

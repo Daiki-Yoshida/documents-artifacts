@@ -1,6 +1,6 @@
 # Work Identity — Work Documents
 
-Work Documents、Project Documentationとの関係、Git所有権、Project baseline branchの役割とpublication権限境界、完了時reconciliation、履歴管理を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
+Work Documentsと軽量なWork Records、Project Documentationとの関係、Git所有権、Project baseline branchへのvisibility/publication、完了時のreconciliation・履歴移管を扱う。Project Documentation内部のrouting / file role / maintenanceは `../documentation/` が主所有する。
 
 ## Work Documents
 
@@ -41,6 +41,33 @@ Work Documents は、その Work Identity について現在進行している�
 目的は、Work 固有の必要情報を失わず保存できる場所を提供することである。
 
 ---
+
+---
+
+## Work Records — 進行中の開発記録
+
+Work Recordsは、Workに属する**開発過程の軽量なジャーナル**である。長時間にわたる作業で、Chat/CLIの一時的なcontextにしか残らない重要な判断・発見・失敗・検証結果を失わず、後続の作業主体が必要に応じて調べられるようにする。
+
+標準の配置:
+
+```text
+<project-root>/.worktrees/<work-type>/<work-name>/documents/records/
+```
+
+Work RecordsはManagement Root RepositoryがGitで所有するWork Documentsの一部であり、Component Repositoryごとに別々の正本を作らない。Work Identityは記録の帰属を示し、記録主体・ツール・実行環境を限定しない。Work Identity確定前の探索的な議論は必要に応じてIssueやProject Documentationへ記録し、記録のためだけにWork Identityを生成しない。
+
+### 軽量な記録単位と内容
+
+- 一連の作業、セッション、または意味のある作業区切りを1つのMarkdownファイルとして記録できる。同じファイルに複数の判断・問題・結果を含めてよく、細かな操作単位に分割する必要はない。
+- 主な内容は「何をしたか」「重要な判断と理由」「意味のある問題・解決」「検証済みの結果・残課題」。Work Identity、日時、記録主体、Issue/PR/commit等の証拠は判明する範囲で示す。固定スキーマや固定長は要求しない。
+- 実測事実・推測・他者からの報告を区別し、重要な失敗と判断変更の経緯を維持する。原文会話の全量、全コマンド出力、厳密なprovenance表は要求しない。非公開情報を無条件で転載しない。
+- 同じWorkに複数の作業主体が参加する場合、変更が衝突しない記録ファイルを選ぶ。全主体共通の連番発番・役割名を必須とせず、既存ファイルへの同時上書きを避ける。
+
+### 長時間作業のチェックポイント
+
+重要な判断、調査結果、問題解決、検証、引継ぎ、中断など**意味のある区切り**で、適切なRecordを更新する。明確な区切りが長く来ない場合にも、その時点の進捗と未解決事項を短く保存する。時間固定の自動監視・全操作の実況・チェックポイントごとのcommitを共通規約として求めない。
+
+Work Recordsのファイル更新、Git commit、remote push、Project baselineへのpublicationは**別々の行為**である。管理ルート側で保存できても、未commit/未公開ならその状態を区別する。具体的なVCS authorityは`../engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md`が所有する。
 
 ---
 
@@ -197,30 +224,32 @@ Project Documentation へ昇格する候補:
 - 一時的な検証ログ
 - 完了後に意味を持たない作業メモ
 
-Work Documents 自体の過去は Git history から確認できるため、独自 archive を作らない。
+Work Documentsのうち、現行知識として必要な部分はProject Documentationへ統合し、不要な作業用文書は整理する。過去の版の追跡は引き続きGit historyが担う。**Work Recordsの歴史的記録は、完了後の専用Archiveへ移管する**。移管・cleanupの完了条件は `S004_LIFECYCLE_AND_RESOURCES.md` が所有する。
 
 ---
 
 ---
 
-## Git history を履歴機構として使用する
+## Work Recordsの歴史的ArchiveとGit history
 
-Work Documents の履歴、変更過程、削除済みWorkの確認には Git を使用する。
+Work完了後、Work Recordsを次の**Project所有の非日常参照領域**へ移管する。
 
-独自の、
+```text
+<project-root>/documents/archive/works/<work-type>/<work-name>/records/
+```
 
-- archive directory
-- history database
-- generated manifest
-- parallel version-history system
+Archiveは、そのWorkに何が起きたかを後から調査するための資料であり、現在有効なProject Documentationの意味的authorityではない。通常のAI作業では全Archiveを読み込まず、必要なときにWork Identityと軽量な入口から参照する。詳細なArchive routingは `../documentation/S002_ROUTING_AND_STRUCTURE.md` が扱う。
 
-を Work Identity のために導入しない。
+Archiveの対象は**Work Records**であり、DESIGN・INVESTIGATION等のWork Documents全体の無差別なコピーではない。確定した設計・制約等は既存のProject Documentationへreconcileする。作業文書の旧版やArchiveの変更履歴はGitで管理し、独立した履歴DB、追加のversion registry、generated manifestは設けない。
 
-Work 完了後に Work Root が削除されても、tracked Work Documents の過去は Git history に残る。
+移管では、既存のArchiveを無条件で上書きしない。保存・参照・Git所有境界が確認できない場合は元のWork Recordsを保持する。Workの最終完了とwork-scoped resourceのcleanupは `S004_LIFECYCLE_AND_RESOURCES.md` の条件に従う。
 
 ---
 
 ## Sources
+
+- `../../records/2026-10-13-work-records-proposal/` — 初期提案と元のWork Documents意図（PR #205）
+- `../../records/2026-10-13-work-records-implementation-adoption/` — 軽量化・長時間稼働・Archive移管と実装開始の後続判断
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 

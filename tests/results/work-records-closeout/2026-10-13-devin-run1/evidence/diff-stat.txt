@@ -1,0 +1,8 @@
+ .serena/.gitignore                                 |   2 +
+ .serena/project.yml                                | 187 +++++++++++++++++++++
+ .worktrees/feat/contact-export/documents/DESIGN.md |  18 --
+ .../contact-export/records/2026-10-13-closeout.md  |   9 +
+ .../records/2026-10-13-investigation.md            |   0
+ .../records/2026-10-13-verification.md             |   0
+ documents/project/EXPORT.md                        |   4 +-
+ 7 files changed, 201 insertions(+), 19 deletions(-)

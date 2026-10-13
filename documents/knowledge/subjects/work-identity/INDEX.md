@@ -29,11 +29,11 @@ Project Root、Work Root、単一/複数repositoryの統一形状、repository�
 
 ### S003_WORK_DOCUMENTS.md
 
-Work Documents、Project Documentationとの関係、Git ownership、Project baseline branchへのvisibility/publication、完了時reconciliation、Git historyによる履歴管理を扱う。
+Work Documentsと軽量Work Records、Project Documentationとの関係、Git ownership、baseline visibility、Work完了時のArchive移管・Git履歴管理を扱う。
 
 ### S004_LIFECYCLE_AND_RESOURCES.md
 
-Work lifecycle、Work completion、Project/Work/Run resource scope、Resource Identity伝播、Work Identityの非目標を扱う。
+Work lifecycle、Work Recordsの最終移管とWork completion、Project/Work/Run resource scope、Resource Identity伝播を扱う。
 
 ### S005_WORKTREE_MATERIALIZATION.md
 

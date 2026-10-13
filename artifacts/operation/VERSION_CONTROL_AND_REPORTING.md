@@ -22,6 +22,12 @@ Work guidance may require Work Documents to become visible from the Project base
 - if publication is not yet authorized, preserve the Work context in an authorized Management Root Repository working state and report publication as pending;
 - never report baseline publication that has not actually happened.
 
+## Lightweight Work Records during extended work
+
+For a confirmed Work, preserve significant changes in understanding and decisions as short Work Records checkpoints at meaningful boundaries. Capture what was done, why important choices were made, material problems and resolutions, actual verification, and relevant remaining work. Keep uncertainty and received reports distinct from firsthand verification. The Work-specific journal's location and completion lifecycle belong to `../project/WORK_IDENTITY.md` and `../project/WORK_LIFECYCLE.md`.
+
+A journal file update does not itself authorize commit, push, merge, paid services or a scheduled monitoring process. Report pending Git preservation/publication as pending, not complete. Project-specific VCS rules remain authoritative.
+
 ## Reporting
 
 Report facts needed to understand the result:

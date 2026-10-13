@@ -101,6 +101,20 @@ This is a lifecycle/visibility goal, not implicit VCS authority. Use the project
 
 Reconcile durable conclusions into Project Documentation when the Work completes.
 
+## Work Records — lightweight development journal
+
+While a confirmed Work is active, preserve its important progress, decisions and reasons, problems, verified results, and unresolved matters as a lightweight journal under:
+
+```text
+<project-root>/.worktrees/<work-type>/<work-name>/documents/records/
+```
+
+The Management Root Repository owns these tracked documents. One Markdown file may cover a meaningful work interval or session and multiple decisions; use short entries, optional evidence links, and conflict-free filenames when multiple writers participate. Do not require a verbatim chat transcript, exhaustive tool log, rigid template, or fixed schedule.
+
+Write checkpoints at meaningful progress boundaries (significant decisions, discoveries, resolution, verification, handoff or interruption). For unusually long uninterrupted work, preserve a brief current progress / unresolved-state checkpoint before context is lost. File update, Git commit, push and baseline publication are distinct operations with separate authority; see `../operation/VERSION_CONTROL_AND_REPORTING.md`.
+
+Work completion and archive transfer are described in `WORK_LIFECYCLE.md`. Do not create Work Identity solely for exploratory discussion that precedes a concrete Work; record meaningful early decisions through an authorized existing Issue or Project Documentation path.
+
 ## Repository participation
 
 A base Work may span multiple repositories. Each repository maps deterministically from:

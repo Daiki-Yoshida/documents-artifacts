@@ -1,0 +1,10 @@
+=== recent commits ===
+70e0cb1 docs: reconcile feat/contact-export closeout and archive Work Records
+6ee6e2e test: install Artifact v2
+a2b99cc test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.serena/project.local.yml

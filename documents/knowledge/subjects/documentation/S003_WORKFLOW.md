@@ -275,12 +275,16 @@ documentation側は、Work完了時に**何をProject Documentationへ残すか*
 - Work中だけ必要だったraw log、棄却案、一時的hypothesisを機械的にcanonicalへ全コピーしない。
 - Work後も真であり、将来のproject taskで参照すべきdurable knowledgeだけを、既存の主authority / routingへreconcileする。
 - destination documentを更新したら、そのdocumentの通常maintenance / routing規則を適用する。
-- active Work Documentsの履歴保存のためだけに別archive treeを作らない。Git historyを利用する。
+- 確定した仕様・長期的に必要な判断理由はcurrent Project Documentationへreconcileする。一方、`../work-identity/S003_WORK_DOCUMENTS.md`に定義された**Work Recordsだけ**は、進行中の開発過程の履歴資料として `<project-root>/documents/archive/works/<work-type>/<work-name>/records/`へ移管する。
+- Archiveは現在有効なProject Documentationのauthorityではない。全Work Documentsをそのままコピーせず、通常のAI参照からは外し、必要な過去調査だけに供する。GitはArchiveを含む文書の変更履歴を管理する。
 - branch mergeだけをreconciliation完了の証拠にしない。Work completionはwork-identityのlifecycleで判断する。
 
 ---
 
 ## Sources
+
+- `../../records/2026-10-13-work-records-proposal/`
+- `../../records/2026-10-13-work-records-implementation-adoption/`
 
 - `../../records/2026-10-03-project-component-documentation-boundary/`
 

@@ -808,4 +808,40 @@ for file in documents/project/migration/semantic-preservation-candidate/*.md; do
   fi
 done
 
+# Issue #204: lightweight Work Records and historical archive are scoped
+# by the existing semantic owners, with original source decisions preserved.
+work_records_source=documents/knowledge/records/2026-10-13-work-records-proposal/RECORD.md
+work_records_adoption=documents/knowledge/records/2026-10-13-work-records-implementation-adoption/RECORD.md
+work_docs_owner=documents/knowledge/subjects/work-identity/S003_WORK_DOCUMENTS.md
+work_lifecycle_owner=documents/knowledge/subjects/work-identity/S004_LIFECYCLE_AND_RESOURCES.md
+doc_workflow_owner=documents/knowledge/subjects/documentation/S003_WORKFLOW.md
+doc_routing_owner=documents/knowledge/subjects/documentation/S002_ROUTING_AND_STRUCTURE.md
+work_reporting_owner=documents/knowledge/subjects/engineering-operation/S006_VERSION_CONTROL_AND_REPORTING.md
+for f in "$work_records_source" "$work_records_adoption" "$work_docs_owner" \
+  "$work_lifecycle_owner" "$doc_workflow_owner" "$doc_routing_owner" "$work_reporting_owner"; do
+  require_file "$f"
+done
+grep -Fq 'Work Records — 進行中の開発記録' "$work_docs_owner" \
+  || fail "Work Records journal meaning missing from work-identity owner"
+grep -Fq 'documents/archive/works/<work-type>/<work-name>/records/' "$work_docs_owner" \
+  || fail "Work Records historical archive path missing"
+grep -Fq '元のRecordsを保持し、完了処理を保留' "$work_lifecycle_owner" \
+  || fail "Work completion can discard unpreserved records"
+grep -Fq 'Work Recordsだけ' "$doc_workflow_owner" \
+  || fail "documentation workflow does not distinguish historical Records"
+grep -Fq '通常のAI作業では全Archiveを読み込まず' "$work_docs_owner" \
+  || fail "archive is not selective-reading historical material"
+grep -Fq 'A journal file update does not itself authorize commit, push' \
+  artifacts/operation/VERSION_CONTROL_AND_REPORTING.md \
+  || fail "checkpoint recording silently grants VCS publication"
+grep -Fq 'Work Records checkpoint / completed Work archive' artifacts/INDEX.md \
+  || fail "work records are not discoverable from the Artifact root"
+grep -Fq 'Only the purpose-built Work Records are transferred' \
+  artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md \
+  || fail "runtime guidance archives all Work Documents instead of Records"
+require_file tests/scenarios/work-records-closeout/scenario.conf
+require_file tests/scenarios/work-records-closeout/PROMPT.md
+require_file tests/scenarios/work-records-closeout/EXPECTATIONS.md
+require_file tests/repositories/work-records-closeout/scripts/verify.sh
+
 printf 'PASS: knowledge structure, source snapshots, links, and legacy inventory\n'

@@ -1,0 +1,15 @@
+scenario: work-records-closeout
+run_id: 2026-10-13-devin-run1
+fixture: work-records-closeout
+prepared_at_utc: 2026-10-13T13:53:02Z
+captured_at_utc: 2026-10-13T14:48:47Z
+source_repo_head_at_prepare: 38ce2283d509aa76251562dd834acc8ed588cc40
+source_repo_head_at_capture: 38ce2283d509aa76251562dd834acc8ed588cc40
+generated_repo: /tmp/documents-artifacts-agent-tests-1000/work-records-closeout/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 6ee6e2e20ebf0568d307b335cc75c39f74d6987d
+head_sha_at_capture: 70e0cb1b0bcec9c4588ec916c7de32b8415861c1
+provenance: present
+verification_output: present
+observed_reads: present
+file_open_events: not-provided
