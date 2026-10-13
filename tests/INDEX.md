@@ -254,6 +254,14 @@ bash tests/scripts/reset-agent-test.sh --scenario contract-boundary
 Evaluation: [`discovered-contract-impact/2026-10-13-devin-run1.md`](evaluations/discovered-contract-impact/2026-10-13-devin-run1.md)。focused baselineは既存`brownfield-scope` / `project-root-execution-routing`評価を再利用し、Artifact正文は変更しない。
 
 
+## Work Records closeout — defined, awaiting independent behavior evaluation
+
+| Scenario | Fixture | Expected result / evidence boundary |
+|---|---|---|
+| `work-records-closeout` | `work-records-closeout` | Workの確定仕様を既存Project Documentationにreconcileし、元Recordsの2ファイルだけをbyte-preservingで `documents/archive/works/` へ移管、仮説/Work Documentsは整理・別Workは保護する。fixture `make verify` に加えて、harnessが改変Record・Work Documents丸ごとのarchive・元Work Documents残留を拒否するnegative controlを持つ。現段階は**定義・決定論的検証用fixture**であり、fresh-agent behavior runによる成功は未確認（Issue #204） |
+
+従来の`documentation-maintenance-reconciliation` fixtureはWork Recordsを含まないため、全Work Documentsの重複archiveを拒否する期待値をそのまま保持する。2つのscenarioは異なる入力条件を検証する。新scenarioのEXPECTATIONSはblind agentへ事前提示しない。
+
 ## Discovery pilots — defined, awaiting evaluation
 
 | Scenario | Fixture | Main observation |
