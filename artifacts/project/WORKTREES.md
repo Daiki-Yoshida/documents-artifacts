@@ -33,7 +33,8 @@ Keep `REPO` explicit **internally** even in a single-repository project; it is n
 For `DIR`-based worktree operations, validate the candidate's path shape, repository mapping, existing ancestor/symlink/ownership boundaries and the confirmed Work Identity. Do not infer authorization merely from a directory value.
 
 - Create may accept a **missing final target path**, but only the deterministic canonical destination, with conflict/ownership checks.
-- Status/remove require an existing registered worktree and must check that the selected path and branch match the resolved Work/REPO.
+- Status is non-mutating and can report an unregistered/missing canonical target. If registered, inspect actual Git path, branch, owner and cleanliness.
+- Remove requires an existing registered worktree and must check that the selected path and branch match the resolved Work/REPO; dirty state is refused.
 - A Work Root path without repository-specific selection does not uniquely identify one worktree in a multi-repository Work. Fail on ambiguity unless a separate explicit operation intentionally targets the entire Work.
 
 Generic `DIR` path-input semantics are owned by `../execution/COMMANDS_AND_CI.md`. The branch, worktree materialization, registration, and cleanup safety rules remain here.
