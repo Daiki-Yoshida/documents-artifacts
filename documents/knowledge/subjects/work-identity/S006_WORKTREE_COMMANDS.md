@@ -169,7 +169,8 @@ DIR=.worktrees/feat/pathfinding/project/
 - relative `DIR`はProject Root基準。末尾slashの無害な差は同じtargetとして正規化する。shell fragmentとして評価しない。
 - 存在するpath/親のrealpath、symlink、境界外参照、unexpected content、stable repository mappingを照合する。absolute/outside-Project-Rootの扱いは明示的なProject authorityに従う。
 - **create**は最終target directoryが存在しなくてもよい。その場合も存在する祖先、想定のcanonical shape、Git repository/branch ownership、衝突・予期せぬ内容をpreflightする。
-- **status/remove**は既存のGit worktree登録と期待path、branch、clean/dirty等を実際のGit状態から検証する。
+- **status**は未作成の正規pathも非変更で診断し、registered/not registeredを正確に報告する。既存登録がある場合のみ、その登録path・branch・owner・clean/dirty等を照合する。
+- **remove**は既存の登録済みGit worktreeだけを対象にし、期待path、branch、owner、clean/dirty等をpreflightする。
 - Work Identityの確認と操作の権限は独立したgateであり、`DIR`を渡せることでは成立しない。
 
 Worktree lifecycleのactual semanticsは下記contractを維持する。generic `DIR` conventionの主所有は`../development-execution/S003_COMMAND_INTERFACE_AND_CI.md`に置く。
