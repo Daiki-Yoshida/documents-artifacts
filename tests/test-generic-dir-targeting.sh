@@ -14,8 +14,8 @@ printf 'component\n' > "$root/components/game/.project-component"
 cat > "$root/Makefile" <<'MAKE'
 SHELL := /bin/sh
 DIR ?=
-.PHONY: docker-up docker-status docker-down generate test worktree-plan
-docker-up docker-status docker-down generate test worktree-plan:
+.PHONY: docker-up docker-status docker-down generate test worktree-plan worktree-status
+docker-up docker-status docker-down generate test worktree-plan worktree-status:
 	@sh scripts/route.sh "$@" "$(DIR)"
 MAKE
 
@@ -67,8 +67,8 @@ case "$operation" in
     if [ -e "$dest" ] && [ ! -d "$dest" ]; then fail 'collision'; fi
     mkdir -p "$dest"; printf 'generated\n' > "$dest/generated.txt"
     ;;
-  worktree-plan)
-    # This models preflight only; it never materializes a Git worktree.
+  worktree-plan|worktree-status)
+    # Non-mutating identity resolution; no real Git worktree is created.
     trimmed="$(printf '%s' "$dir" | sed 's:/*$::')"
     printf '%s' "$trimmed" | grep -Eq '^\.worktrees/(feat|fix|refactor)/[a-z0-9-]+/[a-z0-9-]+$' || fail 'repository-specific path required'
     work="$(printf '%s' "$trimmed" | cut -d/ -f2-3)"
@@ -78,8 +78,14 @@ case "$operation" in
     parent="$(CDPATH= cd -- "$project/.worktrees/$work" && pwd -P)" || fail 'Work Root missing'
     [ "$parent" = "$project/.worktrees/$work" ] || fail 'Work Root escaped'
     [ -d "$parent/documents" ] || fail 'Work Documents missing'
-    [ ! -e "$parent/$repo" ] && [ ! -L "$parent/$repo" ] || fail 'checkout collision'
-    printf 'WORK=%s REPO=%s\n' "$work" "$repo"
+    [ ! -L "$parent/$repo" ] || fail 'symlink checkout'
+    if [ "$operation" = worktree-status ]; then
+      [ ! -e "$parent/$repo" ] || fail 'registered-worktree inspection required'
+      printf 'NOT_REGISTERED WORK=%s REPO=%s\n' "$work" "$repo"
+    else
+      [ ! -e "$parent/$repo" ] || fail 'checkout collision'
+      printf 'WORK=%s REPO=%s\n' "$work" "$repo"
+    fi
     ;;
   *) fail 'unknown command' ;;
 esac
@@ -119,6 +125,8 @@ must_fail run DIR=components/outside generate
 plan="$(run DIR=.worktrees/feat/alpha/game/ worktree-plan)"
 [ "$plan" = 'WORK=feat/alpha REPO=game' ] || fail 'incorrect resolved identity'
 [ ! -e "$root/.worktrees/feat/alpha/game" ] || fail 'preflight materialized worktree'
+status="$(run DIR=.worktrees/feat/alpha/game worktree-status)"
+[ "$status" = 'NOT_REGISTERED WORK=feat/alpha REPO=game' ] || fail 'status did not report absent worktree'
 must_fail run DIR=.worktrees/feat/alpha worktree-plan
 must_fail run DIR=.worktrees/feat/alpha/unknown worktree-plan
 must_fail run DIR=.worktrees/feat/unknown/game worktree-plan
