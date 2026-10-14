@@ -87,136 +87,63 @@ raw commandを利用してよい状況には少なくとも次がある。
 
 この例外はraw commandの全面禁止を意味しない。ただしpublic interfaceを迂回する場合も、そのinterfaceが担っていたenvironment selection、scope、safety、verification semanticsを意図せず失わない。
 
-## Execution Target Directory と `DIR`
+## Generic `DIR` — 公開コマンドのディレクトリ指定
 
-Project RootをAI development sessionのentry surfaceとして維持しながら、build / install / test / lint / run / dev-up / verify等を別checkoutやworktreeへ作用させるため、public commandは必要に応じて **Execution Target Directory** を受け取れる。
+Project RootをAI development sessionのentry surfaceとして維持する。Project-owned Makefile / wrapperで指定対象のdirectoryが可変となる場合は、**`DIR=<directory-path>`を汎用的なpublic inputとして優先する**。すべてのtargetに機械的に`DIR`を追加する義務ではなく、固定対象のoperationは固有の入口を使ってよい。
 
-Makefileをpublic routerとして使うprojectでは、そのnamed parameterとして `DIR` を利用できる。
+`DIR`自体は**指定されたパス**を表すだけで、Work Identity / Work Root / Repository Selector / Branch Identity / Runtime Identity / authorizationという意味を持たない。**受け取ったパスの意味・期待する対象の種類・存在要件・副作用は、呼び出されたoperationのcontractが決める。** パスをsubprocessのCWDへ変更することが共通の目的ではない。
 
-```text
-Agent Session Root
-  = Project Root
+~~~bash
+# Work Rootをもとに、該当WorkのDocker環境を操作
+make DIR=.worktrees/feat/pathfinding/ docker-up
+make DIR=.worktrees/feat/pathfinding/ docker-status
+make DIR=.worktrees/feat/pathfinding/ docker-down
 
-Public Command Surface
-  = Management Root Repository側のMakefile / wrapper
+# Repository checkoutをテスト対象にする
+make DIR=.worktrees/feat/pathfinding/game/ test
 
-DIR
-  = public operationが実際に作用するExecution Target Directory
-```
+# 指定ディレクトリを基準に生成する
+make DIR=components/api/ generate
 
-Make-based projectでの典型形:
+# 正規のWorktree配置候補を指定して作成する
+make DIR=.worktrees/feat/pathfinding/game/ worktree-create
+~~~
 
-```bash
-make DIR=.worktrees/feat/pathfinding/game dev-install
-make DIR=.worktrees/feat/pathfinding/game test
-make DIR=components/web lint
-```
+これはProjectが定義し得るoperation例であり、すべてのProjectが同じtarget名を提供する義務を意味しない。利用者はProject Rootから実在パスを辿れ、対応したshell環境ではTabによるpath補完を活用しやすい。補完動作はshell/Make設定にも依存するため、全環境で自動的に成立するとは仮定しない。
 
-すべてのtargetへ機械的に `DIR` 対応を要求しない。対象directoryが固定されたproject-level operationでは不要である。
+### 各operationによる対象の解決
 
-Make以外のpublic routerを使うprojectは、同じ意味のnamed / structured directory parameterを提供してよい。
+- Work-scoped `docker-up` のような操作では、Work Rootとして検証した`DIR`から**operation内部で**Work Identityや必要なDocker Resource Identityを導出してよい。`DIR`をWork Identityへ一律に変換する規約ではない。
+- `test` / `lint` なら受け取ったcheckout directoryそのものが対象となり得る。生成操作ならそのdirectoryを作成先や作成基準として利用できる。
+- `worktree-create/status/remove` の公開inputも`DIR`の正規配置候補から内部のWork Identity + stable Repository Selectorを解決できる。Git worktreeのsemantic contractとpreflightは`../work-identity/S006_WORKTREE_COMMANDS.md`が主所有する。
+- Work Rootしか示されず複数Repositoryのうち一つを選べない等、operationの指定対象が不明確なら勝手に選択しない。Work全体に作用するoperationなら、その範囲を明示的に定義する。
 
-### `DIR` の意味境界
+### Path resolution / 安全条件
 
-generic `DIR` は、**path-valued execution target selector** である。
+- relative `DIR`はProject Rootから解決し、processの現在CWDに依存しない。末尾slash等の無害な表記差をnormalizeできる。
+- 指定は1つのquoteされたpath valueとして扱い、shell fragmentをevalしない。path固有の`/main`、`/android`等の派生は必要なら**operation固有のresolver**が行い、`DIR`全体の意味にはしない。
+- 既存対象が必要な操作では、targetが存在しなければfailする。一方、作成操作は最終targetの未存在を許容し、既存祖先のrealpath/symlink、正規配置、Git所有権や衝突の有無を検証してから作成する。
+- absoluteまたはProject Root外のpathと書込はProjectの明示的なsupportとauthorityが必要。symlinkやmount後の実効targetも安全上重要なら検証する。
+- `DIR`省略時はoperationがdocumentしたdefault targetを使う。省略が意図せず別Workやdefault Docker scopeへのfallbackにならないこと。
+- **パス指定は承認・権限ではない。** Work Identityの確定、Git worktree登録・branch照合、destructive/external操作の安全gateを維持する。
 
-`DIR` 自体は次を意味しない。
+### 同じoperation familyの解決一貫性
 
-- Work Identity
-- Work Root
-- Repository Selector
-- Branch Identity
-- Runtime Identity
-- operation authority / authorization
+`docker-up/status/config/verify/down/cleanup`などは同じ入力pathとProject状態から同じsemantic target・Runtime/Resource Identityを解決する。非自明なderivationはProject所有の単一resolver/config sourceに寄せる。startだけWork-specificでdownやcleanupがdefault設定を使用する実装にしない。実行側は`S002_HOST_AND_CONTAINER.md`、Work resource lifecycleは`../work-identity/S004_LIFECYCLE_AND_RESOURCES.md`、destructive safetyは`../development-safety/`が所有する。
 
-そのためgeneric contractでは、`DIR=.worktrees/feat/hoge` を受け取って暗黙に `/main` や `/android` を追加するなど、Work topologyやrepository roleを意味論として埋め込まない。
+### Worktree lifecycleとの分担
 
-project固有の高位selector / resolverが独自規約としてpathを派生することはできるが、generic `DIR` の意味は指定されたdirectory pathそのものに留める。
+Worktreeの公開コマンドは`DIR=<canonical-worktree-path>`を受けて、**内部**でWork Identity + Repository Selector + 必要なBASEを解決する形を採用できる。作成候補の最終directoryは未存在でもよいが、任意pathへのmaterializationを許すものではない。`BASE`等の独立した設定は必要に応じて別パラメータにできる。既存Projectが`WORK + REPO`というpublic syntaxを互換性のために保持することは許容するが、generic guidanceではその入力を利用者へ必須化しない。
 
-### path resolution contract
+### Project固有の先行例 — `plaru_expo`
 
-`DIR` を採用するpublic interfaceでは、次を基本とする。
-
-- relative `DIR` はProject Rootを基準にresolveする。
-- trailing slash等の表記差はnormalizeしてよい。
-- pathはshell fragmentではなく1つのpath valueとしてquoteして扱う。
-- operationがexisting targetを要求する場合、対象が存在しなければfail closedする。
-- symlink / canonicalizationがscope判定へ影響する場合、解決後の実体pathも検証する。
-- absolute pathまたはProject Root外pathは、projectが明示的にsupportするときのみ許容することをdefaultとする。
-- `DIR` 未指定時は「processの現在CWDだから」という理由だけで対象を決めず、commandがdocumentしたdefault targetへresolveする。
-
-`DIR` を指定できることは、そのdirectoryに対する任意operationのauthorityを与えない。破壊操作では `DIR` だけをscope / authorizationの根拠にせず、`../development-safety/` のidentity、precondition、confirmation ruleを適用する。
-
-### Agent Session Rootとの接続
-
-routine operationは次の形を取れる。
-
-```text
-AI session
-  stays rooted at Project Root
-       ↓
-project-owned Makefile / wrapper
-       ↓ DIR=<resolved-target>
-project-owned script / resolver
-       ↓
-target repository / worktree
-       ↓
-underlying tool
-```
-
-内部scriptやsubprocessがtarget directoryへ `cd` する、`git -C` を利用する、tool固有のworking-directory optionを使うことは問題ない。
-
-区別すべきなのは、AIがproject contextを取得する **Agent Session Root** と、個々のoperationが作用する **Execution Target Directory / subprocess working directory** である。
-
-## Work Identity commandとの入力境界
-
-Worktree lifecycle operationとgeneric execution-target selectionを混同しない。
-
-`../work-identity/S006_WORKTREE_COMMANDS.md` が所有するworktree create/status/removeは、`WORK + REPO (+ BASE)` からbranch/path/materializationをdeterministically解決し、routine callerへarbitrary pathを入力させない。
-
-一方、既に存在・materializeされたcheckout/worktreeにbuild/install/test/lint/run等を作用させるgeneric public operationでは、target directoryが可変なら `DIR=<path>` を利用できる。
-
-```text
-worktree-create / status / remove
-  identity input = WORK + REPO (+ BASE)
-  DIR            = canonical identity inputではない
-
-build / install / test / lint / run / dev-up / verify
-  execution targetが可変なら DIR=<path> を利用可能
-```
-
-`DIR` はWork Identityを作るAPIでも、repository worktreeをmaterializeするAPIでもない。
-
-## Project-specific specialization example — `plaru_expo`
-
-以下は**generic `DIR` の推奨形を示す例ではなく、project-specific higher-level specializationの実例**である。
-
-`Daiki-Yoshida/plaru_expo` では、workspace rootのMakefileをpublic interfaceとして利用し、AI / developerがworkspace rootからcommandを実行したまま `DIR` でtask Work Rootを指定する実装がある。
-
-例:
-
-```bash
-make DIR=.worktrees/feat/example-change docker-dev-install
-make DIR=.worktrees/feat/example-change docker-dev-typecheck
-make DIR=.worktrees/feat/example-change android-dev-up
-```
-
-このprojectでは `DIR=.worktrees/<task>` をtask Work Rootとして解釈し、operationに応じて `/main` または `/android` をproject-localに派生する。**この意味はgeneric `DIR` contractとは異なる。** またGit helper側の `DIR` も `.worktrees/<type>/<task>` 系へ限定されている。
-
-このtask-pair specializationは `plaru_expo` 固有の規約として扱う。
-
-generic knowledgeへ採用するのは、
-
-- Project / workspace rootのpublic interfaceからtargetを選択できること
-- named `DIR` parameterでexecution target selectionを表現できること
-
-であり、`/main` / `/android` の暗黙派生をgeneric `DIR` contractへ持ち込まない。
+`Daiki-Yoshida/plaru_expo`では`DIR=.worktrees/<task>`からoperationによって`/main`または`/android`を派生する。これはcommand-owned interpretationの実例であり、generic `DIR`のパス値にWorkやrepository roleを組み込む規範ではない。Project-local resolverが必要な対象の解決と検証を担う。
 
 ## Work Identity固有commandとの接続
 
 このsubjectはMakefile / wrapper / scripts等の**generic public command surface**を所有する。
 
-一方、Work Identityとrepository selectorを入力とするworktree create/status/remove、branch/path resolution等のsemantic contractは `../work-identity/S006_WORKTREE_COMMANDS.md` が主所有する。
+一方、worktree create/status/removeのWork Identity・repository selector・branch/path resolution等の**semantic contract**は `../work-identity/S006_WORKTREE_COMMANDS.md` が主所有する。内部identityを利用者が直接引数として指定する必要はない。
 
 ```text
 development-execution
@@ -237,6 +164,9 @@ Work Identity operationをpublic commandとして公開する場合も、その�
 - 未指定の外部workspace最新版へ偶然依存しない。
 
 ## Sources
+
+- `../../records/2026-10-14-generic-dir-implementation-adoption/` — Work進行とIdentity選定の委任
+- `../../records/2026-10-14-generic-dir-command-target/` — DIRの汎用入力に関するユーザーの訂正意図
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 
