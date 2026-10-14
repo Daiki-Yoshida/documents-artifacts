@@ -20,6 +20,12 @@ for script in "$PREPARE" "$RESET" "$INSPECT" "$CAPTURE"; do
   bash -n "$script" || fail "syntax error: $script"
 done
 
+# Issue #209: focused non-Docker contract probe for generic DIR/path targeting.
+bash -n "$REPO_ROOT/tests/test-generic-dir-targeting.sh" \
+  || fail "generic DIR test syntax invalid"
+bash "$REPO_ROOT/tests/test-generic-dir-targeting.sh" >/dev/null \
+  || fail "generic DIR routing contract check failed"
+
 scenario_dirs=("$REPO_ROOT"/tests/scenarios/*/)
 (("${#scenario_dirs[@]}" > 0)) || fail "no scenarios found"
 
