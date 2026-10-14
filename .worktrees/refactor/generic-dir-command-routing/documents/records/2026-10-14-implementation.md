@@ -44,3 +44,13 @@ Independent semantic readback identified a potential regression: conflating `wor
 Added simulated `worktree-status` missing-target regression to the focused test. The updated **exact** GitHub blob is `5a1642dc3fdf49a207ee463577005ebf9b779086`, matching a local copy by Git blob hash. `bash -n` and `bash` on that exact copy both completed successfully; output `PASS: generic DIR command routing, creation targets, and scoped identities (simulated)`.
 
 This is a targeted non-Docker, non-Git-materialization check. The repository-wide suites and a real `git worktree` run are still **NOT RUN**, and no integration into `main` or target project has occurred.
+
+## Verification strategy revision — merge first, test integrated main (2026-10-14)
+
+The user authorized merging this personal guidance repository before running the remaining repository-local tests, to reduce distribution friction. This changes the earlier pre-merge verification gate; **no tests have been rerun as part of this decision**.
+
+Reviewed the proposed simulated `tests/test-generic-dir-targeting.sh`: it tests its own synthetic `route.sh` behavior, not an implementation distributed by this repository or a direct check of Artifact meaning. Its previous PASS is historical evidence for the old script version, not a current integration criterion. The script was deleted from the PR, its invocation removed from `tests/test-agent-harness.sh`, and the listing removed from `tests/INDEX.md`.
+
+The canonical/Artifact DIR change left legacy literal checks in `tests/test-knowledge-integrity.sh`. Updated those exact checks to assert the new generic path-only public input, internal Work/REPO interpretation, Project Root anchoring and preserved branch-identity distinction. This is correction of a knowingly stale gate, not an added testing subsystem.
+
+Agreed execution order: source-preservation PR #210 → implementation PR #211 → verify **integrated main** with the existing repository test commands. GitHub Actions/external hosted CI and target-project auto-sync remain outside scope. Test failures found post-merge must be recorded and fixed explicitly; merging is not evidence of PASS.
