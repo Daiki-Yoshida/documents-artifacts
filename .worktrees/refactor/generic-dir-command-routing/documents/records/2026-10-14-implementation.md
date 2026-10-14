@@ -36,3 +36,11 @@ Adopt the two-layer command design: user-facing `DIR` is a path locator, and eac
 - GitHub Actions, external CI / paid runners, target-project synchronization, and `main` merge were not executed.
 - Work-scoped real WSL worktree was not materialized by this API-only session; the Work has no created Docker/WSL runtime state requiring teardown. GitHub branch and Work Documents are intentionally retained for review.
 - Before integration: independent review of changed canonical semantics / projection; full local repository suites on authorized checkout; review PR #210 source preservation and stack order; validate actual Git worktree handling when a real implementation adopts this public interface.
+
+## Follow-up review and verification (2026-10-14)
+
+Independent semantic readback identified a potential regression: conflating `worktree-status` with `worktree-remove` would incorrectly require an existing registered worktree for a read-only status query. Corrected the `work-identity/S006` canonical guidance and `artifacts/project/WORKTREES.md` projection: **status can report an absent/unregistered canonical candidate; remove still requires a registered clean worktree**.
+
+Added simulated `worktree-status` missing-target regression to the focused test. The updated **exact** GitHub blob is `5a1642dc3fdf49a207ee463577005ebf9b779086`, matching a local copy by Git blob hash. `bash -n` and `bash` on that exact copy both completed successfully; output `PASS: generic DIR command routing, creation targets, and scoped identities (simulated)`.
+
+This is a targeted non-Docker, non-Git-materialization check. The repository-wide suites and a real `git worktree` run are still **NOT RUN**, and no integration into `main` or target project has occurred.
