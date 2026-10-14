@@ -9,6 +9,7 @@
 | `test-artifacts.sh` | whole-pack sync / replace / remove / safety / advertised-route validity+reachability / remote-delivery bootstrap |
 | `test-knowledge-integrity.sh` | knowledge・traceability・Artifact v2 structural integrity |
 | `test-agent-harness.sh` | agent harness fixture/scenario/materialization integrity |
+| `test-generic-dir-targeting.sh` | generic `DIR` path/operation targeting, simulated Work-scoped lifecycle, create target existence differences, and refusal controls without Docker daemon |
 
 Run:
 
