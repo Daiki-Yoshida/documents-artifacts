@@ -45,55 +45,36 @@ Direct raw-tool execution is reasonable when:
 
 Do not bypass the public interface in a way that silently loses its scope, environment, safety, or verification semantics.
 
-## Execution target directory
+## Generic directory target (`DIR`)
 
-Keep the AI session rooted at Project Root while allowing a public operation to target another existing checkout/worktree.
+Keep the AI session rooted at Project Root. For project-owned public operations with a variable directory target, prefer a consistent named `DIR=<directory-path>` input in Make-based projects.
 
-For Make-based projects, `DIR` may be used as the named **execution target directory** parameter:
+`DIR` is **only a path locator**. The selected public operation defines what that path means: an existing checkout to test, a Work Root for Docker operations, or a location/basis for creation. `DIR` itself is not a Work, repository, branch, runtime identity, or authorization.
 
-```bash
-make DIR=.worktrees/feat/pathfinding/game dev-install
-make DIR=.worktrees/feat/pathfinding/game test
-make DIR=components/web lint
-```
+~~~bash
+make DIR=.worktrees/feat/pathfinding/ docker-up
+make DIR=.worktrees/feat/pathfinding/ docker-down
+make DIR=.worktrees/feat/pathfinding/game/ test
+make DIR=components/api/ generate
+make DIR=.worktrees/feat/pathfinding/game/ worktree-create
+~~~
 
-`DIR` is a path-valued execution selector only. It is **not**:
+These are command-contract examples, not universally supplied targets. A command need not accept `DIR` when its target is fixed. A project-specific resolver may derive Work identity, a repository selector, Compose namespace, or a subdirectory from the **validated path** as required by that operation. Do not add an implicit repository suffix as a meaning of generic `DIR`. Reusing a path argument helps discoverability and may support shell path completion when configured.
 
-- Work Identity;
-- Work Root;
-- repository selector;
-- branch/runtime identity;
-- authorization.
+Recommended path handling:
 
-Generic `DIR` semantics must not infer repository roles or silently append project-specific suffixes such as `/main` or `/android`. A project may provide a separate higher-level resolver that specializes its own topology, but the generic directory parameter means the supplied target path.
+- Resolve relative paths from Project Root, independent of incidental process CWD; quote the value as one path, never evaluate it as a shell fragment.
+- Normalize harmless trailing slashes. Resolve realpath/symlink and ownership boundaries when relevant; allow absolute/outside-root targets only with explicit project support and authority.
+- Operations for existing targets must verify existence. **Creation operations may accept a not-yet-existing final target** after checking canonical placement, existing ancestors, collisions and authorization.
+- Define command-specific target kinds and fail on ambiguous selection; a Work Root does not uniquely choose one of multiple component repositories.
+- Omitted `DIR` uses that command's documented default; never accidentally select another Work/default runtime because scope information was dropped.
+- A directory selector does not grant destructive authority; see `../safety/DESTRUCTIVE_OPERATIONS.md` and `../operation/SCOPE_AND_AUTHORITY.md`.
 
-Recommended path contract:
+### Operation-owned identity and Worktree lifecycle
 
-- resolve relative `DIR` from Project Root;
-- treat it as one quoted path value, not a shell-fragment argument;
-- normalize harmless spelling differences such as a trailing slash;
-- fail if an operation requires an existing target and it does not exist;
-- validate canonical/symlink-resolved scope when it affects safety;
-- allow absolute or Project-Root-external paths only when the project explicitly supports them;
-- when `DIR` is omitted, use the command's documented default target, not accidental process CWD.
+`docker-up/status/config/verify/down/cleanup` must resolve the **same resource identity** from the same target path and project state, using one project-owned resolver/config source for non-trivial derivation. Docker Work isolation and shared resource rules remain in `HOST_AND_CONTAINER.md` and `../project/WORK_LIFECYCLE.md`.
 
-A directory selector does not grant destructive authority; see `../safety/DESTRUCTIVE_OPERATIONS.md`.
-
-## Worktree lifecycle is a different API
-
-Do not replace Worktree identity/materialization inputs with `DIR`.
-
-Worktree create/status/remove resolves its path from Work Identity + repository selector as defined in `../project/WORKTREES.md`. `DIR` is for routing ordinary operations to an already resolved/materialized target.
-
-```text
-worktree lifecycle:
-  WORK + REPO (+ BASE) -> branch/path/materialization
-
-routine execution:
-  DIR=<existing target> -> build/install/test/lint/run/verify
-```
-
-A project-specific interface may specialize this further, but it must not erase the identity boundary.
+Worktree create/status/remove can accept a canonical candidate path through `DIR` while resolving **Work Identity + stable repository selector (+ BASE)** internally. Its safety and Git materialization contract is owned by `../project/WORKTREES.md`. Existing project-specific `WORK + REPO` CLI input may remain for compatibility, but it is not a generic requirement for callers.
 
 ## Verification commands
 
