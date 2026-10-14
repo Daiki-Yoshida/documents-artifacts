@@ -2,33 +2,41 @@
 
 Read this only when a project has adopted Work-specific Git worktrees and you are creating, diagnosing, or removing them. Work Identity itself does not require every project or every Work to use a worktree.
 
-## Identity inputs
+## Public directory target and semantic identity
 
-Routine operations use:
+When a project adopts Work-specific Git worktrees, it exposes safe create/status/remove operations; Work Identity alone does not require materializing a worktree.
 
-```yaml
+For a Make-based public interface with variable directory targets, **prefer generic `DIR=<directory-path>`**. Here the public operation treats `DIR` as the candidate location of one repository-specific worktree:
+
+~~~bash
+make DIR=.worktrees/feat/pathfinding/project/ worktree-create
+make DIR=.worktrees/feat/pathfinding/project/ worktree-status
+make DIR=.worktrees/feat/pathfinding/project/ worktree-remove
+~~~
+
+The public path is not permission to place a worktree arbitrarily. Resolve it against the Project Root's canonical mapping to obtain **internal** semantic inputs:
+
+~~~yaml
 WORK: "<work-type>/<work-name>"
 REPO: "<stable project repository selector>"
-BASE: "required only when a missing Work branch needs a start ref and no documented default exists"
-```
+BASE: "required if a missing branch has no documented default starting ref"
+~~~
 
-Keep `REPO` explicit when this capability is adopted, even for a single-repository project, so the public contract does not change if the project later grows. `REPO` is a stable repository selector, not a Git branch name.
+Keep `REPO` explicit **internally** even in a single-repository project; it is not the Git branch name. Caller-facing `WORK + REPO` remains a valid project-local/compatibility interface, not the generic required command syntax. Callers should not decide sparse-checkout or branch naming.
 
-Callers should not manually supply:
+## Canonical path
 
-- arbitrary worktree path;
-- sparse-checkout decision;
-- branch name by default.
-
-Resolve them deterministically from Work + repository identity.
-
-## Path
-
-```text
+~~~text
 <project-root>/.worktrees/<work-type>/<work-name>/<repo-selector>/
-```
+~~~
 
-Fail closed if unrelated filesystem content occupies the target.
+For `DIR`-based worktree operations, validate the candidate's path shape, repository mapping, existing ancestor/symlink/ownership boundaries and the confirmed Work Identity. Do not infer authorization merely from a directory value.
+
+- Create may accept a **missing final target path**, but only the deterministic canonical destination, with conflict/ownership checks.
+- Status/remove require an existing registered worktree and must check that the selected path and branch match the resolved Work/REPO.
+- A Work Root path without repository-specific selection does not uniquely identify one worktree in a multi-repository Work. Fail on ambiguity unless a separate explicit operation intentionally targets the entire Work.
+
+Generic `DIR` path-input semantics are owned by `../execution/COMMANDS_AND_CI.md`. The branch, worktree materialization, registration, and cleanup safety rules remain here.
 
 ## Branch semantics
 
