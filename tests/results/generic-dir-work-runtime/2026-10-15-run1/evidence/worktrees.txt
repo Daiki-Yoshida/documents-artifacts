@@ -1,0 +1,66 @@
+=== git worktree list --porcelain (registration) ===
+worktree /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo
+HEAD a33f3c91604151e79f310bdbc931cf48e0ec36ef
+branch refs/heads/main
+
+worktree /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/other-work/main
+HEAD a33f3c91604151e79f310bdbc931cf48e0ec36ef
+branch refs/heads/feat/other-work
+
+worktree /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/schema-preview/main
+HEAD a33f3c91604151e79f310bdbc931cf48e0ec36ef
+branch refs/heads/feat/schema-preview
+
+
+=== per-worktree inspection ===
+safe_inspection_boundary: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime
+(only the primary generated repository and linked worktrees whose
+resolved real path is inside this run directory are inspected)
+worktree: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo
+  registration_head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  registration_ref: refs/heads/main
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo
+  boundary_scope: primary-generated-repo
+  inspected: yes
+  head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  branch: main
+  status: dirty
+  status_detail:
+     M Makefile
+     M README.md
+     M compose.yml
+     M documents/project/DEVELOPMENT.md
+     M scripts/resource-identity.js
+    ?? .serena/
+    ?? scripts/runtime-env.js
+    ?? scripts/work-compose.sh
+  sparse_checkout: disabled
+worktree: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/other-work/main
+  registration_head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  registration_ref: refs/heads/feat/other-work
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/other-work/main
+  boundary_scope: linked-under-run
+  inspected: yes
+  head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  branch: feat/other-work
+  status: clean
+  sparse_checkout: enabled
+  sparse_patterns:
+    /*
+    !/.worktrees/
+worktree: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/schema-preview/main
+  registration_head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  registration_ref: refs/heads/feat/schema-preview
+  registration_attrs: none
+  resolved_path: /tmp/documents-artifacts-agent-tests-1000/generic-dir-work-runtime/repo/.worktrees/feat/schema-preview/main
+  boundary_scope: linked-under-run
+  inspected: yes
+  head: a33f3c91604151e79f310bdbc931cf48e0ec36ef
+  branch: feat/schema-preview
+  status: clean
+  sparse_checkout: enabled
+  sparse_patterns:
+    /*
+    !/.worktrees/

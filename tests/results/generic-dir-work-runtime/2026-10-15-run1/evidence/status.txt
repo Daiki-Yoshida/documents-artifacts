@@ -1,0 +1,14 @@
+=== git status --short ===
+ M Makefile
+ M README.md
+ M compose.yml
+ M documents/project/DEVELOPMENT.md
+ M scripts/resource-identity.js
+?? .serena/
+?? scripts/runtime-env.js
+?? scripts/work-compose.sh
+
+=== ignored paths present (names only) ===
+!! .serena/project.local.yml
+!! .worktrees/feat/other-work/main/
+!! .worktrees/feat/schema-preview/main/

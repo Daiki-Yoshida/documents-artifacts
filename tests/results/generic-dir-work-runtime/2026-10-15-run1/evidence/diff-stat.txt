@@ -1,0 +1,10 @@
+ .serena/.gitignore               |   2 +
+ .serena/project.yml              | 187 +++++++++++++++++++++++++++++++++++++++
+ Makefile                         |  50 +++++++++--
+ README.md                        |  25 +++++-
+ compose.yml                      |  14 +--
+ documents/project/DEVELOPMENT.md |  11 ++-
+ scripts/resource-identity.js     |  48 ++++++++--
+ scripts/runtime-env.js           |  53 +++++++++++
+ scripts/work-compose.sh          |  28 ++++++
+ 9 files changed, 391 insertions(+), 27 deletions(-)
