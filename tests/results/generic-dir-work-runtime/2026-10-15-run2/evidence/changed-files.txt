@@ -1,0 +1,9 @@
+M	.worktrees/feat/other-work/documents/WORK.md
+M	.worktrees/feat/schema-preview/documents/WORK.md
+M	Makefile
+M	README.md
+A	compose.work.yml
+M	documents/project/DEVELOPMENT.md
+M	scripts/resource-identity.js
+A	scripts/work-runtime.js
+A	scripts/work-runtime.sh

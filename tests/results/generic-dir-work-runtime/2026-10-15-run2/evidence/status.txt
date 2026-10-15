@@ -1,0 +1,14 @@
+=== git status --short ===
+ M .worktrees/feat/other-work/documents/WORK.md
+ M .worktrees/feat/schema-preview/documents/WORK.md
+ M Makefile
+ M README.md
+ M documents/project/DEVELOPMENT.md
+ M scripts/resource-identity.js
+?? compose.work.yml
+?? scripts/work-runtime.js
+?? scripts/work-runtime.sh
+
+=== ignored paths present (names only) ===
+!! .worktrees/feat/other-work/main/
+!! .worktrees/feat/schema-preview/main/

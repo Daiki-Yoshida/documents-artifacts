@@ -1,0 +1,15 @@
+scenario: generic-dir-work-runtime
+run_id: 2026-10-15-run2
+fixture: work-runtime-resources
+prepared_at_utc: 2026-10-15T07:39:01Z
+captured_at_utc: 2026-10-15T07:48:06Z
+source_repo_head_at_prepare: 4e900d56024885537ec724ccc6de2578dce0c306
+source_repo_head_at_capture: 4e900d56024885537ec724ccc6de2578dce0c306
+generated_repo: /tmp/documents-artifacts-agent-tests-1000-run2/generic-dir-work-runtime/repo
+baseline_tag: artifact-test-baseline
+baseline_sha: 93747a9e020e31a5072f17a8c83354b733d444a4
+head_sha_at_capture: 93747a9e020e31a5072f17a8c83354b733d444a4
+provenance: present
+verification_output: present
+observed_reads: not-provided
+file_open_events: present

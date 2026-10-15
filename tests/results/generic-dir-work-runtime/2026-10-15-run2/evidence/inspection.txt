@@ -1,0 +1,11 @@
+=== recent commits ===
+93747a9 test: confirmed Work Roots, Work Documents, and entry documents
+f964d3e test: install Artifact v2
+46a4173 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.worktrees/feat/other-work/main/
+.worktrees/feat/schema-preview/main/

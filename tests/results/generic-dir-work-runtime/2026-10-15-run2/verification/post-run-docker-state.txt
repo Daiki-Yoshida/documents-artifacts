@@ -1,0 +1,43 @@
+=== post-run docker state (2026-10-15T07:47:58Z) ===
+=== docker compose ls --all ===
+NAME                STATUS              CONFIG FILES
+docker              running(1)          /home/fuyur/projects/plaru/plaru_expo/docker/compose.yml
+foodcome-fomac      running(1)          /home/fuyur/projects/foodcome/foodcome-global-match/docker-compose.yml
+
+=== docker ps -a (work-runtime / repo) ===
+none
+
+=== volumes name=work-runtime ===
+DRIVER    VOLUME NAME
+local     work-runtime-lifecycle-db-data
+local     work-runtime-lifecycle-pkg-cache
+local     work-runtime-resources-db-data
+local     work-runtime-resources-pkg-cache
+
+=== networks name=work-runtime ===
+NETWORK ID     NAME                         DRIVER    SCOPE
+7b1943178084   work-runtime-resources-net   bridge    local
+
+=== port bindings 8080/18xxx/19xxx/3xxxx/4xxxx ===
+none
+
+=== generated repo git status ===
+ M .worktrees/feat/other-work/documents/WORK.md
+ M .worktrees/feat/schema-preview/documents/WORK.md
+ M Makefile
+ M README.md
+ M documents/project/DEVELOPMENT.md
+ M scripts/resource-identity.js
+?? compose.work.yml
+?? scripts/work-runtime.js
+?? scripts/work-runtime.sh
+
+=== generated repo log ===
+93747a9 test: confirmed Work Roots, Work Documents, and entry documents
+f964d3e test: install Artifact v2
+46a4173 test: fixture baseline
+
+=== worktree list ===
+/tmp/documents-artifacts-agent-tests-1000-run2/generic-dir-work-runtime/repo                                      93747a9 [main]
+/tmp/documents-artifacts-agent-tests-1000-run2/generic-dir-work-runtime/repo/.worktrees/feat/other-work/main      93747a9 [feat/other-work]
+/tmp/documents-artifacts-agent-tests-1000-run2/generic-dir-work-runtime/repo/.worktrees/feat/schema-preview/main  93747a9 [feat/schema-preview]

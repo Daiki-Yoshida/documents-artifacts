@@ -1,0 +1,134 @@
+=== docker compose ls --all ===
+NAME                STATUS              CONFIG FILES
+docker              running(1)          /home/fuyur/projects/plaru/plaru_expo/docker/compose.yml
+foodcome-fomac      running(1)          /home/fuyur/projects/foodcome/foodcome-global-match/docker-compose.yml
+
+=== docker ps -a ===
+supabase_db_foodcome-fomac public.ecr.aws/supabase/postgres:17.6.1.147 Up About an hour (healthy) 0.0.0.0:54322->5432/tcp, [::]:54322->5432/tcp
+supabase_studio_foodcome-fomac public.ecr.aws/supabase/studio:2026.06.08-sha-8af2bb0 Up About an hour (healthy) 0.0.0.0:54323->3000/tcp, [::]:54323->3000/tcp
+supabase_pg_meta_foodcome-fomac public.ecr.aws/supabase/postgres-meta:v0.96.6 Up About an hour (healthy) 8080/tcp
+supabase_edge_runtime_foodcome-fomac public.ecr.aws/supabase/edge-runtime:v1.74.1 Up About an hour 8081/tcp
+supabase_storage_foodcome-fomac public.ecr.aws/supabase/storage-api:v1.67.26 Up About an hour (healthy) 5000/tcp
+supabase_rest_foodcome-fomac public.ecr.aws/supabase/postgrest:v14.5 Up About an hour 3000/tcp
+supabase_realtime_foodcome-fomac public.ecr.aws/supabase/realtime:v2.106.0 Up About an hour (healthy) 4000/tcp
+supabase_inbucket_foodcome-fomac public.ecr.aws/supabase/mailpit:v1.22.3 Up About an hour (healthy) 1025/tcp, 1110/tcp, 0.0.0.0:54324->8025/tcp, [::]:54324->8025/tcp
+supabase_auth_foodcome-fomac public.ecr.aws/supabase/gotrue:v2.194.0 Up About an hour (healthy) 9999/tcp
+supabase_kong_foodcome-fomac public.ecr.aws/supabase/kong:2.8.1 Up About an hour (healthy) 8001/tcp, 8088/tcp, 8443-8444/tcp, 0.0.0.0:54321->8000/tcp, [::]:54321->8000/tcp
+foodcome-fomac-app-dev-1 foodcome-fomac-app-dev Up About an hour 0.0.0.0:3000->3000/tcp, [::]:3000->3000/tcp
+plaru-expo-feat-map-marker-image-android-metro docker-dev Up 17 hours 0.0.0.0:8083->8081/tcp, [::]:8083->8081/tcp
+
+=== docker volume ls ===
+DRIVER    VOLUME NAME
+local     browser-gpt-bridge-dev-node-modules-e2fac91a7e8e410b1558a84ca244277563a4411e4a8fe6255a698346e5d36f25
+local     browser-gpt-bridge-node-modules-23bd4c173ee4a799eab0642ae0f6db4415333625954684937f7fec8ba170f854
+local     condor_ec_mailhog_data
+local     condor_ec_mysql_data
+local     condor_ec_nginx_logs
+local     condor_ec_redis_data
+local     condor_ec_shopify_cache
+local     condor_ec_shopify_config
+local     condor_ec_wordpress_data
+local     condor_mailhog_data
+local     condor_mysql_data
+local     condor_nginx_logs
+local     condor_redis_data
+local     condor_theme_cache
+local     condor_wordpress_data
+local     consolerpg_dotnet-packages
+local     docker_android_sdk_cache
+local     docker_expo_cache
+local     docker_gradle_cache
+local     docker_metro_cache
+local     docker_node_modules
+local     docker_npm_cache
+local     docker_yarn_cache
+local     dunlyth-game_dotnet-cache
+local     dunlyth-game_godot-cache
+local     dunlyth-work-bootstrap-refactor-map-working-store-scalability-game_dotnet-cache
+local     dunlyth-work-bootstrap-refactor-map-working-store-scalability-game_godot-cache
+local     dunlyth-work-bootstrap_dotnet-cache
+local     dunlyth-work-bootstrap_godot-cache
+local     dunlyth_dotnet-cache
+local     dunlyth_godot-cache
+local     garmin-connectiq-sdk-manager-v1
+local     garmin-connectiq-sdk-v1
+local     garmin-test-watch-app-lifecycle-20260802-164356-583449533-manager
+local     garmin-test-watch-app-lifecycle-20260802-164356-583449533-sdk
+local     gas_setup_node_modules
+local     gd-cs-sample_dotnet-cache
+local     gd-cs-sample_godot-cache
+local     plaru-go-lambda--worktrees-chore-brewery-category-group_go-build-cache
+local     plaru-go-lambda--worktrees-chore-brewery-category-group_go-mod-cache
+local     plaru-go-lambda-worktrees-feat-spot-pet-friendly-thumbnail_go-build-cache
+local     plaru-go-lambda-worktrees-feat-spot-pet-friendly-thumbnail_go-mod-cache
+local     plaru-go-lambda_go-build-cache
+local     plaru-go-lambda_go-mod-cache
+local     plaru_go_lambda_root_go-build-cache
+local     plaru_go_lambda_root_go-mod-cache
+local     shopify_theme_cache
+local     supabase_db_foodcome-fomac
+local     supabase_storage_foodcome-fomac
+local     tomato_db_data
+local     tomato_wp_data
+local     voicebookshelf_node_modules
+local     voicebookshelf_npm_cache
+local     vscode
+local     vscode-git-visibility_node_modules
+local     work-runtime-lifecycle-db-data
+local     work-runtime-lifecycle-pkg-cache
+local     work-runtime-resources-db-data
+local     work-runtime-resources-pkg-cache
+local     youtubedownloader_dotnet-packages
+
+=== docker network ls ===
+NETWORK ID     NAME                                                                         DRIVER    SCOPE
+58010cc727e3   agent-beacon_default                                                         bridge    local
+0a6508a795c4   bridge                                                                       bridge    local
+2d04c50e619f   browser-gpt-bridge-dev_default                                               bridge    local
+10ff3a2c6591   browser-gpt-bridge_default                                                   bridge    local
+b261765314c1   docker_default                                                               bridge    local
+f28e7bae88b7   dunlyth-game_default                                                         bridge    local
+416ebac345b7   dunlyth-work-bootstrap-refactor-map-working-store-scalability-game_default   bridge    local
+36086adea40a   dunlyth-work-bootstrap_default                                               bridge    local
+f8040b1ea95b   dunlyth_default                                                              bridge    local
+0fca00265bc0   foodcome-fomac_default                                                       bridge    local
+87c9ce7db5ba   host                                                                         host      local
+ad47df20984d   none                                                                         null      local
+e50c9cfad729   supabase_network_foodcome-fomac                                              bridge    local
+648071b46ee3   test-mgmt_default                                                            bridge    local
+3ac3ff416e4e   typescript-test_default                                                      bridge    local
+8d78267cfe1f   voicebookshelf_default                                                       bridge    local
+
+=== containers labeled com.docker.compose.project=repo ===
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+
+=== volumes name=work-runtime ===
+DRIVER    VOLUME NAME
+local     work-runtime-lifecycle-db-data
+local     work-runtime-lifecycle-pkg-cache
+local     work-runtime-resources-db-data
+local     work-runtime-resources-pkg-cache
+
+=== networks name=work-runtime ===
+NETWORK ID   NAME      DRIVER    SCOPE
+
+=== host port bindings 8080 / 18xxx / 19xxx ===
+supabase_pg_meta_foodcome-fomac 8080/tcp
+
+=== inspect of pre-existing work-runtime volumes ===
+        "CreatedAt": "2026-09-27T09:51:52+09:00",
+            "com.docker.compose.project": "repo",
+            "com.docker.compose.volume": "db-data"
+        "Name": "work-runtime-resources-db-data",
+        "CreatedAt": "2026-09-27T09:51:52+09:00",
+            "com.docker.compose.project": "repo",
+            "com.docker.compose.volume": "pkg-cache"
+        "Name": "work-runtime-resources-pkg-cache",
+        "CreatedAt": "2026-09-27T14:51:24+09:00",
+            "com.docker.compose.project": "repo",
+            "com.docker.compose.volume": "db-data"
+        "Name": "work-runtime-lifecycle-db-data",
+        "CreatedAt": "2026-09-27T14:51:24+09:00",
+            "com.docker.compose.project": "repo",
+            "com.docker.compose.volume": "pkg-cache"
+        "Name": "work-runtime-lifecycle-pkg-cache",

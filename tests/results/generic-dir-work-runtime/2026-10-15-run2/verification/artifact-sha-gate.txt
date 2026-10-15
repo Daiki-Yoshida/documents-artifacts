@@ -1,0 +1,26 @@
+# Artifact SHA gate — run2 preparation (2026-10-15T07:40:07Z)
+expected blob: 7f1fccb5ba8a8586a4af47cd541387cf0974de5f
+
+## RUN_METADATA.txt
+scenario: generic-dir-work-runtime
+fixture: work-runtime-resources
+source_repo_head: 4e900d56024885537ec724ccc6de2578dce0c306
+baseline_sha: 93747a9e020e31a5072f17a8c83354b733d444a4
+prepared_at_utc: 2026-10-15T07:39:01Z
+
+## (a) source-side artifact at recorded source HEAD
+100644 blob 7f1fccb5ba8a8586a4af47cd541387cf0974de5f	artifacts/execution/COMMANDS_AND_CI.md
+
+## (b) file in generated repo
+7f1fccb5ba8a8586a4af47cd541387cf0974de5f
+
+## (c) blob at baseline tag
+100644 blob 7f1fccb5ba8a8586a4af47cd541387cf0974de5f	documents/artifacts/execution/COMMANDS_AND_CI.md
+
+## (d) RUN_METADATA consistency
+source_repo_head: 4e900d56024885537ec724ccc6de2578dce0c306
+baseline_sha: 93747a9e020e31a5072f17a8c83354b733d444a4
+93747a9e020e31a5072f17a8c83354b733d444a4
+
+## (e) merge-base ancestor check
+ancestor: yes
