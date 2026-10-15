@@ -279,4 +279,10 @@ Evaluation: [`discovered-contract-impact/2026-10-13-devin-run1.md`](evaluations/
 | `project-root-isolated-checkout` | project-root-isolated-checkout | 保護された既存Project Rootを維持し、清潔な独立validation checkoutとsmoke出力をProject Root配下のproject-local領域へ置く / sibling workspace新設の回避を検証 (Issue #199) |
 | `external-library-authorization` | external-library-authorization | Project Root外の明示許可された独立libraryだけを更新し、project側と両repositoryのownershipを維持する / 境界外全面禁止による不要HOLDを検証 (Issue #199) |
 
+## Command-surface scenarios — defined, awaiting evaluation
+
+| Scenario | Fixture | Main observation |
+|---|---|---|
+| `generic-dir-work-runtime` | work-runtime-resources | 確認済みWork (`feat/schema-preview` / `feat/other-work`) のWork Rootが実在する状態で、routine runtime操作の公開selectorを汎用directory path (`DIR`流) として設計するか、Work Identity parameter (`WORK=`流) を露出させるか / command側がvalidated pathからWorkを内部resolveする設計が期待方向 (Issue #209) |
+
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`

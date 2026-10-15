@@ -70,7 +70,8 @@ tests/
 │  ├─ requested-outcome-verification/
 │  ├─ documentation-maintenance-reconciliation/
 │  ├─ state-ownership-consistency/
-│  └─ project-root-execution-routing/
+│  ├─ project-root-execution-routing/
+│  └─ generic-dir-work-runtime/
 ├─ results/
 │  └─ <scenario>/
 │     ├─ <legacy-date-agent>.md   (過去runのflat raw report; 移行しない)
@@ -427,6 +428,10 @@ EXPECTATIONSはexact implementationではなくmust / must not / strong signal /
 ### Twentieth-stage scenarios — completed/evaluated
 
 - `project-root-execution-routing` (fixture `project-root-execution-routing`, Issue #151): completed/evaluated。fresh isolated subjectがProject Rootの `AGENTS.md` / project documentationからArtifact rootへ入り、OPEN-event evidenceで `project/WORKSPACE.md` と `execution/COMMANDS_AND_CI.md` を含むfocused routeを確認。whole-pack preloadは観測されず、Project Root contextを維持したままroot Make + literal `DIR=components/game` で独立Component Repositoryのみ64→128へ変更し、ignored dev-install stateを伴うProject-level final stateを満たした。Project Repositoryはclean、managed Artifact無変更。
+
+### Issue #209 scenario — defined, awaiting evaluation
+
+- `generic-dir-work-runtime` (fixture `work-runtime-resources` + `PREPARE_HOOK`, Issue #209): hookが確認済み `feat/schema-preview` / `feat/other-work` のWork Root (tracked Work Documents + registered `main` checkout) をmaterializeし、Project Root入口文書 (`AGENTS.md` / `documents/INDEX.md` / `documents/project/DEVELOPMENT.md`) を追加する。入口文書・promptはselector引数名 (`DIR`/`WORK`) もruntime target名も与えない — routine runtime操作の公開selectorを汎用directory pathとして設計し、command側がvalidated pathからWork Identityを内部resolveするかをblind観測する。identity-valued selector (`WORK=`流) の露出はIssue #209で報告されたfailure mode。
 
 ## Fixture immutability
 
