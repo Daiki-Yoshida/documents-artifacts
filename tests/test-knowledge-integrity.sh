@@ -313,16 +313,16 @@ grep -Fq 'AI development sessionは **Project Rootから開始する**' "$worksp
   || fail "Project Root lost canonical AI development entry requirement"
 grep -Fq 'repository-specific source ownershipを理由にComponent Repository checkoutをProject全体のAI session rootへ昇格させない' "$workspace_ownership" \
   || fail "Component Repository ownership/context boundary regressed"
-grep -Fq 'generic `DIR` は、**path-valued execution target selector**' "$execution_commands" \
-  || fail "generic DIR lost path-valued execution-target semantics"
+grep -Fq '`DIR`自体は**指定されたパス**を表すだけ' "$execution_commands" \
+  || fail "generic DIR lost path-only locator semantics"
 grep -Fq 'Project-owned public operationがrequested operationを提供している場合' "$execution_commands" \
   || fail "public-command bypass guard missing from canonical knowledge"
-grep -Fq 'relative `DIR` はProject Rootを基準にresolveする' "$execution_commands" \
+grep -Fq 'relative `DIR`はProject Rootから解決し' "$execution_commands" \
   || fail "DIR lost Project Root-relative resolution rule"
 grep -Fq 'Work Rootは、Work Identityに属するWork Documentsとparticipating repository worktreeを束ねる**物理的な作業領域**である' "$work_root_model" \
   || fail "Work Root physical-role boundary regressed"
-grep -Fq 'worktree lifecycleのcanonical inputを `DIR` に置き換えない' "$worktree_commands" \
-  || fail "DIR incorrectly replaced WORK+REPO worktree identity contract"
+grep -Fq '内部でWork IdentityとRepository Selectorを解決する' "$worktree_commands" \
+  || fail "DIR path does not resolve to internal Work/repository identity"
 grep -Fq 'directory pathを指定できること自体は、そのdirectoryに対する破壊操作のauthorizationを意味しない' "$destructive_ops" \
   || fail "DIR selection became destructive authorization"
 
@@ -335,12 +335,12 @@ grep -Fq 'initialize the AI development session from the **Project Root**' "$art
   || fail "Artifact projection lost Project Root session-entry requirement"
 grep -Fq 'Work Root is the physical area' "$artifact_work_identity" \
   || fail "Artifact Work Root/session-root distinction missing"
-grep -Fq '`DIR` is a path-valued execution selector only' "$artifact_commands" \
-  || fail "Artifact DIR semantics missing"
-grep -Fq 'Generic `DIR` semantics must not infer repository roles or silently append project-specific suffixes' "$artifact_commands" \
-  || fail "Artifact DIR gained implicit Work/repository derivation"
-grep -Fq 'Do not replace Worktree identity/materialization inputs with `DIR`' "$artifact_commands" \
-  || fail "Artifact DIR/worktree identity boundary missing"
+grep -Fq '`DIR` is **only a path locator**' "$artifact_commands" \
+  || fail "Artifact DIR path-only locator semantics missing"
+grep -Fq 'Do not add an implicit repository suffix as a meaning of generic `DIR`' "$artifact_commands" \
+  || fail "Artifact DIR gained implicit repository suffix semantics"
+grep -Fq 'Worktree create/status/remove can accept a canonical candidate path through `DIR` while resolving' "$artifact_commands" \
+  || fail "Artifact lost operation-owned Worktree identity resolution"
 grep -Fq 'does not authorize destructive effects' "$artifact_destructive" \
   || fail "Artifact DIR destructive-authority guard missing"
 grep -Fq '| Project-root session / command target routing | `project/WORKSPACE.md` + `execution/COMMANDS_AND_CI.md` |' artifacts/INDEX.md \
@@ -452,7 +452,7 @@ grep -Fq 'managed derived subtree' artifacts/documentation/PRINCIPLES_AND_ROUTIN
   || fail "Artifact documentation projection lost managed-authority distinction"
 grep -Fq 'one managed pack under `documents/artifacts/`' artifacts/documentation/WORKFLOW_AND_MAINTENANCE.md \
   || fail "Artifact documentation workflow lost whole-pack model"
-grep -Fq 'stable repository selector, not a Git branch name' artifacts/project/WORKTREES.md \
+grep -Fq 'it is not the Git branch name' artifacts/project/WORKTREES.md \
   || fail "Artifact worktree selector/branch distinction missing"
 grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.md \
   || fail "Artifact worktree materialization applicability regressed"

@@ -57,39 +57,32 @@ worktree-remove
 
 ## Routine caller inputs
 
-単一repository / 複数repositoryで同じ入力形を使う。
+このcapabilityを採用するProjectで対象directoryが可変の場合、Make-based public interfaceは**generic `DIR=<directory-path>`を優先する**。Worktree操作では、パスを**検証対象のlocator**として受け取り、内部でWork IdentityとRepository Selectorを解決する。
 
-```yaml
-required:
-  WORK: "<work-type>/<work-name>"
-  REPO: "<stable project repository selector>"
-conditional:
-  BASE: "new branch creation時。projectにdocumented default baseがある場合は省略可能"
-```
+~~~bash
+make DIR=.worktrees/feat/pathfinding/project/ worktree-create
+make DIR=.worktrees/feat/pathfinding/project/ worktree-status
+make DIR=.worktrees/feat/pathfinding/project/ worktree-remove
 
-重要:
+make DIR=.worktrees/feat/user-auth/front/ worktree-status
+make DIR=.worktrees/feat/user-auth/back/ worktree-status
+~~~
 
-- capabilityを採用した場合、`REPO`は単一repositoryでも省略しない。例: `project`。`REPO`はstable repository selectorでありGit branch名ではない。
-- callerにworktree filesystem pathを入力させない。
-- callerにsparse適用要否を入力させない。
-- callerにbranch名を原則入力させない。projectのdeterministic mappingから導出する。
-- branchが存在しない場合、現在のHEADを暗黙baseにしない。
+Public command名・supportするpath形状はProjectが明示する。`WORK + REPO`を公開入力に使う従来interfaceは互換・Project固有の選択として残せるが、**汎用規約で必須としない**。
 
-単一repo例:
+内部identityのconceptual inputは次のとおり。
 
-```text
-WORK=feat/pathfinding
-REPO=project
-```
+~~~yaml
+WORK: "<work-type>/<work-name>"
+REPO: "<stable project repository selector>"
+BASE: "missing Work branchの開始refにdocumented defaultがない場合のみ必要"
+~~~
 
-複数repo例:
+Project-owned resolverは`DIR`とcanonical Work Root/repository mappingを照合し、確定したWork Identityおよびstable REPOを返す。単一repository Projectでも**内部**Repo Selectorは明示的に解決する。`DIR`の指定やfilesystem pathの存在そのものはWork確定・操作権限を意味しない。
 
-```text
-WORK=feat/user-auth REPO=front
-WORK=feat/user-auth REPO=back
-```
+Callerにはsparse-checkout適用要否やbranch名を原則指定させず、branchのstart refを偶然のcurrent HEADから推定しない。
 
----
+単一RepositoryのWorktreeを操作するcommandにWork Rootのみを指定しても、複数参加Repositoryから対象を一意に決定できなければfailする。Work全体に対するoperationを別途Projectが明示的に定義した場合のみ、その範囲の解決を行う。
 
 ## Repository selector
 
@@ -153,55 +146,34 @@ branch creationとworktree materializationは一つのpublic create operation内
 
 ---
 
-## Path resolution
+## Path resolution / generic `DIR`との境界
 
-caller inputからpathをdeterministically導出する。
+Work-specific Repository worktreeのcanonical path:
 
-```text
+~~~text
 <project-root>/.worktrees/<work-type>/<work-name>/<repository-selector>/
-```
+~~~
 
-例:
+公開`DIR`はパスを表すだけ。worktree create/status/removeを選んだoperationが、Project Root基準で解決したパスを**正規配置の候補**として扱い、Work Identity + REPO + branch/path/materializationをdeterministically解決する。
 
-```text
-WORK=feat/pathfinding REPO=project
-→ .worktrees/feat/pathfinding/project/
+~~~text
+DIR=.worktrees/feat/pathfinding/project/
+  → validated WORK=feat/pathfinding
+  → validated REPO=project
+  → project-owned branch/base/path resolution
+  → create/status/remove with existing safety gates
+~~~
 
-WORK=fix/session REPO=front
-→ .worktrees/fix/session/front/
-```
+これはcallerに任意のGit worktree配置先を指定させるAPIではない。対象はProject-ownedの正規pathへ完全一致し、pathの字句解釈だけでGit ownershipや許可を決めない。
 
-routine callerがabsolute/relative pathを自由入力するinterfaceにしない。
+- relative `DIR`はProject Root基準。末尾slashの無害な差は同じtargetとして正規化する。shell fragmentとして評価しない。
+- 存在するpath/親のrealpath、symlink、境界外参照、unexpected content、stable repository mappingを照合する。absolute/outside-Project-Rootの扱いは明示的なProject authorityに従う。
+- **create**は最終target directoryが存在しなくてもよい。その場合も存在する祖先、想定のcanonical shape、Git repository/branch ownership、衝突・予期せぬ内容をpreflightする。
+- **status**は未作成の正規pathも非変更で診断し、registered/not registeredを正確に報告する。既存登録がある場合のみ、その登録path・branch・owner・clean/dirty等を照合する。
+- **remove**は既存の登録済みGit worktreeだけを対象にし、期待path、branch、owner、clean/dirty等をpreflightする。
+- Work Identityの確認と操作の権限は独立したgateであり、`DIR`を渡せることでは成立しない。
 
----
-
-## Generic `DIR` parameterとの境界
-
-この文書で禁止している「routine callerによるarbitrary worktree path input」は、**worktree identity / branch / materializationを決めるcreate/status/remove contract**に対する規則である。
-
-`../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が所有するgeneric execution targetの `DIR=<path>` と混同しない。
-
-```text
-worktree lifecycle:
-  WORK + REPO (+ BASE)
-      ↓
-  branch/path/materializationをdeterministicに解決
-      ↓
-  create/status/remove
-
-generic execution:
-  既に存在するtarget directory
-      ↓ DIR=<path>
-  build/install/test/lint/run/dev-up/verify 等
-```
-
-したがって、worktree lifecycleのcanonical inputを `DIR` に置き換えない。
-
-- `worktree-create DIR=.worktrees/...` のようにcaller指定pathをidentity sourceへしない。
-- `WORK + REPO` から解決されたpathをcallerが再入力する必要もない。
-- `DIR` は既にmaterializeされた対象へgeneric operationをroutingするためのpath primitiveであり、Work Identity、REPO、branch identityを意味しない。
-
-この区別により、Project RootをAI session rootとして維持したまま、作成済みrepository-specific worktreeへbuild/test等を実行できる一方、worktree lifecycleのdeterministic identity contractは維持される。
+Worktree lifecycleのactual semanticsは下記contractを維持する。generic `DIR` conventionの主所有は`../development-execution/S003_COMMAND_INTERFACE_AND_CI.md`に置く。
 
 ## Create preflight
 
@@ -317,7 +289,7 @@ newly-created clean worktreeをnormal removalでrollback
 
 ## Status contract
 
-`worktree-status WORK=... REPO=...` はnon-mutating。
+`worktree-status DIR=<canonical-worktree-path>` はnon-mutating。Public syntaxが異なるProjectでも、同じWork/Repository identityを内部で解決して検証する。
 
 最低限表示:
 
@@ -342,7 +314,7 @@ Git状態は`git worktree list`等から読み、custom registryを真実源に�
 
 ## Remove contract
 
-`worktree-remove WORK=... REPO=...` は選択されたGit worktreeだけを対象にする。
+`worktree-remove DIR=<canonical-worktree-path>` は検証済みのWork/Repository identityに対応するGit worktreeだけを対象にする。
 
 preconditions:
 
@@ -401,46 +373,43 @@ success_output:
 
 ---
 
-## なぜREPOを単一repoでも必須にするか
+## Stable Repository Identityと公開入力
 
-単一repoだけ特別扱いしてREPOを省略すると、projectが後からmulti-repo化したときにpublic contractが変わる。
+Worktree lifecycleには、単一/multi-repositoryを問わず、**内部semantic inputとして**stable Repository Selectorが必要である。それによりGit ownership、branch resolution、worktree materializationを一貫して決定できる。
 
-またAIは、
+~~~text
+public DIR=<canonical-worktree-path>
+         ↓ Project-owned path validation
+internal WORK + REPO (+ BASE)
+         ↓ deterministic mapping + Git preflight
+selected worktree
+~~~
 
-```text
-single repoなら引数1つ
-multi repoなら引数2つ
-```
-
-という判断を持つ必要が生じる。
-
-常に、
-
-```text
-WORK + REPO
-```
-
-をpublic identity inputとすることで、filesystem shapeとcommand shapeの両方を単一/multi repoで統一する。
-
----
+利用者が実在するdirectoryを指定できる場合、Work名とRepository Selectorを繰り返し手入力する必要はない。公開入力形式が違うProjectでも、内部で同じsemantic identityと安全なpostconditionに到達することを求める。
 
 ## 最終設計
 
-```yaml
-routine_identity_input: ["WORK", "REPO"]
-path_input_from_caller: false
+~~~yaml
+recommended_variable_target_public_input: "DIR=<directory-path>"
+dir_semantics: "path locator only; operation decides target kind and existence"
+canonical_worktree_locator: ".worktrees/<work-type>/<work-name>/<repository-selector>/"
+internal_identity: "validated directory -> Work Identity + stable REPO"
+internal_repo_required_even_single_repo: true
+alternative_public_interface: "project-local WORK + REPO is allowed, not generically mandatory"
 sparse_decision_from_caller: false
 branch_name_input_by_default: false
 branch_mapping: "project-owned deterministic policy"
 missing_branch_base: "explicit BASE or documented project default; never accidental current HEAD"
 state_source_of_truth: "Git/filesystem/runtime systems themselves; no duplicate worktree registry"
-create: "idempotent, fail-closed, atomic semantic operation"
+create: "planned canonical target may be absent; idempotent, fail-closed, atomic semantic operation"
 status: "non-mutating diagnosis"
-remove: "normal selected-worktree removal only; branch/Work Documents/Work Root remain separate"
-single_multi_repo_command_shape: "uniform WORK + REPO when worktree lifecycle capability is adopted"
-```
+remove: "normal selected registered worktree removal only; branch/Work Documents/Work Root remain separate"
+~~~
 
 ## Sources
+
+- `../../records/2026-10-14-generic-dir-implementation-adoption/` — 実装への進行とWork Identity選定委任
+- `../../records/2026-10-14-generic-dir-command-target/` — 汎用DIR指定の訂正意図
 
 - `../../records/2026-10-03-subject-consistency-convergence/`
 
