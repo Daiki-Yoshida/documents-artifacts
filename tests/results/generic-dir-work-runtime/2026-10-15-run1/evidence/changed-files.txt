@@ -1,0 +1,9 @@
+A	.serena/.gitignore
+A	.serena/project.yml
+M	Makefile
+M	README.md
+M	compose.yml
+M	documents/project/DEVELOPMENT.md
+M	scripts/resource-identity.js
+A	scripts/runtime-env.js
+A	scripts/work-compose.sh

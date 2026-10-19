@@ -1,0 +1,12 @@
+=== recent commits ===
+a33f3c9 test: confirmed Work Roots, Work Documents, and entry documents
+bb26125 test: install Artifact v2
+4102264 test: fixture baseline
+
+=== tags ===
+artifact-test-baseline
+
+=== ignored/untracked paths (gitignore-excluded, names only) ===
+.serena/project.local.yml
+.worktrees/feat/other-work/main/
+.worktrees/feat/schema-preview/main/

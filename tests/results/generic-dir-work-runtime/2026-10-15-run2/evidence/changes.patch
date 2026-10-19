@@ -1,0 +1,558 @@
+diff --git a/.worktrees/feat/other-work/documents/WORK.md b/.worktrees/feat/other-work/documents/WORK.md
+index 13ccbda..c8c1621 100644
+--- a/.worktrees/feat/other-work/documents/WORK.md
++++ b/.worktrees/feat/other-work/documents/WORK.md
+@@ -11,4 +11,8 @@ Confirmed Work identity for follow-up feature work on this service.
+ ## Status
+ 
+ - Work Identity confirmed by the user.
+-- Parallel runtime support not implemented yet.
++- Parallel runtime available from the Project Root:
++  `make DIR=.worktrees/feat/other-work work-up` (see `README.md`
++  "Work runtimes"). The Work runtime gets an isolated DB volume, host
++  port, Compose project and network derived deterministically from this
++  Work identity; the toolchain image and package cache stay shared.
+diff --git a/.worktrees/feat/schema-preview/documents/WORK.md b/.worktrees/feat/schema-preview/documents/WORK.md
+index 33d2867..7b0818b 100644
+--- a/.worktrees/feat/schema-preview/documents/WORK.md
++++ b/.worktrees/feat/schema-preview/documents/WORK.md
+@@ -13,4 +13,8 @@ service.
+ ## Status
+ 
+ - Work Identity confirmed by the user.
+-- Parallel runtime support not implemented yet.
++- Parallel runtime available from the Project Root:
++  `make DIR=.worktrees/feat/schema-preview work-up` (see `README.md`
++  "Work runtimes"). The Work runtime gets an isolated DB volume, host
++  port, Compose project and network derived deterministically from this
++  Work identity; the toolchain image and package cache stay shared.
+diff --git a/Makefile b/Makefile
+index cac934c..4e37bce 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1,8 +1,16 @@
+-# Host entry points for the default runtime. Managed runtime (Node/npm,
+-# project commands) executes inside the app container; the host provides
+-# Git, Docker/Compose, and Make only.
++# Host entry points for the default runtime and confirmed-Work runtimes.
++# Managed runtime (Node/npm, project commands) executes inside the app
++# container; the host provides Git, Docker/Compose, and Make only.
++
++# Deterministic Compose project/container namespace for the default
++# runtime (matches scripts/resource-identity.js defaultRuntime()). Work
++# runtimes resolve their own COMPOSE_PROJECT_NAME in
++# scripts/work-runtime.sh and override this per invocation.
++COMPOSE_PROJECT_NAME := work-runtime-resources
++export COMPOSE_PROJECT_NAME
+ 
+ .PHONY: verify test resource-check up down
++.PHONY: work-up work-status work-config work-run work-down work-cleanup
+ 
+ verify:
+ 	docker compose run --rm app npm run verify
+@@ -18,3 +26,34 @@ up:
+ 
+ down:
+ 	docker compose down
++
++# Parallel runtime for one confirmed Work. DIR locates the Work Root
++# (.worktrees/<work-type>/<work-name>) or its repository checkout
++# (.worktrees/<work-type>/<work-name>/main); scripts/work-runtime.sh
++# derives the Work identity and all runtime resources from it.
++#
++#   make DIR=.worktrees/feat/schema-preview work-up
++#   make DIR=.worktrees/feat/schema-preview work-run ARGS="npm test"
++
++DIR ?=
++ARGS ?=
++
++work-up:
++	scripts/work-runtime.sh up "$(DIR)"
++
++work-status:
++	scripts/work-runtime.sh status "$(DIR)"
++
++work-config:
++	scripts/work-runtime.sh config "$(DIR)"
++
++work-run:
++	scripts/work-runtime.sh run "$(DIR)" $(ARGS)
++
++work-down:
++	scripts/work-runtime.sh down "$(DIR)"
++
++# Destructive: also removes the Work-scoped DB volume (never the shared
++# image or package cache).
++work-cleanup:
++	scripts/work-runtime.sh cleanup "$(DIR)"
+diff --git a/README.md b/README.md
+index 062a082..7e3b26f 100644
+--- a/README.md
++++ b/README.md
+@@ -34,7 +34,7 @@ Facts about this project's runtime resources:
+ runtime resource policy; project tooling derives resource names/ports
+ from it rather than hardcoding them per command.
+ 
+-Only the **default runtime** is supported today:
++The **default runtime**:
+ 
+ ```bash
+ make up       # start default runtime
+@@ -42,6 +42,43 @@ make down     # stop default runtime
+ make verify   # final verification gate (container-managed checks)
+ ```
+ 
++## Work runtimes
++
++Each confirmed Work can run this project **in parallel** with the
++default runtime. Designate the target Work by its Work Root directory
++(or its `main` checkout) through `DIR`:
++
++```bash
++make DIR=.worktrees/feat/schema-preview work-up       # start the Work runtime
++make DIR=.worktrees/feat/schema-preview work-status   # show its containers
++make DIR=.worktrees/feat/schema-preview work-config   # render resolved compose config (dry run)
++make DIR=.worktrees/feat/schema-preview work-run ARGS="npm test"  # run a command inside it
++make DIR=.worktrees/feat/schema-preview work-down     # stop it (volumes kept)
++make DIR=.worktrees/feat/schema-preview work-cleanup  # down + remove the Work DB volume (destructive)
++```
++
++`DIR` is only a path locator. `scripts/work-runtime.sh` resolves it to
++the confirmed Work identity `<work-type>/<work-name>` (tracked
++`documents/` plus the registered `main` checkout must exist), then all
++lifecycle commands derive resource identities from that Work identity
++through `scripts/resource-identity.js`:
++
++| Resource | Scope | Work runtime value |
++|---|---|---|
++| toolchain image | project (shared) | `work-runtime-dev:node20` — same as default |
++| package cache volume | project (shared) | `work-runtime-resources-pkg-cache` — same as default |
++| DB/data volume | per Work | `work-runtime-resources-<work-slug>-db-data` |
++| host port | per Work | deterministic from the Work identity (30000–49999) |
++| Compose project / containers / network | per Work | `work-runtime-resources-<work-slug>[…]` |
++
++`<work-slug>` is the Work identity lowercased with non-alphanumerics
++mapped to `-` (e.g. `feat/schema-preview` → `feat-schema-preview`).
++Derivation is deterministic — no random names and no new Work identity
++per run — so `work-up`, `work-status`, `work-down`, and `work-cleanup`
++always resolve the same resource set for the same Work. `work-cleanup`
++removes only the Work-scoped DB volume; the shared image and cache are
++never touched.
++
+ ## Verification
+ 
+ - `make verify` — host entry point; runs the project verification inside
+diff --git a/compose.work.yml b/compose.work.yml
+new file mode 100644
+index 0000000..841c3e7
+--- /dev/null
++++ b/compose.work.yml
+@@ -0,0 +1,33 @@
++# Project-owned Work runtime override.
++#
++# scripts/work-runtime.sh applies this file on top of a confirmed Work's
++# checkout compose.yml, so Work-scoped runtime resources always resolve
++# to the identities derived from the confirmed Work identity — even if
++# the Work's branch carries an older or different compose.yml. Every
++# value is interpolated from the resolver's exported environment
++# (scripts/work-runtime.js env <work>); each is marked required so a
++# missing value fails loudly instead of silently falling back to the
++# default runtime's resources.
++#
++# Project-scoped resources (shared): the toolchain image and the
++# pkg-cache volume resolve to the same names as the default runtime.
++# Work-scoped resources (isolated): DB volume, host port, network.
++
++services:
++  app:
++    # Replace the service's port mapping entirely: the Work runtime may
++    # only publish its own deterministic host port.
++    ports: !override
++      - "${APP_HOST_PORT:?work-runtime: APP_HOST_PORT required}:3000"
++
++volumes:
++  # Shared package/download cache — identical name for every runtime.
++  pkg-cache:
++    name: "${PKG_CACHE_NAME:?work-runtime: PKG_CACHE_NAME required}"
++  # Work-scoped mutable state.
++  db-data:
++    name: "${DB_VOLUME_NAME:?work-runtime: DB_VOLUME_NAME required}"
++
++networks:
++  default:
++    name: "${NETWORK_NAME:?work-runtime: NETWORK_NAME required}"
+diff --git a/documents/project/DEVELOPMENT.md b/documents/project/DEVELOPMENT.md
+index 700d1b8..df18d93 100644
+--- a/documents/project/DEVELOPMENT.md
++++ b/documents/project/DEVELOPMENT.md
+@@ -23,9 +23,15 @@ complex logic in project-owned scripts rather than recipes.
+ 
+ ## Runtime operations
+ 
+-The public command surface covers the default runtime only (see
+-`README.md`). Parallel per-Work runtimes are not implemented yet; how a
+-caller designates the target Work is an open interface decision.
+-
+-Runtime resource facts and the project-owned resource policy module are
+-described in `README.md` and `scripts/resource-identity.js`.
++The public command surface (see `README.md`) covers the default runtime
++(`make up` / `down` / `verify`) and parallel per-Work runtimes. A caller
++at the Project Root designates the target confirmed Work through the
++`DIR` path locator — the Work Root `.worktrees/<work-type>/<work-name>/`
++or its `main` checkout — e.g.
++`make DIR=.worktrees/feat/schema-preview work-up`.
++`scripts/work-runtime.sh` resolves `DIR` to the confirmed Work identity
++and runs the compose lifecycle against the Work's checkout;
++`scripts/resource-identity.js` derives all runtime resource identities
++deterministically from the Work identity (shared toolchain image and
++package cache; Work-scoped DB volume, host port, Compose project and
++network).
+diff --git a/scripts/resource-identity.js b/scripts/resource-identity.js
+index 98c271f..01cf42c 100644
+--- a/scripts/resource-identity.js
++++ b/scripts/resource-identity.js
+@@ -6,30 +6,97 @@
+ //
+ // Scopes:
+ //  - 'default': the default runtime.
+-//  - Work-specific parallel runtimes are not implemented yet.
++//  - 'work':    parallel runtime for one confirmed Work identity.
++//
++// Confirmed-ness of a Work (an existing Work Root under .worktrees/) is
++// validated by the calling command wrapper against live Git/filesystem
++// state; this module only validates the Work identity's syntax and then
++// derives deterministic resource identities from it.
+ 
+ const PROJECT = 'work-runtime-resources';
+ 
+-// The default runtime — the only supported runtime today.
++// Project-scoped (shared across all runtimes): the toolchain/runtime
++// image carries Node/npm, and the package/download cache is identical
++// for every consumer.
++const IMAGE = 'work-runtime-dev:node20';
++const CACHE_VOLUME = `${PROJECT}-pkg-cache`;
++
++// Confirmed Work identity syntax: <work-type>/<work-name>.
++const WORK_PATTERN = /^[a-z0-9][a-z0-9-]*\/[a-z0-9][a-z0-9-]*$/;
++
++// FNV-1a 32-bit: a fixed, well-known deterministic hash. No randomness,
++// no wall-clock input — the same Work identity always maps to the same
++// derived resources.
++function fnv1a32(s) {
++  let h = 0x811c9dc5;
++  for (let i = 0; i < s.length; i++) {
++    h ^= s.charCodeAt(i);
++    h = Math.imul(h, 0x01000193) >>> 0;
++  }
++  return h >>> 0;
++}
++
++// DNS/Docker-safe slug derived deterministically from the Work identity:
++// 'feat/schema-preview' -> 'feat-schema-preview'.
++function workSlug(work) {
++  return work.toLowerCase().replace(/[^a-z0-9]+/g, '-');
++}
++
++// Deterministic per-Work host port in the band 30000..49999, derived from
++// the Work identity itself. The band cannot collide with the default
++// runtime's fixed port 8080; no per-run random allocation and no new
++// Work identity is minted per run.
++function workHostPort(work) {
++  return 30000 + (fnv1a32(work) % 20000);
++}
++
++function assertWorkIdentity(work) {
++  if (!work || typeof work !== 'string' || !WORK_PATTERN.test(work)) {
++    throw new Error(
++      `workRuntime requires a confirmed Work identity (<work-type>/<work-name>), got ${JSON.stringify(work)}`,
++    );
++  }
++}
++
++// The default runtime.
+ function defaultRuntime() {
+   return {
+     scope: 'default',
+     work: null,
+     project: PROJECT,
+-    image: 'work-runtime-dev:node20',   // toolchain image (project resource)
+-    cacheVolume: `${PROJECT}-pkg-cache`, // shared package/download cache
++    composeProject: PROJECT,            // Compose project/container namespace
++    image: IMAGE,                       // toolchain image (project resource)
++    cacheVolume: CACHE_VOLUME,          // shared package/download cache
+     dbVolume: `${PROJECT}-db-data`,     // mutable state for this runtime
+     hostPort: 8080,                     // host port for this runtime
+     network: `${PROJECT}-net`,
+   };
+ }
+ 
+-// Parallel runtime for a confirmed Work identity — not implemented yet.
++// Parallel runtime for a confirmed Work identity.
++//
++// Per-resource scoping (basis: README "Runtime resources" and Work
++// lifecycle resource scopes):
++//  - image, cacheVolume: project-scoped — safely shared by every runtime;
++//  - dbVolume, hostPort, composeProject, network: Work-scoped — mutable
++//    state must not be shared, the host port must not collide, and the
++//    container/network namespace must isolate this runtime's service
++//    discovery from the default runtime.
++// All Work-scoped names derive deterministically from `work`.
+ function workRuntime(work) {
+-  if (!work || typeof work !== 'string') {
+-    throw new Error('workRuntime requires a confirmed Work identity');
+-  }
+-  throw new Error('parallel Work runtime is not implemented yet');
++  assertWorkIdentity(work);
++  const slug = workSlug(work);
++  return {
++    scope: 'work',
++    work,
++    project: PROJECT,
++    composeProject: `${PROJECT}-${slug}`,
++    image: IMAGE,                          // shared toolchain image
++    cacheVolume: CACHE_VOLUME,             // shared package/download cache
++    dbVolume: `${PROJECT}-${slug}-db-data`, // Work-scoped mutable state
++    hostPort: workHostPort(work),          // Work-scoped host port
++    network: `${PROJECT}-${slug}-net`,     // Work-scoped service network
++  };
+ }
+ 
+-module.exports = { PROJECT, defaultRuntime, workRuntime };
++module.exports = { PROJECT, defaultRuntime, workRuntime, workSlug };
+diff --git a/scripts/work-runtime.js b/scripts/work-runtime.js
+new file mode 100644
+index 0000000..9faa5b4
+--- /dev/null
++++ b/scripts/work-runtime.js
+@@ -0,0 +1,54 @@
++'use strict';
++
++// Work runtime resolver CLI. Single resolution path shared by every Work
++// runtime lifecycle command (up/status/config/run/down/cleanup): it turns
++// a confirmed Work identity into the environment a docker compose
++// invocation needs, so start and teardown always resolve the same
++// resource identities.
++//
++// Runs inside the toolchain container — host Node/npm is not part of
++// this project's execution model. The host wrapper is
++// scripts/work-runtime.sh.
++//
++// Usage:
++//   node scripts/work-runtime.js env <work-type>/<work-name>
++//
++// Output: KEY=VALUE lines (safe to `export` from a POSIX shell):
++//   COMPOSE_PROJECT_NAME  Compose project/container namespace
++//   APP_HOST_PORT         Work-scoped host port
++//   DB_VOLUME_NAME        Work-scoped mutable-state volume
++//   NETWORK_NAME          Work-scoped service network
++//   PKG_CACHE_NAME        shared package/download cache volume
++
++const { workRuntime } = require('./resource-identity');
++
++function usage() {
++  console.error('usage: node scripts/work-runtime.js env <work-type>/<work-name>');
++  process.exit(2);
++}
++
++const [command, work] = process.argv.slice(2);
++
++if (command !== 'env' || !work) {
++  usage();
++}
++
++let descriptor;
++try {
++  descriptor = workRuntime(work);
++} catch (e) {
++  console.error(`work-runtime: ${e.message}`);
++  process.exit(2);
++}
++
++const env = {
++  COMPOSE_PROJECT_NAME: descriptor.composeProject,
++  APP_HOST_PORT: String(descriptor.hostPort),
++  DB_VOLUME_NAME: descriptor.dbVolume,
++  NETWORK_NAME: descriptor.network,
++  PKG_CACHE_NAME: descriptor.cacheVolume,
++};
++
++for (const [key, value] of Object.entries(env)) {
++  console.log(`${key}=${value}`);
++}
+diff --git a/scripts/work-runtime.sh b/scripts/work-runtime.sh
+new file mode 100755
+index 0000000..4e379b6
+--- /dev/null
++++ b/scripts/work-runtime.sh
+@@ -0,0 +1,171 @@
++#!/bin/sh
++# Host-side wrapper for confirmed-Work runtime operations.
++#
++# A caller at the Project Root designates the target confirmed Work by
++# its Work Root directory (or its repository checkout) via DIR:
++#
++#   make DIR=.worktrees/feat/schema-preview work-up
++#   make DIR=.worktrees/feat/schema-preview work-status
++#   make DIR=.worktrees/feat/schema-preview work-config
++#   make DIR=.worktrees/feat/schema-preview work-down
++#   make DIR=.worktrees/feat/schema-preview work-cleanup
++#
++# DIR is only a path locator. This script resolves it to the Work
++# identity <work-type>/<work-name>, validates that the path is a
++# confirmed Work Root (tracked documents/ plus the Work's registered
++# `main` checkout), resolves all runtime resource identities through the
++# project-owned policy module (scripts/resource-identity.js, executed in
++# the toolchain container — host Node/npm is not required), then runs
++# the matching docker compose lifecycle command against the Work's
++# checkout. Every operation resolves the same identity, so start and
++# teardown always target the same resources.
++set -eu
++
++ROOT=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
++REPO_SELECTOR=main
++
++fail() {
++  echo "work-runtime: $*" >&2
++  exit 1
++}
++
++usage() {
++  cat >&2 <<'EOF'
++usage: work-runtime.sh <op> <dir> [args...]
++
++  <dir>   Work Root (.worktrees/<work-type>/<work-name>) or its
++          repository checkout (.worktrees/<work-type>/<work-name>/main)
++
++  ops:
++    up        start the Work runtime alongside the default runtime
++    status    show the Work runtime's containers
++    config    render the resolved compose configuration (dry run)
++    run       run a one-off command inside the Work runtime
++              (remaining args are the command; default: the service command)
++    down      stop and remove the Work runtime's containers/network
++              (volumes are kept)
++    cleanup   down + remove the Work-scoped DB volume (destructive)
++EOF
++  exit 2
++}
++
++[ $# -ge 2 ] || usage
++OP=$1
++DIR=$2
++shift 2
++
++# --- Resolve DIR -> Work Root, checkout, and Work identity -----------
++
++case $DIR in
++  '') usage ;;
++esac
++DIR=${DIR%/}
++
++# Absolute path of the candidate (must already exist — a Work runtime
++# operates on an existing confirmed Work Root).
++[ -d "$ROOT/$DIR" ] || [ -d "$DIR" ] || fail "DIR '$DIR' does not exist"
++if [ -d "$ROOT/$DIR" ]; then
++  CANDIDATE=$(CDPATH= cd -- "$ROOT/$DIR" && pwd -P)
++else
++  CANDIDATE=$(CDPATH= cd -- "$DIR" && pwd -P)
++fi
++
++# Accept either the Work Root or its single repository checkout.
++case $CANDIDATE in
++  */"$REPO_SELECTOR")
++    WORKROOT=${CANDIDATE%/"$REPO_SELECTOR"}
++    ;;
++  *)
++    WORKROOT=$CANDIDATE
++    ;;
++esac
++CHECKOUT=$WORKROOT/$REPO_SELECTOR
++
++case $WORKROOT in
++  "$ROOT"/.worktrees/*/*) ;;
++  *) fail "DIR must resolve to a Work Root under .worktrees/<work-type>/<work-name>" ;;
++esac
++
++WORK=${WORKROOT#"$ROOT"/.worktrees/}
++case $WORK in
++  */*/* | '' | */ | *[!a-z0-9/-]* | -* | */-* | *- | *-/*)
++    fail "cannot derive a Work identity <work-type>/<work-name> from '$WORK'"
++    ;;
++esac
++
++# --- Validate the confirmed Work Root contract ------------------------
++
++[ -f "$WORKROOT/documents/WORK.md" ] ||
++  fail "'$WORK' has no tracked Work Documents ($WORKROOT/documents/WORK.md) — not a confirmed Work Root"
++[ -d "$CHECKOUT" ] && [ -e "$CHECKOUT/.git" ] ||
++  fail "'$WORK' has no repository checkout at $CHECKOUT"
++git -C "$ROOT" worktree list --porcelain | grep -qx "worktree $CHECKOUT" ||
++  fail "$CHECKOUT is not a registered worktree of this repository"
++
++# --- Resolve runtime resources via the project-owned policy module ----
++# The module runs in the shared toolchain container; host Node/npm is
++# not part of this project's execution model.
++
++IMAGE=$(docker compose -f "$ROOT/compose.yml" config --images 2>/dev/null | sed -n '1p')
++[ -n "$IMAGE" ] || fail "cannot resolve the toolchain image from compose.yml"
++
++if ! docker image inspect "$IMAGE" >/dev/null 2>&1; then
++  echo "work-runtime: building toolchain image $IMAGE" >&2
++  docker compose -f "$ROOT/compose.yml" build app >&2
++fi
++
++RESOLVED=$(docker run --rm \
++  -v "$ROOT:/project:ro" \
++  -w /project \
++  "$IMAGE" node scripts/work-runtime.js env "$WORK") ||
++  fail "could not resolve runtime resources for Work '$WORK'"
++
++for kv in $RESOLVED; do
++  case $kv in
++    COMPOSE_PROJECT_NAME=*|APP_HOST_PORT=*|DB_VOLUME_NAME=*|NETWORK_NAME=*|PKG_CACHE_NAME=*)
++      export "$kv"
++      ;;
++    *)
++      fail "unexpected resolver output '$kv'"
++      ;;
++  esac
++done
++
++# Base file: the Work's own checkout compose.yml. Override: the
++# project-owned compose.work.yml, which pins the resolved Work-scoped
++# resource identities regardless of the checkout's compose file.
++COMPOSE="docker compose -f $CHECKOUT/compose.yml -f $ROOT/compose.work.yml --project-directory $CHECKOUT"
++
++echo "work-runtime: work=$WORK project=$COMPOSE_PROJECT_NAME port=$APP_HOST_PORT db=$DB_VOLUME_NAME net=$NETWORK_NAME" >&2
++
++# --- Dispatch ----------------------------------------------------------
++
++case $OP in
++  up)
++    $COMPOSE up -d app
++    ;;
++  status)
++    $COMPOSE ps -a
++    ;;
++  config)
++    $COMPOSE config
++    ;;
++  run)
++    $COMPOSE run --rm app "$@"
++    ;;
++  down)
++    $COMPOSE down
++    ;;
++  cleanup)
++    # Work-scoped destructive operation: removes this Work runtime's
++    # mutable-state volume only. The shared image and the shared package
++    # cache volume are never touched. `compose down` is used (not
++    # `down -v`) precisely so the shared cache volume cannot be removed.
++    $COMPOSE down
++    docker volume rm "$DB_VOLUME_NAME" >/dev/null 2>&1 || true
++    echo "work-runtime: removed Work-scoped volume $DB_VOLUME_NAME" >&2
++    ;;
++  *)
++    usage
++    ;;
++esac

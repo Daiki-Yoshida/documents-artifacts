@@ -1,0 +1,11 @@
+# Run provenance — operator-authored context for this blind execution run.
+# Not agent input: the execution agent is never shown this file.
+
+model: SWE-2 Max
+agent_runtime: devin cli 3000.11.92
+run_started_at_utc: 2026-10-15T07:40:21Z
+run_finished_at_utc: 2026-10-15T07:47:43Z
+entry_condition: prompt-directed-index
+repetition: 2
+read_evidence: self-reported
+known_limitations: artifact read list is self-reported by the agent; an inotify file-open observer corroborates opens on a fixed allowlist only and an open event is not a read

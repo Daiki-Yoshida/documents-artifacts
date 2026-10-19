@@ -529,6 +529,63 @@ DURABLE_CSV
       || fail "bootstrap verification rejected the documented topology"
   fi
 
+  # Issue #209: the generic-dir runtime scenario hands the agent real
+  # confirmed Work Roots (tracked documents + registered `main`
+  # checkouts) while entry surfaces and the prompt name neither the
+  # selector parameter nor the runtime target names — the public
+  # interface shape stays the blind variable.
+  if [[ "$scenario" == "generic-dir-work-runtime" ]]; then
+    for work in schema-preview other-work; do
+      wt="$target/.worktrees/feat/$work/main"
+      git -C "$target" ls-files --error-unmatch \
+        ".worktrees/feat/$work/documents/WORK.md" >/dev/null \
+        || fail "Work Documents not tracked by the repository: $work"
+      [[ "$(git -C "$wt" branch --show-current)" == "feat/$work" ]] \
+        || fail "work checkout branch mismatch: $work"
+      [[ -z "$(git -C "$wt" status --porcelain)" ]] \
+        || fail "work checkout dirty at baseline: $work"
+      [[ ! -e "$wt/.worktrees" ]] \
+        || fail "nested .worktrees materialized inside work checkout: $work"
+      git -C "$wt" sparse-checkout list | grep -Fqx '!/.worktrees/' \
+        || fail "work checkout sparse exclusion missing: $work"
+      git -C "$target" worktree list --porcelain \
+        | grep -Fxq "worktree $wt" \
+        || fail "work checkout not registered: $work"
+      git -C "$target" check-ignore -q \
+        ".worktrees/feat/$work/main/README.md" \
+        || fail "work checkout not ignored by the repository: $work"
+    done
+    git -C "$target" ls-files --error-unmatch \
+      .worktrees/PROJECT_COORDINATION.md >/dev/null \
+      || fail "tracked coordination file missing: $scenario"
+
+    for surface in AGENTS.md README.md documents/INDEX.md \
+        documents/project/DEVELOPMENT.md; do
+      if grep -Eq 'DIR=|WORK=|docker-up|work-up|work-down|work-status|work-config|work-verify|work-cleanup' \
+          "$target/$surface"; then
+        fail "entry surface leaks the answer interface: $scenario/$surface"
+      fi
+    done
+    if grep -Eq 'DIR=|WORK=' "$run_root/PROMPT.md"; then
+      fail "generic-dir prompt leaks the expected selector shape"
+    fi
+    if grep -Eq 'WORKTREES\.md|WORK_IDENTITY\.md|WORK_LIFECYCLE\.md|WORKSPACE\.md|COMMANDS_AND_CI\.md|HOST_AND_CONTAINER\.md' \
+        "$run_root/PROMPT.md"; then
+      fail "generic-dir prompt leaks expected artifact leaves"
+    fi
+
+    # Baseline is reproducibly incomplete: default-runtime section green,
+    # parallel Work runtime unsupported. Node-only check; skipped where
+    # no Node exists. Deterministic — no Docker daemon required.
+    if command -v node >/dev/null 2>&1; then
+      node "$target/scripts/test.js" >/dev/null \
+        || fail "generic-dir baseline app test unexpectedly fails"
+      if node "$target/scripts/resource-check.js" >/dev/null 2>&1; then
+        fail "generic-dir baseline resource-check unexpectedly passes"
+      fi
+    fi
+  fi
+
   # --- declared Component Repository evidence contract ---
   if [[ -n "${EVIDENCE_REPOSITORIES:-}" ]]; then
     meta="$run_root/RUN_METADATA.txt"

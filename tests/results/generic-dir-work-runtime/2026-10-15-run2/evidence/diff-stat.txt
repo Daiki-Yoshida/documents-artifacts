@@ -1,0 +1,10 @@
+ .worktrees/feat/other-work/documents/WORK.md     |   6 +-
+ .worktrees/feat/schema-preview/documents/WORK.md |   6 +-
+ Makefile                                         |  45 +++++-
+ README.md                                        |  39 +++++-
+ compose.work.yml                                 |  33 +++++
+ documents/project/DEVELOPMENT.md                 |  18 ++-
+ scripts/resource-identity.js                     |  87 ++++++++++--
+ scripts/work-runtime.js                          |  54 +++++++
+ scripts/work-runtime.sh                          | 171 +++++++++++++++++++++++
+ 9 files changed, 437 insertions(+), 22 deletions(-)
