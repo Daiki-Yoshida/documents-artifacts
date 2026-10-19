@@ -1,9 +1,9 @@
 # Generic DIR command routing — integration and archive handoff
 
-Work Identity: `refactor/generic-dir-command-routing`  
-Recorded date: 2026-10-19  
-Related: [Issue #209](https://github.com/Daiki-Yoshida/documents-artifacts/issues/209), [PR #210](https://github.com/Daiki-Yoshida/documents-artifacts/pull/210), [PR #211](https://github.com/Daiki-Yoshida/documents-artifacts/pull/211), [PR #212](https://github.com/Daiki-Yoshida/documents-artifacts/pull/212)  
-Status at writing: implementation and integrated-HEAD verification complete; historical Work Records archive proposed; Work resource reconciliation and Issue close **pending**
+- Work Identity: `refactor/generic-dir-command-routing`
+- Recorded date: 2026-10-19
+- Related: [Issue #209](https://github.com/Daiki-Yoshida/documents-artifacts/issues/209), [PR #210](https://github.com/Daiki-Yoshida/documents-artifacts/pull/210), [PR #211](https://github.com/Daiki-Yoshida/documents-artifacts/pull/211), [PR #212](https://github.com/Daiki-Yoshida/documents-artifacts/pull/212)
+- Status at writing: implementation and integrated-HEAD verification complete; historical Work Records archive proposed; Work resource reconciliation and Issue close **pending**
 
 ## Outcome and current owners
 
@@ -30,6 +30,6 @@ This new handoff record documents subsequent integration and validation; neither
 - **Archive publication:** This record is written for the dedicated archive PR. Until merge, do not treat the remote `main` Archive migration as complete.
 - **Work resource inventory:** Confirm the actual local Git worktree registrations and any Work-owned branch, checkout, temporary run directory or Docker resource from an authorized WSL Project Root. The original Work was authored through GitHub API and that record did **not** materialize a Work-specific WSL checkout; do not infer current absence or presence without inspection.
 - **Other scenario/shared resources:** The previous run2 report identified `work-runtime-resources-net` as a possible residual network. Treat it as test-scenario state, not automatically as this Work's resource; check live ownership and attachments before any cleanup. Do not delete Project-shared images, caches, volumes, unrelated Work resources, or other projects' Docker state.
-- **Post-merge gate:** Verify the archive preserves the original blob, that old active Records no longer appear on integrated `main`, and that the three repository Bash suites still pass on the actual integrated HEAD. Record failures/limits accurately.
+- **Post-merge gate (proportionate to archive-only scope):** On the integrated `main` Git tree, verify the original Record's blob identity (`82cdc3c33e51c21f7024db5f76fe0bc3e98cdfb3`), the two intended archive files, the former active Record's absence, accurate links/record references, and no unrelated file changes. Check the PR diff for whitespace errors. The previous integrated `main` (`d82773f7e98f99aefd49cec34993a902c2bbb124`) already passed all three Bash suites; this Record-only move/addition does not change their tested implementation, so **do not rerun all three solely for this archive PR**. Reconsider the test scope if the merge changes other inputs or the targeted checks fail.
 - **Issue/work completion:** Issue #209 remains **OPEN** through this archive PR. Only after archive publication, verification and resource reconciliation should Work completion, optional local cleanup and Issue Close be considered.
 - **Out of scope here:** No target-project Artifact sync, new blind run, hosted CI/GitHub Actions, Docker mutation, branch/worktree deletion or Issue close.
