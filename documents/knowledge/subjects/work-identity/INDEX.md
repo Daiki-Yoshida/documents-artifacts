@@ -41,7 +41,7 @@ Management Root Repository自身がWorkへ参加する場合のrecursive materia
 
 ### S006_WORKTREE_COMMANDS.md
 
-Work Identity worktree lifecycle capabilityを採用するprojectでの、WORK + REPO (+ BASE)を入力とするcreate/status/remove public semantic contract、preflight、postconditions、idempotency、rollback、安全境界を扱う。
+Work Identity worktree lifecycle capabilityを採用するprojectでの、公開 `DIR=<canonical-worktree-path>` によるcreate/status/remove、内部Work Identity・Repository Selector解決、互換 `WORK + REPO` 入力、およびpreflight・postconditions・idempotency・rollback・安全境界を扱う。
 
 ### S007_VALIDATION.md
 
@@ -88,7 +88,7 @@ Work Identityはそれらを前提として、Work Root、Work Documents、Work�
 
 Work RootはWork Identityの物理rootであり、Project全体のAI session entry rootではない。この境界は `S002_WORK_ROOT_AND_REPOSITORIES.md` が扱う。
 
-worktree create/status/removeでは従来どおり `WORK + REPO (+ BASE)` をidentity inputとし、generic execution-target `DIR=<path>` で置換しない。この境界は `S006_WORKTREE_COMMANDS.md` が扱う。
+worktree create/status/removeの公開入力は `DIR=<canonical-worktree-path>` を優先し、検証済みの正規パスから内部でWork Identity・Repository Selector（必要に応じBASE）を解決する。従来の公開 `WORK + REPO` はproject-localな互換interfaceとして残せる。この境界は `S006_WORKTREE_COMMANDS.md` が扱う。
 
 generic `DIR` の意味・path resolution・public command routingは `../development-execution/S003_COMMAND_INTERFACE_AND_CI.md` が主所有する。
 
