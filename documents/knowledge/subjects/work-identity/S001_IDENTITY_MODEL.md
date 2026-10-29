@@ -139,7 +139,7 @@ Work Identity
          └─ Work Identity 自体で lifecycle を管理
 ```
 
-Git は推奨される主要な追跡手段であり、通常のソフトウェア開発では branch を利用することが望ましい。
+Gitは推奨される主要な追跡手段であり、実装ソースを変更するRepositoryではproject-local workflowに従ってWork branchを利用する。Work Identityを共有しても、各Repositoryのbranchは実際の変更と必要な分離に応じて選ぶ。Work Documentsのbaseline管理は `S003_WORK_DOCUMENTS.md` が所有する。
 
 ただし概念の依存方向は次である。
 

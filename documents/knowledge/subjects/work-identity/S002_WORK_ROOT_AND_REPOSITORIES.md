@@ -121,6 +121,8 @@ feat-hogehoge-back
 
 ただし、一つのプロジェクト内では意味関係が一貫していなければならない。
 
+RepositoryへのWork参加と、そのRepositoryでbranch/worktreeを作る判断は異なる。実際に変更する対象・分離の必要性・project-local workflowからGit表現を選ぶ。Work Documentsのbaseline publicationは `S003_WORK_DOCUMENTS.md` が所有する。
+
 ---
 
 ---
