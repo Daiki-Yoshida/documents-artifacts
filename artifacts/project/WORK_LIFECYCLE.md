@@ -9,7 +9,7 @@ goal established
   → design/discussion
   → Work Identity confirmed
   → Work Documents
-  → branch/checkout/optional worktree
+  → repository-specific branch/checkout/optional worktree as needed
   → required work-scoped runtime
   → implementation
   → verification

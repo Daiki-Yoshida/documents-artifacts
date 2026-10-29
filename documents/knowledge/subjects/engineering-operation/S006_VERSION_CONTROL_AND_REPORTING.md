@@ -37,6 +37,10 @@ Work Recordsの配置・Archiveの意味は`../work-identity/`、最終正本へ
 
 ---
 
+## Git状態の報告座標
+
+Work DocumentsのGit保存と公開を判断する際は、対象Repositoryのcommit/ref tree上のtracked状態、個別checkoutのHEAD/index/working tree、remote ref/PR統合状態を区別する。同じpathがWork branchのtreeではtrackedで、baseline上のcheckoutではuntrackedとなることは両立する。GitHub側の統合はローカルcheckoutの同期を意味しない。必要な座標を実測してから、未保存・未公開・未統合・未同期を報告する。
+
 ## Reporting
 
 final reportは、少なくともtask判断に必要な事実を伝える。
@@ -52,6 +56,7 @@ final reportは、少なくともtask判断に必要な事実を伝える。
 
 ## Sources
 
+- `../../records/2026-10-30-management-baseline-coordination/` — Issue #216のGit状態・報告座標とOwnerのbaseline方針
 - `../../records/2026-10-13-work-records-implementation-adoption/`
 
 - `../../records/2026-10-03-subject-consistency-convergence/`

@@ -131,7 +131,7 @@ Work Documents は Git 管理する。
 .worktrees/<work-type>/<work-name>/documents/
 ```
 
-はManagement Root Repositoryが所有するtracked filesであり、**Project baseline branchから現在のactive Workとして確認できる状態**を目標とする。Project baseline branchはprojectが定義するstable coordination/documentation branchであり、名前をliteral `main` に固定しない。
+はManagement Root Repositoryが所有するtracked filesであり、**Project baseline branchを通常の保存・公開先として、active Workをそこから確認できる状態にする**。Project baseline branchはprojectが定義するstable coordination/documentation branchであり、名前をliteral `main` に固定しない。
 
 一方、その兄弟ディレクトリである、
 
@@ -149,7 +149,9 @@ Work Documents は Git 管理する。
 
 Project baseline branchは、完成済みコードだけを示す場所ではなく、**プロジェクトの現在のcoordination / documentation stateを把握する基準面**として扱う。多くのprojectでは `main` がこのroleを担うが、branch名はproject-localである。
 
-実装途中のソースコードは各Work branchへ隔離する。一方、Work DocumentsはProject baselineからactive Workとして確認できることを目標とする。
+実装ソースの変更は対象Repository側のWork branchで分離する。一方、Management Root Repositoryが所有するWork Documentsと通常のproject-level coordination文書は、projectが認可したbaseline publication workflowで管理する。
+
+branchの必要性はWork Identityの共有数ではなく、各Repositoryが実際に変更する責務と分離・reviewの必要性で決める。Management Root自身のpublic command、tooling、運用契約などを実装変更する場合は、その変更に必要なManagement側Work branchを選ぶ。Component実装branchの有無とManagementのcoordination文書publicationは独立している。
 
 例:
 
@@ -248,6 +250,7 @@ Archiveの対象は**Work Records**であり、DESIGN・INVESTIGATION等のWork 
 
 ## Sources
 
+- `../../records/2026-10-30-management-baseline-coordination/` — Issue #216とOwnerのbaseline中心運用・branch独立性の採用判断
 - `../../records/2026-10-13-work-records-proposal/` — 初期提案と元のWork Documents意図（PR #205）
 - `../../records/2026-10-13-work-records-implementation-adoption/` — 軽量化・長時間稼働・Archive移管と実装開始の後続判断
 

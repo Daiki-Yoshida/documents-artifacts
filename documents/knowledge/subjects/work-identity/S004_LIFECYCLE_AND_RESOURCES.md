@@ -17,7 +17,7 @@ Work Documents initialized in Management Root Repository
        ↓
 baseline visibility / publication reconciled as authorized (or explicitly recorded pending)
        ↓
-branch / checkout / optional worktree prepared
+変更対象Repositoryの必要なbranch / checkout / optional worktreeを準備
        ↓
 required work-scoped runtime created
        ↓

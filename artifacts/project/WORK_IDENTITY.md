@@ -95,9 +95,11 @@ is formal work-specific knowledge for active design, investigation, decisions, m
 
 Project Documentation describes the current canonical project state; Work Documents describe the active change.
 
-Work Documents are owned by the Management Root Repository and should become visible from the project's **baseline branch** while the Work is active. The baseline branch is the project-defined stable coordination/documentation branch; its literal name is not fixed to `main`.
+Work Documents are tracked by the Management Root Repository. Routine active-Work documents and project coordination updates belong on its project-defined **baseline branch** (often `main`), through the authorized VCS workflow.
 
-This is a lifecycle/visibility goal, not implicit VCS authority. Use the project-authorized commit/merge workflow. If baseline publication is not yet authorized, preserve the Work context in an authorized Management Root Repository working state and report publication as pending rather than claiming it already happened.
+Choose repository-specific Work branches for actual implementation changes: Component source in its Component repository; Management Root tooling, behavior, or contracts when separate development/review is needed. The shared Work Identity does not require a branch in every participating repository.
+
+Baseline publication does not itself authorize commit/push/merge. If publication is not authorized, preserve the Work context in an authorized Management Root working state and report baseline publication as pending.
 
 Reconcile durable conclusions into Project Documentation when the Work completes.
 
