@@ -290,3 +290,12 @@ Evaluation: [`work-records-closeout/2026-10-13-devin-run1.md`](evaluations/work-
 Evaluation: [`generic-dir-work-runtime/2026-10-15-run2.md`](evaluations/generic-dir-work-runtime/2026-10-15-run2.md)。第1回run (`2026-10-15-run1`) は旧Artifact blobでgenerated repoが作られたためINVALID/NOT_EVALUATEDとして証拠のみ保持し、新版Artifact blob `7f1fccb5` が配布された第2回run (`2026-10-15-run2`) を成立した有効測定として扱う。 |
 
 Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
+
+## Management baseline coordination — defined; Git smoke PASS, agent behavior pending
+
+| Scenario | Fixture | Evaluation boundary |
+|---|---|---|
+| `management-baseline-coordination` | management-baseline-coordination | Issue #216: authorized Management `main` Work Documents checkpoint while the independent Component Work branch stays unchanged. Deterministic local Git smoke PASS; **independent fresh-agent behavior NOT RUN**. |
+
+Evaluation: [`management-baseline-coordination/2026-10-30-local-git-smoke.md`](evaluations/management-baseline-coordination/2026-10-30-local-git-smoke.md).
+Reproduce the Git smoke with `bash tests/scripts/test-management-baseline-smoke.sh`; an agent behavior verdict requires the standard prepare → fresh-agent run → capture → independent evaluator workflow.
