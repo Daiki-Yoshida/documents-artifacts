@@ -28,6 +28,10 @@ For a confirmed Work, preserve significant changes in understanding and decision
 
 A journal file update does not itself authorize commit, push, merge, paid services or a scheduled monitoring process. Report pending Git preservation/publication as pending, not complete. Project-specific VCS rules remain authoritative.
 
+## Git state evidence
+
+For preservation/publication claims, distinguish tracked state on a specific repository/ref tree from a checkout's HEAD/index/working tree and from remote integration. Verify the relevant states before reporting missing history, baseline publication, or local synchronization.
+
 ## Reporting
 
 Report facts needed to understand the result:
