@@ -20,10 +20,10 @@ engineering-operation/
 ```
 
 ### S001_CHANGE_LIFECYCLE.md
-要求理解からverificationまでのengineering change lifecycleを扱い、Work Identity model採用projectではimplementation移行前のidentity confirmationへrouteする。
+要求理解からverificationまでのengineering change lifecycleを扱い、Artifact v2採用ProjectのimplementationではWork IdentityをRC3として確認する。
 
 ### S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md
-user intent、project-local rule、scope、曖昧さがある場合の停止・確認を扱う。
+user intent、project-local rule、RuleClass（RC1〜RC3）、scope、曖昧さがある場合の停止・確認を扱う。
 
 ### S003_PRE_IMPLEMENTATION_SCAN.md
 変更前に必要なscanとproportionality、他subjectへのroutingを扱う。

@@ -6,7 +6,23 @@ engineering changeでは、明示的なuser requestとtarget projectのlocal con
 
 旧sourceはbrownfieldで、project instructions / lint config / house style等の**明示的local conventionがartifact guidanceと衝突する場合、local ruleを優先**すると定めた。
 
-共通知識はdefaultであり、target project固有の明示規則を黙って上書きしない。
+共通知識はdefaultであり、target project固有の明示規則を黙って上書きしない。ただしArtifact採用Projectで適用条件を満たすrequired contractを、単に「推奨だから」というAI判断で省略しない。Projectの具体化と、規範そのものの例外を区別する。
+
+## RuleClass（RC）— 規範の拘束力と決定権
+
+current-effectiveな**規則単位**で、次の3種類を適用条件とともに扱う。
+
+| Class | 意味 | 適用時の責務 |
+|---|---|---|
+| **RC3 — Required** | 選択済みの必須契約 | 条件が成立した場合に守る。AIの便宜や「推奨」解釈で省略しない。 |
+| **RC2 — Recommended** | 標準的に選ぶ方式 | 原則採用する。具体的なtask / Project上の理由があれば代替できる。 |
+| **RC1 — Project Defined** | 具体的手段・名称・policyの決定権 | Project/Ownerが決める。決定後のproject-local contractには従う。 |
+
+RC1は「重要でない」ではなく、RC3は「関連resourceを全て作れ」ではない。Classと**適用条件・前提・例外・責務**を別々に解決する。契約を守ることと、その実現方法を選ぶことは別の判断である。DOC_Lx / SAFETY_Lx / contract Lxなどの変更影響・確認レベルとも独立する。
+
+明示的Project-local規則はRC1の選択、RC2の具体化、RC3の意味を保った特化で優先する。RC3と本当に衝突する例外・不採用が必要なら、Ownerの明示判断としてscopeと影響を確認・記録する。AIが「未採用」と黙示的に推定したり、Project固有規則を勝手に書き換えたりしない。
+
+単なる分類名の追加は既存の規則の意味を変えない。強度を変える／適用条件を広げるときは、別途Owner判断と根拠を保全する。
 
 ## Scope discipline
 
@@ -38,6 +54,8 @@ intentまたはcaller-visible contractが実装判断に必要な程度に不明
 具体的なcontract change levelは `../encapsulation-horizon/S008_OPERATIONAL_GUARDS.md`、destructive operation riskは `../development-safety/S005_CONFIRMATION_AND_REREAD.md` を参照する。
 
 ## Sources
+
+- `../../records/2026-10-31-rule-class-adoption/` — RC呼称・規範強度の採用およびWork必須化のOwner要望
 
 - `../../records/2026-10-12-project-root-write-boundary/ISSUE_199_BODY.md` — 書込scopeと外部操作委譲の追加判断。
 

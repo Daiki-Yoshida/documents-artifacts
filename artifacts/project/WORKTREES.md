@@ -1,6 +1,6 @@
 # Worktree Contract
 
-Read this only when a project has adopted Work-specific Git worktrees and you are creating, diagnosing, or removing them. Work Identity itself does not require every project or every Work to use a worktree.
+Read this when evaluating or operating Work-specific Git worktrees. **RC2:** create a linked worktree when the actual isolation/parallelism need warrants it. **RC3 when a worktree is used:** preserve the identity, ownership, materialization, and removal contracts below. Work Identity itself does not require a linked worktree.
 
 ## Public directory target and semantic identity
 

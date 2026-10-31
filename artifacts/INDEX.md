@@ -2,6 +2,18 @@
 
 This directory contains reusable engineering guidance derived from the repository's canonical knowledge.
 
+## RuleClass (RC)
+
+RuleClass describes the force of **each applicable rule**, not a file-wide rank or an operation-risk level:
+
+- **RC3 — Required:** follow the contract when its conditions apply. Do not silently opt out.
+- **RC2 — Recommended:** prefer the stated approach; use an alternative for a concrete task/project reason.
+- **RC1 — Project Defined:** the project chooses the concrete method, name, or policy; its choice can still be binding locally.
+
+Resolve applicability separately from RC. Project-local instructions specialize the reusable rules; an actual exception to an applicable RC3 contract needs an explicit Owner decision. RC does not change commit, merge, or destructive-operation authority.
+
+For concrete implementation in a project adopting this pack, **Work Identity is RC3**: reuse the confirmed Work or establish a new one before implementation (see `project/WORK_IDENTITY.md`). Branches, worktrees, containers, and other materialized resources are separate need-based choices.
+
 ## Read minimally
 
 Do **not** read every file by default. Start here, identify the task, then open only the relevant router or leaf files.
