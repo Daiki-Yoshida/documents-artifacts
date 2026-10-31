@@ -78,6 +78,12 @@ Work Identity を明示的に確定
 実装開始
 ```
 
+### Artifact v2採用Projectへの適用（RC3）
+
+Artifact v2を開発規範として採用するProjectの**具体的な実装作業はWork Identityで管理する**。既存の確定Workを継続するなら同じIdentityを再利用する。新しい開発目標なら実装前にIdentityを明示確認する（Ownerの有効な事前委譲を含む）。チャット、実行主体、個別Runが変わるだけでは新しいWorkを生成しない。
+
+これは意味的なWork管理の必須契約であり、Git branch、linked worktree、Docker resource等の自動生成義務ではない。具体resourceは対象Repositoryの責務・必要性・project-local権限で判断する。アイデア/調査/比較だけの段階では新規Work確定を急がない。
+
 ### 確定ルール
 
 - Work Identity は **実装作業へ移る直前**に確定する。
@@ -152,6 +158,14 @@ Git representation
 Git branch が Work Identity を定義するのではない。
 
 ---
+
+## Decision lineage — Work Identityの共通適用
+
+Current:
+- `../../records/2026-10-31-rule-class-adoption/` — Artifact v2採用Projectでの実装Workを必須契約RC3として定義する後続判断。
+
+Refined predecessor:
+- `../../records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md` — Work Identityの意味と明示確認gateは継承。今回、Artifact v2採用時の適用条件を明示する。
 
 ## Sources
 
