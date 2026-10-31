@@ -1,6 +1,6 @@
 # Work Identity — Identity Model
 
-Work Identityそのものの意味、確定タイミング、命名、Gitとの依存関係を扱う。以下はsource recordの該当sectionを、責務単位へ再配置したもの。本文の意味内容は変更していない。
+Work Identityそのものの意味、Artifact v2採用Projectへの適用範囲、確定タイミング、命名、Gitとの依存関係を扱う。初期設計の責務再編に加えて、後続のOwner判断に基づきRuleClass（RC3）の現在有効な適用条件を定義している。
 
 ## 目的
 

@@ -1,8 +1,8 @@
 # RuleClass implementation — review and rollout plan
 
 ```yaml
-document_type: "repository_local_implementation_plan"
-authority: "derived_from_documents/knowledge/"
+document_type: "work_document"
+authority: "Work Identity feat/rule-class-contract; current rules remain in documents/knowledge/"
 work_identity: "feat/rule-class-contract"
 base_main: "960c3682fe9172b90b60d05c22078eb1cafc0df1"
 issue: "https://github.com/Daiki-Yoshida/documents-artifacts/issues/219"
