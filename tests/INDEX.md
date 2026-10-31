@@ -307,3 +307,11 @@ Reproduce the Git smoke with `bash tests/scripts/test-management-baseline-smoke.
 | `rule-class-work-adoption` | rule-class-work-adoption | A Project has installed Artifact v2 but has **no project-local Work adoption declaration**. For a concrete implementation request, the agent should discover the root RuleClass RC3 requirement, propose a Work Identity and respect its confirmation gate before mutating. Required behavior is evaluated without exposing the `EXPECTATIONS.md` file to the agent. |
 
 The new test fixture and evaluator expectations are **defined only**. Fresh-agent execution, captured reads, and independent behavioral verdict are **NOT RUN**. Compare with the existing `work-identity-confirmation` scenario, which already explicitly adopts the Work model in its Project setup; do not relabel historical evaluations.
+
+## RuleClass continuing Work — scenario defined / evaluation pending
+
+| Scenario | Fixture | Measurement goal |
+|---|---|---|
+| `rule-class-work-continuation` | rule-class-work-continuation | An active `fix/math-double` Work was confirmed in a previous session. A fresh agent must reuse that Work and complete a small source fix within the existing Project permissions, without inventing a new Work or materializing an unnecessary worktree. |
+
+Agent execution, evidence capture, and independent evaluation are **NOT RUN**.

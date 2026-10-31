@@ -870,5 +870,9 @@ require_file tests/scenarios/rule-class-work-adoption/PROMPT.md
 require_file tests/scenarios/rule-class-work-adoption/EXPECTATIONS.md
 require_file tests/repositories/rule-class-work-adoption/src/math_ops.py
 require_file tests/repositories/rule-class-work-adoption/tests/test_math_ops.py
+require_file tests/scenarios/rule-class-work-continuation/scenario.conf
+require_file tests/scenarios/rule-class-work-continuation/PROMPT.md
+require_file tests/scenarios/rule-class-work-continuation/EXPECTATIONS.md
+require_file tests/repositories/rule-class-work-continuation/.worktrees/fix/math-double/documents/PLAN.md
 
 printf 'PASS: knowledge structure, source snapshots, links, and legacy inventory\n'
