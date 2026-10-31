@@ -6,7 +6,7 @@ Read this when deciding what the task authorizes, whether surrounding cleanup be
 
 Respect explicit user intent and explicit target-project rules.
 
-Reusable artifact guidance is a default. If project instructions, lint/configuration, architecture rules, or a deliberate local convention conflict with it, recognize the conflict and follow the more specific project rule unless the user asks to change that rule.
+Apply the RuleClass semantics in the root `../INDEX.md`: **RC3** contracts bind when their conditions apply, **RC2** choices are defaults with reasoned alternatives, and **RC1** details belong to the Project. Respect explicit user intent and project-local rules that specialize these contracts. If an explicit local policy truly conflicts with an applicable RC3 contract, surface that decision to the Owner instead of silently treating the requirement as optional or overwriting the local policy.
 
 ## Scope discipline
 

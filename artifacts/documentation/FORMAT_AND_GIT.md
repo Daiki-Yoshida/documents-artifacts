@@ -12,9 +12,9 @@ This file does **not** decide when commits/pushes are authorized; that belongs t
 
 ## Commit messages
 
-Prefer the project's existing convention.
+**RC1:** Use the project's existing commit-message convention.
 
-If none exists, a reasonable default is a Conventional-Commits-style English prefix with a concise Japanese description that says what changed, for example:
+**RC2:** If none exists, a reasonable default is a Conventional-Commits-style English prefix with a concise Japanese description that says what changed, for example:
 
 ```text
 docs: プロジェクト概要を更新

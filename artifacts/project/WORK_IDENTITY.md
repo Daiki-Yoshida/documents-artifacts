@@ -26,11 +26,11 @@ Work Identity
 
 Git represents Work Identity where useful; Git does not define it.
 
-## When to establish it
+## When to establish it — RC3
 
 Do not create Work Identity for every early idea or exploratory discussion.
 
-Establish it when the implementation goal has become concrete and the project workflow is moving into implementation.
+**RC3:** Projects adopting this Artifact pack use a Work Identity for concrete implementation. Reuse the current confirmed Work if one already owns the requested change; otherwise establish a new Work Identity as implementation begins. A new chat or agent session is not a reason to create a second Work.
 
 - AI may propose a Work Identity.
 - **Before implementation begins, the user explicitly confirms the Work Identity.**
@@ -54,7 +54,7 @@ fix/login-timeout
 refactor/payment-boundary
 ```
 
-Use a human-readable name that expresses the goal. Branch naming syntax may specialize this project-locally.
+**RC3:** Use a human-readable identity expressing the goal. **RC1:** The project determines the concrete Work/branch name and repository selector conventions.
 
 ## Work Root
 

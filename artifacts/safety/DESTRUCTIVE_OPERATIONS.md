@@ -2,7 +2,7 @@
 
 Read this before delete/reset/purge/force operations or anything that may lose source changes, commits, persistent data, caches, remote state, or host configuration.
 
-## Separate routine from destructive behavior
+## Separate routine from destructive behavior — RC3
 
 A destructive operation must have:
 
