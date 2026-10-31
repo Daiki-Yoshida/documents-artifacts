@@ -456,8 +456,8 @@ grep -Fq 'it is not the Git branch name' artifacts/project/WORKTREES.md \
   || fail "Artifact worktree selector/branch distinction missing"
 grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.md \
   || fail "Artifact worktree materialization applicability regressed"
-grep -Fq 'Work Identity model and a concrete implementation effort' artifacts/operation/CHANGE_LIFECYCLE.md \
-  || fail "Artifact operation flow lost Work Identity gate"
+grep -Fq 'project adopting this Artifact pack is about to undertake concrete implementation' artifacts/operation/CHANGE_LIFECYCLE.md \
+  || fail "Artifact operation flow lost the RuleClass Work Identity gate"
 grep -Fq "Prefer the project's existing convention" artifacts/documentation/FORMAT_AND_GIT.md \
   || fail "Artifact documentation lost project-convention-first commit rule"
 grep -Eq 'If none exists.*Japanese description' artifacts/documentation/FORMAT_AND_GIT.md \
@@ -843,5 +843,32 @@ require_file tests/scenarios/work-records-closeout/scenario.conf
 require_file tests/scenarios/work-records-closeout/PROMPT.md
 require_file tests/scenarios/work-records-closeout/EXPECTATIONS.md
 require_file tests/repositories/work-records-closeout/scripts/verify.sh
+
+# RuleClass RC1/RC2/RC3: project authority and Work Identity adoption
+# are separate from concrete resource creation.
+rule_record=documents/knowledge/records/2026-10-31-rule-class-adoption/RECORD.md
+rule_owner=documents/knowledge/subjects/engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md
+rule_model=documents/knowledge/system/ARTIFACT_MODEL.md
+rule_work=documents/knowledge/subjects/work-identity/S001_IDENTITY_MODEL.md
+for f in "$rule_record" "$rule_owner" "$rule_model" "$rule_work"; do
+  require_file "$f"
+done
+grep -Fq 'record_kind: bundle' "$rule_record" || fail "RuleClass adoption source record invalid"
+for rc in RC1 RC2 RC3; do
+  grep -Fq "$rc" "$rule_owner" || fail "Canonical RuleClass missing $rc"
+  grep -Fq "$rc" artifacts/INDEX.md || fail "Artifact root missing $rc"
+done
+grep -Fq '適用条件とともに扱う' "$rule_owner" || fail "RuleClass lost conditional applicability"
+grep -Fq 'Artifact v2を開発規範として採用するProject' "$rule_work"   || fail "Work Identity applicability was weakened"
+grep -Fq 'Work Identity is RC3' artifacts/INDEX.md || fail "Work Identity strength not projected"
+grep -Fq 'A new chat or agent session is not a reason' artifacts/project/WORK_IDENTITY.md   || fail "Work continuation not protected"
+grep -Fq 'RC2:' artifacts/project/WORKTREES.md || fail "Optional worktree choice strengthened incorrectly"
+grep -Fq 'RC1:' artifacts/execution/EXECUTION_MODEL.md || fail "Project runtime choice missing"
+grep -Fq 'does not require a linked worktree' artifacts/project/WORKTREES.md   || fail "RuleClass accidentally requires linked worktrees"
+require_file tests/scenarios/rule-class-work-adoption/scenario.conf
+require_file tests/scenarios/rule-class-work-adoption/PROMPT.md
+require_file tests/scenarios/rule-class-work-adoption/EXPECTATIONS.md
+require_file tests/repositories/rule-class-work-adoption/src/math_ops.py
+require_file tests/repositories/rule-class-work-adoption/tests/test_math_ops.py
 
 printf 'PASS: knowledge structure, source snapshots, links, and legacy inventory\n'

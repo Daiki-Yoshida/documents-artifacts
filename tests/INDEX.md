@@ -299,3 +299,11 @@ Harness design: `documents/project/AGENT_ARTIFACT_TEST_HARNESS.md`
 
 Evaluation: [`management-baseline-coordination/2026-10-30-local-git-smoke.md`](evaluations/management-baseline-coordination/2026-10-30-local-git-smoke.md).
 Reproduce the Git smoke with `bash tests/scripts/test-management-baseline-smoke.sh`; an agent behavior verdict requires the standard prepare → fresh-agent run → capture → independent evaluator workflow.
+
+## RuleClass Work Identity adoption — scenario defined / evaluation pending
+
+| Scenario | Fixture | Measurement goal |
+|---|---|---|
+| `rule-class-work-adoption` | rule-class-work-adoption | A Project has installed Artifact v2 but has **no project-local Work adoption declaration**. For a concrete implementation request, the agent should discover the root RuleClass RC3 requirement, propose a Work Identity and respect its confirmation gate before mutating. Required behavior is evaluated without exposing the `EXPECTATIONS.md` file to the agent. |
+
+The new test fixture and evaluator expectations are **defined only**. Fresh-agent execution, captured reads, and independent behavioral verdict are **NOT RUN**. Compare with the existing `work-identity-confirmation` scenario, which already explicitly adopts the Work model in its Project setup; do not relabel historical evaluations.
