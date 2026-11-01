@@ -874,5 +874,10 @@ require_file tests/scenarios/rule-class-work-continuation/scenario.conf
 require_file tests/scenarios/rule-class-work-continuation/PROMPT.md
 require_file tests/scenarios/rule-class-work-continuation/EXPECTATIONS.md
 require_file tests/repositories/rule-class-work-continuation/.worktrees/fix/math-double/documents/PLAN.md
+for rule_fixture in rule-class-work-adoption rule-class-work-continuation; do
+  require_file "tests/repositories/$rule_fixture/.gitignore"
+  grep -Fqx '__pycache__/' "tests/repositories/$rule_fixture/.gitignore" \
+    || fail "RuleClass fixture fails to ignore Python bytecode: $rule_fixture"
+done
 
 printf 'PASS: knowledge structure, source snapshots, links, and legacy inventory\n'
