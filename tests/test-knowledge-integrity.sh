@@ -458,8 +458,8 @@ grep -Fq 'stable role owns (or can later receive)' artifacts/project/WORKTREES.m
   || fail "Artifact worktree materialization applicability regressed"
 grep -Fq 'project adopting this Artifact pack is about to undertake concrete implementation' artifacts/operation/CHANGE_LIFECYCLE.md \
   || fail "Artifact operation flow lost the RuleClass Work Identity gate"
-grep -Fq "Prefer the project's existing convention" artifacts/documentation/FORMAT_AND_GIT.md \
-  || fail "Artifact documentation lost project-convention-first commit rule"
+grep -Fq "**RC1:** Use the project's existing commit-message convention." artifacts/documentation/FORMAT_AND_GIT.md \
+  || fail "Artifact documentation lost Project-defined commit convention"
 grep -Eq 'If none exists.*Japanese description' artifacts/documentation/FORMAT_AND_GIT.md \
   || fail "Artifact documentation lost conditional Japanese-description default"
 

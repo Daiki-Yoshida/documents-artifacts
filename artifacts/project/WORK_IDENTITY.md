@@ -33,7 +33,7 @@ Do not create Work Identity for every early idea or exploratory discussion.
 **RC3:** Projects adopting this Artifact pack use a Work Identity for concrete implementation. Reuse the current confirmed Work if one already owns the requested change; otherwise establish a new Work Identity as implementation begins. A new chat or agent session is not a reason to create a second Work.
 
 - AI may propose a Work Identity.
-- **Before implementation begins, the user explicitly confirms the Work Identity.**
+- **Before implementation begins, the user explicitly confirms a new Work Identity, or an existing explicit Owner delegation covers its selection.** An already confirmed Work continues under its established identity.
 - Do not rush to create one during an exploratory discussion whose implementation goal is still unclear.
 
 Materialize work-scoped state only after that identity is confirmed.
