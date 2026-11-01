@@ -63,3 +63,31 @@ ledger**, not an independent runtime authority.
 
 Unrun checks must be labeled NOT RUN; neither a static assertion nor a
 deterministic shell fixture proves an agent's reading or judgment.
+
+## 2026-11-01 independent review and field-testing decision
+
+The Owner requested that **AI behavior is evaluated in actual Project use**, rather
+than making synthetic fresh-agent runs a prerequisite for this PR. The source
+message and the review findings are preserved in
+`records/2026-11-01-self-review.md`.
+
+The self-review corrected a stale test assertion, reconciled new Work
+confirmation with valid Owner delegation, eliminated Python bytecode
+artifacts from test results, and removed an unintended hint from the blind
+adoption fixture. All fixes are committed on this branch.
+
+- Targeted existing integrity assertions: **20/20 PASS** by source-based static
+  evaluation (not the full shell script).
+- Changed Artifact routes: **55 references, zero broken**, cross-checked
+  against the full 42-file Git tree (not the full route reachability suite).
+- Both Python fixtures: `make verify` initial expected FAIL, corrected
+  implementation PASS. `.gitignore` preserves a clean Git worktree.
+- Source record snapshot contents: exact match to the GitHub issue body
+  and RC adoption comment.
+- Full shell suites and historical agent scenarios: **NOT RUN** due lack of
+  a complete source checkout in the isolated test container.
+- Actual Project-based AI behavior: **intentionally deferred** to real use.
+
+Acceptance should distinguish this focused self-review from a full test-suite
+run and from real-world behavior evidence. A PR merge is separate from the
+review and does not sync consuming Projects automatically.
