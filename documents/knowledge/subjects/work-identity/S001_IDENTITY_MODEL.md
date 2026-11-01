@@ -88,7 +88,7 @@ Artifact v2を開発規範として採用するProjectの**具体的な実装作
 
 - Work Identity は **実装作業へ移る直前**に確定する。
 - AI は Work Identity の候補を提案してよい。
-- 実装開始前に、ユーザーがその Work Identity を明示的に確認する。
+- 実装開始前に、ユーザーが新規Work Identityを明示的に確認するか、Identityの選定と確定を委ねる有効な事前承認があることを確認する。
 - まだ目的が曖昧な調査・相談段階では、Work Identity の生成を急がない。
 
 これにより、Work Identity は会話や実行の都合ではなく、実際の開発目標から導出される。

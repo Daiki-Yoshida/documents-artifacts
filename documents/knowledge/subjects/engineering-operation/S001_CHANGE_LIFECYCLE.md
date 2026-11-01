@@ -41,7 +41,7 @@ report
 Artifact v2を開発規範として採用するProjectが、exploration / designから**具体的なimplementation effortへ移る直前**には `../work-identity/S001_IDENTITY_MODEL.md` へrouteし、Work Identityを**RC3**として確定済みのものから再利用、または新規確定する。小さな修正であってもWork Identity自体の必要性は変わらない。
 
 - goalがまだ曖昧な相談・調査ではWork Identityを急いで作らない。
-- implementation goalが具体化したら、Work Identity候補を明示し、owner subjectが要求するexplicit user confirmationを満たしてからimplementationへ進む。
+- implementation goalが具体化したら、Work Identity候補を明示し、owner subjectが要求するexplicit user confirmation（Identity選定・確定への有効なOwner事前委譲を含む）を満たしてからimplementationへ進む。
 - internal changeで他のconfirmationが不要でも、このproject-level Work Identity gateをworkflow都合で省略しない。
 
 Artifact v2を採用していないProjectへこの規則だけで制度を新設するものではない。Artifact採用ProjectでWork Identityを不要と判断するには、明示的なOwner例外が必要である。
