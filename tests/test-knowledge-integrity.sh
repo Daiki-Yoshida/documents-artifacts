@@ -870,6 +870,11 @@ require_file tests/scenarios/rule-class-work-adoption/PROMPT.md
 require_file tests/scenarios/rule-class-work-adoption/EXPECTATIONS.md
 require_file tests/repositories/rule-class-work-adoption/src/math_ops.py
 require_file tests/repositories/rule-class-work-adoption/tests/test_math_ops.py
+for entry_surface in AGENTS.md README.md documents/INDEX.md; do
+  if grep -Fq 'Work Identity' "tests/repositories/rule-class-work-adoption/$entry_surface"; then
+    fail "RuleClass adoption fixture leaks the Work Identity answer via $entry_surface"
+  fi
+done
 require_file tests/scenarios/rule-class-work-continuation/scenario.conf
 require_file tests/scenarios/rule-class-work-continuation/PROMPT.md
 require_file tests/scenarios/rule-class-work-continuation/EXPECTATIONS.md
