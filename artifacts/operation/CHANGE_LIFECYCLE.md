@@ -11,7 +11,7 @@ scan current context and boundaries
         ↓
 route design/risk questions to the owning guidance
         ↓
-establish / confirm Work Identity when required by the project model
+establish / reuse a confirmed Work Identity (RC3 for Artifact-adopting implementation)
         ↓
 confirm other owner-specific gates when required
         ↓
@@ -34,7 +34,7 @@ Know at least:
 - whether destructive/operational risk exists;
 - whether project-local rules constrain the change.
 
-When a project uses the Work Identity model and a concrete implementation effort is about to begin, route to `../project/WORK_IDENTITY.md` and satisfy its explicit confirmation gate before implementation. Do not create a Work Identity merely for exploratory discussion.
+**RC3:** When a project adopting this Artifact pack is about to undertake concrete implementation, route to `../project/WORK_IDENTITY.md`. Reuse an already confirmed Work Identity or satisfy the new-Work confirmation gate before implementation. Exploration and design discussion alone do not create a new Work. This requirement is independent of whether a worktree or separate repository branch is needed.
 
 Use the specialized artifact for the answer:
 - boundary/contract design → `../design/INDEX.md`

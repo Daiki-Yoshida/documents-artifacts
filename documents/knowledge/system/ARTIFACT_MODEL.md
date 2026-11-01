@@ -183,6 +183,17 @@ negative_guard_projection:
 `subjects/` はsemantic completenessを担うため、superseded / rejected / historical knowledgeや、その否定・訂正・Decision Lineageを必要に応じて保持する。
 Artifact向けの削減規則をrecords / subjectsへ逆適用してsemantic knowledgeを削除してはならない。
 
+## 6.2 RuleClassのruntime projection
+
+RuleClass（RC1/RC2/RC3）の意味上のownerは `../subjects/engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md`。Artifactではcurrent-effectiveな規則の**適用条件・意味・強度**を維持する。
+
+- **RC3**: 対象条件を満たすrequired contractを任意の推奨へ弱めない。
+- **RC2**: 原則選ぶdefaultを伝え、代替案の不要な詳述を避ける。
+- **RC1**: Projectが選ぶ具体方式と、決定後のproject-local contractを区別する。
+- 強度はfile単位ではなくrule単位で判断する。必要な箇所へ短いmarkerを置き、全leafへ分類の定義全文を複製しない。
+- 強度・対象範囲の変更は、単なるラベル付与と分け、採用判断とDecision Lineageを記録する。
+- RuleClassはDOC_Lx等のchange impact / confirmation levelとは独立する。
+
 ## 7. Current-effective projection gate
 
 Artifact projectionでsubjects内のstatusを平坦化しない。
@@ -297,3 +308,4 @@ artifact更新では、単に旧artifactとの差分を見るのではなく、�
 - `../records/2026-10-03-knowledge-effective-status-lineage/`
 - `../records/2026-10-04-negative-alternative-leakage/RECORD.md`
 - `../records/2026-10-07-generalized-nal-adoption/RECORD.md`
+- `../records/2026-10-31-rule-class-adoption/`

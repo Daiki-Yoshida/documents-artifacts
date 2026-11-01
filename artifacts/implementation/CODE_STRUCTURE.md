@@ -10,7 +10,7 @@ Classes, interfaces, objects, functions, packages, and services are mechanisms. 
 
 Implementation is replaceable while its boundary contract holds.
 
-## Feature/module first
+## Feature/module first — RC2
 
 Prefer feature/module as the major code boundary, with technical layers inside when needed.
 

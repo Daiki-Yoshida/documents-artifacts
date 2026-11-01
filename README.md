@@ -190,7 +190,7 @@ hookの強度はadopting projectの選択:
 - **conditional link** — 「taskが必要とするとき `artifacts/INDEX.md` を見よ」(参照は条件付き)。
 - **required entry** — 「projectのengineering/documentation変更の前に `artifacts/INDEX.md` を参照し、taskに関連するguidanceだけを適用せよ」(root参照を必須化。whole-pack preloadは要求しない)。
 
-どちらもproject-ownedなadoption判断であり、効果の優位は各projectの計測でのみ判断する (1回のrun結果から因果的な優位は主張しない)。`tests/` の `project-entry-discovery` / `project-entry-required` scenarioが両variantの観測条件を規定する。
+どちらもproject-ownedなadoption判断であり、効果の優位は各projectの計測でのみ判断する (1回のrun結果から因果的な優位は主張しない)。**RuleClassのRC3（特にWork Identity）を新しいchat/agentにも確実に適用したいProjectでは、required entry方式を推奨する。** installer自体がProject-owned entry fileを書き換えるわけではない。`tests/` の `project-entry-discovery` / `project-entry-required` scenarioが両variantの観測条件を規定する。
 
 根拠・運用:
 

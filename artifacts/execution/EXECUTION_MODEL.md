@@ -30,7 +30,7 @@ Internal Docker/script structure may change; public daily operations should rema
 - DB/migration CLI;
 - project-specific cloud/deploy CLI.
 
-Prefer repository-managed execution environments over undocumented host installations.
+**RC2:** Prefer repository-managed execution environments over undocumented host installations. **RC1:** Select the concrete runtime/container technology for the Project's needs.
 
 ## Reproducibility
 

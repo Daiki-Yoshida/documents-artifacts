@@ -21,7 +21,7 @@ work-identity/
 
 ### S001_IDENTITY_MODEL.md
 
-Work Identityそのものの意味、必要性、確定タイミング、命名、Gitとの依存方向を扱う。
+Work Identityそのものの意味、Artifact v2採用ProjectへのRC3適用、確定タイミング、命名、Gitとの依存方向を扱う。
 
 ### S002_WORK_ROOT_AND_REPOSITORIES.md
 

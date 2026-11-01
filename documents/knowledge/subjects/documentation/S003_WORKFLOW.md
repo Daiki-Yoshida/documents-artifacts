@@ -227,6 +227,14 @@ standalone_context:
 Management Root RepositoryとComponent Repositoryのrole定義は `../workspace-structure/` を参照する。parent/child repository hierarchyをdocumentation workflow側で再導入しない。
 
 
+## Artifact導入時の入口とRC3の発見可能性
+
+Artifact v2をProjectのengineering規範として採用する場合、AIのentryから配布packのroot `documents/artifacts/INDEX.md` へ到達できる導線をProject-owned instructionに設ける。特にWork Identity等のRC3を新しいagent/sessionへ継続適用したいProjectには、engineering change前にroot INDEXを読む **required entryを推奨**する。
+
+conditional link / required entryの設計選択はProjectが所有する。ただし、conditional linkしかない状況で全ての新agentがRC3を認識できると断定しない。Project文書にArtifact leaf本文やRuleClass定義を複製するのではなく、root entryに誘導して必要leafだけを読ませる。
+
+Source: `../../records/2026-10-31-rule-class-adoption/`（Ownerの新規chat/Projectに関する問題提起）。
+
 ## Managed Artifact Handling
 
 target projectへ配布された再利用guidanceは、project-owned Project Documentationと同じownershipで直接保守しない。
