@@ -8,7 +8,7 @@
 bash tests/test-dev-artifacts-stage1.sh
 ```
 
-このチェックは、モデル・運用文書の存在、旧管理ルートの除去、recordsと層別subjects領域の維持などを検証する。**records→subjectsの内容品質やAIの行動検証を証明するものではない**。
+このチェックは、モデル・運用文書の存在、旧管理ルートの除去、recordsと層別subjects領域の維持、Stage 1でのsubjects/artifacts内容混入の防止などを検証する。**records→subjectsの内容品質やAIの行動検証を証明するものではない**。
 
 ## 旧Artifact v2テストの扱い
 

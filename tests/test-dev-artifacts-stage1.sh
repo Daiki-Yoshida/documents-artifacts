@@ -28,6 +28,17 @@ test -d documents/knowledge/records || { echo "records missing" >&2; exit 1; }
 test -d documents/knowledge/subjects/dev-philosophy || { echo "philosophy directory missing" >&2; exit 1; }
 test -d documents/knowledge/subjects/dev-methodology || { echo "methodology directory missing" >&2; exit 1; }
 test -d artifacts || { echo "artifacts directory missing" >&2; exit 1; }
+
+# Stage 1 is intentionally a clean foundation. No extracted subject or projected
+# artifact text is authoritative before Stage 2 / Stage 3.
+for dir in documents/knowledge/subjects/dev-philosophy documents/knowledge/subjects/dev-methodology artifacts; do
+  test -f "$dir/.gitkeep" || { echo "placeholder missing: $dir/.gitkeep" >&2; exit 1; }
+  unexpected="$(find "$dir" -mindepth 1 ! -path "$dir/.gitkeep" -print -quit)"
+  test -z "$unexpected" || { echo "unexpected pre-Stage-2/3 content: $unexpected" >&2; exit 1; }
+done
+unexpected="$(find documents/knowledge/subjects -mindepth 1 -maxdepth 1 -type f -print -quit)"
+test -z "$unexpected" || { echo "unexpected root subjects file: $unexpected" >&2; exit 1; }
+
 test ! -d documents/knowledge/system || { echo "old system directory is still active" >&2; exit 1; }
 test ! -d documents/project || { echo "old project directory is still active" >&2; exit 1; }
 
