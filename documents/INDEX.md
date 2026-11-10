@@ -1,38 +1,14 @@
 # Documents Index
 
-このrepository内のfile化された情報では、`knowledge/` を常に最優先の情報源とする。
+`documents/` は知識内容と、このリポジトリの設計・運用文書を保持する。
 
-## Routing
+| 調べたいこと | 入口 |
+| --- | --- |
+| 階層、責務、管理権限、承認規則 | [repository/models/INDEX.md](repository/models/INDEX.md) |
+| リポジトリ全体の配置 | [repository/REPOSITORY_STRUCTURE.md](repository/REPOSITORY_STRUCTURE.md) |
+| 知識更新・運用手順 | [repository/operations/INDEX.md](repository/operations/INDEX.md) |
+| source event / 原文記録 | [knowledge/records/](knowledge/records/) |
+| 哲学・方法論の正本 | [knowledge/INDEX.md](knowledge/INDEX.md) |
+| 旧管理設計の参考 | [repository/legacy/INDEX.md](repository/legacy/INDEX.md) |
 
-```yaml
-第1情報源:
-  target: "knowledge/INDEX.md"
-
-repository更新フロー:
-  target: "project/KNOWLEDGE_UPDATE_WORKFLOW.md"
-
-repository構造:
-  target: "project/REPOSITORY_STRUCTURE.md"
-
-第2情報源:
-  target: "../artifacts/"
-  note: "AI向け派生情報。疑義があればknowledgeへ戻る"
-
-legacy_source_logs:
-  target: "../docs-jp/"
-  note: "旧来の人間向け説明・実験/source log。2026-09-21時点はknowledge/recordsへ原文snapshot済みで、現在のauthorityではない"
-```
-
-## 優先順位
-
-```text
-documents/knowledge/
-  ↓
-repository-local derived documents
-  ↓
-artifacts/
-  ↓
-target-project copies
-```
-
-`documents/project/` はこのrepositoryの運用説明であり、knowledgeと意味が衝突した場合はknowledgeを優先してproject文書側を修正する。
+**注意:** 旧`knowledge/system/`や旧`project/`を現行の管理規則として参照しない。Dev-Philosophyの内容の制定権はOwnerにあり、管理モデルはその手続きを定義する。
