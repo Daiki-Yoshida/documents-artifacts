@@ -19,15 +19,15 @@ for f in \
   documents/repository/operations/INDEX.md \
   documents/repository/operations/KNOWLEDGE_UPDATE_WORKFLOW.md \
   documents/repository/legacy/INDEX.md \
-  documents/knowledge/INDEX.md \
-  documents/knowledge/subjects/dev-philosophy/.gitkeep \
-  documents/knowledge/subjects/dev-methodology/.gitkeep \
-  artifacts/.gitkeep
+  documents/knowledge/INDEX.md
 do
   require_file "$f"
 done
 
 test -d documents/knowledge/records || { echo "records missing" >&2; exit 1; }
+test -d documents/knowledge/subjects/dev-philosophy || { echo "philosophy directory missing" >&2; exit 1; }
+test -d documents/knowledge/subjects/dev-methodology || { echo "methodology directory missing" >&2; exit 1; }
+test -d artifacts || { echo "artifacts directory missing" >&2; exit 1; }
 test ! -d documents/knowledge/system || { echo "old system directory is still active" >&2; exit 1; }
 test ! -d documents/project || { echo "old project directory is still active" >&2; exit 1; }
 

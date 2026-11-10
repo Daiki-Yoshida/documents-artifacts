@@ -33,6 +33,14 @@ artifacts.sh
 
 `subjects/`と`artifacts/`の旧本文はこのブランチでは外したが、`main`とGit履歴に残る。`records/`は引き継いでいる。空の`artifacts/`を既存プロジェクトへ配布しない。
 
+## Stage 1 の検証
+
+```bash
+bash tests/test-dev-artifacts-stage1.sh
+```
+
+旧Artifact v2向けテストはこの開発ブランチの未構築領域には非適用。詳細は[tests/INDEX.md](tests/INDEX.md)。
+
 ## 文書の入口
 
 - [documents/INDEX.md](documents/INDEX.md)

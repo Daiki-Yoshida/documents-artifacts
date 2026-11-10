@@ -32,6 +32,7 @@ Stage 2・3が未制定であることを、過去のArtifact v2の規則で補�
 - 調査・提案・Owner採用・実際のGitHub反映を区別する。
 - 既存の記録、採用/却下の関係、Decision Lineageを取り込み直すために書き換えない。
 - 検証はStageに相応しいものを実施し、未実行テストをPASSと報告しない。
+- Stage 1の構造smokeは `bash tests/test-dev-artifacts-stage1.sh`。旧Artifact v2専用テストは未構築のsubjects/artifactsに非適用であり、Stage 2・3で新体系に応じて見直す。
 
 旧Artifact v2の手順とAgent評価設備は [legacy](../legacy/INDEX.md) に保存し、Stage 3の方式が定まるまで未完成packを配布しない。
 
