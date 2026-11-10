@@ -45,4 +45,4 @@ scope: "このChatGPT会話においてOwnerが『一旦ここで対話してい
 - U9は保存可能性の問い合わせ、U10は本記録の作成指示。**記録の実施許可**と**哲学の制定承認**を混同しない。
 - 現行の管理契約: [RECORD_MODEL.md](../../../repository/models/RECORD_MODEL.md)、[AUTHORITY_GOVERNANCE_MODEL.md](../../../repository/models/AUTHORITY_GOVERNANCE_MODEL.md)、[DECISION_LINEAGE_MODEL.md](../../../repository/models/DECISION_LINEAGE_MODEL.md)。
 - A-3の検討資料: [A1_ROUGH_PHILOSOPHY.md](../../../repository/operations/stage2/A1_ROUGH_PHILOSOPHY.md)。本recordを既存P01–P17へ即時統合する判断は行っていない。
-- 取り込み先: \`refactor/dev-artifacts-restructure\`。現行\`main\`の配布物やsubjectsを編集しない。
+- 取り込み先: `refactor/dev-artifacts-restructure`。現行`main`の配布物やsubjectsを編集しない。
