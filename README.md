@@ -33,6 +33,10 @@ artifacts.sh
 
 `subjects/`と`artifacts/`の旧本文はこのブランチでは外したが、`main`とGit履歴に残る。`records/`は引き継いでいる。空の`artifacts/`を既存プロジェクトへ配布しない。
 
+## Stage 2 — 哲学先行（進行中）
+
+[Owner採用済みのStage 2 Workflow](documents/repository/operations/STAGE2_WORKFLOW.md) に従い、現在は **A-1 / A-2を開始した段階**。粗哲学は未承認であり、[調査資料](documents/repository/operations/stage2/INDEX.md)と `subjects/dev-philosophy/` を区別する。
+
 ## Stage 1 の検証
 
 ```bash
