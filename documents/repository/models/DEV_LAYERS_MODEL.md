@@ -39,4 +39,4 @@ AIが哲学を抽出・成形しても、Ownerの明示的な最終承認がな�
 
 - [3層モデルと用語決定](../../knowledge/records/2026-11-10-dev-layers-terminology/)
 - [Stage 1採用と設計方針](../../knowledge/records/2026-11-11-dev-artifacts-stage1-governance/)
-- 固定した関係語彙の原文recordは未収録。Stage 2の根拠整備時に別のsource eventとして補う（既存recordへ追記しない）。
+- [Ownerが固定関係語彙を明示した相談メモ](../../knowledge/records/2026-11-11-dev-artifacts-owner-memo/)（このChatGPTメッセージの保存。元の別会話の全文保存ではない）

@@ -51,4 +51,5 @@ recordとsubjectの間で「何が採用されたか」「何が発言された�
 
 - [3層モデルと用語決定](../../knowledge/records/2026-11-10-dev-layers-terminology/)
 - [Stage 1採用](../../knowledge/records/2026-11-11-dev-artifacts-stage1-governance/)
+- [Owner相談メモ](../../knowledge/records/2026-11-11-dev-artifacts-owner-memo/)
 - [Decision Lineage](DECISION_LINEAGE_MODEL.md)
