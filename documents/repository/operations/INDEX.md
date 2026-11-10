@@ -4,7 +4,8 @@
 
 - [Knowledge Update Workflow](KNOWLEDGE_UPDATE_WORKFLOW.md)：source eventの取り込み、Owner承認の扱い、Stage境界、変更管理。
 - [Stage 2 Workflow](STAGE2_WORKFLOW.md)：Ownerが採用した哲学先行 A→B→C→D の進め方。
-- [Stage 2 Working Analysis](stage2/INDEX.md)：A-1粗哲学候補、A-2 records全件監査の証拠と進捗。未承認候補は正本ではない。
+- [Stage 2全件監査・Owner吟味への引継ぎ](stage2/A1_A2_COMPLETION_REPORT.md)：A-1旧subjects70件、A-2 records206件の一次意味監査を完了。17件の粗哲学候補はすべて未承認。
+- [Stage 2調査資料](stage2/INDEX.md)：全ファイル台帳と判断系譜、所見16件を保存。
 - Artifact射影・配布手順はStage 3で制定する。旧Artifact v2の運用を暗黙に再採用しない。
 - 過去の移行・監査・Agentテスト資料は[legacy](../legacy/INDEX.md)に保存する。
 

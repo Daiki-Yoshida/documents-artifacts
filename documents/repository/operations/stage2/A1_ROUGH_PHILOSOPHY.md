@@ -6,9 +6,9 @@
 ## 調査範囲と表現上のルール
 
 - 調査元：旧`documents-artifacts`の`main@7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`に固定した`documents/knowledge/subjects/`。
-- 70ファイルのうち**31ファイルを全文取得・初期確認**。残り39ファイルは未確認であり、現時点の網羅性を保証しません。
+- **70ファイルすべてを全文取得・初期点検**。未確認の旧subjectsファイルは0件。ただしこれだけでは各候補の完全な意味保存と採用状態の確定を保証しません。
 - 直接引用は旧subjectsの日本語記述。引用の**Markdown強調記号や折り返し改行のみ表示上整理**しており、全文原文とのbyte一致を意味しません。引用の次に置く「抽出候補」はAIによる仮の整理であり、**元文の代替でもOwnerの制定済み思想でもありません**。
-- 「哲学か方法論か」「概念が独立しているか」「どのファイルに分けるか」はA-3・A-4まで確定しません。P01〜P11は追跡用の仮IDです。
+- 「哲学か方法論か」「概念が独立しているか」「どのファイルに分けるか」はA-3・A-4まで確定しません。P01〜P17は追跡用の仮IDです。
 - 古いsubjectsには後続訂正を含むものがあります。原文recordにおける採否・訂正・有効範囲の検証はA-2で継続します。
 - 出典パスは特記しない限り`documents/knowledge/subjects/`からの相対パスです。
 
@@ -156,11 +156,72 @@
 
 **留保：** 方法論との境界が不明瞭。特にWork IdentityのRC3適用条件を、すべての人間開発に無条件に拡大しない。
 
-## 今後必要な作業
+## P12 — 契約適合と依頼の目的達成は別の評価
 
-1. A-1の未確認39ファイル（HISTORYを含む）を日本語本文のまま確認し、候補追加・撤回・分割を検討する。
-2. A-2で各候補を原文recordsに照合し、後続の採用・訂正・不採用・適用範囲を区別する。
-3. 本人によるA-3吟味を行う。上記11候補の数も粒度も確定ではない。
-4. A-4で初めて哲学全体の構造と分類単位を決定する。
+**旧subjects：** `code-design/S009_TESTING_AND_RUNTIME.md`、`S010_COMPATIBILITY_AND_VERIFICATION.md`、`engineering-operation/S005_VERIFICATION_AND_DONE.md`。
 
-**本書はAIによる未承認の粗抽出であり、正式な哲学の言葉・確定解釈ではない。**
+**仮の意味：** 契約・実装・テストが内部で一致していても、契約そのものが利用者の求める結果を表していなければ、目的は達成されない。形式上の正しさと外側の達成目的を混同しない。
+
+**A-2で確認した判断：** `2026-09-06-design-principles-proposals/`の提案1→`2026-09-15-design-principles-contract-decision/`の修正採用1。旧「Contract Test＝正しさ全体」という解釈は非現行。
+
+**留保：** 哲学上の価値判断と、要求を実際に検証する具体的な方法論を区別する。
+
+## P13 — 契約の互換性は当事者への保証で決まる
+
+**旧subjects：** `code-design/S010_COMPATIBILITY_AND_VERIFICATION.md`、`encapsulation-horizon/S008_OPERATIONAL_GUARDS.md`。
+
+**仮の意味：** 公開した契約の変更を「追加だから安全」と判断せず、呼び出し側と実装側の双方に対して、従来の意味・保証が維持されるかを問う。
+
+**A-2で確認した判断：** `2026-09-15-design-principles-contract-decision/`の修正採用3。追加形状を互換性とみなす旧解釈を修正した。
+
+**留保：** source/binary/wire/schema等の確認方式や変更levelは方法論に属し得る。P01の契約原理の具体化かもしれない。
+
+## P14 — 重要な要求が契約の形そのものを見直させる
+
+**旧subjects：** `code-design/S011_PERFORMANCE_SHAPED_INTERACTION.md`。
+
+**仮の意味：** 境界の契約は重要でも、現実の要求と証拠を無視して形を固定化することが目的ではない。性能要件が実際に重要で、既存のinteraction shapeが障害なら契約形状を再評価できる。
+
+**A-2で確認した判断：** `2026-09-15-performance-redesign-hold/`では**保留**、`2026-09-20-performance-contract-evolution/`で証拠とload-bearing要件を前提に進化を許容。保留を現在のstatusとして残さない。
+
+**留保：** この考えがP12の「目的」を実現する具体論か、それ自体が哲学的価値かはA-3で検討する。
+
+## P15 — 意味上の所有権と物理的な配置は別
+
+**旧subjects：** `workspace-structure/S001_PROJECT_AND_REPOSITORY_MODEL.md`、`S002_GIT_OWNERSHIP_AND_MULTI_REPOSITORY.md`、`documentation/S001_PRINCIPLES.md`。
+
+**仮の意味：** あるものが物理的に他のものの内部へ配置されても、それだけで意味の所有権、変更権限、Git上の親子関係は発生しない。
+
+**A-2で確認した判断：** `2026-10-03-project-component-documentation-boundary/`で親子構造から責務別モデルへ整理、`2026-10-04-management-root-repository-terminology/`で役割名を更新、`2026-10-04-workspace-physical-topology/`で物理包含と権威の別軸を確認。
+
+**留保：** repositoryの例から抽出した一般原理。P03「意味の高度」やP11「Work Identity」と共通する根かどうかは不明。
+
+## P16 — 原文の保存、現在の評価、利用目的を区別する
+
+**旧subjects：** `documentation/S001_PRINCIPLES.md`、`S006_HISTORY.md`、`work-identity/S003_WORK_DOCUMENTS.md`。
+
+**仮の意味：** 過去に提案・議論された情報を完全に保持することは、その全情報を現在採用していることを意味しない。情報の正確さ、採用状態、配布・提示の必要性を別の軸で扱う。
+
+**A-2で確認した判断：** `2026-09-21-knowledge-record-accuracy/`、`2026-10-03-knowledge-effective-status-lineage/`、`2026-10-13-record-intake-regulation/`。
+
+**留保：** Ownerの開発哲学そのものというより、repository管理の契約かもしれない。両領域への独立した二重制定は避ける。
+
+## P17 — 操作の権限・対象・事実を分離する
+
+**旧subjects：** `engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md`、`S006_VERSION_CONTROL_AND_REPORTING.md`、`development-safety/S002_DESTRUCTIVE_OPERATIONS.md`。
+
+**仮の意味：** 操作が技術的に可能であることは、実行を許されていることではない。対象の実効的な書込先・副作用・Owner権限を評価する。また、書込・commit・push・merge・検証・完了はそれぞれ別の状態である。
+
+**A-2で確認した判断：** `2026-10-12-project-root-write-boundary/`、`2026-10-13-project-root-write-boundary-completion/`、`2026-10-30-management-baseline-coordination/`。
+
+**留保：** 具体的なGit運用はDev-Methodology。区別する価値判断がP10やP15に含まれる可能性がある。
+
+## A-1完了とOwner吟味への引き継ぎ
+
+- 旧subjects **70/70ファイル**を全文取得し、哲学・方法論・歴史に関わる意味を一次点検済み。ファイル未確認は0件。
+- ここまでのP01〜P17は**17個の未承認の候補**であり、哲学の最終個数、概念の上下関係、分類単位を確定したものではない。
+- [A-2 records全件台帳](A2_RECORDS_COVERAGE.md)、[系譜の監査](A2_DECISION_LINEAGE_REVIEW.md)による採否・訂正・意味差の検証を受けた状態であり、解釈に保留があるものは明示する。
+- A-3でOwnerと思想の本体を議論し、A-4の合意後にのみ哲学の構造を確定する。
+- [A-1/A-2完了監査とOwnerへの論点](A1_A2_COMPLETION_REPORT.md)に検証の限界を記す。
+
+**現時点で制定済みの哲学は、この候補群には存在しない。**

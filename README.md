@@ -35,7 +35,7 @@ artifacts.sh
 
 ## Stage 2 — 哲学先行（進行中）
 
-[Owner採用済みのStage 2 Workflow](documents/repository/operations/STAGE2_WORKFLOW.md) に従い、現在は **A-1 / A-2を開始した段階**。粗哲学は未承認であり、[調査資料](documents/repository/operations/stage2/INDEX.md)と `subjects/dev-philosophy/` を区別する。
+[Owner採用済みのStage 2 Workflow](documents/repository/operations/STAGE2_WORKFLOW.md) に従い、**A-1/A-2の全件取得・一次意味監査は完了**（旧subjects 70/70、records 206/206）。[完了報告とOwnerへの論点](documents/repository/operations/stage2/A1_A2_COMPLETION_REPORT.md)・[調査資料](documents/repository/operations/stage2/INDEX.md)を参照。現在はA-3でOwnerが哲学の内容を吟味する前段階であり、17件の粗哲学候補は**すべて未承認**。 `subjects/dev-philosophy/` は空のまま維持する。
 
 ## Stage 1 の検証
 
