@@ -69,6 +69,6 @@
 ## Fidelity / Authority
 
 - ここにある表・説明・文案は**assistantの要約・提案**であり、原文sourceの全文ではない。
-- Ownerの発言は \`USER_MESSAGES.md\` のU1–U10を参照する。
+- Ownerの発言は `USER_MESSAGES.md` のU1–U10を参照する。
 - 先行する P01–P17 の候補との包含関係は未決。特に命名と意味論を、既存P01へ単純に吸収してはいけない。
 - 哲学の制定、意味の修正、優先関係の確定にはOwnerによる明示的な最終承認を要する。
