@@ -1,0 +1,226 @@
+# A-2 — All-record corpus inventory and read-coverage ledger
+
+**Phase:** A-2 IN PROGRESS (not a full audit). Current audit corpus: branch `refactor/dev-artifacts-restructure` at immutable `14fdd210d96011536d28e1e0de856800871672ef`; comparison baseline old `main@7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`.
+
+- Original main: **197 files** under **101 record directories**.
+- Development branch after Stage 2 workflow adoption: **204 files** under **104 record directories**; includes new governance and Stage 2 decision records.
+- Every tracked file (including snapshot `files/` payloads) is enumerated below; `RECORD.md` alone is not enough to claim full directory coverage.
+- So far: **8 files text read in full**, **4 files scanned for headings/key passages**, **192 not text-reviewed**. This ledger is a coverage/triage instrument, *not a claim that all records have been semantically audited*.
+- `full_text_read` means the whole file was retrieved and its displayed text inspected; it does **not** imply every decision relation has been resolved.
+- `scanned_not_full_review` means content was fetched but only selected lines, headings or excerpts were inspected in review. No semantic-completeness claim.
+- `not_reviewed` means neither original source payload nor its current authority has been checked in this audit.
+- Any audit of historical source must resolve later adopted/rejected/superseded decisions and compare against the candidate; historical status is not authority.
+
+| Record directory / payload file | Blob SHA | Review state |
+| --- | --- | --- |
+| `documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/AI_WORKFLOW.md` | `42e995f5039fee6b78b7f1d7a93d242567f20fdc` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/CODING_STANDARDS.md` | `cbe3b01a3b8885402c3efc82b4e20c3cde48486a` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/files/DESIGN_PHILOSOPHY.md` | `e99fdc169f3774cede6fcb7fa64b871e90fa8424` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-bounded-contracts-refinement-source/MANIFEST.md` | `be5058843e0e965cc1f37231d705f8f6c7d62756` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-bounded-contracts-standardization-commit/RECORD.md` | `2af05be6bf90c42d0dee212010e9988fd93b0746` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-code-standards-refinement-commit/RECORD.md` | `6bfff85a0918365ec8f89f63bebbb0dfbea14824` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-dependency-boundary-refinement-commit/RECORD.md` | `b6ec9f927f8c25c6c9e3d43b22390281a4bd62a6` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/AI_WORKFLOW.md` | `ee8ad718331482e63c3a68ddc997b7966f326501` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/CODING_STANDARDS.md` | `c42fdac981bdf9acea01d1644b4d294434833672` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/files/DESIGN_PHILOSOPHY.md` | `1864b4d0e0b7f23f86b994fd419d597fb84e7912` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-dependency-boundary-refinement-source/MANIFEST.md` | `434c5b2cfe52f265744fb8fdcfb3f49aa8d80614` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-design-principles-foundation-commit/RECORD.md` | `d5176a2447928ab151d211ef17a67587fc6fb6f9` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-domain-model-refinement-source/files/CODING_STANDARDS.md` | `5a5e21b02f175065fbbfa6434ceca8e2dbbc5474` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-domain-model-refinement-source/files/DESIGN_PHILOSOPHY.md` | `faa120958f7e727cda476b87407e8ef4eaf32c92` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-domain-model-refinement-source/MANIFEST.md` | `a1a445b4447d540bd0bfec632e3fbac84a607844` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-domain-modeling-refinement-commit/RECORD.md` | `f4a05cdbc48235f209972a9dc4a4aa82c3f1a73b` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-entity-mutability-refinement-commit/RECORD.md` | `ab7abc16874696e91000bb9c57ecdf43ffac8e58` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-initial-code-design-source/files/AI_WORKFLOW.md` | `7043b6d20d01ba4a3e171171400dddd423b3da39` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-initial-code-design-source/files/CODING_STANDARDS.md` | `3bae7e4212fcea8b5807edc00906fad6308f1140` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-initial-code-design-source/files/DESIGN_PHILOSOPHY.md` | `488998aa85d245c949f9be4e21570a2a64b4dbf4` | not_reviewed |
+| `documents/knowledge/records/2026-01-31-initial-code-design-source/MANIFEST.md` | `ea613991a92143cc8d5207df50b13ba9cae64542` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/AI_DOC_STRATEGY.md` | `ed2059d8252ca524d45c45106771f6417fa755c4` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/files/documents/reference/PROGRAMMING_PARADIGM.md` | `c417009102059cc1d42d2f8578cf22fc889d8547` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-design-principles-reference-snapshot/MANIFEST.md` | `cb81442ab187cb05eed33e675c8982b4f69f441e` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-external-boundary-refinement-commit/RECORD.md` | `5193a728e72005e8c0b93969e89e42a3b00a0c00` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-module-mapping-testing-refinement-commit/RECORD.md` | `0125ec7e8faab6de1a2b6bda25d8d5d17cc8a2e8` | not_reviewed |
+| `documents/knowledge/records/2026-06-13-operational-discipline-commit/RECORD.md` | `564e110bf91805ead2b67ff6069fcd48ccaf743f` | not_reviewed |
+| `documents/knowledge/records/2026-06-21-encapsulation-horizon-artifact-commit/RECORD.md` | `a8277989aaddd2fcce58664c201b5d60dbfbbacc` | not_reviewed |
+| `documents/knowledge/records/2026-06-21-encapsulation-source-alignment-commit/RECORD.md` | `3168b33586c4bf28837e3199f2ebdd08d9565921` | not_reviewed |
+| `documents/knowledge/records/2026-06-21-project-structure-origin-commit/RECORD.md` | `9992d60540c909ab2efd5deb03bc37937f58a61a` | not_reviewed |
+| `documents/knowledge/records/2026-06-22-design-review-guard-commit/RECORD.md` | `194b2b77578cbaa2ee59708c49949419acef8745` | not_reviewed |
+| `documents/knowledge/records/2026-06-22-horizon-search-direction-commit/RECORD.md` | `8fc31cf1b40b05b907e10fd04cc5d6ef40d6bb70` | not_reviewed |
+| `documents/knowledge/records/2026-07-01-brownfield-policy-commit/RECORD.md` | `7e9ef7d803857d04e107b7e2faab16cccb3137c9` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-doc-update-commit/RECORD.md` | `453d308b424b04ad5a8e19277adb858c13147688` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/AI_WORKFLOW.md` | `e3ab73e4957bcbe09a83dfd870811ef81fbafc71` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/CODING_STANDARDS.md` | `02668d168fbf57ec2f1df38f3a2e94c2c877c192` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/DESIGN_PHILOSOPHY.md` | `4a356c81c675e2fb390cee8ff15c34f397570ce6` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/INDEX.md` | `63cb47489e585ee119abe1623c61a42599280910` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/files/PROJECT_STRUCTURE.md` | `69abc27cca5735a745ae6f19d50c5e276c686f60` | not_reviewed |
+| `documents/knowledge/records/2026-07-02-design-principles-final-source-snapshot/MANIFEST.md` | `0d3fd2121eadb416bad819fd16136cb4ffdb3bdf` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-atomicity-commit/RECORD.md` | `0eb3ebe22723f11cdc6e19fdc30ef03887562207` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-consistency-fixes-commit/RECORD.md` | `52a3672e650253bc4b81aac1c53afac60f43ee1e` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-split-commit/RECORD.md` | `60eeed925fd5c7cc4fc324f92600597972e59346` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENT_WORKFLOW.md` | `90c17259079ec97b09c1586fa4a1e6b4a6ed6b13` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/DOCUMENTATION_PHILOSOPHY.md` | `b5415fcf4adb770b17623179a482aa77f322bef3` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/FILE_AND_STRUCTURE.md` | `72f5b2c47dae045a17b1a94589cb1ca7c490346c` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/files/INDEX.md` | `2b0509ad3a34f60a7c51a13493ad60d6300b9cc9` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-strategy-final-source-snapshot/MANIFEST.md` | `b5c4b7bf667a4a81b3a239d20b840ec1ff08590a` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-v2-2-review-fixes-commit/RECORD.md` | `92b31e55e5e2708d2fa04aa0f82a0c587ffb0581` | not_reviewed |
+| `documents/knowledge/records/2026-07-09-documentation-v2-restructure-commit/RECORD.md` | `7dc8a0366a92de2684bd4f63d57d564541df298a` | not_reviewed |
+| `documents/knowledge/records/2026-07-18-development-environment-initial-pr/RECORD.md` | `8b8216d85558deccd45bef8d61605108e6611907` | not_reviewed |
+| `documents/knowledge/records/2026-07-18-environment-standards-origin-commit/RECORD.md` | `3c379820b87d09caf39fa72b3656185b4604e963` | not_reviewed |
+| `documents/knowledge/records/2026-07-18-environment-workflow-origin-commit/RECORD.md` | `ec6887cde5714cac69e2d8b213746121d5856d14` | not_reviewed |
+| `documents/knowledge/records/2026-07-18-workspace-structure-origin-commit/RECORD.md` | `1e275f352af514958169cf4ff5d6e448b50e83e1` | not_reviewed |
+| `documents/knowledge/records/2026-07-19-optional-worktree-policy-commit/RECORD.md` | `0dbe80fe2addb88a1e9093b49a2ed319c5df360b` | not_reviewed |
+| `documents/knowledge/records/2026-08-02-task-resource-ownership-pr/RECORD.md` | `fd5b09e26a4b4c1f0f9bd1df79d048f5e8f520b9` | not_reviewed |
+| `documents/knowledge/records/2026-08-02-task-resource-reconciliation-commit/RECORD.md` | `08bb22dc63daac68385262192d7ab0030c26c745` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` | `d13406518405231a353590cab37ea409cf72a798` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_STANDARDS.md` | `d26988857aa351f23d6f4256f5209e5e6c34e574` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/ENVIRONMENT_WORKFLOW.md` | `fd05ec0738e2b5e68b4e6d7e9635902c8e0dd09e` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/INDEX.md` | `8fa048420e278ed381441bd66e7126cd794343ff` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/files/WORKSPACE_STRUCTURE.md` | `28508999e55716fe794f2273a1ad55569bd8734a` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-development-environment-final-source-snapshot/MANIFEST.md` | `2b0a0f1d63acdda2258de74b7284bedbae516f78` | not_reviewed |
+| `documents/knowledge/records/2026-08-03-docker-resource-reuse-pr/RECORD.md` | `b55c2209d19afff8e3724816b193adbb9138eb79` | not_reviewed |
+| `documents/knowledge/records/2026-09-06-design-principles-proposals/RECORD.md` | `468017da4e18c7211d1d9a03003210352d5b8ffc` | not_reviewed |
+| `documents/knowledge/records/2026-09-15-cross-artifact-consistency-issue/RECORD.md` | `9392d28b783174a27efc72e4155d2e04b507ff2b` | not_reviewed |
+| `documents/knowledge/records/2026-09-15-cross-artifact-consistency-pr/RECORD.md` | `7f356a5e4a6532bdde3619cf0016018726c42e5e` | not_reviewed |
+| `documents/knowledge/records/2026-09-15-design-principles-contract-decision/RECORD.md` | `c993e2b092b1b2901e8401d6d410a0d30fc81db0` | full_text_read |
+| `documents/knowledge/records/2026-09-15-design-principles-proposal-status/RECORD.md` | `ca0cdff285704cd0c2a659849db8e44d6a1e40e2` | not_reviewed |
+| `documents/knowledge/records/2026-09-15-performance-redesign-hold/RECORD.md` | `847690d43fb0813ec40baf3b4036bd85c481e6d4` | not_reviewed |
+| `documents/knowledge/records/2026-09-20-performance-contract-evolution/RECORD.md` | `a0102ba5af7ef938e3c0d1f4a519210bf59baabc` | not_reviewed |
+| `documents/knowledge/records/2026-09-20-work-identity-artifactization-pr/RECORD.md` | `bfa538697254f0ff74605cfb472cb22e3251470c` | not_reviewed |
+| `documents/knowledge/records/2026-09-20-worktree-command-contract-pr/RECORD.md` | `d4278abbd706417e4dd6d02a33153bfbf20542d8` | not_reviewed |
+| `documents/knowledge/records/2026-09-20-worktree-materialization-pr/RECORD.md` | `280cf4df0f42976a0f921a0adad32c78a05b71c4` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-artifact-source-redesign/RECORD.md` | `21e232d7ec3630af10436d0aff62e142ac1fa2a4` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-development-documentation-subjects-implementation/RECORD.md` | `2a87d18128fe44e7b541bbe7590bd9ab9be25555` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-development-subject-split-implementation/RECORD.md` | `8d8610296eade288095c396a1787ec2e9d2c0caf` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/ENCAPSULATION_HORIZON_JP.md` | `43e95ed85bf68fd77fde1d212ac3e8cbfb4a2484` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/design-principles/source-logs/ENCAPSULATION_HORIZON_ORIGINAL_NOTES_JP.md` | `ecad4ecf22fe510b7f71ef0e7c9be684298d73c9` | scanned_not_full_review |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` | `d42d372288b567ad581f278776dec2aeb73f2c67` | scanned_not_full_review |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_STANDARDS.md` | `4efa0fc46f40c34501065fe5e39d179db6d6f8eb` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/ENVIRONMENT_WORKFLOW.md` | `18df39991d46a01ba359c6f661b9b4177cc94d46` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/INDEX.md` | `eefbe361cfc8fca4f012c33d27348ce0433ea3a3` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_DESIGN_JP.md` | `914c937eb0ae9813b4c736d74723212126bda04e` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_GIT_MATERIALIZATION_EXPERIMENT_JP.md` | `eb7a9d28d05297128845056b9c019796ad31efad` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_COMMAND_CONTRACT_JP.md` | `9fd3fbdc6dc9dfda105bfb4ef956b77fec7557a2` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/source-logs/WORK_IDENTITY_WORKTREE_REFERENCE_VALIDATION_JP.md` | `dc5ef3b599a35d6f908f10c536ead3886cfb539c` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/development-environment-strategy/WORKSPACE_STRUCTURE.md` | `0880df2c6f076a1db8cd636d5bd47e453016c016` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENT_WORKFLOW_JP.md` | `0f1d8fa44761a67262d9347b60a8004e6d41b5d3` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/DOCUMENTATION_PHILOSOPHY_JP.md` | `1a09132c1b5718fdfd75efc11049d65627f9c667` | scanned_not_full_review |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/FILE_AND_STRUCTURE_JP.md` | `9ab9bebb551096aed78643d2d35153c5168c2f2a` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/documentation-strategy/INDEX_JP.md` | `2834c1dad901366cc438e5fe05112b0e4954dbea` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/files/docs-jp/README.md` | `f27bc8759b2479ff82763a50bec304286fa82c80` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-docs-jp-snapshot/MANIFEST.md` | `1273fcebe65b0f5813f760bd537724b70828445b` | full_text_read |
+| `documents/knowledge/records/2026-09-21-encapsulation-horizon-subject-rebuild/RECORD.md` | `32fd4e5ab4310724aadf3e39e36c00e239b902fb` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-only-phase/RECORD.md` | `12a7bb93f1782eefe9d90ad96b7579e3b447df42` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-record-accuracy/RECORD.md` | `5bb346cbc677980ef5f4b32881397d6c4db8b465` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-scaling-requirements/RECORD.md` | `8d454cc81578dca296e044e17549fac137b7cc6a` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-source-model-implementation/RECORD.md` | `52b0e165b7a2c498183670db4f9fd836e3d111a8` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-source-model/RECORD.md` | `3a48945a77e370c229faa5c0830ef0c6aa6fbd06` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-structure-implementation/RECORD.md` | `d86ba4cd49fa3695c80d79920f9640dc860fc298` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-knowledge-system-subjects-implementation/RECORD.md` | `283b8bbeef81d7079a69d9c18e9e66216d2b5413` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-records-subjects-model/RECORD.md` | `04875d3c611e779d971b9a1df434402eb114a6ca` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-subject-prefix-implementation/RECORD.md` | `720463c121e47b6bcc941ccd41b57884d7aebcbe` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-subject-section-prefix/RECORD.md` | `06748bf9ae2f3de19e545fe58e07d7a705aaaef0` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-work-identity-subject-rebuild/RECORD.md` | `b57ea779b5b5dd02fca777b9d12cdf104650f74c` | not_reviewed |
+| `documents/knowledge/records/2026-09-21-worktree-reference-validation-pr/RECORD.md` | `3e4fdda7cf4cbc615202ca088c86602221ac85a2` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-add-more-subjects/RECORD.md` | `7e879bc606c5f696ba6b69cd38b7f180376491ec` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-development-environment-subject-split/RECORD.md` | `cc248d0427a61488ce3449c5edd82d2d54bac245` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-six-subject-cross-audit-fixes/RECORD.md` | `426ee118394591d24d661a35eacbe2e1bfb70be1` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-six-subject-cross-audit-implementation/RECORD.md` | `31b4601164a3f4f59bd712f23986edfbc220b441` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-workspace-work-identity-alignment/RECORD.md` | `dea69c64a00bbf8d5c95940bf933ed0999afbe10` | not_reviewed |
+| `documents/knowledge/records/2026-09-22-workspace-work-identity-transition-context/RECORD.md` | `022ec2bbe1e2391120ac1ac70f95535f3a2ba3cf` | not_reviewed |
+| `documents/knowledge/records/2026-09-23-knowledge-integrity-implementation/RECORD.md` | `f95f18457172275b1dac0588673de34aa7bc876a` | not_reviewed |
+| `documents/knowledge/records/2026-09-24-artifact-delivery-routing-redesign/RECORD.md` | `317eef696a05c668657ec424c087fc2544c9df09` | not_reviewed |
+| `documents/knowledge/records/2026-09-24-code-design-recovery-continuation/RECORD.md` | `15c2eddfa4f1777226a5fbdfacf15a42296d7352` | not_reviewed |
+| `documents/knowledge/records/2026-09-24-knowledge-integrity-repair/RECORD.md` | `e950ecd5c66080cecc0a97a1e934cf8230d15eb6` | not_reviewed |
+| `documents/knowledge/records/2026-09-24-strong-contract-explicit-not-maximal/RECORD.md` | `d22378fbcd454080c957ff48d4fcaab3ca098a7d` | scanned_not_full_review |
+| `documents/knowledge/records/2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md` | `ad07367880c47f140e7fa955f740e0857bbc6871` | full_text_read |
+| `documents/knowledge/records/2026-09-27-integration-root-routing-gap/RECORD.md` | `0a50a37d2665564eafe1fae4f58a684ee548705d` | not_reviewed |
+| `documents/knowledge/records/2026-09-27-work-runtime-lifecycle-propagation/RECORD.md` | `d10ad94fd46f6a3e29590adae3fcb148a118bb48` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-historical-branch-cleanup-conversation/RECORD.md` | `b9330be9531f0ec9c0cb64f94ea62bdef089a86f` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_BODY.md` | `54d5ab83d4d70cb4d9553c9821956b84a865c0c8` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/ISSUE_171_DECISION_COMMENTS.md` | `32e6a414cd8414449783be29f7105f42d78b966f` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/RECORD.md` | `12d7dbebcc2039974491f4cb5972ee8e12724a86` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-knowledge-effective-status-lineage/USER_MESSAGES.md` | `0891debcc575729ee186240524a9dad34cf75046` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-component-chat-transcript/CHAT_TRANSCRIPT.md` | `f96212477cd844b8b6b682e1fe34bff3575f9d61` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-component-chat-transcript/RECORD.md` | `46931128a530804479294ad767a91858f65ace3f` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-component-documentation-boundary/ISSUE_167_BODY.md` | `f358d7e3b86c9d1d69dcd75f3ff7db5e15379817` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-component-documentation-boundary/RECORD.md` | `fb2b88da9127fd2d21315d58865b9daa90621449` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-component-documentation-boundary/USER_MESSAGES.md` | `7ad732ee29a102bef42d2290fbaabd93077eb629` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_BODY.md` | `f9bc92e7be99acf2451e909b75ad134a5cabc0a6` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958273589.md` | `4a24a9b1aa794819c2229f87ea3a11d788a74bcf` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-root-execution-routing/ISSUE_148_COMMENT_5958401218.md` | `571ee58bf6427a8a9f3e8da8aae1c96a73eca445` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-root-execution-routing/RECORD.md` | `07ae4fdb2bbf4bf785479ebb6721a4e56b61e205` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-project-root-execution-routing/USER_MESSAGES.md` | `cc53e920ba0db6bf32b97cb7aebe886cd4271a0c` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-consistency-convergence/ISSUE_164_BODY.md` | `cea83dddbe70b05174c502f1410fdad205fb74a8` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-consistency-convergence/RECORD.md` | `78774851e8aaf44a48f139a4018188a118ac3282` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-consistency-convergence/USER_MESSAGES.md` | `e935bdf7235415c9e1273e5685be7e2ddba8445c` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_AUDIT_RESULT.md` | `249a063d2e2abc67c4ab6edb50e47f0b7a912949` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_174_BODY.md` | `203d3ea68d78a16153556b8d5d101d9b86766b0c` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/ISSUE_175_BODY.md` | `0eb27d7a39d00171d38e62b38a420e5fed265b0d` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/RECORD.md` | `372b2493f59888308ba7b2209e5da9cafcadaa48` | not_reviewed |
+| `documents/knowledge/records/2026-10-03-subject-effective-status-lineage-audit/USER_MESSAGE.md` | `10654af95cc6eaa00c475af152900c7302d466f4` | not_reviewed |
+| `documents/knowledge/records/2026-10-04-management-root-repository-terminology/ISSUE_192_BODY.md` | `b6cc811136c5720e4097514ea10229fda8d7948e` | not_reviewed |
+| `documents/knowledge/records/2026-10-04-management-root-repository-terminology/RECORD.md` | `30f466460e0cb2f3b7db8397414db1b3fa6fcf98` | not_reviewed |
+| `documents/knowledge/records/2026-10-04-negative-alternative-leakage/ISSUE_190_BODY.md` | `690e2eb636fa087f52cf69e734a0d0d8042c7c57` | not_reviewed |
+| `documents/knowledge/records/2026-10-04-negative-alternative-leakage/RECORD.md` | `06c9f111fca3d7c486dced39142736095c2949bd` | full_text_read |
+| `documents/knowledge/records/2026-10-04-workspace-physical-topology/ISSUE_191_BODY.md` | `fba30ed747723daa4f615c9651dc7a891f53201b` | not_reviewed |
+| `documents/knowledge/records/2026-10-04-workspace-physical-topology/RECORD.md` | `8a4ce1ee243d9416ccfa8aa2b7475a6d7f67a133` | not_reviewed |
+| `documents/knowledge/records/2026-10-07-generalized-nal-adoption/RECORD.md` | `d15058fb46659c80d7d99dc76fb37027b5bbd645` | full_text_read |
+| `documents/knowledge/records/2026-10-07-generalized-nal-adoption/USER_APPROVAL.md` | `74fbfdd4520c8cfaeb039e90b5363bef97142b90` | full_text_read |
+| `documents/knowledge/records/2026-10-07-generalized-nal-issue/ISSUE_196_BODY.md` | `81529b5e38a2fbeba3ba83871bd8157f59f46a21` | not_reviewed |
+| `documents/knowledge/records/2026-10-07-generalized-nal-issue/RECORD.md` | `05da3a20b9d69eebbc603cb01f484b457c66c41b` | not_reviewed |
+| `documents/knowledge/records/2026-10-07-generalized-nal-proposal/CHAT_PROPOSAL.md` | `dc5aae8ae50baecdd824659f174b0d163b1b4a38` | not_reviewed |
+| `documents/knowledge/records/2026-10-07-generalized-nal-proposal/RECORD.md` | `37878b67769d68b951fad1a87be0760ae223fe6b` | full_text_read |
+| `documents/knowledge/records/2026-10-12-project-root-write-boundary/ISSUE_199_BODY.md` | `022bafdbc90adc0b7d4db6878517a64f41387028` | not_reviewed |
+| `documents/knowledge/records/2026-10-12-project-root-write-boundary/RECORD.md` | `f998df49607121491531157f534f520746ffcc89` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/ISSUE_199_COMMENT_6127390776.md` | `1466872a9f8b24325847388613186f9629645f60` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/ISSUE_199_COMMENT_6127539417.md` | `dfd8bcce1714a1db68a8250b674758cfe9651981` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/ISSUE_199_FINAL_BODY.md` | `44c1a8fb1e0f3927412ddc160816543bfbb6365f` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/PR_200_COMMENT_6126784823.md` | `1e17c104f288c311b7eb94e06df99c2765a4c468` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/PR_200_COMMENT_6127041494.md` | `c76080b44f8b57512df564f9705582ed6511aedb` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/PR_200_FINAL_BODY.md` | `1fa78d37d30e01c5fc2a450416e3f44b427563e0` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/PR_200_FINAL_REVIEW.md` | `16f7631b0286bd4b8aa3620436ded26d856a8151` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/RECORD.md` | `31081c2d498ae0a3dbeb8ef0ded6eb219ac8176f` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-project-root-write-boundary-completion/USER_MESSAGES.md` | `6ac3bc4460f01df612d87288b5ae5eec7ce31127` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-record-intake-regulation/DESIGN_CONTEXT.md` | `57f80e65832d9be19568d31bb607048fd28d6cde` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-record-intake-regulation/ISSUE_189_BODY.md` | `b00cd9e2e301bf68c5e348595e04ff7b096ac3d8` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-record-intake-regulation/RECORD.md` | `66abe19743d5fb11693afb9b5b45af24ddb565fa` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-record-intake-regulation/USER_MESSAGES.md` | `beec30ec0b6ba317b7375367da9fa9a285c4bdab` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-implementation-adoption/ISSUE_COMMENT_6143925024.md` | `2b959d95211e6f9228135d25004f2d4caec42625` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-implementation-adoption/ISSUE_COMMENT_6144512278.md` | `f97a67ca2487b34bf35edb23c027dc0087552682` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-implementation-adoption/RECORD.md` | `e62a32d1fdbaa59168be2254f9f76feb359ffcdb` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-implementation-adoption/USER_APPROVAL.md` | `d26212ad1e8f0a3eebccefad93f881590d5d7430` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-proposal/DESIGN_CONTEXT.md` | `190b5b55975614ecd5d7df0170869c094434500a` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-proposal/ISSUE_204_BODY.md` | `6c04c423d7159a400806ab097407e0af3f024dac` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-proposal/RECORD.md` | `1c91c0f58cdff0ea8fd7c8cca2c6a78ca43eedd8` | not_reviewed |
+| `documents/knowledge/records/2026-10-13-work-records-proposal/USER_MESSAGES.md` | `c42892987f8e8d8387fd5d1f98e56bb4efed2557` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-command-target/DESIGN_CONTEXT.md` | `0d1e54c2c31a34925edab0d7593941a811bf3710` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-command-target/ISSUE_209_BODY.md` | `5d559146fb29696e60bf837dd406f3e8c49df0af` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-command-target/RECORD.md` | `867e1315f086e933fa5410208c94c05c1425f755` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-command-target/USER_MESSAGES.md` | `c224559432e50323e86b5bbce9abeef512b209e1` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-implementation-adoption/RECORD.md` | `c4049d9970678f494bd2f421260ec5582a43b7f1` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-implementation-adoption/REVIEW_COMMENT.md` | `b01505bb0cd5aa2dbd95bbe57196f0c2fe7cf8ab` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-implementation-adoption/USER_MESSAGE.md` | `5a836f8b75f89e035f9b417b30dbe8d659544b4b` | not_reviewed |
+| `documents/knowledge/records/2026-10-14-generic-dir-implementation-adoption/WORK_SELECTION_COMMENT.md` | `737c2c702b9557114b0d802d2551d4ad7675fdc0` | not_reviewed |
+| `documents/knowledge/records/2026-10-30-management-baseline-coordination/ISSUE_216_BODY.md` | `b7cf86fb4c0d5705bff6f37fcdc7ee741b48bbb1` | not_reviewed |
+| `documents/knowledge/records/2026-10-30-management-baseline-coordination/RECORD.md` | `5af30f576af99311a2ecfa90b5ec45fa3eaf522d` | not_reviewed |
+| `documents/knowledge/records/2026-10-30-management-baseline-coordination/USER_MESSAGES.md` | `55f2e52a0e2ee23980c091505b178cee53d8cf93` | not_reviewed |
+| `documents/knowledge/records/2026-10-31-rule-class-adoption/ISSUE_219_BODY.md` | `ac90799aefbb38451607637ac9d3a91e8f37d9b8` | not_reviewed |
+| `documents/knowledge/records/2026-10-31-rule-class-adoption/ISSUE_219_RC_ADOPTION_COMMENT.md` | `c635812e58f13f23867acc3545c18e6ba3295e93` | not_reviewed |
+| `documents/knowledge/records/2026-10-31-rule-class-adoption/RECORD.md` | `168caca83933a34452beff88380956150eac56cc` | full_text_read |
+| `documents/knowledge/records/2026-10-31-rule-class-adoption/USER_MESSAGES.md` | `638fd33af3dbb837ca83ec42165bc681d5ad7d1c` | not_reviewed |
+| `documents/knowledge/records/2026-11-10-dev-layers-terminology/ASSISTANT_PROPOSALS.md` | `d24b59a822d3b1719be4cc305ef083bae7e146c9` | not_reviewed |
+| `documents/knowledge/records/2026-11-10-dev-layers-terminology/RECORD.md` | `9b4c423ef54ff191d79497d59e27e881d3aec678` | not_reviewed |
+| `documents/knowledge/records/2026-11-10-dev-layers-terminology/USER_MESSAGES.md` | `495ca73727189fe28a1f034010b79bb1ab37ea5d` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-dev-artifacts-owner-memo/RECORD.md` | `14112dce15ed8f30007e6534f2d9b4dbd0cd192f` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-dev-artifacts-owner-memo/USER_MESSAGE.md` | `4ff375cdf9345a5ee332f38d51ca15729414df85` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-dev-artifacts-stage1-governance/ASSISTANT_PROPOSAL.md` | `0824348b1acffcf0f0faaa4de10557a40c18697d` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-dev-artifacts-stage1-governance/RECORD.md` | `4da36b8f100a684f9115f78eba16fa8355110bf2` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-dev-artifacts-stage1-governance/USER_MESSAGES.md` | `fe24b01c64843a00cc7f2ae181bbc3a3aca69853` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-stage2-philosophy-first/RECORD.md` | `9b680d5fbb66dfd82e64bee5347730a8cd47cdc4` | not_reviewed |
+| `documents/knowledge/records/2026-11-11-stage2-philosophy-first/USER_MESSAGES.md` | `70f4460148696ebf6770b79990265dbe98cf3ac3` | not_reviewed |
+
+## Priority follow-ups
+
+- Finish actual text review of unreviewed records and snapshot files; no directory is exempt solely because it is a commit record or historical import.
+- Link each A-1 candidate to Owner adoption/revision/rejection, rather than to a topic-matching file alone.
+- Explicitly seek claims **not present** in legacy subjects. Do not limit scan to mentions of the A-1 candidate IDs.
+- Separate A-2 findings/evidence from A-3 Owner discussion and A-4 taxonomy. No owner approval is assumed.
