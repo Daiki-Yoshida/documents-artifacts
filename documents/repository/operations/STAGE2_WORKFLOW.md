@@ -34,7 +34,7 @@ Do not define subjects→artifacts projection, reading scheme, or packaging here
 
 ## Status / evidence
 
-- [Source adoption record](../../../knowledge/records/2026-11-11-stage2-philosophy-first/)
+- [Source adoption record](../../knowledge/records/2026-11-11-stage2-philosophy-first/)
 - [Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)
 - [A-1 / A-2 evidence workspace](stage2/INDEX.md)
 
