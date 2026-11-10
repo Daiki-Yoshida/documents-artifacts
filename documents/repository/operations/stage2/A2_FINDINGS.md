@@ -1,52 +1,72 @@
-# A-2 — Preliminary record audit findings (NOT a completed audit)
+# Stage 2-A-2：records照合の初期所見（未完了）
 
-Baseline main: `7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`; working branch record inventory: `14fdd210d96011536d28e1e0de856800871672ef`.
+**位置づけ：** 調査の途中結果。日本語の旧subjects／recordsから検討すべき意味差を発見するための資料であり、採否・哲学の制定を行うものではない。
 
-**Progress:** inventory of 204 record payload files established. Full text review so far 8; targeted scan 4. All unreviewed entries are explicitly listed in [A2_RECORDS_COVERAGE.md](A2_RECORDS_COVERAGE.md).
+- 照合の基準：旧`main@7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`のsubjectsとrecords。
+- 作業用recordsの現在の固定時点：`documents/knowledge/records/` のGit tree SHA `2e632c2c545402766404b8223847022fb6975233`。
+- この時点の対象206ファイルのうち、**全文確認8件・見出し／重要箇所のみ確認4件・未確認194件**。直近追加したOwner言語指摘のrecordも列挙対象に含むが、A-2の哲学的内容監査を終えたわけではない。
+- 以下の所見は元の日本語を根拠に記述し、英語への変換によって意味を確定しない。以前の英語版初稿は正式な調査所見としては無効。
+- [A-2全ファイルの調査台帳](A2_RECORDS_COVERAGE.md)で本文の確認状況を追跡する。
 
-## F01 — A current correction to concept generality (supported)
+## F01 — 概念の中立性と意味の同一性は別（後続の修正採用あり）
 
-**A-1 candidate:** P03. `2026-09-15-design-principles-contract-decision/RECORD.md` explicitly records the proposal “Concept Altitude and semantic identity” as **adopted with corrections**: removal of a feature name is a neutrality signal, not proof of a shared contract; check invariants, failure meaning and lifecycle. This supports the narrower interpretation in old `encapsulation-horizon/S004_CONCEPT_ALTITUDE.md`.
+対応する粗哲学候補：P03。
 
-**Audit state:** primary PR-body snapshot reviewed; further owner-message context and subsequent records remain to be checked.
+`2026-09-15-design-principles-contract-decision/RECORD.md`には、Concept Altitude と semantic identity を分離する提案が**修正して採用**されたことが記録されている。最初のfeature名を外せることは中立性の手掛かりだが、共有可能な意味・契約の同一性の証拠ではない。不変条件、事前・事後条件、失敗の意味、ライフサイクル、変更理由などから判断する。
 
-## F02 — YAGNI: investigate the strength and scope of Owner intent
+これは`encapsulation-horizon/S004_CONCEPT_ALTITUDE.md`の、単一の責務説明だけでは共有契約を確定しないという現在記述と整合する可能性が高い。
 
-**A-1 candidates:** P01 / P04 / P05. `2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md` preserves Owner messages strongly rejecting **cost-only** YAGNI for contracts and hardening, even describing YAGNI as potentially an anti-pattern in AI-heavy development.
+**確認状態：** PR本文を記録したsourceは全文確認済み。ただし、当該判断に至ったOwnerの他の原文や後続記録まで照合したわけではない。
 
-The old `S003_HARDENING_POLICY.md` / `S004_CONCEPT_ALTITUDE.md` instead state a *qualified* asymmetry: current selected contract guarantees are not cut merely because creation is costly, while speculative internal machinery may be deferred. These may be a compatible refinement, but the apparent difference in normative strength must be traced across later approvals before treating P04 as Owner's enacted philosophy.
+## F02 — YAGNIに関する本人の原意と後続の整理（要重点調査）
 
-**Status:** Potential meaning drift / refinement **unresolved**, not a proven contradiction. No subject text changed.
+対応する粗哲学候補：P01、P04、P05。
 
-## F03 — Strong contract is not maximal overconstraint (needs full source review)
+`2026-09-24-yagni-encapsulation-horizon-decision/RECORD.md`にはOwner本人の発言が保存されている。
 
-Old `encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md` distinguishes explicit required semantics from incidental observable implementation properties. `2026-09-24-strong-contract-explicit-not-maximal/RECORD.md` has a matching adopted rule in the inspected passages, but the full long source has only been scanned, not comprehensively reviewed.
+> やっぱり、YAGNIをコスト回避だけを主目的に使わないという制約を強く掲げたいんだよね。
 
-**Status:** Supporting evidence located; complete event interpretation pending.
+同記録では、契約を固める場面でのYAGNIの扱いへの強い要求が表明される。一方、旧subjectsの`S003_HARDENING_POLICY.md`と`S004_CONCEPT_ALTITUDE.md`は、現在選んだ契約の保証と、投機的な内部機構の追加を分けて扱う条件付きの説明となっている。
 
-## F04 — Generalized NAL adoption is traceable; proposal payload outstanding
+**未解決：** これは本人の思想を正しく具体化した精緻化か、言葉の強度を弱めた意味の齟齬か。前後の採用・補足を原文で確認するまでどちらとも断定しない。
 
-Read `2026-10-07-generalized-nal-adoption/RECORD.md` and `USER_APPROVAL.md` (Owner's short acceptance) and `2026-10-07-generalized-nal-proposal/RECORD.md`. The adoption metadata points to a separate proposal payload `CHAT_PROPOSAL.md` which has **not** been reviewed yet.
+## F03 — 強い契約と過剰な公開保証の区別
 
-Old context-shaping subjects describe NAL/Positive-first as general human/AI context shaping, not just Artifact v2. The content and historical distinction remain tentative until proposal body and other relevant records are checked.
+対応する粗哲学候補：P05。
 
-## F05 — Old source snapshots are not automatically current authority
+旧`encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md`は、必要な意味・制約を明示することと、現在の実装が偶然示す性質を最大限に公開保証することを区別している。`2026-09-24-strong-contract-explicit-not-maximal/RECORD.md`の確認した箇所にも、これに対応する採用規則が見られる。
 
-Read `2026-09-21-docs-jp-snapshot/MANIFEST.md` and scanned selected old philosophy payloads. The manifest states that its original docs text and historical authority wording are preserved **as a snapshot**, not as a current decision.
+**確認状態：** 原文recordは長文のため重要箇所を調査した段階。全文を通じた根拠と採用範囲の検証は未完了。
 
-In particular, an old documentation philosophy describes selective file routing, whereas recent Owner direction rejects relying on selective reading for the full Dev-Philosophy. The historical text must not override new decisions or dictate Stage 3.
+## F04 — NALの一般化は採用記録を持つが、元の提案本文は未確認
 
-**Status:** Historical-vs-current caution verified at manifest level; full snapshot audit remains outstanding.
+対応する粗哲学候補：P08。
 
-## F06 — RC/Work Identity applicability must not expand accidentally
+`2026-10-07-generalized-nal-adoption/RECORD.md`と`USER_APPROVAL.md`、`2026-10-07-generalized-nal-proposal/RECORD.md`を全文確認した。
 
-`2026-10-31-rule-class-adoption/RECORD.md` states RC1–RC3 and Work Identity's RC3 applicability for concrete implementation work in projects adopting Artifact v2. It explicitly says the candidate classification list was **not** adopted wholesale.
+採用recordは、NALをArtifactへの射影だけでなく、目的に応じた文脈構成全般へ一般化し、Positive-first、必要な否定的ガード、意味保存の境界を維持することを説明している。ただし、採用対象の詳細が記載された`CHAT_PROPOSAL.md`は**未確認**。
 
-The old `work-identity/S001_IDENTITY_MODEL.md` contains a potential broad principle “work identity is meaning-based”; whether to elevate that meaning to Dev-Philosophy is an **A-3 Owner decision**. The implementation-scoped RC3 details should not silently become a universal philosophical rule.
+**確認状態：** 採用関係の入口を確認済み。一般化した概念の詳細や現行の有効範囲は引き続き検証する。
 
-## Do not conclude yet
+## F05 — 原文snapshotの古い権威表現は現行規則ではない
 
-- No full-record coverage or final completeness claim.
-- No full legacy-subject coverage either.
-- No enactment of Dev-Philosophy and no A-4 taxonomy.
-- No modification to the original records or the provisional subjects surface.
+`2026-09-21-docs-jp-snapshot/MANIFEST.md`を全文確認し、旧哲学文書の一部を調査した。manifestは、snapshotに当時の原文や当時の権威表現を保持することを明記しており、その内容を現在の規範として肯定するものではない。
+
+旧ドキュメント哲学にはファイルを選択して読む仕組みが存在する。しかし現在のOwnerは、少なくとも開発哲学の全体把握を求めている。**旧資料の配布方式をStage 3の既定規則にしてはならない。**
+
+**確認状態：** snapshotの性格は確認済み。内部payloadの全件監査は未完了。
+
+## F06 — RCとWork Identityの適用範囲を拡大解釈しない
+
+`2026-10-31-rule-class-adoption/RECORD.md`を全文確認した。同記録では、RC1〜RC3が採用され、Artifact v2採用Projectの具体的な実装Workに対するWork IdentityのRC3適用範囲が説明されている。一方、旧Issueの一括分類候補をすべて承認したわけではない、と明記されている。
+
+旧`work-identity/S001_IDENTITY_MODEL.md`の「作業単位を目的の意味で捉える」思想をDev-Philosophyへ昇格させるかは、**A-3でOwnerが吟味する対象**である。RC3の具体的な適用範囲を哲学の普遍的規則と混同しない。
+
+## 残る検証
+
+recordsの全件監査はまだ始まったばかりであり、上記は結論ではない。未確認の記録から、既存subjectsに含まれていない哲学や、候補への反証が見つかる可能性がある。
+
+- 残りの原文records・snapshot payloadを確認する。
+- 各粗哲学候補の源流と後続採用・訂正・不採用を追跡する。
+- 日本語原文で解決できない解釈差は未解決として明示する。
+- A-3でOwnerの吟味を受けるまで、新しい哲学を制定しない。

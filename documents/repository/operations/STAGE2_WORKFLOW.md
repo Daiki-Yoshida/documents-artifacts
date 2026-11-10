@@ -1,41 +1,54 @@
-# Stage 2 Workflow — Philosophy first
+# Stage 2の進行手順 — 開発哲学を先に抽出する
 
-Status: **Owner adopted on 2026-11-11**. Workflow definition only: no philosophy or methodology content is established here.
+**状態：2026-11-11にOwnerが進め方を決定。** 本書は工程の運用手順であり、哲学・方法論の内容を制定するものではない。
 
-## Premise
+## 基本原則
 
-Dev-Philosophy is the foundation; Dev-Methodology **実現する** Dev-Philosophy; AI-Orchestration is a separate, more concrete agent protocol built upon the first two layers. Analysis therefore starts with philosophy rather than forcing legacy leaves into a predefined taxonomy.
+Dev-Philosophy（開発哲学）が基底となり、Dev-Methodology（開発方法論）は哲学を「実現する」。AI-Orchestrationは両者を前提とする、さらに具象的なAIエージェント間プロトコルである。
 
-## Stage 2-A — Establish the philosophy foundation
+そのため、既存ファイルに分類表を先に当てはめるのではなく、**哲学を先に抽出して吟味し、その後で方法論を整理する。**
 
-| Step | Procedure | Output / transition |
+### 日本語と意味の保存
+
+旧`documents-artifacts`の運用を継承し、`records`では原文の言語を維持し、**日本語主体のrecordsから整理するsubjectsとその中間抽出資料は日本語を標準**とする。見出し、パス、英語の固有技術用語は必要に応じて維持してよい。
+
+- records→subjectsの工程では、翻訳・トークン圧縮を目的に意味を削らない。
+- **まず日本語原文を確認し、原文とAIの解釈・候補を分けて記録する**。英語へ一度翻訳してから日本語に戻す処理を抽出の正規経路にしない。
+- 条件、例外、規範の強さ、反論、採否や未解決の評価関係を維持する。
+- A-1の粗哲学は暫定候補であり、要点化は意味の全保存を保証しない。A-2で原文と照合して改善する。
+- **Artifactsの配布言語や射影圧縮はStage 3で別途決める。**
+
+## Stage 2-A — 開発哲学を形成する
+
+| 工程 | 作業 | 成果・境界 |
 | --- | --- | --- |
-| **A-1** | Extract **rough philosophy** candidates from the **entire former subjects corpus** at the pinned old `main` commit. Preserve provenance, uncertainty, mixed passages and relevant objections. Do not classify files wholesale. | Candidate inventory and full-corpus coverage ledger, **not** official subjects |
-| **A-2** | Inspect **all records** against rough candidates: missing claims, meaning drift, adoption/rejection/supersession, implicit philosophy not in subjects. Record coverage of each record and its payload; no claim of full coverage while anything is unread or unresolved. | Record-by-record audit and provisional revised philosophy candidates |
-| **A-3** | Owner personally examines the proposed philosophy, debates with ChatGPT, revises and accepts/rejects meanings. | Explicit scope-aware Owner judgments, captured as source records |
-| **A-4** | **After Owner consensus**, derive subject partition units and structure from the agreed philosophy; do **not** pre-impose categories or legacy leaf boundaries. | Owner-agreed philosophy taxonomy/structure |
-| **A-5** | Write the philosophy side into `documents/knowledge/subjects/dev-philosophy/` **provisionally**. Distinguish content approval from arrangement approval and mark unapproved claims as non-authoritative. | Provisional philosophy subjects, not yet final Stage 2-D release |
+| **A-1** | 固定した旧`main`の全subjectsから、意味単位で「粗哲学」を抽出する。原文、出典、曖昧さ、反論、混在する方法論を残し、ファイル丸ごとの一括分類を避ける。 | 未承認の候補と全ファイルの確認台帳 |
+| **A-2** | 粗哲学を手掛かりにrecordsを全件確認し、抽出漏れ、意味の齟齬、採用・却下・訂正・置換を調査する。粗哲学には存在しない思想も探す。 | record単位の照合台帳と暫定的な改善候補 |
+| **A-3** | Owner本人が哲学を吟味し、ChatGPTと議論しながら内容を改善・採否判断する。 | 承認対象・範囲を明示したOwner判断。原文記録を保持 |
+| **A-4** | Ownerの合意形成の後、開発哲学の土台から逆算して分類単位・構成を決定する。 | 本人が合意した概念の整理方式 |
+| **A-5** | 哲学側だけを`documents/knowledge/subjects/dev-philosophy/`へ**仮の状態で**記載する。 | 承認済みの意味と仮の配置・未承認部分を混同しない暫定subjects |
 
-- A-1/A-2 scratch reports, inventories, and evidence go under `documents/repository/operations/stage2/`; none are the canonical philosophy.
-- Source evidence is `documents/knowledge/records/` and the old subject `main` snapshot. Do not amend raw past records to suit current conclusions.
-- Owner's explicit final approval is mandatory before a philosophy idea is **enacted**. A-3 is a required gate; AI extraction is not approval.
-- A-4 must follow A-3 consensus. A-5 follows A-4, and its tentative status is never hidden.
-- A-1 and A-2 are ordered for substantive interpretation, but a records inventory and source coverage setup may start in parallel with the A-1 reading. Early record insights cannot be treated as the final completeness audit.
+- A-1、A-2の作業資料は`documents/repository/operations/stage2/`に置き、哲学の正本とは扱わない。
+- A-3のOwner承認を飛ばして候補を正式制定してはならない。A-4はA-3の合意後、A-5はA-4の後で進める。
+- A-1の読解と並行してA-2の全recordsの所在・照合台帳を準備することはできるが、**全件列挙＝全文読了＝意味検証完了ではない**。
+- 原文recordを現在の解釈へ合わせて書き換えない。
 
-## Stage 2-B / C / D — High-level adopted boundaries
+## Stage 2-B、C、D — 方針が決定済みの範囲
 
-- **B:** Extract Dev-Methodology, stating how it realizes the philosophy. Do not manufacture a philosophical premise where none is supported; discoveries may trigger revisiting A.
-- **C:** Cross-check omissions, meaning drift, duplicate semantic ownership, unaddressed lineages, and links between philosophy and methodology.
-- **D:** Resolve review findings, owner-approval/status issues and traceability, then complete Stage 2. Detailed substeps remain undecided.
+- **B：Dev-Methodologyの抽出。** 開発哲学を実現する関係を整理する。新しい哲学上の論点が出た場合はAの判断へ戻って検討できる。
+- **C：横断的な抽出漏れの調査。** 意味差、重複した定義権、未解決の判断や層間関係なども確認対象とする。
+- **D：Stage 2の完成。** 検証結果、Ownerの採否、未解決事項と根拠の整合を確認する。
 
-## No Stage 3 leakage
+B〜Dの細かい作業手順・完了条件は、この時点で制定されていない。
 
-Do not define subjects→artifacts projection, reading scheme, or packaging here. Keep `artifacts/` unpopulated and do not distribute this development branch. Stage 3 will be designed after actual subjects exist.
+## Stage 3との境界
 
-## Status / evidence
+`subjects→artifacts`の射影、読み込み方式、配布物の構造はここでは決めない。`artifacts/`は未構築のまま維持し、開発ブランチから配布しない。
 
-- [Source adoption record](../../knowledge/records/2026-11-11-stage2-philosophy-first/)
+## 根拠と入口
+
+- [OwnerがStage 2の工程を決めた原文記録](../../knowledge/records/2026-11-11-stage2-philosophy-first/)
 - [Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)
-- [A-1 / A-2 evidence workspace](stage2/INDEX.md)
+- [A-1・A-2の調査資料](stage2/INDEX.md)
 
-Recorded as a repo-local workflow derived from the Owner's decision; not a replacement for the source record.
+この手順書はOwnerの判断に基づくリポジトリ運用文書であり、原文recordの代わりではない。

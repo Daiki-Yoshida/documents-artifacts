@@ -1,36 +1,166 @@
-# A-1 — Rough philosophy candidates (NOT adopted)
+# Stage 2-A-1：粗哲学の抽出候補（未承認）
 
-**Phase:** A-1 initial extraction (incomplete). **All candidates below are tentative semantic hypotheses**, not Dev-Philosophy enacted by the Owner, nor a proposed final taxonomy. IDs P01–P11 are audit handles only, not future subject IDs or a decision order.
+> **重要：この文書は正式なDev-Philosophyではありません。**
+> 2026-11-11の初稿を英語で書いたことは、原文言語・意味の保存を重視する設計方針に反する不備でした。以下は英語の候補から単純に訳し戻したものではなく、確認した**旧subjectsの日本語原文**に立ち戻って再記述した、暫定的な分析です。初稿はGit履歴に残りますが、今後の判断根拠には使用しません。
 
-Source corpus pinned to original `main@7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`. Evidence paths below resolve under `documents/knowledge/subjects/` on that commit. This report derives from **31/70 files read**. Direct records checks described in A-2 are separate and only partial.
+## 調査範囲と表現上のルール
 
-| Rough ID | Candidate meaning (not yet owner-approved) | Primary observed old-subject evidence | Review cautions |
-| --- | --- | --- | --- |
-| **P01** | Boundary contracts are strict and stable where exposed; enclosed implementation may change freely *only to the extent that the contract contains observable leakage*. | `encapsulation-horizon/S001_CORE_PRINCIPLE.md` §§1,4; `S005_CONTRACT_COMPLETENESS.md` §7; `code-design/S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md` | Not a claim that internals may be incorrect or violate resource/data guarantees. |
-| **P02** | A hard boundary is chosen at a responsibility/meaning altitude and evolves with responsibility maturity; hardening all scales is not the goal. Stability and seam cost qualify hardening. | `encapsulation-horizon/S001_CORE_PRINCIPLE.md` §§2–4; `S002_RESPONSIBILITY_AND_HORIZON.md` §5; `S003_HARDENING_POLICY.md` §6; `S006_EVOLUTION_AND_GRADUATION.md` §8 | The “AND test” is a warning, not a mechanical split command; module is a prior, not a floor. |
-| **P03** | Concept meaning should be modeled at the altitude appropriate to that meaning rather than owned by its first consumer. Neutral naming is distinct from a proven shared contract and from physical placement. | `encapsulation-horizon/S004_CONCEPT_ALTITUDE.md` §6.7 | The one-sentence test is only a neutrality signal; check later correction and record adoption. |
-| **P04** | YAGNI should suppress speculative public surface and internal machinery, not erase guarantees required by a *selected* responsibility simply because defining them costs effort. | `encapsulation-horizon/S003_HARDENING_POLICY.md` §§6,6.5; `S004_CONCEPT_ALTITUDE.md` §6.8; `S005_CONTRACT_COMPLETENESS.md` | Key open issue: earlier Owner record appears more restrictive about YAGNI for internal hardening; investigate full decision history before wording as philosophy. |
-| **P05** | Strong contracts are explicit and sufficiently complete, not maximally restrictive: incidental behavior of the current implementation does not automatically become a public guarantee. | `encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md` §7 and 2026-09-24 refinement | Must distinguish current responsibility/requirements from incidental implementation properties. |
-| **P06** | State and cross-boundary business outcomes require identifiable ownership; side effects are made explicit and contained, rather than assumed eliminable. | `code-design/S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md`; `S004_STATE_OWNERSHIP_AND_CONSISTENCY.md` | Atomic/retry/compensation mechanisms probably belong in Methodology; do not bake a particular solution into philosophy. |
-| **P07** | Design judgments prioritize boundary, contract, compatibility and change locality over a preferred class hierarchy or internal elegance. OO is read in terms of contract/message interactions, not inheritance for its own sake. | `code-design/S001_REALIZATION_MODEL.md`; `S003_INHERITANCE_BOUNDARY.md`; `S012_DESIGN_PRIORITY.md` | Do not turn “inheritance needs a behavioral contract” into blanket “composition only.” Priority order needs record verification. |
-| **P08** | Communication/instruction context should express the purpose-relevant model directly and preserve essential conditions; unnecessary negative alternative models can distort judgment (Positive-first / NAL). | `context-shaping/S001_POSITIVE_FIRST_CONTEXT.md`; `S002_NEGATIVE_ALTERNATIVE_LEAKAGE.md`; `S003_APPLICABILITY_AND_GUARDS.md` | The exclusion target is **unnecessary** alternatives, never counterevidence, unresolved status or needed safeguards. Assess whether general philosophy or methodology after Owner review. |
-| **P09** | Accuracy and semantic fidelity outrank token economy when preserving development knowledge. | `documentation/S001_PRINCIPLES.md` §核心原則 | This old file also advocates selective routing; do not promote that *delivery mechanism* to new philosophy (Stage 3 and later Owner decisions). |
-| **P10** | Safety should be embedded in convenient defaults and clearly owned operations: make the safe action the easy action, while keeping intent/reproducibility visible. | `development-safety/S001_SAFETY_PRINCIPLES.md`; `development-execution/S001_EXECUTION_MODEL.md` | Distinguish the enduring value from Docker-first and other implementation-specific commands. |
-| **P11** | Work/resource identity should derive from the meaning of a development goal, not be defined by a Git branch or execution tool. | `work-identity/S001_IDENTITY_MODEL.md`; `engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md` | Borderline philosophy versus methodology. Work Identity RC3 scope must not be generalized beyond its adopted applicability. |
+- 調査元：旧`documents-artifacts`の`main@7ad8bb4f948359633003a47fa6bfcc8d6853ddb6`に固定した`documents/knowledge/subjects/`。
+- 70ファイルのうち**31ファイルを全文取得・初期確認**。残り39ファイルは未確認であり、現時点の網羅性を保証しません。
+- 直接引用は旧subjectsの日本語記述。引用の**Markdown強調記号や折り返し改行のみ表示上整理**しており、全文原文とのbyte一致を意味しません。引用の次に置く「抽出候補」はAIによる仮の整理であり、**元文の代替でもOwnerの制定済み思想でもありません**。
+- 「哲学か方法論か」「概念が独立しているか」「どのファイルに分けるか」はA-3・A-4まで確定しません。P01〜P11は追跡用の仮IDです。
+- 古いsubjectsには後続訂正を含むものがあります。原文recordにおける採否・訂正・有効範囲の検証はA-2で継続します。
+- 出典パスは特記しない限り`documents/knowledge/subjects/`からの相対パスです。
 
-## Not decided
+## P01 — 境界の契約と内部の自由
 
-- Whether these are 11 independent principles, or a smaller set with relationships.
-- Which claims are genuinely **Owner's philosophy**, versus reproducible engineering practices / Dev-Methodology.
-- Correct semantic scope, priority and exception rules (A-2 record review required).
-- Structure, category, names or sequence of `subjects/dev-philosophy/` leaves (only after A-3 consensus / A-4).
+**旧subjectsの記述（日本語原文から引用）**
 
-## Source corrections to chase in A-2
+> 境界面（外部に公開する契約）は固く（strict・stable）、その内部実装は柔軟（free）であれ。
 
-- `2026-09-15-design-principles-contract-decision`: concept neutrality vs semantic identity; compatibility both sides; cross-boundary ownership.
-- `2026-09-24-yagni-encapsulation-horizon-decision`: original Owner intent and cost-only YAGNI.
-- `2026-09-24-strong-contract-explicit-not-maximal`: avoid over-promoting incidental guarantees.
-- `2026-10-07-generalized-nal-adoption`: general NAL extends beyond Artifact projection.
-- `2026-10-31-rule-class-adoption`: preserve applicability scope of Work Identity / RC.
+> 内部の自由度と境界面の契約完全性は双対(dual)である。
 
-**Next:** finish remaining 39 legacy files, including HISTORY; then use records to validate, challenge and supplement the rough philosophy. No candidate is enacted by this report.
+**仮の抽出候補：** 外部に公開した境界の契約は厳密に守り、その契約を満たす限り内部実装の変更自由を確保する。ここでいう契約は単なる型・シグネチャではなく、外部へ影響する意味、資源、失敗、決定性、データ等の漏洩経路を考慮する。
+
+**根拠：** `encapsulation-horizon/S001_CORE_PRINCIPLE.md` 第1・4節、`encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md` 第7節、`code-design/S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md`。
+
+**留保：** 「内部は自由」は「内部は不正確でもよい」ではない。実際に必要な保証の範囲や、自由と契約完全性の因果関係をA-2で確認する。
+
+## P02 — 責務・高度に応じて選ぶ動的な境界
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> フラクタルだからといって、全スケールで硬化を強制してはならない。
+
+> 硬化の単位 ＝ 一つの「呼び出し側に整合した責務」を負う「機能のまとまり」。
+
+> 規則：一責務 かつ 安定 かつ 継ぎ目が安い ときに硬化する。
+
+**仮の抽出候補：** 境界をどの高さで厳密な契約として扱うかは、責務の意味、成熟度、呼び出し側からの一貫性、継ぎ目の維持費用などに基づき選ぶ。すべての関数・クラスを一律に硬化するわけではなく、責務が成熟・変化すれば境界を再評価する。
+
+**根拠：** `encapsulation-horizon/S001_CORE_PRINCIPLE.md` 第2〜4節、`S002_RESPONSIBILITY_AND_HORIZON.md` 第5節、`S003_HARDENING_POLICY.md` 第6節、`S006_EVOLUTION_AND_GRADUATION.md` 第8節。
+
+**留保：** 旧文書でもANDの出現は機械的な分割命令ではなく警告である。`module`は初期判断の目安であり、不変の下限ではない。これらの区別を削らない。
+
+## P03 — 概念の意味と最初の利用者・配置を分離する
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 概念はその意味の高度に置く。最初の呼び出し側は消費者であって所有者ではない。
+
+**仮の抽出候補：** 概念の意味を、その概念を最初に必要とした機能へ不要に従属させない。ただし、消費者に依存しない名前を付けられることは、複数の消費者が同一の契約を共有できる証拠ではない。意味の一般性、物理配置、契約の共有は別々に判断する。
+
+**根拠：** `encapsulation-horizon/S004_CONCEPT_ALTITUDE.md` 第6.7節。
+
+**留保：** 「責務を一文で説明できる」は中立性を考える手掛かりであり、意味の同一性の証明ではない。後続の修正採用記録をA-2で確認する。
+
+## P04 — YAGNIの適用範囲と必要な契約の完全性
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> YAGNI が禁じるのは投機的な機構（使われない interface・余分な継ぎ目・早すぎる共有モジュール抽出）。
+
+> hardeningを待てるのは「まだ何を固めるべきか分からない」からであり、「固めるのが大変だから」だけではない。
+
+**仮の抽出候補：** YAGNIにより将来を予測した公開機能や内部機構の追加を抑える一方、現在選んだ責務を成立させるために必要な契約・保証を、作成コストが高いという理由だけで省略しない。
+
+**根拠：** `encapsulation-horizon/S003_HARDENING_POLICY.md` 第6・6.5節、`S004_CONCEPT_ALTITUDE.md` 第6.8節、`S005_CONTRACT_COMPLETENESS.md` 第7節。
+
+**留保：** Ownerの2026-09-24原文には、内部の堅牢化や基盤設計に対するYAGNIの適用をさらに渋る強い意図がある。旧subjectsでの整理がその意味を正しく保持したか**未解決**。この候補を最終的な哲学として採用しない。
+
+## P05 — 強い契約は最大限に制限する契約ではない
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 「strong contract」は必要な意味・制約を明示的に閉じることであり、現在の実装が偶発的に持つobservable propertyを最大限にpublic guaranteeへ昇格することではない。
+
+**仮の抽出候補：** 必要な契約は十分に明示するが、現在の実装が偶然持つ性質まで無条件に外部保証へ組み込まず、内部の変更可能性を保つ。要求や選択した責務から必要とされる性質は例外なく検討対象となる。
+
+**根拠：** `encapsulation-horizon/S005_CONTRACT_COMPLETENESS.md` 第7節（2026-09-24追加）。
+
+**留保：** 「強い＝最大限の保証」と誤読しない。原文recordの採用関係をA-2で確認する。
+
+## P06 — 状態・副作用・業務結果の所有境界
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> mutable stateは1つのclear ownerを持つ。
+
+> 1つのbusiness outcomeが複数state ownerをまたぐ場合、参加者の内部stateを奪わずに、coordinationとfailure policyを所有するboundaryを明確にする。
+
+**仮の抽出候補：** 状態や副作用を消去するのではなく、その所有者と外部への影響を明らかにして境界へ閉じ込める。複数の所有者にまたがる結果には調整・失敗方針の責務を定める。
+
+**根拠：** `code-design/S002_IMPLEMENTATION_FREEDOM_AND_SIDE_EFFECTS.md`、`code-design/S004_STATE_OWNERSHIP_AND_CONSISTENCY.md`。
+
+**留保：** atomic transaction、retry、compensationなどの具体的手段は哲学の原理と区別する。方法論に属するかどうかの決定はまだ行わない。
+
+## P07 — 設計判断で優先するものと技術的手段の位置づけ
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 内部実装を美しくするために、1〜4を犠牲にしない。
+
+> class / interface / objectはboundaryを表現するmechanismであり、それ自体が設計目的ではない。
+
+**仮の抽出候補：** 境界や契約の明確さ、外部との安定した接点、変更影響の局所化、副作用の明示性を、内部実装の見た目や特定の言語パラダイムより優先する。継承も合成も目的ではなく、必要な契約に応じた手段として扱う。
+
+**根拠：** `code-design/S001_REALIZATION_MODEL.md`、`S003_INHERITANCE_BOUNDARY.md`、`S012_DESIGN_PRIORITY.md`。
+
+**留保：** 「継承は禁止」「常に合成を使う」といった別の規範を作らない。順位自体の根拠record・採用状態はA-2で調査する。
+
+## P08 — 必要な文脈を直接伝えることとNAL
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> consumerの目的に必要なmodel・判断・手順を直接記述し、それを正しく適用するためのcondition・exception・rationale・constraintを添える。
+
+**仮の抽出候補：** 説明・指示では、受け手の目的に必要な意味や判断材料を中心に据える。不採用案を否定するだけのために不要な代替モデルを詳述し、判断を混乱させない。ただし必要な比較、反例、訂正、禁止、安全条件、履歴は残す。
+
+**根拠：** `context-shaping/S001_POSITIVE_FIRST_CONTEXT.md`、`S002_NEGATIVE_ALTERNATIVE_LEAKAGE.md`、`S003_APPLICABILITY_AND_GUARDS.md`。
+
+**留保：** これは哲学か、説明作成の方法論かを未判定とする。NALは未解決事項や反証を消す基準ではない。
+
+## P09 — 情報の正確性と伝達効率の関係
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 正確性とトークン効率が競合する場合、正確性が勝つ。
+
+**仮の抽出候補：** 知識や判断材料を保存・提示する際は、意味の正確性や必要な情報の完全性を、単なるトークン節約より重く扱う。
+
+**根拠：** `documentation/S001_PRINCIPLES.md` の核心原則。
+
+**留保：** 同じ旧文書は、解決策として選択的ルーティングを推奨している。しかし**それをDev-Philosophyの必須原則に昇格させない**。現在のOwnerは少なくとも哲学について全体把握を必須としており、配布方式はStage 3で判断する。
+
+## P10 — 安全性と使いやすさを両立する設計
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 安全な操作を最も簡単な操作にする
+
+**仮の抽出候補：** 安全のための手順を複雑にするだけでなく、安全な操作が日常的に選びやすい構造を設計する。実行対象、責務、副作用、再現性を明確にする。
+
+**根拠：** `development-safety/S001_SAFETY_PRINCIPLES.md`、`development-execution/S001_EXECUTION_MODEL.md`。
+
+**留保：** Docker-first等の具体的な技術選択は、価値判断と同一視しない。優先順位の全体も後続recordと照合する。
+
+## P11 — Workの同一性を目的の意味から考える
+
+**旧subjectsの記述（日本語原文から引用）**
+
+> 開発作業の管理単位を、ツール固有の識別子や個々の実行回数ではなく、「何を実現するための開発作業なのか」という意味のある単位へ統一する。
+
+**仮の抽出候補：** 開発作業の単位はGitブランチや実行ツールで定義するのではなく、達成する開発目標の意味によって同一性を持つ。
+
+**根拠：** `work-identity/S001_IDENTITY_MODEL.md`、`engineering-operation/S002_AUTHORITY_SCOPE_AND_CLARIFICATION.md`。
+
+**留保：** 方法論との境界が不明瞭。特にWork IdentityのRC3適用条件を、すべての人間開発に無条件に拡大しない。
+
+## 今後必要な作業
+
+1. A-1の未確認39ファイル（HISTORYを含む）を日本語本文のまま確認し、候補追加・撤回・分割を検討する。
+2. A-2で各候補を原文recordsに照合し、後続の採用・訂正・不採用・適用範囲を区別する。
+3. 本人によるA-3吟味を行う。上記11候補の数も粒度も確定ではない。
+4. A-4で初めて哲学全体の構造と分類単位を決定する。
+
+**本書はAIによる未承認の粗抽出であり、正式な哲学の言葉・確定解釈ではない。**
