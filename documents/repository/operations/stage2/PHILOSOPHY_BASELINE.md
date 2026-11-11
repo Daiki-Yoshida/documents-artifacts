@@ -28,7 +28,7 @@
 
 ## 同じ日付でも対象としないもの
 
-- `2026-11-11-truth-intent-information-nal-dialogue/` は最後の真実・NAL記録と**同じOwner発言11件を重複収録**しており、 `RECORD.md` のない部分的な別保存であるため、2つ目の独立した基準点には数えない。**削除や黙示的な統合は行わず**、出所記録としてそのまま保全する。
+- `2026-11-11-truth-intent-information-nal-dialogue/` は、最後の真実・NALの基準recordと**Owner発言11件が全て同一**であることを照合した重複取り込み（`RECORD.md` なし）。後続のOwner指示により、**開発ブランチの現在のrecordsから重複ディレクトリを削除済み**。正規記録の4ファイルは一切変更していない。削除側の別文面のAI二次分析も、削除前commit `9012d8fc3699927256e28297264693e9d69e2a72` およびblob SHA `4577ee7858acd45ebce31999f94c51f0fe049fc0` から復元可能。経緯は[重複取り込み整理record](../../../knowledge/records/2026-11-11-truth-nal-duplicate-cleanup/RECORD.md)に保存した。
 - `2026-11-11-dev-artifacts-owner-memo/`、`2026-11-11-dev-artifacts-stage1-governance/`、`2026-11-11-stage2-philosophy-first/`、`2026-11-11-stage2-language-issue/` 等は、同日の重要な**管理・工程・是正記録**だが、今回の哲学形成の直接対話とは別。接尾辞を付けない。
 - 本件を記録する`2026-11-11-philosophy-baseline-designation/`も管理上の判断であり、接尾辞の対象外。
 
