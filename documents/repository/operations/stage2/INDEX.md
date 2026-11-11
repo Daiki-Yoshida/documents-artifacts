@@ -4,7 +4,7 @@
 
 進行規則：[Stage 2の進行手順](../STAGE2_WORKFLOW.md)。
 
-**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接対話した2026-11-11の独立record5件を、Stage 2-A-3の優先参照起点として識別する。形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
+**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接対話した2026-11-11の5件に、11/12の継続対話（Owner8件・AI7件の全文記録）を加えた計6件を、Stage 2-A-3の優先参照起点として識別する。形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
 
 ## A-1/A-2：一次監査完了
 
@@ -20,4 +20,4 @@
 
 **範囲：** 全ファイルの本文取得と哲学関連の一次点検、重要な系譜の確認を実施。全命題の唯一解釈の証明や、候補のOwner承認を意味しない。継続的な意味の精緻化・本人の価値判断はA-3、実際の分類構造はA-4に進める。
 
-**現在：A-1/A-2の一次監査完了、A-3のOwner吟味待ち。** `documents/knowledge/subjects/dev-philosophy/`と`artifacts/`は未構築。
+**現在：A-1/A-2の一次監査完了、A-3のOwner対話・吟味進行中。** `documents/knowledge/subjects/dev-philosophy/`と`artifacts/`は未構築。

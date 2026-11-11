@@ -4,7 +4,7 @@
 
 ## 位置づけ
 
-2026-11-11にOwner自身が**直接哲学を議論した5つの独立record**を、先行する歴史的記録を読み解くときの重要な基準点として識別する。
+2026-11-11にOwner自身が直接哲学を議論した**5つの独立record**に、2026-11-12に記録した**継続対話1件**を加え、計**6件**を先行する記録と照らしながら開発哲学を再構築するための重要な基準点として識別する。後続の対話により改善・訂正・置換できる。
 
 - `-philosophy-baseline` の接尾辞は、議論の重要性・当面の参照順を示す**発見の手掛かり**。 `record_kind`、`decision_lineage`、`current`、`supersedes` 等の意味上の状態ではない。
 - これらの**Ownerの原文**を優先的に把握する。AIの提案や推論を同格に扱わない。
@@ -14,7 +14,7 @@
 - 旧recordsは削除せず、あらゆる矛盾を「新しい日付のほうが上」と判断しない。**基準点の優先的な参照と、規範的authorityの確定は別の軸**。
 - Dev-Philosophyのsubject構造は、A-3の内容吟味を経てA-4で合意する。Stage3のArtifacts構造も本件では決めない。
 
-## 対象recordと旧path→新path対応
+## 対象recordと旧path→新path対応（新規を含む）
 
 すべて`documents/knowledge/records/`配下。リンクは改名後のディレクトリへ向ける。
 
@@ -25,6 +25,7 @@
 | 境界の選定・分割圧・統合圧 | `2026-11-11-boundary-selection-and-split-pressure/` | [`2026-11-11-boundary-selection-and-split-pressure-philosophy-baseline/`](../../../knowledge/records/2026-11-11-boundary-selection-and-split-pressure-philosophy-baseline/RECORD.md) |
 | AON原則のOwnerによる制定 | `2026-11-11-aon-principle-adoption/` | [`2026-11-11-aon-principle-adoption-philosophy-baseline/`](../../../knowledge/records/2026-11-11-aon-principle-adoption-philosophy-baseline/RECORD.md) |
 | 真実・原本・解釈・NAL | `2026-11-11-truth-source-interpretation-nal/` | [`2026-11-11-truth-source-interpretation-nal-philosophy-baseline/`](../../../knowledge/records/2026-11-11-truth-source-interpretation-nal-philosophy-baseline/RECORD.md) |
+| 仮想のまとまり・複数主体・責務内包・運用と実態の乖離 | —（2026-11-12新規record） | [`2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/`](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/RECORD.md) — [Owner発言8件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/USER_MESSAGES.md) / [AI返信7件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/ASSISTANT_MESSAGES.md) |
 
 ## 同じ日付でも対象としないもの
 
