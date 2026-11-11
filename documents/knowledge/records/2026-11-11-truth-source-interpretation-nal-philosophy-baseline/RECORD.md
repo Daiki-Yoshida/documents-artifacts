@@ -51,10 +51,10 @@ Ownerは、解釈を真実と取り違えないこと、原本はその瞬間の
 
 ## 先行・関連資料
 
-- [AON原則の採用記録](../2026-11-11-aon-principle-adoption/RECORD.md)
-- [命名・意味・契約の対話](../2026-11-11-naming-semantics-contract-philosophy/RECORD.md)
-- [境界面理論の対話](../2026-11-11-boundary-horizon-dialogue/RECORD.md)
-- [再帰的境界選定と分割・統合圧](../2026-11-11-boundary-selection-and-split-pressure/RECORD.md)
+- [AON原則の採用記録](../2026-11-11-aon-principle-adoption-philosophy-baseline/RECORD.md)
+- [命名・意味・契約の対話](../2026-11-11-naming-semantics-contract-philosophy-philosophy-baseline/RECORD.md)
+- [境界面理論の対話](../2026-11-11-boundary-horizon-dialogue-philosophy-baseline/RECORD.md)
+- [再帰的境界選定と分割・統合圧](../2026-11-11-boundary-selection-and-split-pressure-philosophy-baseline/RECORD.md)
 - [A-1 粗哲学候補（未承認）](../../../repository/operations/stage2/A1_ROUGH_PHILOSOPHY.md)
 - [RECORD_MODEL](../../../repository/models/RECORD_MODEL.md)
 - [DECISION_LINEAGE_MODEL](../../../repository/models/DECISION_LINEAGE_MODEL.md)

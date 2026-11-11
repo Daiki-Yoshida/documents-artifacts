@@ -55,7 +55,7 @@ NiNはU2で検討された候補であり、最終的な採用名称はAON。YAG
 ## 関連資料
 
 - [P04 — A1_ROUGH_PHILOSOPHY](../../../repository/operations/stage2/A1_ROUGH_PHILOSOPHY.md)
-- [境界面理論の再帰的選定・分割圧・統合圧に関する先行record](../2026-11-11-boundary-selection-and-split-pressure/RECORD.md)
+- [境界面理論の再帰的選定・分割圧・統合圧に関する先行record](../2026-11-11-boundary-selection-and-split-pressure-philosophy-baseline/RECORD.md)
 - [RECORD_MODEL](../../../repository/models/RECORD_MODEL.md)
 - [DECISION_LINEAGE_MODEL](../../../repository/models/DECISION_LINEAGE_MODEL.md)
 

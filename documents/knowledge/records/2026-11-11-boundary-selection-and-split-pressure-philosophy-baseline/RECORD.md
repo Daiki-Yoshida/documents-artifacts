@@ -2,7 +2,7 @@
 record_format: 1
 record_kind: bundle
 recorded_date: "2026-11-11"
-scope: "このChatGPT会話で、先行record 2026-11-11-boundary-horizon-dialogue/のU8の後から、Ownerが『最適な名前つけって何だと思う？』と再開し、『一旦ここまでで境界面理論はよさそうかな？recordsに記録してほしい』と区切った範囲。Ownerの発言22件を会話順に収録し、assistantの回答は二次分析として別ファイルに整理。取り込み時点で閉じたbundle。"
+scope: "このChatGPT会話で、先行record 2026-11-11-boundary-horizon-dialogue-philosophy-baseline/のU8の後から、Ownerが『最適な名前つけって何だと思う？』と再開し、『一旦ここまでで境界面理論はよさそうかな？recordsに記録してほしい』と区切った範囲。Ownerの発言22件を会話順に収録し、assistantの回答は二次分析として別ファイルに整理。取り込み時点で閉じたbundle。"
 ---
 
 # 境界面理論 — 契約選定・分割圧・統合圧の対話記録
@@ -52,8 +52,8 @@ scope: "このChatGPT会話で、先行record 2026-11-11-boundary-horizon-dialog
 
 ## 先行recordとの関係
 
-- [命名・意味・契約](../2026-11-11-naming-semantics-contract-philosophy/RECORD.md) — 命名、意味、契約の原理と実態。
-- [境界面理論・第1段](../2026-11-11-boundary-horizon-dialogue/RECORD.md) — まとまり・主観・主体・抽象・脱皮。
+- [命名・意味・契約](../2026-11-11-naming-semantics-contract-philosophy-philosophy-baseline/RECORD.md) — 命名、意味、契約の原理と実態。
+- [境界面理論・第1段](../2026-11-11-boundary-horizon-dialogue-philosophy-baseline/RECORD.md) — まとまり・主観・主体・抽象・脱皮。
 - 今回 — 契約を既定とした再帰的な局所選定、分割圧・統合圧、内部自由の目的。
 
 ## 継続時の未解決事項

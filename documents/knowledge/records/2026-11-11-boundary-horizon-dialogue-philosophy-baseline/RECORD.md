@@ -46,7 +46,7 @@ scope: "2026-11-11のChatGPT会話で、先行する『命名・意味・契約�
 - **「一緒なんだよね」（U7）はOwnerの強い肯定であるが、この会話だけで全P01–P17の採否を確定したり、完成した哲学文書の採用と読み替えたりしない。**
 - U8はGitHub recordsへの保存指示であり、正式なDev-Philosophyの制定承認ではない。
 - [RECORD_MODEL](../../../repository/models/RECORD_MODEL.md) と [AUTHORITY_GOVERNANCE_MODEL](../../../repository/models/AUTHORITY_GOVERNANCE_MODEL.md) に従い、原文・分析・正式な意味の正本・現在評価を分離する。
-- 先行record： [命名・意味・契約に関するOwner対話](../2026-11-11-naming-semantics-contract-philosophy/RECORD.md)。
+- 先行record： [命名・意味・契約に関するOwner対話](../2026-11-11-naming-semantics-contract-philosophy-philosophy-baseline/RECORD.md)。
 - 既存の未承認候補： [A1_ROUGH_PHILOSOPHY.md](../../../repository/operations/stage2/A1_ROUGH_PHILOSOPHY.md)。候補と本対話の上下関係を無断で確定しない。
 - ブランチはrefactor/dev-artifacts-restructure。既存mainやsubjects、artifactsを編集しない。
 
