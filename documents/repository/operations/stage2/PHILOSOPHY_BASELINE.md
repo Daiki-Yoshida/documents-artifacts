@@ -4,7 +4,7 @@
 
 ## 位置づけ
 
-2026-11-11にOwner自身が直接哲学を議論した**5つの独立record**に、2026-11-12に記録した**継続対話1件**を加え、計**6件**を先行する記録と照らしながら開発哲学を再構築するための重要な基準点として識別する。後続の対話により改善・訂正・置換できる。
+2026-11-11にOwner自身が直接哲学を議論した**5つの独立record**に、2026-11-12の**継続対話1件**、2026-11-13の**継続対話1件**を加えた計**7件**を、先行する記録と照合しながら開発哲学を再構築するための重要な基準点として識別する。後続の対話により改善・訂正・置換できる。
 
 - `-philosophy-baseline` の接尾辞は、議論の重要性・当面の参照順を示す**発見の手掛かり**。 `record_kind`、`decision_lineage`、`current`、`supersedes` 等の意味上の状態ではない。
 - これらの**Ownerの原文**を優先的に把握する。AIの提案や推論を同格に扱わない。
@@ -26,6 +26,7 @@
 | AON原則のOwnerによる制定 | `2026-11-11-aon-principle-adoption/` | [`2026-11-11-aon-principle-adoption-philosophy-baseline/`](../../../knowledge/records/2026-11-11-aon-principle-adoption-philosophy-baseline/RECORD.md) |
 | 真実・原本・解釈・NAL | `2026-11-11-truth-source-interpretation-nal/` | [`2026-11-11-truth-source-interpretation-nal-philosophy-baseline/`](../../../knowledge/records/2026-11-11-truth-source-interpretation-nal-philosophy-baseline/RECORD.md) |
 | 仮想のまとまり・複数主体・責務内包・運用と実態の乖離 | —（2026-11-12新規record） | [`2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/`](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/RECORD.md) — [Owner発言8件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/USER_MESSAGES.md) / [AI返信7件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/ASSISTANT_MESSAGES.md) |
+| 定義・相互作用の仮想性、共有実態への複数契約、欲求からの定義の脱皮 | —（2026-11-13新規record） | [`2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/`](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/RECORD.md) — [Owner発言10件](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/USER_MESSAGES.md) / [AI返信9件](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/ASSISTANT_MESSAGES.md) |
 
 ## 同じ日付でも対象としないもの
 

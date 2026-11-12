@@ -4,7 +4,7 @@
 
 進行規則：[Stage 2の進行手順](../STAGE2_WORKFLOW.md)。
 
-**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接対話した2026-11-11の5件に、11/12の継続対話（Owner8件・AI7件の全文記録）を加えた計6件を、Stage 2-A-3の優先参照起点として識別する。形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
+**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接対話した2026-11-11の5件に、11/12（Owner8件・AI7件）と11/13（Owner10件・AI9件）の継続対話を加えた**計7件**を、Stage 2-A-3の優先参照起点として識別する。形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
 
 ## A-1/A-2：一次監査完了
 
