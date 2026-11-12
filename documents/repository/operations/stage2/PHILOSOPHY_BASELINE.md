@@ -4,7 +4,7 @@
 
 ## 位置づけ
 
-2026-11-11にOwner自身が直接哲学を議論した**5つの独立record**に、2026-11-12の**継続対話1件**、2026-11-13の**継続対話2件**を加えた計**8件**を、先行する記録と照合しながら開発哲学を再構築するための重要な基準点として識別する。後続の対話により改善・訂正・置換できる。
+2026-11-11にOwner自身が直接哲学を議論した**5つの独立record**に、2026-11-12の**継続対話1件**、2026-11-13の**継続対話3件**を加えた計**9件**を、先行する記録と照合しながら開発哲学を再構築するための重要な基準点として識別する。後続の対話により改善・訂正・置換できる。
 
 - `-philosophy-baseline` の接尾辞は、議論の重要性・当面の参照順を示す**発見の手掛かり**。 `record_kind`、`decision_lineage`、`current`、`supersedes` 等の意味上の状態ではない。
 - これらの**Ownerの原文**を優先的に把握する。AIの提案や推論を同格に扱わない。
@@ -27,8 +27,9 @@
 | 真実・原本・解釈・NAL | `2026-11-11-truth-source-interpretation-nal/` | [`2026-11-11-truth-source-interpretation-nal-philosophy-baseline/`](../../../knowledge/records/2026-11-11-truth-source-interpretation-nal-philosophy-baseline/RECORD.md) |
 | 仮想のまとまり・複数主体・責務内包・運用と実態の乖離 | —（2026-11-12新規record） | [`2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/`](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/RECORD.md) — [Owner発言8件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/USER_MESSAGES.md) / [AI返信7件](../../../knowledge/records/2026-11-12-virtual-boundary-and-responsibility-philosophy-baseline/ASSISTANT_MESSAGES.md) |
 | 定義・相互作用の仮想性、共有実態への複数契約、欲求からの定義の脱皮 | —（2026-11-13新規record） | [`2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/`](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/RECORD.md) — [Owner発言10件](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/USER_MESSAGES.md) / [AI返信9件](../../../knowledge/records/2026-11-13-definition-interaction-shared-reality-and-metamorphosis-philosophy-baseline/ASSISTANT_MESSAGES.md) |
-
 | 契約の定義・成立・履行、境界の双璧、再帰的分割の幅と粒度 | —（2026-11-13追加record） | [`2026-11-13-contract-formation-performance-and-boundary-twin-walls-philosophy-baseline/`](../../../knowledge/records/2026-11-13-contract-formation-performance-and-boundary-twin-walls-philosophy-baseline/RECORD.md) — [Owner発言3件](../../../knowledge/records/2026-11-13-contract-formation-performance-and-boundary-twin-walls-philosophy-baseline/USER_MESSAGES.md) / [Assistant A1全文](../../../knowledge/records/2026-11-13-contract-formation-performance-and-boundary-twin-walls-philosophy-baseline/ASSISTANT_MESSAGE_A1.md)・[A2全文](../../../knowledge/records/2026-11-13-contract-formation-performance-and-boundary-twin-walls-philosophy-baseline/ASSISTANT_MESSAGE_A2.md) |
+
+| 再定義の契機と乖離、階層的判断、境界の堅牢性 | —（2026-11-13継続record・第8件から連続） | [`2026-11-13-redefinition-divergence-and-robust-boundaries-philosophy-baseline/`](../../../knowledge/records/2026-11-13-redefinition-divergence-and-robust-boundaries-philosophy-baseline/RECORD.md) — [Owner発言3件](../../../knowledge/records/2026-11-13-redefinition-divergence-and-robust-boundaries-philosophy-baseline/USER_MESSAGES.md) / [Assistant A1全文](../../../knowledge/records/2026-11-13-redefinition-divergence-and-robust-boundaries-philosophy-baseline/ASSISTANT_MESSAGE_A1.md)・[A2全文](../../../knowledge/records/2026-11-13-redefinition-divergence-and-robust-boundaries-philosophy-baseline/ASSISTANT_MESSAGE_A2.md) |
 
 ## 同じ日付でも対象としないもの
 
