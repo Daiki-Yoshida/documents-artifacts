@@ -10,10 +10,14 @@
 
 | 成果物 | 用途 |
 | --- | --- |
-| [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。定義・主体・契約三定義・内部自由・双璧と幅／粒度・乖離と再定義を扱う |
-| [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、未解決のQ番号を管理するレビュー資料 |
+| [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。定義・主体・契約三定義・内部自由・双璧と幅／粒度・乖離と再定義を扱い、既存原理からの導出案を該当節へ明示する |
+| [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、Q01〜Q08の現在評価と中心残問を管理するレビュー資料 |
 
 **本文・章構成とも未承認。** AONと真実・原本・記録・NALの統合は今回の対象外。これはA-3の吟味を進める編集面であり、A-4の構造合意やA-5のsubject化を完了したものではない。
+
+2026-11-13の更新では、[普遍階層と方法論の範囲](A3_PHILOSOPHY_DRAFT.md#philosophy-scope) とQ01〜Q08から導ける説明を本文へ反映した。Q番号を維持したまま、[中心残問をQ01の合意成立条件とQ02の分割判断の精緻化へ絞っている](A3_PHILOSOPHY_REVIEW.md#remaining-questions)。編集上の整理であり、導出案の正式承認や全論点の解決を意味しない。
+
+[導出説明・更新依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md) には、Ownerの問い、Assistantの回答全文、Ownerの記録・草案更新指示を、選定した3メッセージとして保存している。
 
 今後は同じ草案ファイルを編集し、変更をGit履歴で追う。原文recordsは編集用本文と分離して保持する。[草案作成依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-editable-draft-request/RECORD.md) / [議論の入口：Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
