@@ -1,10 +1,21 @@
 # Stage 2：調査・検証資料（未承認）
 
-本ディレクトリはStage 2の監査・抽出作業の資料領域であり、Dev-Philosophyの正本ではない。見出し・ファイル名は英語でも、**記述・分析・Ownerレビューは日本語を標準**とする。
+本ディレクトリはStage 2の監査・抽出・Owner吟味の作業資料領域であり、Dev-Philosophyの正本ではない。見出し・ファイル名は英語でも、**記述・分析・Ownerレビューは日本語を標準**とする。
 
 進行規則：[Stage 2の進行手順](../STAGE2_WORKFLOW.md)。
 
-**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接対話した2026-11-11の5件に、11/12（Owner8件・AI7件）と11/13（Owner10件・AI9件）の継続対話を加えた**計7件**を、Stage 2-A-3の優先参照起点として識別する。形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
+**[開発哲学の基準点（-philosophy-baseline）](PHILOSOPHY_BASELINE.md)：** Ownerが直接議論した対話recordsを、Stage 2-A-3の優先参照起点として識別する。対象と継続関係は基準点一覧で管理し、形式上の接尾辞だけで採用statusや永続的な規範優先順位を付与しない。
+
+## A-3：編集用の哲学体系草案
+
+| 成果物 | 用途 |
+| --- | --- |
+| [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。定義・主体・契約三定義・内部自由・双璧と幅／粒度・乖離と再定義を扱う |
+| [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、未解決のQ番号を管理するレビュー資料 |
+
+**本文・章構成とも未承認。** AONと真実・原本・記録・NALの統合は今回の対象外。これはA-3の吟味を進める編集面であり、A-4の構造合意やA-5のsubject化を完了したものではない。
+
+今後は同じ草案ファイルを編集し、変更をGit履歴で追う。原文recordsは編集用本文と分離して保持する。[草案作成依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-editable-draft-request/RECORD.md) / [議論の入口：Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
 ## A-1/A-2：一次監査完了
 
@@ -20,4 +31,4 @@
 
 **範囲：** 全ファイルの本文取得と哲学関連の一次点検、重要な系譜の確認を実施。全命題の唯一解釈の証明や、候補のOwner承認を意味しない。継続的な意味の精緻化・本人の価値判断はA-3、実際の分類構造はA-4に進める。
 
-**現在：A-1/A-2の一次監査完了、A-3のOwner対話・吟味進行中。** `documents/knowledge/subjects/dev-philosophy/`と`artifacts/`は未構築。
+**現在：A-1/A-2の一次監査完了、A-3のOwner対話・草案吟味進行中。** `documents/knowledge/subjects/dev-philosophy/`と`artifacts/`は未構築。
