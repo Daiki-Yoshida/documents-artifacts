@@ -17,7 +17,7 @@
 
 既存の哲学から導いた説明は[草案本文](A3_PHILOSOPHY_DRAFT.md)に反映し、[現在の未解決論点はQ01とQ02](A3_PHILOSOPHY_REVIEW.md#remaining-questions)に絞った。検討経緯はrecordsとGit履歴から辿れる。導出案や本文は未承認である。
 
-[導出説明・更新依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md) には、Ownerの問い、Assistantの回答全文、Ownerの記録・草案更新指示を、選定した3メッセージとして保存している。
+[導出検討のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md)に先行対話を保存。さらに[別チャット由来の本質論・対象範囲の対話record](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を原文のまま取り込み、Owner発言に基づく補強案を草案D1.2と冒頭へ反映した。
 
 今後は同じ草案ファイルを編集し、変更をGit履歴で追う。原文recordsは編集用本文と分離して保持する。[草案作成依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-editable-draft-request/RECORD.md) / [議論の入口：Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
