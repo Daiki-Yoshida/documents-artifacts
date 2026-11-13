@@ -10,16 +10,16 @@
 
 | 成果物 | 用途 |
 | --- | --- |
-| [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。定義・主体・契約三定義・内部自由・双璧と幅／粒度・乖離と再定義を扱い、既存原理からの導出案を該当節へ明示する |
-| [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、現在の未解決論点Q02と出典対応を管理するレビュー資料 |
+| [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。基点主体、契約三定義、内部自由、境界の双璧・枝ごとの壁、再定義などを扱う |
+| [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、現在のレビュー状態を管理する資料 |
 
 **本文・章構成とも未承認。** AONと真実・原本・記録・NALの統合は今回の対象外。これはA-3の吟味を進める編集面であり、A-4の構造合意やA-5のsubject化を完了したものではない。
 
-既存の哲学から導いた説明は[草案本文](A3_PHILOSOPHY_DRAFT.md)に反映し、[現在の未解決論点はQ02](A3_PHILOSOPHY_REVIEW.md#remaining-questions)に絞った。検討経緯はrecordsとGit履歴から辿れる。導出案や本文は未承認である。
+基点主体と枝ごとのミクロ側の壁、既存原理からの帰結と規範的指針を[草案本文](A3_PHILOSOPHY_DRAFT.md)へ接続した。[現行のレビュー状態](A3_PHILOSOPHY_REVIEW.md#review-status)では、本六章について独立して維持する未解決論点はない。具体的な実務的実現はDev-Methodologyが担い、草案本文の正式承認と構成の最終確定は引き続きA-3以降で扱う。
 
 [導出検討のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md)に先行対話を保存。さらに[別チャット由来の本質論・対象範囲の対話record](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を原文のまま取り込み、Owner発言に基づく補強案を草案D1.2と冒頭へ反映した。
 
-[Q01の終了とQ02の指針整理についてのOwner判断](../../../knowledge/records/2026-11-14-q01-closure-q02-guidance/RECORD.md)を記録し、D3.2の責務境界とD5.4の判断指針を草案に明示した。現在の論点台帳にはQ02のみを置く。
+[哲学と方法論の責務境界についてのOwner判断](../../../knowledge/records/2026-11-14-q01-closure-q02-guidance/RECORD.md)、[基点主体と双璧の継続対話](../../../knowledge/records/2026-11-14-contextual-base-subject-and-branchwise-walls-philosophy-baseline/RECORD.md)、[今回の分析へのOwner承認](../../../knowledge/records/2026-11-14-q02-closure-and-baseline-integration/RECORD.md)を、それぞれ独立したrecordsとして保持する。
 
 今後は同じ草案ファイルを編集し、変更をGit履歴で追う。原文recordsは編集用本文と分離して保持する。[草案作成依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-editable-draft-request/RECORD.md) / [議論の入口：Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
