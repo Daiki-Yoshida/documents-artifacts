@@ -17,7 +17,7 @@
 | [A3_CONCEPTUAL_STRESS_REVIEW.md](A3_CONCEPTUAL_STRESS_REVIEW.md) | 定義・合意・履行・共有実態・再定義・分割についての10事例による概念上の反例検証。E06〜E08の表現精度を改善。正式承認ではない |
 | [匿名・単独レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md) | A3_PHILOSOPHY_DRAFT.mdから今回手動で整えた六章23節の独立した提示文。原文の議論・出典・Issue・編集指示を含めず、別AIへ本文だけ渡す用途。正式制定物ではない |
 
-**匿名レビュー用本文の扱い：** [草案](A3_PHILOSOPHY_DRAFT.md)が唯一の継続編集元であり、[独立レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md)はその時点の手動生成スナップショット。基準にした草案blobは `a3bee3c2dc51829ead624f3e9829fd4473f038e9`。以後草案に変更があれば、必要時に改めて本文を手動で整え直す。**恒久的な生成スクリプトは設けない。** 匿名レビューではリポジトリやこのINDEXのURLではなく、出力ファイルの中身のみを渡す。
+**匿名レビュー用本文の扱い：** [草案](A3_PHILOSOPHY_DRAFT.md)が唯一の継続編集元であり、[独立レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md)はその時点の手動生成スナップショット。基準にした草案blobは `a3bee3c2dc51829ead624f3e9829fd4473f038e9`。**現在の草案はS17を反映して更新済みのため、匿名レビュー用本文は旧版であり、この変更はまだ反映されていない。** 必要時に改めて本文を手動で整え直す。**恒久的な生成スクリプトは設けない。** 匿名レビューではリポジトリやこのINDEXのURLではなく、出力ファイルの中身のみを渡す。
 
 **本文・章構成とも未承認。** Ownerは現在の六章を**契約境界哲学体系**と位置づけ、まず本体系をほぼ完成させてからAON・記録・環境の潔癖など他の思想を別途論じると判断した。これら他領域の詳細・分類や相互関係は本A-3資料では未決定。A-4の構造合意やA-5のsubject化を完了したものではない。
 
@@ -27,9 +27,11 @@
 
 [導出検討のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md)に先行対話を保存。さらに[別チャット由来の本質論・対象範囲の対話record](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を原文のまま取り込み、Owner発言に基づく補強案を草案D1.2と冒頭へ反映した。
 
-[今回の完成度向上に向けたOwnerの継続依頼](../../../knowledge/records/2026-11-14-contract-boundary-quality-review-request/RECORD.md)、[契約境界哲学体系そのものを原則とするOwner判断](../../../knowledge/records/2026-11-14-contract-boundary-principle-unification/RECORD.md)、[命名の採用範囲に関する先行Owner判断](../../../knowledge/records/2026-11-14-contract-boundary-terminology-approval/RECORD.md)、[契約境界哲学体系の範囲・検討順序に関するOwner判断](../../../knowledge/records/2026-11-14-contract-boundary-philosophy-scope-sequencing/RECORD.md)、[哲学と方法論の責務境界についてのOwner判断](../../../knowledge/records/2026-11-14-q01-closure-q02-guidance/RECORD.md)、[基点主体と双璧の継続対話](../../../knowledge/records/2026-11-14-contextual-base-subject-and-branchwise-walls-philosophy-baseline/RECORD.md)、[今回の分析へのOwner承認](../../../knowledge/records/2026-11-14-q02-closure-and-baseline-integration/RECORD.md)を、それぞれ独立したrecordsとして保持する。
+[認識・情報化・実体験と欲求＝本質のOwner発言／Assistant応答を収録した哲学baseline](../../../knowledge/records/2026-11-14-recognition-information-and-virtuality-philosophy-baseline/RECORD.md)、[今回の完成度向上に向けたOwnerの継続依頼](../../../knowledge/records/2026-11-14-contract-boundary-quality-review-request/RECORD.md)、[契約境界哲学体系そのものを原則とするOwner判断](../../../knowledge/records/2026-11-14-contract-boundary-principle-unification/RECORD.md)、[命名の採用範囲に関する先行Owner判断](../../../knowledge/records/2026-11-14-contract-boundary-terminology-approval/RECORD.md)、[契約境界哲学体系の範囲・検討順序に関するOwner判断](../../../knowledge/records/2026-11-14-contract-boundary-philosophy-scope-sequencing/RECORD.md)、[哲学と方法論の責務境界についてのOwner判断](../../../knowledge/records/2026-11-14-q01-closure-q02-guidance/RECORD.md)、[基点主体と双璧の継続対話](../../../knowledge/records/2026-11-14-contextual-base-subject-and-branchwise-walls-philosophy-baseline/RECORD.md)、[今回の分析へのOwner承認](../../../knowledge/records/2026-11-14-q02-closure-and-baseline-integration/RECORD.md)を、それぞれ独立したrecordsとして保持する。
 
-**契約境界哲学体系をほぼ完成と評価するための残る確認：** 六章23節の本文と出典対応のOwnerによる通読・意図の確認、E01〜E04およびE06〜E08の修正文が原意を保っているかの確認、E05の要否判断。**体系そのものを原則とし、個別の原則名や略称を設けない判断は確定済み**。章名・用語と性質の参照名もOwner採用範囲で反映済み。現在の独立したQ01・Q02は終了済みであり、他思想をこの六章へ混ぜることは完成条件としない。正式制定とA-4の構成確定は別の承認判断とする。
+**今回の根源的な接続：** [S17のOwner原文とAssistant応答](../../../knowledge/records/2026-11-14-recognition-information-and-virtuality-philosophy-baseline/RECORD.md)に基づき、[草案](A3_PHILOSOPHY_DRAFT.md)のD1.1・D1.3・D2.2・D4.2に、認識を介する言及、個体にも及ぶ仮想性、直接の体験と情報化された記憶の違い、欲求＝本質の強い結合を追記した。旧「中身を未決定として論じられる」という説明はD1.3から除去。**これは草案へのAssistant編集反映であり、今回の修正文のOwner承認ではない。** また、**「仮想」「情報化」「認識＝情報」の用語の最終的な関係はまだ検討中**とする。S17の「情報化」は正式な全面改名の合意ではない。
+
+**契約境界哲学体系をほぼ完成と評価するための残る確認：** 六章23節の本文と出典対応のOwnerによる通読・意図の確認、E01〜E04・E06〜E08および今回のS17に基づく修正文が原意を保っているかの確認、E05の要否判断、仮想と情報化の用語関係の検討。**体系そのものを原則とし、個別の原則名や略称を設けない判断は確定済み**。章名・用語と性質の参照名もOwner採用範囲で反映済み。現在の独立したQ01・Q02は終了済みであり、他思想をこの六章へ混ぜることは完成条件としない。正式制定とA-4の構成確定は別の承認判断とする。
 
 今後は同じ草案ファイルを編集し、変更をGit履歴で追う。原文recordsは編集用本文と分離して保持する。[草案作成依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-editable-draft-request/RECORD.md) / [議論の入口：Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
