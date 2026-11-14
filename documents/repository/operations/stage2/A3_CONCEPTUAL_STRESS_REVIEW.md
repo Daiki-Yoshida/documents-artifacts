@@ -1,6 +1,6 @@
 # 契約境界哲学体系 — 意味・境界の反例検証と完成候補レビュー
 
-**位置づけ：Stage 2-A-3のAssistantによる検討資料（Owner未承認）。** 本書は新しい原則や別の哲学体系の制定、またQ01・Q02の再開を目的としない。草案本文の定義権は引き続き [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) に置き、原文出典と採否は [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) で追跡する。
+**位置づけ：Stage 2-A-3のAssistantによる検討資料（Owner未承認）。** 本書は新しい原則や別の哲学体系の制定、またQ01・Q02の再開を目的としない。Ownerの発言原文はrecordsに保持し、現在の**未承認の編集文面**は [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) に置く。原文出典・採否の対応は [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) で追跡する。
 
 ## 確認した範囲・根拠
 
