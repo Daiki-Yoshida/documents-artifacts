@@ -12,10 +12,13 @@
 | --- | --- |
 | [A3_PHILOSOPHY_DRAFT.md](A3_PHILOSOPHY_DRAFT.md) | 六章・D番号で継続編集する哲学本文の草案。基点主体、契約三定義、内部自由、境界の双璧・枝ごとの壁、再定義などを扱う |
 | [A3_PHILOSOPHY_REVIEW.md](A3_PHILOSOPHY_REVIEW.md) | 本文とOwner原文の対応、訂正経緯、AIの接続案、現在のレビュー状態を管理する資料 |
+| [A3_WHOLE_DRAFT_REVIEW.md](A3_WHOLE_DRAFT_REVIEW.md) | 六章23節の横断レビュー。原文忠実性・関係語・出典・重複についての編集候補。本文未反映 |
 
 **本文・章構成とも未承認。** AONと真実・原本・記録・NALの統合は今回の対象外。これはA-3の吟味を進める編集面であり、A-4の構造合意やA-5のsubject化を完了したものではない。
 
 基点主体と枝ごとのミクロ側の壁、既存原理からの帰結と規範的指針を[草案本文](A3_PHILOSOPHY_DRAFT.md)へ接続した。[現行のレビュー状態](A3_PHILOSOPHY_REVIEW.md#review-status)では、本六章について独立して維持する未解決論点はない。具体的な実務的実現はDev-Methodologyが担い、草案本文の正式承認と構成の最終確定は引き続きA-3以降で扱う。
+
+[六章全体レビュー](A3_WHOLE_DRAFT_REVIEW.md)では、固定版 `0d8e5953` を対象として概念の接続と主要原文を照合した。E01〜E05は編集候補であり、新しい哲学上の未解決Qや採用済みの修正文ではない。草案本文の更新は別に扱う。
 
 [導出検討のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md)に先行対話を保存。さらに[別チャット由来の本質論・対象範囲の対話record](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を原文のまま取り込み、Owner発言に基づく補強案を草案D1.2と冒頭へ反映した。
 
