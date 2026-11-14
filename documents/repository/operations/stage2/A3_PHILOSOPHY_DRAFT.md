@@ -2,13 +2,13 @@
 
 **状態：Stage 2-A-3の未承認・編集用草案。** 開発哲学（Dev-Philosophy）を構成する**契約境界哲学体系**の文章化・体系化の案であり、この本文や六章構成全体の正式制定はまだ行っていない。
 
-このファイルを継続して編集する。既に採用された用語・章名・性質名の参照は[ユビキタス言語](A3_UBIQUITOUS_LANGUAGE.md)に整理し、**原則の正式名称と英語略称はまだ確定していない**。原文・訂正の経緯はrecordsに保持し、出典対応、AIによる接続案、論点の現在評価は [レビュー資料](A3_PHILOSOPHY_REVIEW.md) で扱う。議論の入口は [Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
+このファイルを継続して編集する。既に採用された用語・章名・性質名の参照は[ユビキタス言語](A3_UBIQUITOUS_LANGUAGE.md)に整理する。**契約境界哲学体系それ自体を原則とし、内部の個々の判断指針に独立した原則名や英語略称を設けない。** この位置づけは[Ownerの後続判断](../../../knowledge/records/2026-11-14-contract-boundary-principle-unification/RECORD.md)による。原文・訂正の経緯はrecordsに保持し、出典対応、AIによる接続案、論点の現在評価は [レビュー資料](A3_PHILOSOPHY_REVIEW.md) で扱う。議論の入口は [Issue #221](https://github.com/Daiki-Yoshida/documents-artifacts/issues/221)。
 
 本体系が扱うのは、**主体が新たな意味あるまとまりや相互作用を見出し、定義し、成立させる営み**である。既に存在している物理現象そのものの成立条件を説明するものではない。まとまり・定義・命名・契約・主体・欲求・責務・内部自由・境界面理論・再定義を、この営みに共通する普遍階層で論じる。
 
 **本体系は開発哲学全体と同義ではない。** Ownerの開発哲学には、AON・記録・環境の潔癖など、契約境界とは別に論じる思想もある。これらの思想の定義・分類・相互関係はここでは確定せず、まず契約境界哲学体系をほぼ完成できる状態へ整えてから扱う。法律や組織などの例は、契約境界哲学体系の普遍的な適用範囲を説明するものであり、特定の制度の解説ではない。
 
-初稿の根拠は `refactor/dev-artifacts-restructure` の `a9c249c10b34e1ae5e9ee4bf220c26db9667359c` にある関連対話7件。後続の検討・承認も含めた出典コードS01〜S14はレビュー資料の [出典一覧](A3_PHILOSOPHY_REVIEW.md#sources) を参照する。D番号は草案の箇所を指定するためのIDであり、原則の優先順位ではない。
+初稿の根拠は `refactor/dev-artifacts-restructure` の `a9c249c10b34e1ae5e9ee4bf220c26db9667359c` にある関連対話7件。後続の検討・承認も含めた出典コードS01〜S16はレビュー資料の [出典一覧](A3_PHILOSOPHY_REVIEW.md#sources) を参照する。D番号は草案の箇所を指定するためのIDであり、原則の優先順位ではない。
 
 本体系の名称と検討順序は[Ownerの範囲・順序の判断](../../../knowledge/records/2026-11-14-contract-boundary-philosophy-scope-sequencing/RECORD.md)に基づく。先行する導出案は[導出検討と更新依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md) に基づき、該当節へ記述した。さらに[別チャット由来の本質論・対象範囲の対話記録](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を踏まえ、本体系の対象と本質の帰属先を明示した。原文とAssistantの解釈は[対応表](A3_PHILOSOPHY_REVIEW.md#traceability)で区別する。これらの草案化はOwnerによる全文の正式承認ではない。
 
