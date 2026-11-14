@@ -8,7 +8,7 @@
 
 **本体系は開発哲学全体と同義ではない。** Ownerの開発哲学には、AON・記録・環境の潔癖など、契約境界とは別に論じる思想もある。これらの思想の定義・分類・相互関係はここでは確定せず、まず契約境界哲学体系をほぼ完成できる状態へ整えてから扱う。法律や組織などの例は、契約境界哲学体系の普遍的な適用範囲を説明するものであり、特定の制度の解説ではない。
 
-初稿の根拠は `refactor/dev-artifacts-restructure` の `a9c249c10b34e1ae5e9ee4bf220c26db9667359c` にある関連対話7件。後続の検討・承認も含めた出典コードS01〜S13はレビュー資料の [出典一覧](A3_PHILOSOPHY_REVIEW.md#sources) を参照する。D番号は草案の箇所を指定するためのIDであり、原則の優先順位ではない。
+初稿の根拠は `refactor/dev-artifacts-restructure` の `a9c249c10b34e1ae5e9ee4bf220c26db9667359c` にある関連対話7件。後続の検討・承認も含めた出典コードS01〜S14はレビュー資料の [出典一覧](A3_PHILOSOPHY_REVIEW.md#sources) を参照する。D番号は草案の箇所を指定するためのIDであり、原則の優先順位ではない。
 
 本体系の名称と検討順序は[Ownerの範囲・順序の判断](../../../knowledge/records/2026-11-14-contract-boundary-philosophy-scope-sequencing/RECORD.md)に基づく。先行する導出案は[導出検討と更新依頼のrecord](../../../knowledge/records/2026-11-13-philosophy-question-derivations/RECORD.md) に基づき、該当節へ記述した。さらに[別チャット由来の本質論・対象範囲の対話記録](../../../knowledge/records/2026-11-13-development-philosophy-essence-dialogue-import/RECORD.md)を踏まえ、本体系の対象と本質の帰属先を明示した。原文とAssistantの解釈は[対応表](A3_PHILOSOPHY_REVIEW.md#traceability)で区別する。これらの草案化はOwnerによる全文の正式承認ではない。
 
