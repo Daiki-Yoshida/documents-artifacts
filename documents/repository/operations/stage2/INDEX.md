@@ -15,6 +15,9 @@
 | [A3_UBIQUITOUS_LANGUAGE.md](A3_UBIQUITOUS_LANGUAGE.md) | Ownerが採用した体系・章名、用語、性質の参照名と、体系自体を原則とし個別原則名を設けない方針の索引 |
 | [A3_WHOLE_DRAFT_REVIEW.md](A3_WHOLE_DRAFT_REVIEW.md) | 固定版の六章23節横断レビュー。E01〜E04は現行草案へ反映済み、E05は未反映の任意編集候補 |
 | [A3_CONCEPTUAL_STRESS_REVIEW.md](A3_CONCEPTUAL_STRESS_REVIEW.md) | 定義・合意・履行・共有実態・再定義・分割についての10事例による概念上の反例検証。E06〜E08の表現精度を改善。正式承認ではない |
+| [匿名・単独レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md) | A3_PHILOSOPHY_DRAFT.mdから今回手動で整えた六章23節の独立した提示文。原文の議論・出典・Issue・編集指示を含めず、別AIへ本文だけ渡す用途。正式制定物ではない |
+
+**匿名レビュー用本文の扱い：** [草案](A3_PHILOSOPHY_DRAFT.md)が唯一の継続編集元であり、[独立レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md)はその時点の手動生成スナップショット。基準にした草案blobは `a3bee3c2dc51829ead624f3e9829fd4473f038e9`。以後草案に変更があれば、必要時に改めて本文を手動で整え直す。**恒久的な生成スクリプトは設けない。** 匿名レビューではリポジトリやこのINDEXのURLではなく、出力ファイルの中身のみを渡す。
 
 **本文・章構成とも未承認。** Ownerは現在の六章を**契約境界哲学体系**と位置づけ、まず本体系をほぼ完成させてからAON・記録・環境の潔癖など他の思想を別途論じると判断した。これら他領域の詳細・分類や相互関係は本A-3資料では未決定。A-4の構造合意やA-5のsubject化を完了したものではない。
 
