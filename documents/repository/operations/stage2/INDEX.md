@@ -17,7 +17,7 @@
 | [A3_CONCEPTUAL_STRESS_REVIEW.md](A3_CONCEPTUAL_STRESS_REVIEW.md) | 定義・合意・履行・共有実態・再定義・分割についての10事例による概念上の反例検証。E06〜E08の表現精度を改善。正式承認ではない |
 | [匿名・単独レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md) | A3_PHILOSOPHY_DRAFT.mdから今回手動で整えた六章23節の独立した提示文。原文の議論・出典・Issue・編集指示を含めず、別AIへ本文だけ渡す用途。正式制定物ではない |
 
-**匿名レビュー用本文の扱い：** [草案](A3_PHILOSOPHY_DRAFT.md)が唯一の継続編集元であり、[独立レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md)はそこから私が手動で整えた独立スナップショット。現在の版は草案blob `62facb589e97ceae26c8a475e3aa2f66d7544f6f` を基準に手動で整え、出力blob `1943e505f60b26d47fc92798c1934042f7ffcf0a`。S17・S18とSubject完全性を重視した説明拡充を反映済み。草案を更新したときは必要に応じて私が本文を手動で整え直す。**恒久的な生成スクリプトは設けない。** 匿名レビューではリポジトリやこのINDEXのURLではなく、出力ファイルのMarkdown本文のみを渡す。
+**匿名レビュー用本文の扱い：** [草案](A3_PHILOSOPHY_DRAFT.md)が唯一の継続編集元であり、[独立レビュー用本文](review-export/CONTRACT_BOUNDARY_PHILOSOPHY.md)はそこから私が手動で整えた独立スナップショット。現在の版は草案blob `e4ebd7db0c29701a6673a2271bd7cec4fd8d58f8` を基準に手動で整え、出力blob `e12064418b71e85a297b21013e24c3bec1fd7469`。S17・S18とSubject完全性を重視した説明拡充を反映済み。草案を更新したときは必要に応じて私が本文を手動で整え直す。**恒久的な生成スクリプトは設けない。** 匿名レビューではリポジトリやこのINDEXのURLではなく、出力ファイルのMarkdown本文のみを渡す。
 
 **本文・章構成とも未承認。** Ownerは現在の六章を**契約境界哲学体系**と位置づけ、まず本体系をほぼ完成させてからAON・記録・環境の潔癖など他の思想を別途論じると判断した。これら他領域の詳細・分類や相互関係は本A-3資料では未決定。A-4の構造合意やA-5のsubject化を完了したものではない。
 
